@@ -16,7 +16,9 @@ jobs:
       - run: pip install -r requirements.txt tzdata
       - env:
           PYTHONPATH: src
-        run: python -m armor valida
+        run: |
+          python -m armor valida
+          python -m armor sfide
       - run: |
           git config user.name "armor-bot"
           git config user.email "armor-bot@users.noreply.github.com"

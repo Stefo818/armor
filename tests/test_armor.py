@@ -96,3 +96,15 @@ def test_parse_multpl_html_e_testo():
     assert list(s.values) == [3.35, 3.64]
     s2 = parse_multpl("Nov 6, 2026\t† 3.64\nSep 30, 2025\t  3.28")
     assert list(s2.values) == [3.28, 3.64]
+
+
+def test_extras_pure_functions():
+    import numpy as np
+    import pandas as pd
+    from armor import extras
+    idx = pd.bdate_range("2024-01-01", periods=300)
+    rng = np.random.default_rng(0)
+    px = pd.DataFrame(np.cumprod(1 + rng.normal(0.0005, 0.01, (300, 5)), axis=0), index=idx, columns=list("ABCDE"))
+    out = extras.compute_breadth(px)
+    assert {"breadth50", "breadth200", "nh_nl"} <= set(out.columns)
+    assert out["breadth200"].dropna().between(0, 100).all()

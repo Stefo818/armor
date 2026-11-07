@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from . import journal, store
-from .config import (BACKTEST_RET, CALIBRATION, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
+from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_ret, price_features, vwce_series
 
@@ -40,7 +40,7 @@ def read_csv(p):
         return pd.DataFrame()
 
 
-def svg_lines(series, w=680, h=190, fmt=lambda v: it(v, 1), hline=None, ymin=None):
+def svg_lines(series, w=680, h=190, fmt=lambda v: it(v, 1), hline=None, ymin=None, dots=None):
     """Grafico a linee in SVG semplice. series = [(nome, Series, colore)]."""
     series = [(n, s.dropna(), c) for n, s, c in series if s is not None and not s.dropna().empty]
     if not series:
@@ -73,12 +73,19 @@ def svg_lines(series, w=680, h=190, fmt=lambda v: it(v, 1), hline=None, ymin=Non
         step = max(len(s) // 700, 1)
         pts = " ".join(f"{sx(d):.1f},{sy(v):.1f}" for d, v in s.iloc[::step].items())
         out.append(f"<polyline points='{pts}' fill='none' stroke='{c}' stroke-width='1.8' stroke-linejoin='round'/>")
+    for n, ds, c in (dots or []):
+        for d, v in ds.dropna().items():
+            if x0 <= d.value <= x1:
+                out.append(f"<circle cx='{sx(d):.1f}' cy='{sy(v):.1f}' r='3.2' fill='{c}' stroke='var(--card)' stroke-width='1'/>")
     out.append("</svg>")
     leg = " ".join(f"<span class='lg'><i style='background:{c}'></i>{esc(n)}</span>" for n, _, c in series)
+    leg += "".join(f"<span class='lg'><i style='background:{c};border-radius:50%'></i>{esc(n)}</span>" for n, _, c in (dots or []))
     return "".join(out) + f"<div class='legend'>{leg}</div>"
 
 
-MAX_AGE = {"eq_gdp": 160, "cape_m": 50, "pe_m": 50, "ps_m": 110, "cpi": 60, "unrate": 60}
+MAX_AGE = {"gpr": 10, "gpr_threat": 10, "gpr_act": 10, "fear_greed": 6, "breadth50": 8, "breadth200": 8, "nh_nl": 8,
+           "top_ps": 10, "top_pe": 10, "top_fcf_yield": 10, "ai_capex_ocf": 130,
+           "spy_pc_volume": 10, "spy_pc_open_interest": 10, "spy_iv_atm_30d": 10, "spy_put_skew_95": 10, "eq_gdp": 160, "cape_m": 50, "pe_m": 50, "ps_m": 110, "cpi": 60, "unrate": 60}
 
 
 def asof_val(s: pd.Series, date: pd.Timestamp, max_age: int = 12):
@@ -152,6 +159,19 @@ INDICATORS = [
                      ("Azioni società USA non finanziarie / PIL (trimestrale)", "eq_gdp", 1, 2)]),
     ("Materie prime, incertezza, ampiezza", [("Oro ($)", "gold", 0, 0), ("Petrolio WTI ($)", "wti", 0, 1),
                                              ("Incertezza politica (EPU)", "epu", 1, 0), ("Ampiezza: RSP/SPY (alto = mercato più largo)", "rsp_spy", -1, 3)]),
+    ("Sentiment e ampiezza (dati accumulati da quando l'app li scarica)", [
+        ("Fear & Greed CNN (0 paura, 100 euforia)", "fear_greed", 0, 0),
+        ("Titoli S&P 500 sopra la media a 200 giorni (%)", "breadth200", -1, 0),
+        ("Titoli S&P 500 sopra la media a 50 giorni (%)", "breadth50", -1, 0),
+        ("Nuovi massimi meno nuovi minimi a 52 settimane (% titoli)", "nh_nl", -1, 1)]),
+    ("Geopolitica", [("Rischio geopolitico GPR (indice)", "gpr", 1, 0), ("GPR: minacce", "gpr_threat", 1, 0), ("GPR: atti di guerra/terrore", "gpr_act", 1, 0)]),
+    ("Grandi aziende (30 maggiori società USA, media pesata per capitalizzazione)", [
+        ("Prezzo/fatturato", "top_ps", 1, 2), ("P/E sugli utili previsti", "top_pe", 1, 1),
+        ("Rendimento da flusso di cassa libero (%)", "top_fcf_yield", -1, 2),
+        ("Investimenti AI: spesa in conto capitale / flusso di cassa operativo (big tech)", "ai_capex_ocf", 1, 2)]),
+    ("Opzioni su SPY (archivio proprio, nessuno storico prima di novembre 2026)", [
+        ("Put/Call sui volumi", "spy_pc_volume", 1, 2), ("Put/Call sull'open interest", "spy_pc_open_interest", 1, 2),
+        ("Volatilità implicita ATM a 30 giorni", "spy_iv_atm_30d", 1, 3), ("Skew put 95% (premio sulle put)", "spy_put_skew_95", 1, 3)]),
 ]
 
 
@@ -171,6 +191,13 @@ def indicator_series(key, sp, p):
     if key == "rsp_spy":
         a, b = store.load("rsp"), store.load("spy")
         return (a / b.reindex(a.index)).dropna() if not a.empty else a
+    if key.startswith("spy_"):
+        d = read_csv(DATA / "archive" / "spy_options_summary.csv")
+        col = key[4:]
+        if d.empty or col not in d.columns:
+            return pd.Series(dtype=float)
+        d["date"] = pd.to_datetime(d["date"])
+        return d.drop_duplicates("date", keep="last").set_index("date")[col].astype(float)
     return store.load(key)
 
 
@@ -182,6 +209,8 @@ def comparison_html(date, sp, p):
         out.append(f"<tr class='grp'><td colspan='7'>{esc(group)}</td></tr>")
         for label, key, bad, dec in items:
             s = indicator_series(key, sp, p)
+            if key.startswith('spy_') and len(s):
+                s = s.copy(); s.index = [min(x, date) for x in s.index]
             vals = []
             for o in offs:
                 d = date if o is None else date - pd.Timedelta(days=o)
@@ -235,6 +264,137 @@ def horizon_card(hz, r, spot, rel):
         relhtml = f"<span class='badge {REL_CLASS[rel[0]]}' title='{esc(rel[1])}'>{REL_TXT[rel[0]]}</span>"
     return (f"<div class='card hz'><div class='hzh'><h3>{HZ_LABEL[hz]}</h3><span class='badge {LEVEL_CLASS[lev]}'>Rischio {lev.lower()}</span></div>"
             f"<div class='ratio'>{it(r['ratio'], 1)}× la frequenza storica</div>{lines}{rtxt}{drv}<div class='relrow'>{relhtml}</div></div>")
+
+
+def primary_prob(r):
+    """Probabilita' del calo 'principale' dell'orizzonte, da una riga del diario."""
+    hz = r["horizon"]
+    if r["thr1"] == PRIMARY[hz]:
+        return float(r["p1"]), int(r["thr1"])
+    if pd.notna(r["p2"]) and r["thr2"] == PRIMARY[hz]:
+        return float(r["p2"]), int(r["thr2"])
+    return float(r["p1"]), int(r["thr1"])
+
+
+def history_html(date, pred, hist, jr, outc):
+    """Sezione 'Storico delle previsioni': grafici per orizzonte + tabella completa del diario."""
+    j = jr.copy()
+    if len(j):
+        j["asof"] = pd.to_datetime(j["asof"])
+        pp = j.apply(primary_prob, axis=1)
+        j["pp"] = [a for a, _ in pp]
+        j["pthr"] = [b for _, b in pp]
+    o = outc.copy() if len(outc) else pd.DataFrame()
+    if len(o):
+        o["asof"] = pd.to_datetime(o["asof"])
+    h = pd.DataFrame()
+    if len(hist):
+        h = hist.copy()
+        h["date"] = pd.to_datetime(h["date"])
+        h = h.set_index("date")
+        h = h[h.index >= date - pd.Timedelta(days=365 * 6)]
+    cols = {"10g": "#d9822b", "1m": "#c0392b", "3m": "#7a4fd1", "6m": "#2a6fdb"}
+    charts, btns = [], []
+    for k, hz in enumerate(HORIZONS):
+        if hz not in pred:
+            continue
+        thr = PRIMARY[hz]
+        ser = (h[f"p_{hz}"] * 100) if len(h) and f"p_{hz}" in h else pd.Series(dtype=float)
+        base = pred[hz]["base"][thr] * 100
+        live = pd.Series(dtype=float)
+        if len(j):
+            g = j[j.horizon == hz].sort_values("asof")
+            live = pd.Series(g["pp"].values * 100, index=g["asof"].values).groupby(level=0).last()
+        today = pd.Series([pred[hz]["p"][thr] * 100], index=[date])
+        ser = pd.concat([ser, today]) if len(ser) else today
+        ch = svg_lines([(f"Probabilità stimata (%), calo ≥{thr}% entro {HZ_LABEL[hz]}", ser, cols[hz])],
+                       fmt=lambda v: it(v, 0) + "%", ymin=0, hline=base,
+                       dots=[("Previsioni registrate nel diario", live, "#1b2330")] if len(live) else None)
+        charts.append(f"<div class='hzc' id='hzc-{hz}' style='{'' if k == 0 else 'display:none'}'>{ch}"
+                      f"<p class='muted'>Linea tratteggiata = frequenza storica ({it(base, 0)}%). La linea colorata è la stima walk-forward sullo S&P 500 dal 2000 "
+                      "(ogni punto usa solo i dati noti allora); i pallini sono le previsioni vere, registrate nel diario in tempo reale.</p></div>")
+        btns.append(f"<button class='tab{' on' if k == 0 else ''}' data-hz='{hz}' onclick=\"showHz('{hz}')\">{HZ_LABEL[hz]}</button>")
+    out = [f"<div class='tabs'>{''.join(btns)}</div>{''.join(charts)}"]
+    if not len(j):
+        out.append("<p class='muted'>Il diario è ancora vuoto: la prima previsione verrà registrata al prossimo aggiornamento.</p>")
+        return "".join(out)
+
+    j = j.sort_values(["horizon", "asof"])
+    j["prev_pp"] = j.groupby("horizon")["pp"].shift(1)
+    if len(o):
+        o2 = o.set_index(["asof", "horizon"])
+    rows = []
+    for _, r in j.sort_values(["asof", "horizon"], ascending=[False, True]).iterrows():
+        hz = r["horizon"]
+        try:
+            scad = (r["asof"] + pd.offsets.BDay(int(r["sessions"]))).strftime("%d/%m/%Y")
+        except Exception:
+            scad = "—"
+        ch = "" if pd.isna(r["prev_pp"]) else f"{'+' if r['pp'] >= r['prev_pp'] else '−'}{it(abs(r['pp'] - r['prev_pp']) * 100, 1)} pt"
+        esito, scost = "<span class='muted'>in corso</span>", "—"
+        if len(o) and (r["asof"], hz) in o2.index:
+            x = o2.loc[(r["asof"], hz)]
+            x = x.iloc[0] if isinstance(x, pd.DataFrame) else x
+            hit = x.get("hit1")
+            esito = f"{pct(x['realized'], 1, True)}"
+            if pd.notna(hit) and hit != "":
+                esito += f" · calo ≥{int(r['thr1'])}%: {'avvenuto' if int(hit) == 1 else 'no'}"
+            d_ = pd.to_numeric(x.get("discrepancy"), errors="coerce")
+            scost = pct(d_, 1, True) if pd.notna(d_) else "—"
+        rng = f"{pct(r['q50'], 1, True)} <small class='muted'>[{pct(r['q10'], 1, True)} … {pct(r['q90'], 1, True)}]</small>"
+        rows.append(f"<tr><td>{r['asof'].strftime('%d/%m/%Y')}</td><td>{HZ_LABEL[hz]}</td>"
+                    f"<td>{pct(r['pp'], 1)} <small class='muted'>calo ≥{int(r['pthr'])}%</small></td><td>{it(r['ratio'], 2)}×</td>"
+                    f"<td><span class='badge {LEVEL_CLASS.get(r['level'], 'ok')}'>{esc(r['level'])}</span></td>"
+                    f"<td>{rng}</td><td>{ch or '—'}</td><td>{scad}</td><td>{esito}</td><td>{scost}</td></tr>")
+    head = ("<table><thead><tr><th>Data</th><th>Orizzonte</th><th>Probabilità di calo</th><th>Rispetto al normale</th><th>Livello</th>"
+            "<th>Rendimento ipotizzato VWCE [80%]</th><th>Variazione rispetto alla previsione precedente</th><th>Scadenza</th>"
+            "<th>Esito reale</th><th>Scostamento</th></tr></thead><tbody>")
+    vis, old = rows[:48], rows[48:]
+    out.append("<h3>Tutte le previsioni registrate</h3>" + head + "".join(vis) + "</tbody></table>")
+    if old:
+        out.append(f"<details><summary>Mostra le {len(old)} previsioni più vecchie</summary>{head}{''.join(old)}</tbody></table></details>")
+    out.append("<p class='muted'>Il diario è a sola aggiunta con catena di hash: una previsione registrata non si può modificare a posteriori senza che la verifica lo segnali. "
+               "Scostamento = rendimento reale − ipotizzato.</p>")
+    return "".join(out)
+
+
+def challengers_html():
+    ch = read_csv(DATA / "challengers.csv")
+    ct = read_csv(DATA / "cape_test.csv")
+    cq = read_csv(DATA / "cape_quintili.csv")
+    out = ["<p>Ogni nuova variabile viene aggiunta al modello in prova e confrontata con quello attuale, in test walk-forward. "
+           "Regola fissata prima di guardare i risultati: la variabile entra nel modello solo se migliora l'indice di Brier di oltre 0,01 "
+           "<b>e</b> l'AUC sia nel periodo 2000-2012 sia dal 2013. Finora nessuna ha superato la prova: restano mostrate come contesto, non muovono le probabilità.</p>"]
+    if len(ch):
+        c = ch[ch.get("principale", 0) == 1] if "principale" in ch else ch
+        rows = []
+        for _, r in c.iterrows():
+            e = r["esito"]
+            cls = "ok" if e == "CANDIDATA" else "warn"
+            f = lambda v: "—" if pd.isna(v) else f"{v:+.3f}".replace(".", ",")
+            rows.append(f"<tr><td>{esc(r['variabile'])}</td><td>{esc(str(r.get('target', '')))}</td><td>{f(r.get('dBSS_2000_12'))}</td><td>{f(r.get('dBSS_2013_26'))}</td>"
+                        f"<td>{f(r.get('dAUC_2000_12'))}</td><td>{f(r.get('dAUC_2013_26'))}</td><td><span class='badge {cls}'>{esc(e)}</span></td></tr>")
+        brk = [r for _, r in ch.iterrows() if str(r["esito"]).startswith("storico")]
+        done = {rr["variabile"] for _, rr in c.iterrows()}
+        for r in brk:
+            if r["variabile"] not in done:
+                rows.append(f"<tr><td>{esc(r['variabile'])}</td><td colspan='5' class='muted'>storico ancora troppo breve per un test onesto (si accumula giorno per giorno)</td><td><span class='badge warn'>in attesa</span></td></tr>")
+        out.append("<table><thead><tr><th>Variabile aggiunta</th><th>Target</th><th>Δ Brier 2000-12</th><th>Δ Brier 2013-26</th><th>Δ AUC 2000-12</th><th>Δ AUC 2013-26</th><th>Esito</th></tr></thead><tbody>"
+                   + "".join(rows) + "</tbody></table><p class='muted'>Δ positivo = la variabile migliora il modello. Servono Δ Brier &gt; 0,01 e Δ AUC &gt; 0 in entrambi i periodi.</p>")
+    cape = store.load("cape_m")
+    if len(ct) and len(cape):
+        cur = cape.iloc[-1]
+        pr = (cape < cur).mean() * 100
+        out.append(f"<h3>Valutazioni (CAPE) e rendimenti a lungo termine</h3><p>CAPE oggi: <b>{it(cur, 1)}</b>, più alto del {it(pr, 0)}% dei mesi in archivio. "
+                   "Un CAPE alto è una buona ragione per aspettarsi rendimenti futuri più bassi su molti anni, ma come strumento di timing non ha funzionato: "
+                   "R² fuori campione sotto zero significa che fa peggio di usare la semplice media storica.</p>")
+        rows = "".join(f"<tr><td>{esc(r['orizzonte'])}</td><td>{r['r2_tutto']:+.3f}</td><td>{r['r2_2000_12']:+.3f}</td><td>{r['r2_2013_26']:+.3f}</td></tr>".replace(".", ",") for _, r in ct.iterrows())
+        out.append("<table><thead><tr><th>Orizzonte</th><th>R² fuori campione 2000-26</th><th>2000-12</th><th>2013-26</th></tr></thead><tbody>" + rows + "</tbody></table>")
+    if len(cq):
+        rows = "".join(f"<tr><td>{int(r['gruppo'])} di 5</td><td>{it(r['cape_mediano'], 1)}</td><td>{pct(r['rendimento_1a'], 1, True)}</td><td>{pct(r['positivi'], 0)}</td><td>{pct(r['p10'], 1, True)}</td></tr>" for _, r in cq.iterrows())
+        out.append(f"<h3>Rendimento a 1 anno per fascia di CAPE (dal {cape.index[0].year})</h3><table><thead><tr><th>Fascia</th><th>CAPE mediano</th><th>Rendimento medio 1 anno</th><th>Casi positivi</th><th>Peggior 10%</th></tr></thead><tbody>"
+                   + rows + "</tbody></table>")
+    return "".join(out)
 
 
 def build(ctx: dict) -> None:
@@ -381,6 +541,9 @@ def build(ctx: dict) -> None:
     stale = (datetime.utcnow().date() - date.date()).days
     stale_txt = f"<div class='banner'>Ultimo dato disponibile: {date.strftime('%d/%m/%Y')} ({stale} giorni fa). Esegui l'aggiornamento.</div>" if stale > 4 else ""
 
+    hist_html = history_html(date, pred, hist, jr, outc)
+    chal_html = challengers_html()
+
     body = f"""
 <header><div><h1>Armor</h1><div class='muted'>Rischio di cali su VWCE · aggiornato ai dati del {date.strftime('%d/%m/%Y')} · generato {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div></header>
 {stale_txt}
@@ -392,12 +555,13 @@ def build(ctx: dict) -> None:
   <div class='hl4'>VWCE: {it(spot, 2)} € · Armor stima il rischio di cali, non la direzione: nei test la direzione non è prevedibile.</div>
 </section>
 <h2>Previsioni per orizzonte</h2><div class='grid4'>{cards}</div>
-<h2>Andamento del rischio</h2><div class='card'>{ch_risk}<p class='muted'>Probabilità stimata di un calo ≥10% (S&P 500, stima walk-forward fino a oggi). Dopo le crisi (2008, 2020, 2022) la linea sale.</p></div>
+<h2>Storico delle previsioni</h2><div class='card scroll'>{hist_html}</div>
 <div class='grid2'><div class='card'><h3>VWCE ultimi 2 anni</h3>{ch_price}</div><div class='card'><h3>VIX ultimi 2 anni</h3>{ch_vix}</div></div>
 <h2>Segnali di attenzione</h2><div class='card'>{flags_html}</div>
 <h2>Confronto con il passato</h2><div class='card scroll'>{comparison_html(date, sp, p)}<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = cambiamento verso più rischio, verde = verso meno rischio.</p></div>
 <h2>Previsto contro reale</h2><div class='card'>{pv}</div>
 <h2>Affidabilità del modello</h2><div class='card scroll'>{avh}</div>
+<h2>Variabili provate e non adottate</h2><div class='card scroll'>{chal_html}</div>
 <h2>Dati e archivio</h2><div class='card scroll'>{dc}</div>
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza.</footer>
 """
@@ -424,5 +588,7 @@ tr.grp td{background:var(--bg);font-weight:700;text-align:left;font-size:12px;te
 .scroll{overflow-x:auto}.chart{width:100%;height:auto}.grid{stroke:var(--bd);stroke-width:1}.hl{stroke:var(--mu);stroke-dasharray:4 4}.ax{fill:var(--mu);font-size:11px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mu)}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
 .banner{background:var(--badbg);color:var(--bad);padding:10px 14px;border-radius:10px;margin-bottom:12px;font-weight:600}footer{margin:26px 0 8px;color:var(--mu);font-size:12px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tab{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:6px 14px;border-radius:99px;font:inherit;cursor:pointer}.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+details{margin-top:10px}summary{cursor:pointer;color:var(--ac)}h3{margin-top:16px}
 @media(max-width:600px){body{padding:10px}.hl1{font-size:28px}}
-</style></head><body>{{BODY}}</body></html>"""
+</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script></body></html>"""

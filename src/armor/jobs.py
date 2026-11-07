@@ -66,6 +66,9 @@ def main() -> None:
         from . import validate
         r = validate.run()
         print(r[r.model == "armor"].to_string(index=False))
+    elif cmd == "sfide":
+        from . import challenger
+        print(challenger.run().to_string(index=False))
     elif cmd == "dati-completi":
         stampa_stato(sources.update_all(full=True))
     elif cmd == "report":
@@ -74,7 +77,7 @@ def main() -> None:
     elif cmd == "verifica-diario":
         print(journal.verify())
     else:
-        print("Comandi: tutto | senza-download | diagnosi | valida | dati-completi | report | verifica-diario")
+        print("Comandi: tutto | senza-download | diagnosi | valida | sfide | dati-completi | report | verifica-diario")
 
 
 if __name__ == "__main__":

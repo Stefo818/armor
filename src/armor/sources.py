@@ -204,5 +204,10 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
             store.set_status(st, sid, True, "", store.upsert(sid, fetch_multpl(url)))
         except Exception as e:  # noqa: BLE001
             store.set_status(st, sid, False, str(e))
+    try:
+        from . import extras
+        extras.update_extras(st, only)
+    except Exception as e:  # noqa: BLE001
+        store.set_status(st, 'extras', False, str(e))
     store.write_status(st)
     return st

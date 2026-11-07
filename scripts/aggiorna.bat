@@ -3,6 +3,7 @@ chcp 65001 >nul
 cd /d "%~dp0.."
 set PYTHONPATH=%cd%\src
 if exist .git git pull --rebase --autostash
+.venv\Scripts\python -m pip install -r requirements.txt -q
 .venv\Scripts\python -m armor tutto
 if exist .git (
   git add data
