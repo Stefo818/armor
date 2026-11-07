@@ -1,15 +1,34 @@
 {
- "updated": "2026-11-07T14:38:04Z",
+ "updated": "2026-11-07T20:29:49Z",
  "quotes": {
   "vwce": {
-   "price": 165.84,
-   "prev": 165.89999389648438,
-   "chg": -0.00036162687577800945,
-   "time": "2026-11-06T16:36:06Z",
+   "price": 165.16,
+   "prev": 163.55999755859375,
+   "chg": 0.00978235794380633,
+   "time": "2026-11-06T20:46:03Z",
    "open": false,
    "name": "VWCE",
    "ccy": "€",
-   "symbol": "VWCE.DE"
+   "symbol": "VWCE.DU",
+   "venue": "Düsseldorf",
+   "alts": {
+    "Xetra": [
+     165.84,
+     "2026-11-06T16:36:06Z"
+    ],
+    "Borsa Italiana": [
+     165.94,
+     "2026-11-06T16:35:14Z"
+    ],
+    "Monaco/gettex": [
+     165.32,
+     "2026-11-06T19:58:39Z"
+    ],
+    "Düsseldorf": [
+     165.16,
+     "2026-11-06T20:46:03Z"
+    ]
+   }
   },
   "sp500": {
    "price": 7376.86,
@@ -50,7 +69,31 @@
    "name": "Cambio EUR/USD",
    "ccy": "",
    "symbol": "EURUSD=X"
+  },
+  "vt": {
+   "price": 151.73,
+   "prev": 151.36500549316406,
+   "chg": 0.0024113533088228056,
+   "time": "2026-11-06T21:00:00Z",
+   "open": false,
+   "name": "VT (azioni mondiali in dollari)",
+   "ccy": "$",
+   "symbol": "VT"
+  },
+  "ndx": {
+   "price": 26989.992,
+   "prev": 26647.85546875,
+   "chg": 0.012839176933064023,
+   "time": "2026-11-06T22:15:59Z",
+   "open": false,
+   "name": "Nasdaq 100",
+   "ccy": "",
+   "symbol": "^NDX"
   }
  },
- "errors": []
+ "errors": [
+  "VWCE.F: 'close'",
+  "VWCE.SG: 'NoneType' object is not subscriptable",
+  "VWCE.BE: 'NoneType' object is not subscriptable"
+ ]
 }
