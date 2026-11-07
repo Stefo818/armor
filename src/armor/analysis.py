@@ -255,6 +255,23 @@ def generate(date: pd.Timestamp, pred: dict, spot: float, sp: pd.Series, live: d
         ns += "</div>"
         # lettura
         neg_t = [t for t, n in top_t if any(i["label"] == "negativo" and t in i["themes"] for i in macro)][:3]
+        sect = [i for i in items if i["kind"] == "sector"]
+        if sect:
+            ns += "<div class='asec'><h3>Settori dominanti nel fondo</h3><p>Il fondo pesa molto tecnologia (circa 38%), finanza (18%), industria, salute e consumi. Qui il tono delle notizie per settore:</p>"
+            bys = {}
+            for i in sect:
+                bys.setdefault(i["group"], []).append(i)
+            for g, its in sorted(bys.items(), key=lambda kv: np.mean([x["sent"] for x in kv[1]])):
+                a = np.mean([x["sent"] for x in its])
+                lab = newsmod.label_of(a)
+                ns += (f"<details class='co'><summary><b>{e(g)}</b> · tono <span class='tag {lab}'>{lab}</span> ({num(a, 2)}) · {len(its)} titoli</summary>"
+                       f"<ul class='news'>{''.join(_news_li(x) for x in its[:4])}</ul></details>")
+            ns += "</div>"
+        try:
+            from . import news_view
+            ns = news_view.financial_view(items, pred, sp) + ns
+        except Exception as ex:  # noqa: BLE001
+            ns = f"<div class='asec'><p class='muted'>Sintesi finanziaria non disponibile ({type(ex).__name__}).</p></div>" + ns
         read = ("<div class='asec'><h3>Come leggere le notizie di oggi</h3><ul>"
                 f"<li>Il mercato reagisce alle sorprese, non alle notizie già note: un titolo negativo già scontato dai prezzi conta poco.</li>"
                 f"<li>I temi con più titoli negativi oggi: {e(', '.join(neg_t)) if neg_t else 'nessuno in particolare'}. Controlla se coincidono con segnali di stress nei dati (VIX, credito, tassi): quando notizie negative e stress nei dati vanno insieme, il rischio è più concreto.</li>"

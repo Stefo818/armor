@@ -210,3 +210,29 @@ def test_news_scorer_iniettato():
     from armor import news
     out = news.collect(get=lambda u: "<rss><channel></channel></rss>", scorer=lambda t: [])
     assert out["model"] == "vocabolario"
+
+
+def test_allarmi_semafori_coerenza():
+    from armor import allarmi, insight, semafori
+    msgs, st = allarmi.evaluate([{"id": "a", "key": "vix", "op": ">", "value": 30}], {"vix": {"label": "VIX", "value": 35.0}}, {})
+    assert len(msgs) == 1 and st["a"] is True
+    msgs2, st2 = allarmi.evaluate([{"id": "a", "key": "vix", "op": ">", "value": 30}], {"vix": {"label": "VIX", "value": 35.0}}, st)
+    assert msgs2 == [] and st2["a"]
+    msgs3, st3 = allarmi.evaluate([{"id": "a", "key": "vix", "op": ">", "value": 30}], {"vix": {"label": "VIX", "value": 20.0}}, st)
+    assert st3["a"] is False
+    spec = semafori.SPEC_BY["vix"]
+    assert semafori.light_of(spec, 15, None) == "ok" and semafori.light_of(spec, 25, None) == "wa" and semafori.light_of(spec, 35, None) == "ba"
+    items = [{"key": "vix", "light": "ba", "name": "VIX"}, {"key": "hy_oas", "light": "ok", "name": "HY"}]
+    c = insight.coherence(items)
+    assert c["discordanti"] and "Paura e opzioni" in c["tesi"]
+
+
+def test_fine_series_cot_e_valutazioni():
+    from armor import live, posizionamento, valuations
+    pts = [(1000 + 60 * i, 100.0 + i) for i in range(800)]
+    f = live.fine_series(pts)
+    assert len(f["t1"]) <= 91 and f["t10"][1] - f["t10"][0] == 600
+    assert valuations.harmonic([(1, 20.0)] * 5) == 20.0 and valuations.harmonic([(1, 20.0)]) is None
+    assert valuations.zone("sp500", "pe", 30) == "ba" and valuations.zone("sp500", "pe", 15) == "ok"
+    line = '"E-MINI S&P 500 - CME",261103,2026-11-03,13874A,CME ,00,138 ,2000000,100000,300000,50000,800000,100000,200000,300000,900000,100000,1,2\n'
+    assert round(posizionamento.parse_cot(line).iloc[0]["lev"], 1) == -30.0

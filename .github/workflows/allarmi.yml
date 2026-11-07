@@ -1,0 +1,36 @@
+name: Allarmi personali Armor
+on:
+  schedule:
+    - cron: '*/15 7-21 * * 1-5'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
+jobs:
+  allarmi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Controlla se ci sono regole
+        id: r
+        run: test -s data/alert_rules.json && echo "ok=1" >> "$GITHUB_OUTPUT" || echo "ok=0" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        if: steps.r.outputs.ok == '1'
+        with:
+          python-version: '3.11'
+      - if: steps.r.outputs.ok == '1'
+        run: pip install -r requirements.txt tzdata
+      - name: Controlla gli allarmi
+        if: steps.r.outputs.ok == '1'
+        env:
+          PYTHONPATH: src
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python -m armor allarmi
+      - name: Salva lo stato
+        if: steps.r.outputs.ok == '1'
+        run: bash scripts/salva.sh "Stato allarmi" data/alerts_custom_state.json

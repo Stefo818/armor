@@ -22,6 +22,7 @@ QUOTES = {  # chiave: (simbolo Yahoo, nome, valuta)
 HIDDEN_IN_BAR = {"vt", "ndx"}   # servono per le valutazioni e i grafici, non per la barra in alto
 INTRADAY_FILE = DATA / "intraday.json"
 URL = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=5m&range=5d"
+URL1 = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=1m&range=1d"
 UA = {"User-Agent": "Mozilla/5.0 (Armor personal dashboard)"}
 
 
@@ -71,7 +72,21 @@ def best_vwce(get, errors: list) -> dict:
     return best
 
 
-def fetch_all(get=None) -> dict:
+def fine_series(pts: list) -> dict:
+    """Da punti al minuto: ultimi 90 minuti ai minuti (grafico 1 ora) e ultime 12 ore ogni 10 minuti (grafico 6 ore)."""
+    if not pts:
+        return {}
+    t_end = pts[-1][0]
+    one = [(t, c) for t, c in pts if t >= t_end - 5400]
+    ten = {}
+    for t, c in pts:
+        if t >= t_end - 43200:
+            ten[t // 600 * 600] = c
+    return {"t1": [t for t, _ in one], "v1": [round(c, 4) for _, c in one],
+            "t10": list(ten.keys()), "v10": [round(c, 4) for c in ten.values()]}
+
+
+def fetch_all(get=None, get1=None) -> dict:
     get = get or (lambda sym: requests.get(URL.format(sym=requests.utils.quote(sym)), headers=UA, timeout=20).json())
     old = {}
     try:
@@ -93,7 +108,16 @@ def fetch_all(get=None) -> dict:
     for k, q in quotes.items():
         pts = q.pop("_pts", None)
         if pts:
-            intraday[k] = {"t": [t for t, _ in pts], "v": [round(c, 4) for _, c in pts]}
+            intraday[k] = {"t": [t for t, _ in pts], "v": [round(c, 4) for _, c in pts], "sym": q.get("symbol")}
+    get1 = get1 or (lambda sym: requests.get(URL1.format(sym=requests.utils.quote(sym)), headers=UA, timeout=20).json())
+    for k, q in quotes.items():
+        if k not in intraday or k in ("sp_fut",):
+            continue
+        try:
+            fine = fine_series(parse_chart(get1(q["symbol"]))["_pts"])
+            intraday[k].update(fine)
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"{k} 1m: {str(e)[:60]}")
     out = {"updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "quotes": quotes, "errors": errors,
            "_intraday": intraday}
     return out

@@ -1,4 +1,5 @@
 """Blocchi di pagina del cruscotto: probabilita' dettagliate, giorni simili, indicatori, valutazioni, grafici, registro, analisi."""
+from . import store
 import html
 import json
 
@@ -165,16 +166,16 @@ ul.news{list-style:none;padding-left:0!important}ul.news li{margin:10px 0}ul.new
 JS = r"""
 <script>
 (function(){
-var RANGES=[['6h','6 ore',21600],['1d','1 giorno',86400],['1w','1 settimana',604800],['1m','1 mese',2592000],['3m','3 mesi',7862400],['6m','6 mesi',15724800],['1y','1 anno',31536000],['3y','3 anni',94608000],['5y','5 anni',157680000],['max','Max',0]];
+var RANGES=[['1h','1 ora',3600],['6h','6 ore',21600],['1d','1 giorno',86400],['1w','1 settimana',604800],['1m','1 mese',2592000],['3m','3 mesi',7862400],['6m','6 mesi',15724800],['1y','1 anno',31536000],['3y','3 anni',94608000],['5y','5 anni',157680000],['max','Max',0]];
 var DATA=null,cbs=[];
 function load(cb){if(DATA)return cb(DATA);cbs.push(cb);if(cbs.length>1)return;
 fetch('data.json?'+Date.now()).then(function(r){return r.json()}).then(function(j){DATA=j.series||{};cbs.forEach(function(f){f(DATA)})}).catch(function(){DATA={};cbs.forEach(function(f){f(DATA)})})}
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
-function series(s){var D=[];for(var i=0;i<s.d.length;i++)D.push([s.d[i]*86400,s.v[i]]);var I=[];if(s.i){for(var j=0;j<s.i.t.length;j++)I.push([s.i.t[j],s.i.v[j]])}return{D:D,I:I}}
+function series(s){var D=[];for(var i=0;i<s.d.length;i++)D.push([s.d[i]*86400,s.v[i]]);var I=[],I1=[],I10=[];if(s.i){for(var j=0;j<s.i.t.length;j++)I.push([s.i.t[j],s.i.v[j]]);if(s.i.t1)for(var a=0;a<s.i.t1.length;a++)I1.push([s.i.t1[a],s.i.v1[a]]);if(s.i.t10)for(var b=0;b<s.i.t10.length;b++)I10.push([s.i.t10[b],s.i.v10[b]])}return{D:D,I:I,I1:I1,I10:I10}}
 function pts(s,range){var x=series(s),D=x.D,I=x.I,r=RANGES.filter(function(a){return a[0]===range})[0];
-var last=Math.max(D.length?D[D.length-1][0]:0,I.length?I[I.length-1][0]:0);var from=r[2]?last-r[2]:0;
-if(range==='6h'||range==='1d'||range==='1w'){var P=I.filter(function(p){return p[0]>=from});if(P.length>=5)return P;if(range==='1w'){P=D.filter(function(p){return p[0]>=from});return P.length>=3?P:[]}return[]}
+var last=Math.max(D.length?D[D.length-1][0]:0,I.length?I[I.length-1][0]:0,x.I1.length?x.I1[x.I1.length-1][0]:0);var from=r[2]?last-r[2]:0;
+if(range==='1h'||range==='6h'||range==='1d'||range==='1w'){var src=range==='1h'&&x.I1.length>=5?x.I1:(range==='6h'&&x.I10.length>=5?x.I10:I);var P=src.filter(function(p){return p[0]>=from});if(P.length>=5)return P;if(range==='1w'){P=D.filter(function(p){return p[0]>=from});return P.length>=3?P:[]}return[]}
 var P2=D.filter(function(p){return p[0]>=from});if(I.length&&P2.length&&I[I.length-1][0]>P2[P2.length-1][0]+3600)P2.push(I[I.length-1]);return P2.length>=3?P2:[]}
 function avail(s){var o={};RANGES.forEach(function(r){o[r[0]]=pts(s,r[0]).length>0});return o}
 function tfmt(t,span){var d=new Date(t*1000);if(span<=2*86400)return d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
@@ -200,20 +201,28 @@ var tw=tip.offsetWidth;tip.style.left=Math.min(Math.max(px-tw/2,0),w-tw)+'px';ti
 cv._m={X:X,P:P}}
 function stats_(){var P=st.P;if(!P.length){stats.innerHTML='';return}var a=P[0][1],b=P[P.length-1][1],lo=Math.min.apply(null,P.map(function(p){return p[1]})),hi=Math.max.apply(null,P.map(function(p){return p[1]}));var ch=b-a,pc=a?ch/Math.abs(a)*100:0;
 stats.innerHTML="<div>Ultimo<b>"+fmt(b,st.dec)+"</b></div><div>Variazione<b style='color:"+(ch>=0?css('--ok'):css('--bad'))+"'>"+(ch>=0?'+':'−')+fmt(Math.abs(ch),st.dec)+' ('+(ch>=0?'+':'−')+fmt(Math.abs(pc),1)+"%)</b></div><div>Minimo<b>"+fmt(lo,st.dec)+"</b></div><div>Massimo<b>"+fmt(hi,st.dec)+"</b></div>"}
-function setRange(r){st.range=r;st.P=pts(st.s,r);stats_();rbox.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.r===r)});draw(null)}
+var live30=null;
+function stopLive(){if(live30){clearInterval(live30);live30=null}}
+function tickLive(){var s=st.s;if(!s||!s.i||!s.i.sym||st.range!=='1h')return;
+fetch('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(s.i.sym)+'?interval=1m&range=1d',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){
+var r0=j.chart.result[0],T=r0.timestamp||[],C=r0.indicators.quote[0].close,t1=[],v1=[],end=T[T.length-1];for(var i=0;i<T.length;i++){if(C[i]!=null&&T[i]>=end-5400){t1.push(T[i]);v1.push(C[i])}}
+if(t1.length>5){s.i.t1=t1;s.i.v1=v1;st.P=pts(s,'1h');stats_();draw(null);note('Aggiornato in diretta ogni 30 secondi (ultimo dato: '+new Date(t1[t1.length-1]*1000).toLocaleTimeString('it-IT')+'). Ritardo della fonte: circa 15 minuti.')}
+}).catch(function(){note('Il browser non permette l\'aggiornamento ogni 30 secondi: i dati si rinnovano ogni 15 minuti, a ogni aggiornamento automatico dell\'app.');stopLive()})}
+function note(t){var n=root.querySelector('.clive');if(!n){n=document.createElement('div');n.className='muted clive';n.style.fontSize='12px';rbox.parentNode.insertBefore(n,rbox.nextSibling)}n.textContent=t}
+function setRange(r){stopLive();st.range=r;var cn=root.querySelector('.clive');if(cn)cn.textContent='';if(r==='1h'){tickLive();live30=setInterval(tickLive,30000)}st.P=pts(st.s,r);stats_();rbox.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.r===r)});draw(null)}
 function show(key){load(function(D){var s=D[key];st.key=key;st.s=s;if(!s){title.textContent='Grafico non disponibile';stats.innerHTML='';st.P=[];draw(null);rbox.innerHTML='';help.textContent='Questo dato non è ancora stato scaricato.';return}
 st.dec=s.dec==null?2:s.dec;title.innerHTML='<h3 style="margin:0 0 4px">'+s.l+'</h3>';help.textContent=(window.HELP&&window.HELP[key])||'';
 var av=avail(s);rbox.innerHTML='';RANGES.forEach(function(r){var b=document.createElement('button');b.textContent=r[1];b.dataset.r=r[0];b.disabled=!av[r[0]];b.onclick=function(){setRange(r[0])};rbox.appendChild(b)});
-var want=st.range;if(!av[want]){want=['3m','1m','1y','max'].filter(function(r){return av[r]})[0]||'max'}setRange(want)})}
+var want=st.range;if(!av[want]||(want==='1h'&&false)){want=['3m','1m','1y','max'].filter(function(r){return av[r]})[0]||'max'}setRange(want)})}
 function move(ev){var m=cv._m;if(!m)return;var r=cv.getBoundingClientRect(),x=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;var P=m.P,lo=0,hi=P.length-1;while(hi-lo>1){var mid=(lo+hi)>>1;if(m.X(P[mid][0])<x)lo=mid;else hi=mid}var i=Math.abs(m.X(P[lo][0])-x)<Math.abs(m.X(P[hi][0])-x)?lo:hi;draw(i)}
 cv.addEventListener('mousemove',move);cv.addEventListener('touchstart',move,{passive:true});cv.addEventListener('touchmove',move,{passive:true});cv.addEventListener('mouseleave',function(){draw(null)});cv.addEventListener('touchend',function(){setTimeout(function(){draw(null)},1500)});
 window.addEventListener('resize',function(){draw(null)});
-return{show:show,redraw:function(){draw(null)}}}
+return{show:show,stop:stopLive,redraw:function(){draw(null)}}}
 var modal=document.getElementById('cm'),mv=null;
 function openChart(key){if(!modal)return;modal.classList.add('show');if(!mv)mv=mount(modal.querySelector('.cbody'));mv.show(key)}
-if(modal){modal.addEventListener('click',function(e){if(e.target===modal||e.target.classList.contains('cx'))modal.classList.remove('show')});document.addEventListener('keydown',function(e){if(e.key==='Escape')modal.classList.remove('show')})}
+if(modal){modal.addEventListener('click',function(e){if(e.target===modal||e.target.classList.contains('cx')){modal.classList.remove('show');if(mv&&mv.stop)mv.stop()}});document.addEventListener('keydown',function(e){if(e.key==='Escape')modal.classList.remove('show')})}
 document.addEventListener('click',function(e){var el=e.target.closest&&e.target.closest('[data-chart]');if(el&&el.dataset.chart)openChart(el.dataset.chart)});
-var emb=document.getElementById('embedchart');if(emb){var ev=mount(emb);var chips=document.querySelectorAll('#chartchips .chip');chips.forEach(function(c){c.onclick=function(){chips.forEach(function(x){x.classList.toggle('on',x===c)});ev.show(c.dataset.k)}});if(chips.length){chips[0].classList.add('on');ev.show(chips[0].dataset.k)}}
+var emb=document.getElementById('embedchart');if(emb){var ev=mount(emb);document.addEventListener('tabshown',function(){ev.redraw()});var chips=document.querySelectorAll('#chartchips .chip');chips.forEach(function(c){c.onclick=function(){chips.forEach(function(x){x.classList.toggle('on',x===c)});ev.show(c.dataset.k)}});if(chips.length){chips[0].classList.add('on');ev.show(chips[0].dataset.k)}}
 window.showM=function(h){document.querySelectorAll('.mpane').forEach(function(e){e.style.display=e.id==='mp-'+h?'':'none'});document.querySelectorAll('.tab[data-m]').forEach(function(e){e.classList.toggle('on',e.dataset.m===h)})};
 /* registro */
 var rs=document.getElementById('regsel');
@@ -274,4 +283,121 @@ CSS += """
 .kc.ok .v{color:var(--ok)}.kc.wa .v{color:var(--warn)}.kc.ba .v{color:var(--bad)}
 .bar{height:8px;background:var(--bd);border-radius:4px;min-width:60px}.bar i{display:block;height:100%;background:var(--ac);border-radius:4px}
 table.cal tr.hi td{background:var(--warnbg)}
+"""
+
+
+def alerts_section(opts: list[dict], now: dict) -> str:
+    import json
+    return ("<div class='card'><h3 style='margin-top:0'>I tuoi allarmi</h3>"
+            "<p>Scegli un valore, una condizione e una soglia: l'app ti avvisa <b>solo</b> quando la condizione scatta. Esempio: «VIX» «sopra» «30».</p>"
+            "<div class='alform'><select id='alkey'></select><select id='alop'><option value='>'>sopra</option><option value='<'>sotto</option></select>"
+            "<input id='alval' type='number' step='any' placeholder='soglia'><input id='alname' type='text' placeholder='nome (facoltativo)'><button class='btn' id='aladd'>Aggiungi</button></div>"
+            "<div id='allist'></div><div id='alnow' class='mu'></div></div>"
+            "<div class='card'><h3 style='margin-top:0'>Ricevere gli avvisi sul telefono anche ad app chiusa</h3>"
+            "<p>Gli allarmi qui sopra funzionano sempre quando apri l'app. Per riceverli anche a telefono spento servono due passaggi, da fare una volta sola:</p>"
+            "<ol><li><b>[Telefono]</b> installa l'app gratuita «ntfy» e iscriviti al tuo nome segreto (lo stesso del segreto NTFY_TOPIC su GitHub).</li>"
+            "<li><b>[Chrome su GitHub]</b> crea un «token»: Settings (del tuo profilo) → Developer settings → Personal access tokens → Fine-grained tokens → Generate. Repository: solo «armor». Permessi: <i>Contents → Read and write</i>. Copia il token e incollalo qui sotto.</li></ol>"
+            "<div class='alform'><input id='altoken' type='password' placeholder='token GitHub (resta solo su questo telefono)'><button class='btn' id='alsync'>Salva allarmi per le notifiche</button></div>"
+            "<div id='alsyncmsg' class='mu'></div>"
+            "<p class='mu'>Il token resta salvato solo nel browser di questo dispositivo e viene usato soltanto per scrivere il file delle regole nel tuo repository. GitHub controlla gli allarmi ogni 15 minuti nei giorni di borsa.</p></div>"
+            f"<script>window.ALOPTS={json.dumps(opts, ensure_ascii=False)};window.NOW={json.dumps(now)};</script>")
+
+
+AL_JS = r"""
+(function(){var sel=document.getElementById('alkey');if(!sel)return;var O=window.ALOPTS||[],N=window.NOW||{};
+O.forEach(function(o){var e=document.createElement('option');e.value=o.k;e.textContent=o.l;sel.appendChild(e)});
+function get(){try{return JSON.parse(localStorage.getItem('armor_rules')||'[]')}catch(e){return[]}}
+function put(r){try{localStorage.setItem('armor_rules',JSON.stringify(r))}catch(e){}}
+function hit(r){var v=N[r.key];if(v==null)return null;return r.op==='>'?v>+r.value:v<+r.value}
+function lab(k){var o=O.filter(function(x){return x.k===k})[0];return o?o.l:k}
+function fmt(v){return v==null?'n.d.':(+v).toLocaleString('it-IT',{maximumFractionDigits:2})}
+function render(){var R=get(),h='';if(!R.length)h='<p class="mu">Nessun allarme impostato.</p>';
+else h='<table><tr><th>Allarme</th><th>Ora</th><th>Stato</th><th></th></tr>'+R.map(function(r,i){var t=hit(r);return '<tr><td>'+(r.name?'<b>'+r.name+'</b><br>':'')+lab(r.key)+' '+(r.op==='>'?'sopra':'sotto')+' '+fmt(r.value)+'</td><td>'+fmt(N[r.key])+'</td><td>'+(t==null?'—':t?'<span class="badge bad">SCATTATO</span>':'<span class="badge ok">ok</span>')+'</td><td><button class="chip" data-i="'+i+'">Elimina</button></td></tr>'}).join('')+'</table>';
+document.getElementById('allist').innerHTML=h;document.querySelectorAll('#allist button[data-i]').forEach(function(b){b.onclick=function(){var R=get();R.splice(+b.dataset.i,1);put(R);render();banner()}});
+document.getElementById('alnow').textContent='Valori usati: ultimo aggiornamento dell\u2019app.'}
+function banner(){var b=document.getElementById('alertbanner');if(!b)return;var s=get().filter(function(r){return hit(r)});b.style.display=s.length?'':'none';b.innerHTML=s.map(function(r){return '🔔 <b>'+(r.name||lab(r.key))+'</b>: '+lab(r.key)+' vale '+fmt(N[r.key])+' ('+(r.op==='>'?'sopra':'sotto')+' '+fmt(r.value)+')'}).join('<br>')}
+document.getElementById('aladd').onclick=function(){var v=document.getElementById('alval').value;if(v==='')return;var R=get();R.push({id:'r'+Date.now(),key:sel.value,op:document.getElementById('alop').value,value:+v,name:document.getElementById('alname').value.trim()});put(R);document.getElementById('alval').value='';document.getElementById('alname').value='';render();banner()};
+var tk=document.getElementById('altoken');try{tk.value=localStorage.getItem('armor_gh')||''}catch(e){}
+document.getElementById('alsync').onclick=function(){var t=tk.value.trim(),m=document.getElementById('alsyncmsg');if(!t){m.textContent='Incolla prima il token.';return}try{localStorage.setItem('armor_gh',t)}catch(e){}
+var api='https://api.github.com/repos/Stefo818/armor/contents/data/alert_rules.json',H={Authorization:'Bearer '+t,Accept:'application/vnd.github+json'};m.textContent='Salvataggio…';
+fetch(api,{headers:H}).then(function(r){return r.status===404?{}:r.json()}).then(function(j){var body={message:'Allarmi personali',content:btoa(unescape(encodeURIComponent(JSON.stringify({rules:get()},null,1))))};if(j&&j.sha)body.sha=j.sha;
+return fetch(api,{method:'PUT',headers:H,body:JSON.stringify(body)})}).then(function(r){m.textContent=r.ok?'Fatto: gli allarmi saranno controllati ogni 15 minuti da GitHub.':'Non riuscito (codice '+r.status+'): controlla il token e i permessi.'}).catch(function(){m.textContent='Non riuscito: nessuna connessione o permessi mancanti.'})};
+render();banner()})();
+"""
+CSS += """
+.alform{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.alform select,.alform input{font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);min-width:0}.alform input[type=text],.alform input[type=password]{flex:1;min-width:180px}
+.epbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}.bil ul{margin:6px 0 6px 18px;padding:0}.bil li{margin:5px 0}
+.up{color:var(--ok)}.dn{color:var(--bad)}
+"""
+
+
+def valuation_block(cards: list[dict], ctxs: dict, cape: dict | None = None) -> str:
+    """Schede P/E e P/S con semaforo, dati medi, soglie di preoccupazione e cosa e' successo in passato a 3, 6 e 12 mesi."""
+    from . import valuations as V
+    ZT = {"ok": "Nella norma", "wa": "Caro", "ba": "Molto caro"}
+    pc = lambda x, d=1: "n.d." if x is None else f"{x * 100:+.{d}f}%".replace(".", ",")
+    p0 = lambda x: "n.d." if x is None else f"{x * 100:.0f}%"
+    out = []
+    for c in cards:
+        k = c["key"]
+        boxes, details = [], []
+        for m, lab, dec in (("pe", "Capitalizzazione / utili (P/E)", 1), ("ps", "Capitalizzazione / fatturato (P/S)", 2)):
+            v = c.get(m)
+            z = V.zone(k, m, v)
+            if v is None:
+                boxes.append(f"<div class='vm'><div class='lab'>{lab}</div><div class='vbig muted'>n.d.</div></div>")
+                continue
+            y, r = V.ZONES[(k, m)]
+            ctx = ctxs.get((k, m))
+            boxes.append(f"<div class='vm clk z{z or ''}' data-chart='val_{m}_{k}'><div class='lab'>{lab}</div><div class='vbig'>{num(v, dec)}</div>"
+                         f"<div class='vz'>{ZT.get(z, '')}</div></div>")
+            fz = lambda x: num(x, dec)
+            lines = [f"<b>{m.upper()}:</b> zona verde sotto {fz(y)}, gialla {fz(y)}–{fz(r)}, rossa sopra {fz(r)} (soglie " + ("storiche" if k == "sp500" else "indicative") + ")."]
+            if ctx:
+                lines.append(f"Media storica dal {ctx['since']}: <b>{fz(ctx['avg'])}</b> (mediana {fz(ctx['median'])}). Un valore sopra {fz(ctx['p75'])} è tra il 25% più caro della storia, sopra {fz(ctx['p90'])} tra il 10% più caro (qui oggi: {num(ctx['pct'], 0)}° percentile).")
+                rows = "".join(f"<tr><td>{x['orizzonte']}</td><td>{pc(x.get('mean'))}</td><td>{p0(x.get('pos'))}</td><td>{pc(x.get('p10'))}</td><td class='mu'>{pc(x.get('all_mean'))} / {p0(x.get('all_pos'))}</td></tr>"
+                               for x in ctx["rows"] if x.get("mean") is not None)
+                dd = next((x for x in ctx["rows"] if x.get("dd10") is not None), None)
+                if rows:
+                    lines.append(f"<b>Cosa è successo all'S&amp;P 500 dopo valori simili</b> (±10%, {ctx['n_years']} anni diversi tra il {ctx['since']} e oggi):"
+                                 f"<table><tr><th>Dopo</th><th>Rendimento medio</th><th>Casi positivi</th><th>Caso brutto (10°perc.)</th><th>Tutti i giorni (medio / positivi)</th></tr>{rows}</table>"
+                                 + (f"Calo ≥10% entro 3 mesi: <b>{p0(dd['dd10'])}</b> dei casi (normale {p0(dd['all_dd10'])})." if dd else ""))
+            else:
+                own = store.load(f"val_{m}_{k}")
+                lines.append("Storico lungo non disponibile gratuitamente per questo fondo: l'app lo costruisce giorno per giorno"
+                             + (f" ({len(own)} giorni finora)" if len(own) else "") + ". Nel frattempo usa come guida la tabella dell'S&amp;P 500 (stesso tipo di misura), tenendo conto che i valori di VWCE sono in media più bassi e quelli del Nasdaq più alti.")
+            details.append("<div class='vd'>" + "<br>".join(lines) + "</div>")
+        out.append(f"<div class='card vcard'><h3>{e(c['name'])}</h3><div class='vrow'>{''.join(boxes)}</div>"
+                   f"<div class='muted'>{e(c['src'] or c['note'])}</div><details class='exp' open><summary>Dati medi, quando preoccuparsi, cosa è successo in passato</summary>{''.join(details)}</details></div>")
+    if cape:
+        out.append(f"<div class='card vcard'><h3>CAPE (Shiller) S&amp;P 500</h3><div class='vrow'><div class='vm clk z{cape['zone']}' data-chart='cape_m'><div class='lab'>P/E su utili medi di 10 anni</div><div class='vbig'>{num(cape['value'], 1)}</div><div class='vz'>{ZT.get(cape['zone'], '')}</div></div></div>"
+                   f"<details class='exp'><summary>Dati medi e cosa è successo in passato</summary><div class='vd'>Media dal {cape['ctx']['since']}: <b>{num(cape['ctx']['avg'], 1)}</b>. Sopra {num(cape['ctx']['p90'], 1)} è tra il 10% più caro della storia. "
+                   + "".join(f"<br>Dopo valori simili, {x['orizzonte']}: {pc(x.get('mean'))} in media, {p0(x.get('pos'))} dei casi positivi." for x in cape["ctx"]["rows"] if x.get("mean") is not None) + "</div></details></div>")
+    legend = ("<div class='explain'><p><b>Come leggere.</b> Il <b>P/E</b> dice quanti euro si pagano per ogni euro di utile annuo (20 = si paga l'utile di 20 anni); il <b>P/S</b> fa lo stesso con il fatturato. "
+              "Più alti, più il mercato è «caro» e più dipende da utili futuri molto buoni. <b>Non dicono quando il mercato scenderà</b>: un mercato caro può restare caro per anni. Dicono quanto margine di sicurezza c'è e quali rendimenti sono stati tipici dopo valori simili. "
+              "I rapporti dei fondi sono pubblicati una volta al giorno e qui sono aggiornati con il prezzo di adesso. I rendimenti passati non garantiscono quelli futuri.</p></div>")
+    return f"<div class='grid3'>{''.join(out)}</div>{legend}"
+
+
+CSS += """
+.vm.zok{box-shadow:inset 0 -4px 0 var(--ok)}.vm.zwa{box-shadow:inset 0 -4px 0 var(--warn)}.vm.zba{box-shadow:inset 0 -4px 0 var(--bad)}
+.vz{font-size:12px;font-weight:700;text-transform:uppercase}.vm.zok .vz{color:var(--ok)}.vm.zwa .vz{color:var(--warn)}.vm.zba .vz{color:var(--bad)}
+.vd{font-size:13.5px}.vd table{margin:6px 0;font-size:12.5px}
+.pgnav{position:sticky;top:0;z-index:6;display:flex;gap:6px;overflow-x:auto;padding:8px 0;background:var(--bg);margin:0 -2px 10px;-webkit-overflow-scrolling:touch}
+.pgnav button{white-space:nowrap;padding:9px 15px;border:1px solid var(--bd);border-radius:99px;background:var(--card);color:var(--tx);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pgnav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.pg{display:none}.pg.on{display:block}
+"""
+
+TABS_JS = r"""
+<script>
+(function(){var B=document.querySelectorAll('.pgnav button'),P=document.querySelectorAll('.pg');
+function show(id,push){var ok=false;P.forEach(function(p){var on=p.id==='p-'+id;p.classList.toggle('on',on);if(on)ok=true});if(!ok){id='oggi';document.getElementById('p-oggi').classList.add('on')}
+B.forEach(function(b){b.classList.toggle('on',b.dataset.p===id)});try{localStorage.setItem('armor_tab',id)}catch(e){}
+if(push!==false){try{history.replaceState(null,'','#'+id)}catch(e){}}window.scrollTo(0,0);setTimeout(function(){document.dispatchEvent(new Event('tabshown'));window.dispatchEvent(new Event('resize'))},30)}
+B.forEach(function(b){b.onclick=function(){show(b.dataset.p)}});
+window.armorTab=show;
+var h=(location.hash||'').slice(1),s=null;try{s=localStorage.getItem('armor_tab')}catch(e){}show(h&&document.getElementById('p-'+h)?h:(s||'oggi'),false);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[data-go]');if(a){e.preventDefault();show(a.dataset.go)}})})();
+</script>
 """

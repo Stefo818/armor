@@ -18,7 +18,14 @@ UA = {"User-Agent": "Mozilla/5.0 (Armor personal dashboard)"}
 TOP20 = [("AAPL", "Apple"), ("MSFT", "Microsoft"), ("NVDA", "Nvidia"), ("AMZN", "Amazon"), ("GOOGL", "Alphabet (Google)"),
          ("META", "Meta"), ("AVGO", "Broadcom"), ("TSLA", "Tesla"), ("BRK-B", "Berkshire Hathaway"), ("JPM", "JPMorgan"),
          ("LLY", "Eli Lilly"), ("V", "Visa"), ("ORCL", "Oracle"), ("XOM", "Exxon Mobil"), ("MA", "Mastercard"),
-         ("NFLX", "Netflix"), ("COST", "Costco"), ("WMT", "Walmart"), ("TSM", "TSMC"), ("ASML", "ASML")]
+         ("NFLX", "Netflix"), ("COST", "Costco"), ("WMT", "Walmart"), ("TSM", "TSMC"), ("ASML", "ASML"), ("MU", "Micron")]
+# peso approssimativo nel fondo VWCE (%), per pesare il tono delle notizie sulle societa' piu' grandi
+VWCE_W = {"NVDA": 5.0, "AAPL": 4.5, "MSFT": 3.6, "AMZN": 2.3, "GOOGL": 3.4, "TSM": 1.8, "AVGO": 1.5, "META": 1.5, "MU": 1.1}
+SECTOR_QUERIES = [  # settori dominanti nel fondo (tecnologia 38%, finanza 18%, industria 9%, salute 8%, consumi 8%, energia 4%)
+    ("Tecnologia e chip", "technology stocks OR semiconductors OR AI chips"), ("Finanza e banche", "bank stocks OR financials earnings OR bank profits"),
+    ("Industria", "industrial stocks OR manufacturing PMI OR factory output"), ("Salute e farmaceutico", "healthcare stocks OR pharma OR biotech"),
+    ("Consumi", "consumer spending OR retail sales OR consumer confidence"), ("Energia", "energy stocks OR oil majors OR natural gas prices"),
+    ("Mercati emergenti", "emerging markets stocks OR Asia stocks OR India China markets")]
 MACRO_QUERIES = [  # (tema del feed, query Google News)
     ("Mercati", "stock market OR Wall Street OR S&P 500"), ("Banche centrali", "Federal Reserve OR ECB interest rates"),
     ("Inflazione e lavoro", "inflation OR jobs report OR unemployment"), ("Geopolitica", "war OR sanctions OR geopolitics OR ceasefire"),
@@ -132,6 +139,7 @@ def collect(get=None, now: datetime | None = None, scorer=None) -> dict:
     get = get or _get_text
     items, errors, seen = [], [], set()
     jobs = [("macro", g, GOOGLE.format(q=quote(q))) for g, q in MACRO_QUERIES]
+    jobs += [("sector", g, GOOGLE.format(q=quote(q))) for g, q in SECTOR_QUERIES]
     jobs += [("company", f"{n} ({t})", YAHOO.format(s=t)) for t, n in TOP20]
     for kind, group, url in jobs:
         try:

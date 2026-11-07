@@ -48,7 +48,42 @@ def fetch_fund(sym: str) -> dict[str, float]:
         except Exception:  # noqa: BLE001
             pass
     if "pe" not in out and "ps" not in out:
+        out = from_constituents(t)
+        if out:
+            print(f"[valuations] {sym}: rapporti stimati dai principali titoli", flush=True)
+    if "pe" not in out and "ps" not in out:
         raise RuntimeError(f"rapporti non disponibili per {sym}")
+    return out
+
+
+def harmonic(vals: list[tuple[float, float]]) -> float | None:
+    """Media armonica pesata (il modo corretto di mediare un P/E: si media l'inverso, cioe' gli utili per euro investito)."""
+    vals = [(w, v) for w, v in vals if v and v > 0 and w and w > 0]
+    if len(vals) < 5:
+        return None
+    tw = sum(w for w, _ in vals)
+    return tw / sum(w / v for w, v in vals)
+
+
+def from_constituents(t, n: int = 25) -> dict[str, float]:
+    """Ripiego: P/E e P/S calcolati sui primi n titoli del fondo, pesati."""
+    import yfinance as yf
+    top = t.funds_data.top_holdings
+    pe, ps = [], []
+    for sym, r in list(top.iterrows())[:n]:
+        w = float(r["Holding Percent"])
+        try:
+            info = yf.Ticker(str(sym)).info
+        except Exception:  # noqa: BLE001
+            continue
+        pe.append((w, info.get("trailingPE")))
+        ps.append((w, info.get("priceToSalesTrailing12Months")))
+    out = {}
+    a, b = harmonic([(w, float(v)) for w, v in pe if v]), harmonic([(w, float(v)) for w, v in ps if v])
+    if a:
+        out["pe"] = a
+    if b:
+        out["ps"] = b
     return out
 
 
@@ -112,3 +147,45 @@ def current() -> list[dict]:
             card["note"] = "Dato non ancora disponibile: compare dopo il primo aggiornamento che riesce a leggerlo."
         cards.append(card)
     return cards
+
+
+ZONES = {  # (soglia gialla, soglia rossa) indicative; per l'S&P 500 sono quelle storiche usate nell'analisi
+    ("sp500", "pe"): (17, 24), ("sp500", "ps"): (2, 3), ("vwce", "pe"): (17, 21), ("vwce", "ps"): (2, 2.8),
+    ("ndx", "pe"): (24, 30), ("ndx", "ps"): (4, 6),
+}
+
+
+def zone(key: str, m: str, v: float | None) -> str | None:
+    if v is None or (key, m) not in ZONES:
+        return None
+    y, r = ZONES[(key, m)]
+    return "ok" if v < y else ("wa" if v < r else "ba")
+
+
+def history_context(ser_key: str, value: float, tol: float = 0.10) -> dict | None:
+    """Cosa e' successo all'S&P 500 dopo i giorni in cui il rapporto valeva come oggi (entro +-10%), a 3, 6 e 12 mesi."""
+    import numpy as np
+    from .features import closed_sp500, fwd_maxdd, fwd_ret
+    s = store.load(ser_key)
+    p = closed_sp500()
+    if len(s) < 200 or value is None:
+        return None
+    d = s.reindex(pd.date_range(s.index[0], p.index[-1])).ffill(limit=45).shift(1).reindex(p.index).dropna()
+    vals = s.dropna()
+    res = {"avg": float(vals.mean()), "median": float(vals.median()), "p75": float(vals.quantile(.75)), "p90": float(vals.quantile(.90)),
+           "since": int(s.index[0].year), "pct": float((vals < value).mean() * 100), "rows": []}
+    near = d[(d >= value * (1 - tol)) & (d <= value * (1 + tol))]
+    res["n_days"], res["n_years"] = int(len(near)), int(near.index.year.nunique()) if len(near) else 0
+    for lab, h in (("3 mesi", 63), ("6 mesi", 126), ("1 anno", 252)):
+        r = fwd_ret(p, h)
+        a, b = r.reindex(near.index).dropna(), r.reindex(d.index).dropna()
+        row = {"orizzonte": lab, "n": int(len(a))}
+        if len(a) >= 30:
+            row.update(mean=float(a.mean()), median=float(a.median()), pos=float((a > 0).mean()), p10=float(a.quantile(.10)),
+                       all_mean=float(b.mean()), all_pos=float((b > 0).mean()))
+            if h == 63:
+                dd = fwd_maxdd(p, 63)
+                row["dd10"] = float((dd.reindex(near.index).dropna() <= -0.10).mean())
+                row["all_dd10"] = float((dd.reindex(d.index).dropna() <= -0.10).mean())
+        res["rows"].append(row)
+    return res

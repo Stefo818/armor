@@ -1,0 +1,24 @@
+name: Agenda del mattino Armor
+on:
+  schedule:
+    - cron: '50 6 * * 1-5'   # circa le 8 in Italia
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mattina:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Agenda e bilancio di ieri
+        env:
+          PYTHONPATH: src
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python -m armor mattina

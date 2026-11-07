@@ -24,7 +24,7 @@ jobs:
           path: ~/.cache/huggingface
           key: hf-finbert-v1
       - run: pip install -r requirements.txt tzdata
-      - name: FinBERT (facoltativo: se non si installa, si usa il vocabolario)
+      - name: "FinBERT (facoltativo, se non si installa si usa il vocabolario)"
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install transformers || echo "FinBERT non installato"
       - name: Notizie e analisi
         env:

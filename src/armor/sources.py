@@ -31,6 +31,22 @@ YF = {
     "dxy": ("DX-Y.NYB", "America/New_York", "18:30"),
     "eurusd": ("EURUSD=X", "UTC", "23:59"),
     "vwce_de": ("VWCE.DE", "Europe/Berlin", "17:50"),
+    "stoxx50": ("^STOXX50E", "Europe/Berlin", "17:45"),
+    "dax": ("^GDAXI", "Europe/Berlin", "17:45"),
+    "ftsemib": ("FTSEMIB.MI", "Europe/Rome", "17:45"),
+    "nikkei": ("^N225", "Asia/Tokyo", "15:30"),
+    "eem": ("EEM", "America/New_York", "16:30"),
+    "sec_xlk": ("XLK", "America/New_York", "16:30"),
+    "sec_xlf": ("XLF", "America/New_York", "16:30"),
+    "sec_xle": ("XLE", "America/New_York", "16:30"),
+    "sec_xlv": ("XLV", "America/New_York", "16:30"),
+    "sec_xly": ("XLY", "America/New_York", "16:30"),
+    "sec_xlp": ("XLP", "America/New_York", "16:30"),
+    "sec_xli": ("XLI", "America/New_York", "16:30"),
+    "sec_xlu": ("XLU", "America/New_York", "16:30"),
+    "sec_xlb": ("XLB", "America/New_York", "16:30"),
+    "sec_xlre": ("XLRE", "America/New_York", "16:30"),
+    "sec_xlc": ("XLC", "America/New_York", "16:30"),
 }
 
 # id -> codice FRED (CSV pubblico, nessuna chiave necessaria)
@@ -173,16 +189,30 @@ def fetch_shiller() -> dict[str, pd.Series]:
 def update_all(full: bool = False, only: list[str] | None = None) -> dict:
     """Aggiorna tutte le serie. Restituisce lo stato per serie (salvato in data/status.json)."""
     st = store.read_status()
-    for sid in YF:
-        if only and sid not in only:
-            continue
+    # Yahoo Finance: scarico in parallelo, con tempo massimo complessivo (una fonte lenta non blocca le altre)
+    import time as _t
+    from concurrent.futures import ThreadPoolExecutor
+    t0 = _t.time()
+    ids = [sid for sid in YF if not (only and sid not in only)]
+
+    def _job(sid):
+        old = store.load(sid)
+        start = None if (full or old.empty) else (old.index[-1] - timedelta(days=12)).strftime("%Y-%m-%d")
+        return fetch_yf(sid, start)
+    ex = ThreadPoolExecutor(max_workers=6)
+    futs = {sid: ex.submit(_job, sid) for sid in ids}
+    deadline = _t.time() + 240
+    n_ok = 0
+    for sid, f in futs.items():
         try:
-            old = store.load(sid)
-            start = None if (full or old.empty) else (old.index[-1] - timedelta(days=12)).strftime("%Y-%m-%d")
-            n = store.upsert(sid, fetch_yf(sid, start))
+            n = store.upsert(sid, f.result(timeout=max(1.0, deadline - _t.time())))
             store.set_status(st, sid, True, "", n)
+            n_ok += 1
         except Exception as e:  # noqa: BLE001
-            store.set_status(st, sid, False, str(e))
+            store.set_status(st, sid, False, str(e) or type(e).__name__)
+    ex.shutdown(wait=False, cancel_futures=True)
+    print(f"[dati] Yahoo Finance: {n_ok}/{len(ids)} serie in {_t.time() - t0:.0f}s", flush=True)
+    t1 = _t.time()
     fred_fails = 0
     for sid, code in FRED.items():
         if only and sid not in only:
@@ -196,6 +226,7 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
         except Exception as e:  # noqa: BLE001
             fred_fails += 1
             store.set_status(st, sid, False, str(e))
+    print(f"[dati] FRED in {_t.time() - t1:.0f}s", flush=True)
     for sid, url in CBOE.items():
         if only and sid not in only:
             continue

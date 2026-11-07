@@ -59,6 +59,10 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
     except Exception as e:  # noqa: BLE001
         print("Calendario/composizione non aggiornati:", str(e)[:100])
     try:
+        daily_report(ctx, nws)
+    except Exception as e:  # noqa: BLE001
+        print("Bilancio non generato:", str(e)[:100])
+    try:
         run_alerts(ctx)
     except Exception as e:  # noqa: BLE001
         print("Avvisi non elaborati:", str(e)[:100])
@@ -67,6 +71,38 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
         print("Registro dati:", n, "giorni")
     except Exception as e:  # noqa: BLE001
         print("Registro non aggiornato:", str(e)[:150])
+
+
+def daily_report(ctx: dict, nws: dict | None, force_week: bool = False) -> None:
+    """Bilancio del giorno (e, il venerdi', rapporto settimanale): salvati per la pagina e inviati come avviso."""
+    import json as _j
+    from . import alerts, bilancio, regime, semafori
+    p = closed_sp500()
+    sem = semafori.compute(p, __import__("armor.live", fromlist=["x"]).load())
+    reg = regime.compute(p)["nome"]
+    prev = alerts._load().get("levels")
+    d = bilancio.day_summary(ctx["pred"], prev, reg, nws, semaforo=semafori.overall(sem))
+    bilancio.REPORTS.mkdir(parents=True, exist_ok=True)
+    (bilancio.REPORTS / "bilancio-latest.json").write_text(_j.dumps(d, ensure_ascii=False), encoding="utf-8")
+    alerts.send([bilancio.evening_message(d)])
+    if force_week or datetime.now().weekday() == 4:
+        w = bilancio.weekly(ctx["pred"], reg, sem)
+        bilancio.weekly_save(w)
+        alerts.send([{"title": "Rapporto settimanale pronto", "priority": 3, "tags": ["newspaper"],
+                      "message": "\n".join(["Da guardare la prossima settimana:"] + [f"{i + 1}. {x}" for i, x in enumerate(w["watch"][:3])])}])
+        print("Rapporto settimanale salvato")
+
+
+def mattina() -> None:
+    from . import alerts, bilancio, live
+    try:
+        live.run()
+    except Exception as e:  # noqa: BLE001
+        print("Prezzi non aggiornati:", str(e)[:80])
+    m = bilancio.morning_message()
+    print(m["message"] if m else "Niente da segnalare stamattina")
+    if m:
+        alerts.send([m])
 
 
 def run_alerts(ctx: dict) -> None:
@@ -87,7 +123,7 @@ def tutto(skip_download: bool = False) -> None:
     if not skip_download:
         from .guard import with_timeout
         try:
-            st = with_timeout(sources.update_all, 900, "download dati")
+            st = with_timeout(sources.update_all, 840, "download dati")
         except TimeoutError as ex:
             print("ATTENZIONE:", ex)
             st = store.read_status()
@@ -121,6 +157,15 @@ def costruisci_sito(live_first: bool = False) -> None:
     from .report import build
     site = ROOT / "site"
     site.mkdir(exist_ok=True)
+    try:   # se i rapporti P/E e P/S non sono ancora stati salvati (es. dopo un salvataggio fallito), si provano a leggere subito
+        if store.load("val_pe_vwce").empty or store.load("val_pe_ndx").empty:
+            from . import valuations
+            from .guard import with_timeout
+            res = with_timeout(valuations.snapshot, 150, "valutazioni")
+            for sid, ser in (res or {}).items():
+                store.upsert(sid, ser)
+    except Exception as e:  # noqa: BLE001
+        print("[valuations] non lette dal sito:", str(e)[:100])
     build(forecast(write=False), out=site / "index.html")
     if live.LIVE_FILE.exists():
         shutil.copy(live.LIVE_FILE, site / "live.json")
@@ -159,6 +204,15 @@ def main() -> None:
     elif cmd == "notizie":
         ctx = forecast(write=False)
         daily_extras(ctx, fetch_news=True)
+    elif cmd == "allarmi":
+        from . import allarmi
+        allarmi.run()
+    elif cmd == "mattina":
+        mattina()
+    elif cmd == "settimana":
+        ctx = forecast(write=False)
+        from . import news as _n
+        daily_report(ctx, _n.load_latest(), force_week=True)
     elif cmd == "migliora":
         from . import autoimprove
         print(autoimprove.run().tail(3).to_string(index=False))

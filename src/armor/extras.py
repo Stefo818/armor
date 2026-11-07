@@ -190,7 +190,14 @@ def snapshot_ai_capex() -> float:
 def update_extras(st: dict, only: list[str] | None = None) -> None:
     today = pd.Timestamp(datetime.now(timezone.utc).date())
 
+    from concurrent.futures import ThreadPoolExecutor
+    pool = ThreadPoolExecutor(max_workers=4)
+    futs = []
+
     def run(ids: list[str], fn, as_series: bool = True):
+        futs.append(pool.submit(_run, ids, fn))
+
+    def _run(ids: list[str], fn):
         if only and not set(ids) & set(only):
             return
         try:
@@ -217,8 +224,13 @@ def update_extras(st: dict, only: list[str] | None = None) -> None:
     run(["aaii_bull", "aaii_bear", "aaii_spread"], fetch_aaii)
     from .valuations import snapshot as snapshot_valuations
     run(["val_pe_vwce", "val_ps_vwce", "val_pe_sp500", "val_ps_sp500", "val_pe_ndx", "val_ps_ndx"], snapshot_valuations)
+    from .posizionamento import fetch_cot
+    run(["cot_lev_net", "cot_am_net", "cot_dealer_net"], fetch_cot)
     run(["gpr", "gpr_threat", "gpr_act"], fetch_gpr)
     run(["fear_greed"], fetch_fear_greed)
     run(["breadth50", "breadth200", "nh_nl"], fetch_breadth)
     run(["top_ps", "top_pe", "top_fcf_yield"], snapshot_fundamentals)
     run(["ai_capex_ocf"], snapshot_ai_capex)
+    for f in futs:   # i passaggi lenti girano insieme: si aspetta che finiscano tutti
+        f.result()
+    pool.shutdown(wait=False)
