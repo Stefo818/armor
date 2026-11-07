@@ -210,6 +210,8 @@ def update_extras(st: dict, only: list[str] | None = None) -> None:
             for sid in ids:
                 store.set_status(st, sid, False, str(e))
 
+    from .aaii import fetch_aaii
+    run(["aaii_bull", "aaii_bear", "aaii_spread"], fetch_aaii)
     run(["gpr", "gpr_threat", "gpr_act"], fetch_gpr)
     run(["fear_greed"], fetch_fear_greed)
     run(["breadth50", "breadth200", "nh_nl"], fetch_breadth)

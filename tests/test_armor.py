@@ -121,3 +121,12 @@ def test_live_parse_chart():
     q = live.parse_chart(js, now_ts=ts[-1] + 60)
     assert q["price"] == 103.0 and q["prev"] == 101.0 and q["open"] is True
     assert abs(q["chg"] - (103 / 101 - 1)) < 1e-9
+
+
+def test_aaii_to_series():
+    import pandas as pd
+    from armor import aaii
+    d = pd.DataFrame({"bull": [0.4, 0.3], "neutral": [0.3, 0.3], "bear": [0.3, 0.4], "total": [1, 1], "ma8": [0, 0], "spread": [0.1, -0.1]},
+                     index=pd.to_datetime(["2026-10-29", "2026-11-05"]))
+    s = aaii.to_series(d)
+    assert abs(s["aaii_spread"].iloc[-1] + 10) < 1e-9 and abs(s["aaii_bull"].iloc[0] - 40) < 1e-9

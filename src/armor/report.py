@@ -85,7 +85,7 @@ def svg_lines(series, w=680, h=190, fmt=lambda v: it(v, 1), hline=None, ymin=Non
     return "".join(out) + f"<div class='legend'>{leg}</div>"
 
 
-MAX_AGE = {"gpr": 10, "gpr_threat": 10, "gpr_act": 10, "fear_greed": 6, "breadth50": 8, "breadth200": 8, "nh_nl": 8,
+MAX_AGE = {"aaii_spread": 14, "aaii_bull": 14, "aaii_bear": 14, "gpr": 10, "gpr_threat": 10, "gpr_act": 10, "fear_greed": 6, "breadth50": 8, "breadth200": 8, "nh_nl": 8,
            "top_ps": 10, "top_pe": 10, "top_fcf_yield": 10, "ai_capex_ocf": 130,
            "spy_pc_volume": 10, "spy_pc_open_interest": 10, "spy_iv_atm_30d": 10, "spy_put_skew_95": 10, "eq_gdp": 160, "cape_m": 50, "pe_m": 50, "ps_m": 110, "cpi": 60, "unrate": 60}
 
@@ -162,6 +162,7 @@ INDICATORS = [
     ("Materie prime, incertezza, ampiezza", [("Oro ($)", "gold", 0, 0), ("Petrolio WTI ($)", "wti", 0, 1),
                                              ("Incertezza politica (EPU)", "epu", 1, 0), ("Ampiezza: RSP/SPY (alto = mercato più largo)", "rsp_spy", -1, 3)]),
     ("Sentiment e ampiezza (dati accumulati da quando l'app li scarica)", [
+        ("Sondaggio AAII: rialzisti meno ribassisti (punti %)", "aaii_spread", 0, 1),
         ("Fear & Greed CNN (0 paura, 100 euforia)", "fear_greed", 0, 0),
         ("Titoli S&P 500 sopra la media a 200 giorni (%)", "breadth200", -1, 0),
         ("Titoli S&P 500 sopra la media a 50 giorni (%)", "breadth50", -1, 0),

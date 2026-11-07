@@ -54,6 +54,7 @@ def candidates(idx) -> dict[str, pd.DataFrame]:
         "Curva tassi 10Y-3M": pd.DataFrame({"t10y3m": _al(L("t10y3m"), idx, 1, 5)}),
         "Rischio geopolitico GPR": pd.DataFrame({"log_gpr21": np.log(_al(L("gpr").rolling(21).mean(), idx, 1, 10))}),
         "Prezzo/fatturato S&P 500": pd.DataFrame({"log_ps": np.log(_al(L("ps_m"), idx, 1, 100))}),
+        "Sentiment AAII (rialzisti meno ribassisti)": pd.DataFrame({"aaii_spread": _al(L("aaii_spread"), idx, 1, 10), "aaii_spread8": _al(L("aaii_spread").rolling(8).mean(), idx, 1, 10)}),
         "Fear & Greed CNN": pd.DataFrame({"fear_greed": _al(L("fear_greed"), idx, 1, 5)}),
         "Ampiezza: titoli sopra media 200g": pd.DataFrame({"breadth200": _al(L("breadth200"), idx, 1, 5)}),
     }

@@ -6,3 +6,8 @@ Armor_dashboard.html
 *.zip
 
 site/
+
+# dati AAII: condizioni d'uso che vietano la ridistribuzione, restano solo sul PC
+sentiment.xls
+dati_manuali/
+data/series/aaii_*.csv
