@@ -72,6 +72,13 @@ def day_summary(pred: dict, prev_levels: dict | None, regime: str | None, news: 
     big = [e for e in evs if e["peso"] >= 3][:3]
     if big:
         lines.append("<b>In arrivo:</b> " + "; ".join(f"{e['nome']} il {datetime.fromisoformat(e['date']).strftime('%d/%m')}" for e in big) + ".")
+    try:
+        from . import salute
+        rn = salute.red_names(salute.compute())
+        if rn:
+            lines.append(f"<b>Attenzione ai dati:</b> {', '.join(rn)} non si aggiorna come dovrebbe: le stime di oggi sono meno affidabili.")
+    except Exception:  # noqa: BLE001
+        pass
     lines.append(f"<b>Consiglio di metodo:</b> {SAFE}")
     return {"date": today.isoformat(), "lines": lines, "levels": lv}
 

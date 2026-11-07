@@ -1,5 +1,7 @@
 """Scaricamento dati da fonti gratuite. Ogni fonte e' indipendente: se una fallisce le altre proseguono."""
 import io
+import json
+import os
 import time
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -123,13 +125,67 @@ def fetch_yf(sid: str, start: str | None) -> pd.Series:
     raise RuntimeError(last or "errore")
 
 
-def fetch_fred(code: str) -> pd.Series:
-    r = _get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}", tries=2, timeout=25)
-    df = pd.read_csv(io.StringIO(r.text))
+def parse_fred_json(text: str) -> pd.Series:
+    """Risposta dell'API ufficiale FRED (observations, file_type=json) -> serie. Il punto '.' indica dato mancante."""
+    obs = json.loads(text).get("observations", [])
+    if not obs:
+        raise RuntimeError("FRED: nessuna osservazione")
+    df = pd.DataFrame(obs)[["date", "value"]]
+    df["date"] = pd.to_datetime(df["date"])
+    df["value"] = pd.to_numeric(df["value"], errors="coerce")
+    return df.dropna().set_index("date")["value"]
+
+
+def parse_fred_csv(text: str) -> pd.Series:
+    df = pd.read_csv(io.StringIO(text))
     df.columns = ["date", "value"]
     df["date"] = pd.to_datetime(df["date"])
     df["value"] = pd.to_numeric(df["value"], errors="coerce")
     return df.dropna().set_index("date")["value"]
+
+
+def fetch_fred(code: str, start: str | None = None) -> pd.Series:
+    """Con la chiave gratuita FRED_API_KEY usa l'API ufficiale (stabile da GitHub); senza chiave, o se l'API non risponde, il CSV pubblico."""
+    key = os.environ.get("FRED_API_KEY", "").strip()
+    if key:
+        try:
+            url = f"https://api.stlouisfed.org/fred/series/observations?series_id={code}&api_key={key}&file_type=json"
+            if start:
+                url += f"&observation_start={start}"
+            return parse_fred_json(_get(url, tries=2, timeout=25).text)
+        except Exception as e:  # noqa: BLE001
+            print(f"[dati] FRED API non riuscita per {code}: {str(e)[:60].replace(key, '***')}; provo il CSV", flush=True)
+    r = _get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}", tries=2, timeout=25)
+    return parse_fred_csv(r.text)
+
+
+STOOQ = {"sp500": "^spx", "nasdaq100": "^ndx"}   # riserva gratuita se Yahoo non risponde (il VIX si prende da FRED: VIXCLS)
+
+
+def parse_stooq_csv(text: str) -> pd.Series:
+    df = pd.read_csv(io.StringIO(text))
+    df.columns = [c.strip().lower() for c in df.columns]
+    if "date" not in df or "close" not in df:
+        raise RuntimeError("Stooq: formato non riconosciuto")
+    df["date"] = pd.to_datetime(df["date"])
+    s = pd.to_numeric(df["close"], errors="coerce").set_axis(df["date"]).dropna()
+    s = s[s > 0]
+    if s.empty:
+        raise RuntimeError("Stooq: nessun dato")
+    return s
+
+
+def fetch_stooq(sym: str) -> pd.Series:
+    return parse_stooq_csv(_get(f"https://stooq.com/q/d/l/?s={sym}&i=d", tries=2, timeout=25).text)
+
+
+def fallback_source(sid: str, tz: str, close: str) -> tuple[pd.Series, str]:
+    """Riserva per le serie chiave quando Yahoo fallisce. Restituisce (serie, nome fonte)."""
+    if sid in STOOQ:
+        return drop_open_session(fetch_stooq(STOOQ[sid]), tz, close), "Stooq"
+    if sid == "vix":
+        return fetch_fred("VIXCLS"), "FRED VIXCLS"
+    raise RuntimeError("nessuna fonte di riserva")
 
 
 def fetch_cboe(url: str) -> pd.Series:
@@ -189,6 +245,12 @@ def fetch_shiller() -> dict[str, pd.Series]:
     raise RuntimeError(last or "errore")
 
 
+def _fred_start(sid: str) -> str | None:
+    """Con serie già salvata si scaricano solo gli ultimi ~14 mesi (più veloce); altrimenti tutta la storia."""
+    old = store.load(sid)
+    return None if old.empty else (old.index[-1] - timedelta(days=400)).strftime("%Y-%m-%d")
+
+
 def update_all(full: bool = False, only: list[str] | None = None) -> dict:
     """Aggiorna tutte le serie. Restituisce lo stato per serie (salvato in data/status.json)."""
     st = store.read_status()
@@ -215,7 +277,13 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
                 continue
             except Exception as e:  # noqa: BLE001
                 val = str(e)
-        store.set_status(st, sid, False, val)
+        try:   # riserva: Stooq / FRED per le serie chiave
+            ser, src = fallback_source(sid, YF[sid][1], YF[sid][2])
+            store.set_status(st, sid, True, f"fonte di riserva: {src} (Yahoo: {str(val)[:60]})", store.upsert(sid, ser))
+            n_ok += 1
+            print(f"[dati] {sid}: Yahoo non ha risposto, uso {src}", flush=True)
+        except Exception:  # noqa: BLE001
+            store.set_status(st, sid, False, val)
     print(f"[dati] Yahoo Finance: {n_ok}/{len(ids)} serie in {_t.time() - t0:.0f}s", flush=True)
     t1 = _t.time()
     fred_fails = 0
@@ -226,7 +294,7 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
             store.set_status(st, sid, False, "FRED non raggiungibile: saltata (si aggiorna dal PC)")
             continue
         try:
-            store.set_status(st, sid, True, "", store.upsert(sid, fetch_fred(code)))
+            store.set_status(st, sid, True, "", store.upsert(sid, fetch_fred(code, _fred_start(sid))))
             fred_fails = 0
         except Exception as e:  # noqa: BLE001
             fred_fails += 1

@@ -292,3 +292,22 @@ def test_rapporti_capovolti_e_apprendimento(tmp_path, monkeypatch):
     assert (store.load("val_pe_sp500") > 1).all()
     t = learning.live_table(pd.Series(dtype=float))
     assert t.empty or "bss" in t
+
+
+def test_fase0_fred_stooq_salute_registro():
+    import json
+    import pandas as pd
+    from armor import registry, salute, sources
+    js = json.dumps({"observations": [{"date": "2026-11-03", "value": "4.1"}, {"date": "2026-11-04", "value": "."}, {"date": "2026-11-05", "value": "4.3"}]})
+    s = sources.parse_fred_json(js)
+    assert list(s.values) == [4.1, 4.3]
+    assert list(sources.parse_fred_csv("DATE,X\n2026-11-03,1.5\n2026-11-04,.\n").values) == [1.5]
+    st = sources.parse_stooq_csv("Date,Open,High,Low,Close,Volume\n2026-11-05,1,2,0.5,6000.5,10\n2026-11-06,1,2,0.5,6100.25,10\n")
+    assert st.iloc[-1] == 6100.25 and len(st) == 2
+    rows = salute.compute({"sp500": {"last_date": "2026-11-06"}, "vix": {"last_date": "2026-10-01", "msg": "x"}, "cape_m": {"last_date": "2026-10-31"}},
+                          today=pd.Timestamp("2026-11-07"))
+    d = {r["key"]: r["light"] for r in rows}
+    assert d["sp500"] == "ok" and d["vix"] == "ba" and d["cape_m"] == "ok"
+    assert "VIX" in salute.red_names(rows) and "Fermo" in salute.html(rows)
+    row = {"date": "2026-11-06", "armor_index": 50}
+    assert "pup_1m" in registry.check(row) and "date" not in registry.check(row)

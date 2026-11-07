@@ -61,3 +61,19 @@ def read() -> pd.DataFrame:
         return pd.read_csv(REGISTRY)
     except Exception:  # noqa: BLE001
         return pd.DataFrame()
+
+
+def expected_keys(horizons=HORIZONS) -> list[str]:
+    """Colonne che ogni riga del registro deve avere (oltre agli indicatori)."""
+    from .outlook import THRESHOLDS
+    ks = ["date", "armor_index", "modello"]
+    for hz in horizons:
+        ks += [f"p_{hz}", f"livello_{hz}", f"pup_{hz}", f"bup_{hz}"]
+        ks += [f"dn_{hz}_{t}" for t in THRESHOLDS] + [f"up_{hz}_{t}" for t in THRESHOLDS]
+    ks += [f"scen3m_{i}" for i in range(5)]
+    return ks
+
+
+def check(row: dict) -> list[str]:
+    """Elenco delle colonne attese che mancano nella riga di oggi (stampato nel log)."""
+    return [k for k in expected_keys() if k not in row]

@@ -24,7 +24,7 @@ def forecast(write: bool = True) -> dict:
     spot = float(v.reindex([t], method="ffill").iloc[0]) if not v.empty else float("nan")
     n = journal.append(t.strftime("%Y-%m-%d"), spot, pred, model=mid) if write else 0
     print(f"Previsioni del {t.date()}: {n} nuove righe nel diario")
-    return {"date": t, "pred": pred, "spot": spot, "eng": eng, "fitted": fitted}
+    return {"date": t, "pred": pred, "spot": spot, "eng": eng, "fitted": fitted, "model": mid}
 
 
 def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
@@ -74,10 +74,22 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
             from . import armor_index, outlook
             sp_ = closed_sp500()
             mat = outlook.probability_matrix(sp_)
+            extra["modello"] = ctx.get("model", "")
             for hz in mat:
                 u = mat[hz]["up"][PRIMARY[hz]]
                 extra[f"pup_{hz}"] = round(u["p"], 5)
                 extra[f"bup_{hz}"] = round(u["base"], 5)
+                for thr, c in mat[hz]["down"].items():
+                    extra[f"dn_{hz}_{thr}"] = round(c["p"], 5)
+                for thr, c in mat[hz]["up"].items():
+                    extra[f"up_{hz}_{thr}"] = round(c["p"], 5)
+            try:   # scenari a 3 mesi: media degli indicatori (stessa definizione della pagina Previsioni)
+                sg = [x for x in outlook.signal_table(sp_) if x.get("scen") and x["scen"][0] == x["scen"][0]]
+                if sg:
+                    for i in range(5):
+                        extra[f"scen3m_{i}"] = round(float(sum(x["scen"][i] for x in sg) / len(sg)), 5)
+            except Exception as e:  # noqa: BLE001
+                print("[registro] scenari non salvati:", str(e)[:80])
             aix = armor_index.compute(sp_)
             if aix:
                 armor_index.save_history(aix)
@@ -87,7 +99,11 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
                         extra["aix_" + g["name"].split()[0].lower()] = round(g["score"], 4)
         except Exception as e:  # noqa: BLE001
             print("Probabilità di rialzo / Indice Armor non salvati:", str(e)[:100])
-        n = registry.append(registry.row_for(ctx["date"], ctx["pred"], INDICATORS, ctx["spot"], news.summary(nws), extra))
+        row = registry.row_for(ctx["date"], ctx["pred"], INDICATORS, ctx["spot"], news.summary(nws), extra)
+        miss = registry.check(row)
+        if miss:
+            print(f"[registro] colonne mancanti ({len(miss)}): {', '.join(miss[:8])}{'...' if len(miss) > 8 else ''}", flush=True)
+        n = registry.append(row)
         print("Registro dati:", n, "giorni")
     except Exception as e:  # noqa: BLE001
         print("Registro non aggiornato:", str(e)[:150])
