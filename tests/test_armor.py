@@ -87,3 +87,12 @@ def test_outcomes(tmp_path, monkeypatch):
     assert journal.update_outcomes(vw, sp) == 0
     o = pd.read_csv(tmp_path / "o.csv")
     assert abs(o.realized[0] - (vw.iloc[21] / vw.iloc[0] - 1)) < 1e-4
+
+
+def test_parse_multpl_html_e_testo():
+    from armor.sources import parse_multpl
+    html = "<tr><td>Nov 6, 2026</td><td><abbr>&#x2020;</abbr> 3.64</td></tr><tr><td>Dec 31, 2025</td><td>&#x2020; 3.35</td></tr>"
+    s = parse_multpl(html)
+    assert list(s.values) == [3.35, 3.64]
+    s2 = parse_multpl("Nov 6, 2026\t† 3.64\nSep 30, 2025\t  3.28")
+    assert list(s2.values) == [3.28, 3.64]

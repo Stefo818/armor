@@ -78,24 +78,30 @@ def svg_lines(series, w=680, h=190, fmt=lambda v: it(v, 1), hline=None, ymin=Non
     return "".join(out) + f"<div class='legend'>{leg}</div>"
 
 
-def asof_val(s: pd.Series, date: pd.Timestamp):
+MAX_AGE = {"eq_gdp": 160, "cape_m": 50, "pe_m": 50, "ps_m": 110, "cpi": 60, "unrate": 60}
+
+
+def asof_val(s: pd.Series, date: pd.Timestamp, max_age: int = 12):
+    """Ultimo valore noto alla data; None se piu' vecchio di max_age giorni (dato non aggiornato)."""
     s = s.dropna()
     s = s[s.index <= date]
-    return float(s.iloc[-1]) if len(s) else None
+    if not len(s) or (date - s.index[-1]).days > max_age:
+        return None
+    return float(s.iloc[-1])
 
 
 def build_panel(sp: pd.Series) -> pd.DataFrame:
     ld = lambda k: store.load(k)
     df = pd.DataFrame(index=sp.index)
     df["sp500"] = sp
-    for k in ["vix", "vix3m", "vvix", "skew", "move", "hy_oas", "baa10y", "nfci", "t10y3m", "t10y2y", "cape", "rsp", "spy"]:
+    limit = {"cape_m": 45, "ps_m": 100, "pe_m": 45}
+    for k in ["vix", "vix3m", "vvix", "skew", "move", "hy_oas", "baa10y", "nfci", "t10y3m", "t10y2y", "cape_m", "ps_m", "rsp", "spy"]:
         s = ld(k)
         if not s.empty:
             if k in ("baa10y", "hy_oas", "t10y3m", "t10y2y", "nfci"):
                 s = s.shift(1)             # i dati FRED escono con un giorno di ritardo
-            if k == "cape":
-                s = s.shift(1, freq="MS")  # Shiller: pubblicato con ritardo, uso a ritroso
-            df[k] = s.reindex(df.index.union(s.index)).ffill().reindex(df.index)
+            full = s.reindex(pd.date_range(s.index[0], max(df.index[-1], s.index[-1]))).ffill(limit=limit.get(k, 7))
+            df[k] = full.reindex(df.index)
     return df
 
 
@@ -107,31 +113,29 @@ def flags_table(panel, p):
     P = panel
     g = lambda k: P[k] if k in P else pd.Series(np.nan, index=P.index)
     conds = [
-        ("VIX sopra 30", g("vix") > 30),
-        ("VIX in forte salita (+30% in 21 giorni)", (g("vix") / g("vix").shift(21) - 1) > 0.30),
-        ("Curva VIX invertita (VIX a 3 mesi sotto VIX)", (g("vix3m") / g("vix")) < 1),
-        ("S&P 500 sotto la media a 200 giorni", f["ma200"] < 0),
-        ("S&P 500 oltre il 10% sotto i massimi dell'anno", f["dd252"] < -0.10),
-        ("Spread BAA-10Y in salita di oltre 0,3 punti in 21 giorni", (g("baa10y") - g("baa10y").shift(21)) > 0.3),
-        ("Spread High Yield sopra 5 punti", g("hy_oas") > 5),
-        ("Condizioni finanziarie strette (NFCI sopra 0)", g("nfci") > 0),
-        ("SKEW sopra 150 (opzioni: paura di crolli)", g("skew") > 150),
-        ("Curva dei tassi 10Y-3M invertita", g("t10y3m") < 0),
-        ("CAPE (valutazioni) sopra 30", g("cape") > 30),
+        ("VIX sopra 30", g("vix") > 30, ["vix"]),
+        ("VIX in forte salita (+30% in 21 giorni)", (g("vix") / g("vix").shift(21) - 1) > 0.30, ["vix"]),
+        ("Curva VIX invertita (VIX a 3 mesi sotto VIX)", (g("vix3m") / g("vix")) < 1, ["vix", "vix3m"]),
+        ("S&P 500 sotto la media a 200 giorni", f["ma200"] < 0, []),
+        ("S&P 500 oltre il 10% sotto i massimi dell'anno", f["dd252"] < -0.10, []),
+        ("Spread BAA-10Y in salita di oltre 0,3 punti in 21 giorni", (g("baa10y") - g("baa10y").shift(21)) > 0.3, ["baa10y"]),
+        ("Spread High Yield sopra 5 punti (storico FRED solo 3 anni)", g("hy_oas") > 5, ["hy_oas"]),
+        ("Condizioni finanziarie strette (NFCI sopra 0)", g("nfci") > 0, ["nfci"]),
+        ("SKEW sopra 150 (opzioni: paura di crolli)", g("skew") > 150, ["skew"]),
+        ("Curva dei tassi 10Y-3M invertita", g("t10y3m") < 0, ["t10y3m"]),
+        ("CAPE (valutazioni) sopra 30", g("cape_m") > 30, ["cape_m"]),
+        ("Prezzo/fatturato S&P 500 sopra 3 (pochi periodi: statistica debole)", g("ps_m") > 3, ["ps_m"]),
     ]
     rows = []
     base = float((dd[ret.notna()] <= -0.10).mean())
-    for name, c in conds:
+    for name, c, keys in conds:
         c = c.reindex(p.index).fillna(False)
-        valid = c.notna() & ret.notna()
-        m = c & valid
-        today = bool(c.iloc[-1]) if len(c) else False
-        has_data = c.any()
+        m = c & ret.notna()
+        nodata = any((k not in P) or pd.isna(P[k].iloc[-1]) for k in keys)
         n = int(m.sum())
-        rows.append({"name": name, "today": today, "n": n,
+        rows.append({"name": name, "today": bool(c.iloc[-1]) and not nodata, "n": n,
                      "freq": float((dd[m] <= -0.10).mean()) if n >= 150 else None,
-                     "ret": float(ret[m].mean()) if n >= 150 else None, "base": base,
-                     "nodata": not has_data})
+                     "ret": float(ret[m].mean()) if n >= 150 else None, "base": base, "nodata": nodata})
     return rows
 
 
@@ -143,8 +147,9 @@ INDICATORS = [
                              ("Condizioni finanziarie NFCI (sopra 0 = strette)", "nfci", 1, 2)]),
     ("Tassi e dollaro", [("Curva 10Y-3M (punti)", "t10y3m", -1, 2), ("Curva 10Y-2Y (punti)", "t10y2y", -1, 2),
                          ("Tasso reale 10 anni (%)", "real10y", 0, 2), ("Dollaro (indice ampio)", "usd_broad", 0, 1)]),
-    ("Valutazioni", [("CAPE (Shiller)", "cape", 1, 1), ("P/E (utili ultimi 12 mesi)", "pe_trailing", 1, 1),
-                     ("Capitalizzazione azioni / PIL", "eq_gdp", 1, 2)]),
+    ("Valutazioni", [("CAPE (P/E di Shiller, utili medi 10 anni)", "cape_m", 1, 1), ("P/E (utili ultimi 12 mesi)", "pe_m", 1, 1),
+                     ("Prezzo/fatturato S&P 500 (cap./vendite)", "ps_m", 1, 2),
+                     ("Azioni società USA non finanziarie / PIL (trimestrale)", "eq_gdp", 1, 2)]),
     ("Materie prime, incertezza, ampiezza", [("Oro ($)", "gold", 0, 0), ("Petrolio WTI ($)", "wti", 0, 1),
                                              ("Incertezza politica (EPU)", "epu", 1, 0), ("Ampiezza: RSP/SPY (alto = mercato più largo)", "rsp_spy", -1, 3)]),
 ]
@@ -180,24 +185,28 @@ def comparison_html(date, sp, p):
             vals = []
             for o in offs:
                 d = date if o is None else date - pd.Timedelta(days=o)
-                vals.append(asof_val(s, d) if s is not None and len(s) else None)
+                vals.append(asof_val(s, d, MAX_AGE.get(key, 12) + (0 if o is None else o)) if s is not None and len(s) else None)
             cells = []
             for k, v in enumerate(vals):
                 if v is None:
                     cells.append("<td class='muted'>—</td>")
                     continue
-                txt = f"{v:+.1f}%".replace(".", ",") if dec == "pct" else it(v, dec)
-                if dec == "pct":
-                    txt = f"{it(v, 1)}%"
-                extra = ""
-                if k > 0 and vals[0] is not None and bad != 0 and v != 0:
+                txt = f"{it(v, 1)}%" if dec == "pct" else it(v, dec)
+                small = ""
+                if k > 0 and vals[0] is not None and bad != 0:
                     ch = vals[0] - v
-                    worse = (ch > 0) == (bad > 0) and abs(ch / v) > 0.05 if v else False
-                    better = (ch > 0) != (bad > 0) and abs(ch / v) > 0.05 if v else False
-                    extra = " class='worse'" if worse else (" class='better'" if better else "")
-                cells.append(f"<td{extra}>{txt}</td>")
+                    use_abs = dec == "pct" or abs(v) < 5
+                    rel = abs(ch) if use_abs else abs(ch / v)
+                    thr = 0.05 if use_abs and dec != "pct" else (1.0 if dec == "pct" else 0.05)
+                    if rel >= thr and abs(ch) > 0:
+                        worse = (ch > 0) == (bad > 0)
+                        shown = ("+" if ch > 0 else "−") + it(abs(ch), 2 if abs(v) < 5 and dec != "pct" else (1 if dec == "pct" else 0)) + (" pt" if dec == "pct" else "")
+                        if not use_abs:
+                            shown = ("+" if ch > 0 else "−") + it(abs(ch / v) * 100, 0) + "%"
+                        small = f"<small class='{'worse' if worse else 'better'}'>da allora {shown}</small>"
+                cells.append(f"<td>{txt}{small}</td>")
             if all(v is None for v in vals):
-                cells = ["<td colspan='6' class='muted'>in attesa del primo scaricamento di questa serie</td>"]
+                cells = ["<td colspan='6' class='muted'>dato non disponibile o non aggiornato</td>"]
             out.append(f"<tr><td>{esc(label)}</td>{''.join(cells)}</tr>")
     out.append("</tbody></table>")
     return "".join(out)
@@ -257,6 +266,10 @@ def build(ctx: dict) -> None:
     r3 = pred.get("3m", {})
     why = (f"Il rischio di un calo di almeno 10% in 3 mesi è stimato al {pct(r3['p'][10])}, "
            f"cioè {it(r3['ratio'], 1)} volte la frequenza storica ({pct(r3['base'][10])}).") if r3 else ""
+    fl0 = flags_table(panel, p)
+    strong = [f for f in fl0 if f["today"] and f["freq"] is not None and f["freq"] >= 1.5 * f["base"]]
+    stress_note = (f"{len(strong)} segnali di stress sono attivi (vedi 'Segnali di attenzione'): storicamente, quando erano attivi, "
+                   "i cali ≥10% a 3 mesi sono stati molto più frequenti del normale. Il modello sui soli prezzi non li vede ancora.") if len(strong) >= 2 else ""
     weak = [HZ_LABEL[h] for h in HORIZONS if rel.get(h, ("",))[0] != "Utile"]
     note_rel = ("Attenzione: il modello ha funzionato davvero nei test solo a 10 giorni e 1 mese; "
                 f"per {' e '.join(weak)} l'affidabilità è debole o non dimostrata (vedi sezione Affidabilità).") if weak else ""
@@ -337,11 +350,11 @@ def build(ctx: dict) -> None:
                     + rows + "</tbody></table><p class='muted'>Ogni riga è un quinto dei giorni, dal meno al più rischioso. Più stimato e reale sono vicini, meglio il modello è tarato.</p>")
 
     # segnali
-    fl = flags_table(panel, p)
+    fl = fl0
     rows = []
     for f in sorted(fl, key=lambda x: (not x["today"], x["name"])):
         if f["nodata"]:
-            st = "<td class='muted'>serie non ancora scaricata</td>"
+            st = "<td class='muted'>dato non disponibile o non aggiornato</td>"
         else:
             st = f"<td>{'ATTIVO' if f['today'] else 'no'}</td>"
         hist_txt = (f"{pct(f['freq'], 0)} (contro {pct(f['base'], 0)} sempre); rendimento medio a 3 mesi {pct(f['ret'], 1, True)}; {f['n']} giorni"
@@ -375,13 +388,14 @@ def build(ctx: dict) -> None:
   <div class='hl1'>{verdict}</div>
   <div class='hl2'>{esc(why)}</div>
   <div class='hl3'>{esc(note_rel)}</div>
+  <div class='hl3 stress'>{esc(stress_note)}</div>
   <div class='hl4'>VWCE: {it(spot, 2)} € · Armor stima il rischio di cali, non la direzione: nei test la direzione non è prevedibile.</div>
 </section>
 <h2>Previsioni per orizzonte</h2><div class='grid4'>{cards}</div>
 <h2>Andamento del rischio</h2><div class='card'>{ch_risk}<p class='muted'>Probabilità stimata di un calo ≥10% (S&P 500, stima walk-forward fino a oggi). Dopo le crisi (2008, 2020, 2022) la linea sale.</p></div>
 <div class='grid2'><div class='card'><h3>VWCE ultimi 2 anni</h3>{ch_price}</div><div class='card'><h3>VIX ultimi 2 anni</h3>{ch_vix}</div></div>
 <h2>Segnali di attenzione</h2><div class='card'>{flags_html}</div>
-<h2>Confronto con il passato</h2><div class='card scroll'>{comparison_html(date, sp, p)}<p class='muted'>Rosso: l'indicatore è cambiato in senso più rischioso rispetto ad allora (oltre il 5%); verde: meno rischioso.</p></div>
+<h2>Confronto con il passato</h2><div class='card scroll'>{comparison_html(date, sp, p)}<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = cambiamento verso più rischio, verde = verso meno rischio.</p></div>
 <h2>Previsto contro reale</h2><div class='card'>{pv}</div>
 <h2>Affidabilità del modello</h2><div class='card scroll'>{avh}</div>
 <h2>Dati e archivio</h2><div class='card scroll'>{dc}</div>
@@ -399,14 +413,14 @@ TEMPLATE = """<!doctype html><html lang='it'><head><meta charset='utf-8'><meta n
 header{display:flex;justify-content:space-between;margin-bottom:12px}h1{margin:0;font-size:28px;letter-spacing:.5px}h2{font-size:18px;margin:26px 0 10px}h3{margin:0 0 8px;font-size:16px}
 .muted{color:var(--mu);font-size:13px}.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;overflow-x:auto}
 .hero{border-radius:16px;padding:22px;border:1px solid var(--bd)}.hero.ok{background:var(--okbg)}.hero.warn{background:var(--warnbg)}.hero.bad{background:var(--badbg)}
-.hl1{font-size:34px;font-weight:700}.hero.ok .hl1{color:var(--ok)}.hero.warn .hl1{color:var(--warn)}.hero.bad .hl1{color:var(--bad)}.hl2{margin-top:4px;font-size:16px}.hl3,.hl4{margin-top:6px;color:var(--mu);font-size:13px}
+.hl1{font-size:34px;font-weight:700}.hero.ok .hl1{color:var(--ok)}.hero.warn .hl1{color:var(--warn)}.hero.bad .hl1{color:var(--bad)}.hl2{margin-top:4px;font-size:16px}.hl3.stress{color:var(--bad);font-weight:600}.hl3,.hl4{margin-top:6px;color:var(--mu);font-size:13px}
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-top:12px}
 .hzh{display:flex;justify-content:space-between;align-items:center}.ratio{font-size:13px;color:var(--mu);margin-bottom:8px}
 .prow{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:6px 0;border-top:1px solid var(--bd)}.prow b{font-size:20px}.prow .muted{grid-column:1/3;margin-top:-4px}
 .hyp{margin-top:8px;padding:8px;border-radius:10px;background:var(--bg);display:grid;gap:2px}.hyp .lab{font-size:12px;color:var(--mu)}.hyp b{font-size:20px}.drv{margin-top:8px;font-size:13px;color:var(--mu)}.relrow{margin-top:10px}
 .badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600}.badge.ok{background:var(--okbg);color:var(--ok)}.badge.warn{background:var(--warnbg);color:var(--warn)}.badge.bad{background:var(--badbg);color:var(--bad)}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:7px 8px;border-bottom:1px solid var(--bd);text-align:right}th:first-child,td:first-child{text-align:left}thead th{font-size:12px;color:var(--mu);font-weight:600}
-tr.grp td{background:var(--bg);font-weight:700;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mu)}td.worse{color:var(--bad);font-weight:600}td.better{color:var(--ok);font-weight:600}tr.act td{background:var(--warnbg)}
+tr.grp td{background:var(--bg);font-weight:700;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mu)}td.worse{color:var(--bad);font-weight:600}td small{display:block;font-size:11px;font-weight:600}small.worse{color:var(--bad)}small.better{color:var(--ok)}tr.act td{background:var(--warnbg)}
 .scroll{overflow-x:auto}.chart{width:100%;height:auto}.grid{stroke:var(--bd);stroke-width:1}.hl{stroke:var(--mu);stroke-dasharray:4 4}.ax{fill:var(--mu);font-size:11px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mu)}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
 .banner{background:var(--badbg);color:var(--bad);padding:10px 14px;border-radius:10px;margin-bottom:12px;font-weight:600}footer{margin:26px 0 8px;color:var(--mu);font-size:12px}

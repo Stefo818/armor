@@ -46,6 +46,12 @@ FRED = {
 
 CBOE = {"pput": "https://cdn.cboe.com/api/global/us_indices/daily_prices/PPUT_History.csv"}
 
+MULTPL = {
+    "ps_m": "https://www.multpl.com/s-p-500-price-to-sales/table/by-quarter",
+    "cape_m": "https://www.multpl.com/shiller-pe/table/by-month",
+    "pe_m": "https://www.multpl.com/s-p-500-pe-ratio/table/by-month",
+}
+
 SHILLER_URLS = [
     "http://www.econ.yale.edu/~shiller/data/ie_data.xls",
     "https://img1.wsimg.com/blobby/go/e5e77e9f-e23f-40a5-9bb8-8d1bc3c4a7e3/downloads/ie_data.xls",
@@ -119,6 +125,26 @@ def fetch_cboe(url: str) -> pd.Series:
     return pd.to_numeric(df[col], errors="coerce").set_axis(df["date"]).dropna()
 
 
+def parse_multpl(text: str) -> pd.Series:
+    """Estrae coppie data/valore dalla tabella di multpl.com (accetta HTML o testo copiato)."""
+    import re
+    dates = list(re.finditer(r"([A-Z][a-z]{2} \d{1,2}, \d{4})", text))
+    out = {}
+    for i, m in enumerate(dates):
+        end = dates[i + 1].start() if i + 1 < len(dates) else len(text)
+        seg = text[m.end():min(end, m.end() + 400)]
+        v = re.search(r"(-?\d+(?:[.,]\d+)?)", re.sub(r"&#?\w+;", " ", re.sub(r"<[^>]+>", " ", seg)).replace("†", " "))
+        if v:
+            out[pd.to_datetime(m.group(1))] = float(v.group(1).replace(",", ""))
+    if not out:
+        raise RuntimeError("tabella multpl non riconosciuta")
+    return pd.Series(out).sort_index()
+
+
+def fetch_multpl(url: str) -> pd.Series:
+    return parse_multpl(_get(url).text)
+
+
 def fetch_shiller() -> dict[str, pd.Series]:
     """CAPE e P/E (Shiller). Dati mensili, pubblicati con ritardo: usati solo come contesto."""
     last = None
@@ -171,12 +197,12 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
             store.set_status(st, sid, True, "", store.upsert(sid, fetch_cboe(url)))
         except Exception as e:  # noqa: BLE001
             store.set_status(st, sid, False, str(e))
-    if not only or "cape" in only:
+    for sid, url in MULTPL.items():
+        if only and sid not in only:
+            continue
         try:
-            for sid, s in fetch_shiller().items():
-                store.set_status(st, sid, True, "", store.upsert(sid, s))
+            store.set_status(st, sid, True, "", store.upsert(sid, fetch_multpl(url)))
         except Exception as e:  # noqa: BLE001
-            store.set_status(st, "cape", False, str(e))
-            store.set_status(st, "pe_trailing", False, str(e))
+            store.set_status(st, sid, False, str(e))
     store.write_status(st)
     return st

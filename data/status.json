@@ -302,21 +302,5 @@
   "last_date": "2026-11-06",
   "rows": 10163,
   "checked_at": "2026-11-07 13:44 UTC"
- },
- "cape": {
-  "ok": true,
-  "msg": "",
-  "new_rows": 1713,
-  "last_date": "2023-09-30",
-  "rows": 1713,
-  "checked_at": "2026-11-07 13:44 UTC"
- },
- "pe_trailing": {
-  "ok": true,
-  "msg": "",
-  "new_rows": 1830,
-  "last_date": "2023-06-30",
-  "rows": 1830,
-  "checked_at": "2026-11-07 13:44 UTC"
  }
 }
