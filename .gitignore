@@ -15,3 +15,4 @@ data/series/aaii_*.csv
 data/intraday.json
 data.json
 registro.csv
+key fred.txt
