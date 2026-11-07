@@ -236,3 +236,26 @@ def test_fine_series_cot_e_valutazioni():
     assert valuations.zone("sp500", "pe", 30) == "ba" and valuations.zone("sp500", "pe", 15) == "ok"
     line = '"E-MINI S&P 500 - CME",261103,2026-11-03,13874A,CME ,00,138 ,2000000,100000,300000,50000,800000,100000,200000,300000,900000,100000,1,2\n'
     assert round(posizionamento.parse_cot(line).iloc[0]["lev"], 1) == -30.0
+
+
+def test_indice_armor_punteggi_e_termometro():
+    import pandas as pd
+    from armor import armor_index as A
+    x = pd.Series([10.0, 20.0, 30.0, 40.0])
+    s = A._thresh_score(x, "hi", 20, 30)
+    assert s.iloc[0] == 0 and abs(s.iloc[1] - .35) < 1e-9 and abs(s.iloc[2] - .7) < 1e-9 and s.iloc[3] == 1
+    lo = A._thresh_score(pd.Series([2.0, 1.05, 0.95, 0.5]), "lo", 1.05, 0.95)
+    assert lo.iloc[0] == 0 and lo.iloc[3] == 1 and lo.is_monotonic_increasing
+    idx = pd.date_range("2020-01-01", periods=5)
+    z = [0, .2, .5, .8, 1.0]
+    S = pd.DataFrame({k: z for k in ["vix", "vterm", "vvix", "hy_oas", "baa10y", "cape_m", "pe_m", "dd252", "ma200"]}, index=idx)
+    v, _g = A.combine(S)
+    assert v.dropna().is_monotonic_increasing and 1 <= v.dropna().min() and v.dropna().max() <= 100
+    assert "svg" in A.thermometer(50) and A.band(10)[0] == "molto basso" and A.band(95)[0] == "molto alto"
+
+
+def test_run_parallel_non_blocca():
+    import time
+    from armor.guard import run_parallel
+    r = run_parallel({"a": lambda: 1, "b": lambda: time.sleep(5)}, workers=2, deadline=0.5)
+    assert r["a"] == ("ok", 1) and r["b"][0] == "err"

@@ -70,8 +70,12 @@ def _cell(x):
 def html(m: dict) -> str:
     if not m["reg"]:
         return "<p class='mu'>Dati sugli altri mercati non ancora scaricati: compaiono dopo il prossimo aggiornamento giornaliero.</p>"
-    rows = "".join(f"<tr data-chart='{r['key']}'><td>{_h.escape(r['name'])}</td>{_cell(r['d1'])}{_cell(r['m1'])}{_cell(r['m3'])}{_cell(r['ytd'])}{_cell(r['y1'])}"
-                   f"<td>{f"{r['dd'] * 100:.1f}".replace(".", ",")}%</td><td>{'sopra' if r['ma200'] > 0 else 'sotto'}</td></tr>" for r in m["reg"])
+    def _row(r):
+        dd = f"{r['dd'] * 100:.1f}".replace(".", ",")
+        ma = "sopra" if r["ma200"] > 0 else "sotto"
+        return (f"<tr data-chart='{r['key']}'><td>{_h.escape(r['name'])}</td>{_cell(r['d1'])}{_cell(r['m1'])}{_cell(r['m3'])}{_cell(r['ytd'])}{_cell(r['y1'])}"
+                f"<td>{dd}%</td><td>{ma}</td></tr>")
+    rows = "".join(_row(r) for r in m["reg"])
     out = ("<table><tr><th>Mercato</th><th>Ieri</th><th>1 mese</th><th>3 mesi</th><th>Da inizio anno</th><th>1 anno</th><th>Dal massimo</th><th>Media 200g</th></tr>" + rows + "</table>")
     if "verdict" in m:
         txt = {"globale": "Il calo è <b>diffuso</b>: più mercati sono sotto il massimo di almeno 5%. Il rischio è globale e la diversificazione geografica protegge poco.",

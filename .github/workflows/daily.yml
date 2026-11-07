@@ -24,6 +24,8 @@ jobs:
         env:
           PYTHONPATH: src
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        timeout-minutes: 20
         run: python -m armor tutto
       - name: Salva i dati nel repository
+        if: always()
         run: bash scripts/salva.sh "Aggiornamento automatico dati" data

@@ -158,6 +158,7 @@ td[data-chart]>b,td[data-chart]{text-decoration:none}.lq[data-chart]::after{cont
 .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:700}.tag.positivo{background:var(--okbg);color:var(--ok)}.tag.negativo{background:var(--badbg);color:var(--bad)}.tag.neutro{background:var(--bg);color:var(--mu)}
 ul.news{list-style:none;padding-left:0!important}ul.news li{margin:10px 0}ul.news a{color:var(--tx)}details.co{margin:6px 0;border:1px solid var(--bd);border-radius:10px;padding:2px 12px}details.co summary{padding:8px 0}
 .eps{margin-top:0}.heroin{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
+.vminis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-bottom:10px}.vmini{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 12px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}.vmini .mv{cursor:pointer;font-size:13px}.vmini .mv i{font-style:normal;font-size:11px;color:var(--mu)}.vmini .mv.zba i{color:var(--bad)}.vmini .mv.zwa i{color:var(--warn)}.vmini .mv.zok i{color:var(--ok)}
 .hchip{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;text-align:left}.hchip .t{font-size:12px;color:var(--mu);font-weight:700}.hchip .p{font-size:26px;font-weight:800}.hchip .l{font-size:12px}
 .hrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px}.hbox{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;font-size:14px}.hbox h4{margin:0 0 6px}.hbox ul{margin:0;padding-left:18px}.hbox li{margin:5px 0}
 .hbox.r{border-left:4px solid var(--bad)}.hbox.o{border-left:4px solid var(--ok)}
@@ -329,6 +330,28 @@ CSS += """
 .epbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}.bil ul{margin:6px 0 6px 18px;padding:0}.bil li{margin:5px 0}
 .up{color:var(--ok)}.dn{color:var(--bad)}
 """
+
+
+def valuations_mini(cards: list[dict]) -> str:
+    """Riga compatta P/E e P/S di VWCE, S&P 500 e Nasdaq 100 (in cima a «Oggi»)."""
+    from . import valuations as V
+    ZT = {"ok": "nella norma", "wa": "caro", "ba": "molto caro"}
+    names = {"vwce": "VWCE", "sp500": "S&P 500", "ndx": "Nasdaq 100"}
+    out = ""
+    for c in cards or []:
+        k = c.get("key")
+        if k not in names:
+            continue
+        cells = ""
+        for m, lab, dec in (("pe", "P/E", 1), ("ps", "P/S", 2)):
+            v = c.get(m)
+            if v is None:
+                cells += f"<span class='mv'>{lab} <b>n.d.</b></span>"
+                continue
+            z = V.zone(k, m, v)
+            cells += f"<span class='mv z{z or ''}' data-chart='val_{m}_{k}'>{lab} <b>{num(v, dec)}</b> <i>{ZT.get(z, '')}</i></span>"
+        out += f"<div class='vmini'><b>{names[k]}</b>{cells}</div>"
+    return f"<div class='vminis'>{out}</div>" if out else ""
 
 
 def valuation_block(cards: list[dict], ctxs: dict, cape: dict | None = None) -> str:

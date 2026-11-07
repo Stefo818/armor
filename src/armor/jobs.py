@@ -187,9 +187,14 @@ def diagnosi() -> None:
 
 
 def main() -> None:
+    import faulthandler
+    faulthandler.dump_traceback_later(600, repeat=True)   # se qualcosa si blocca, il log mostra dove
     cmd = sys.argv[1] if len(sys.argv) > 1 else "tutto"
     if cmd == "tutto":
         tutto()
+        import os
+        sys.stdout.flush()
+        os._exit(0)   # chiusura immediata: nessun thread di rete bloccato può tenere vivo il programma
     elif cmd == "senza-download":
         tutto(skip_download=True)
     elif cmd == "diagnosi":

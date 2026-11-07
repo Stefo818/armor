@@ -8,6 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
+from . import armor_index
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_ret, price_features, vwce_series
@@ -716,8 +717,18 @@ def build(ctx: dict, out=None) -> None:
         if hz not in pred:
             continue
         r_ = pred[hz]
-        chips += (f"<div class='hchip'><div class='t'>{HZ_LABEL[hz].upper()}</div><div class='p'>{pct(r_['p'][PRIMARY[hz]], 0)}</div>"
-                  f"<div class='l'>calo ≥{PRIMARY[hz]}% · <span class='badge {LEVEL_CLASS[r_['level']]}'>{r_['level'].lower()}</span></div></div>")
+        pdn = r_["p"][PRIMARY[hz]]
+        try:
+            pup = mat[hz]["up"][PRIMARY[hz]]["p"]
+        except Exception:  # noqa: BLE001
+            pup = None
+        if pup is not None:
+            more = "più probabile il calo" if pdn > pup * 1.15 else ("più probabile il rialzo" if pup > pdn * 1.15 else "calo e rialzo quasi pari")
+            upl = f"<div class='l up'>rialzo ≥{PRIMARY[hz]}%: <b>{pct(pup, 0)}</b></div><div class='l mo'>{more}</div>"
+        else:
+            upl = ""
+        chips += (f"<div class='hchip'><div class='t'>{HZ_LABEL[hz].upper()}</div><div class='p'>{pct(pdn, 0)}</div>"
+                  f"<div class='l'>calo ≥{PRIMARY[hz]}% · <span class='badge {LEVEL_CLASS[r_['level']]}'>{r_['level'].lower()}</span></div>{upl}</div>")
     neg = sorted([x for x in sigs if x["verdict"] == "negativo"], key=lambda x: -x["ratio"])[:3]
     pos = sorted([x for x in sigs if x["verdict"] == "positivo"], key=lambda x: x["ratio"])[:3]
     li = lambda x: (f"<li data-chart='{x['key']}'><b>{esc(x['name'])}</b> {it(x['now'], 2)}: in passato calo ≥10% a 3 mesi nel {pct(x['freq_dd10'], 0)} "
@@ -787,6 +798,15 @@ def build(ctx: dict, out=None) -> None:
     # ---- nuovi moduli (ognuno protetto: se uno fallisce, la pagina resta)
     from . import allarmi, bilancio, decennio, insight, mercati, news as newsmod, posizionamento, regime as regmod, semafori
     sem = semafori.compute(p, livemod.load())
+    from . import armor_index
+    aix = armor_index.compute(sp)
+    if aix:
+        armor_index.save_history(aix)
+        try:
+            chartdata["armor_index"] = {"l": "Indice Armor (1–100)", "dec": 0, **sitedata.ser_payload(store.load("armor_index"), 0)}
+            help_all.setdefault("armor_index", "Indice sintetico 1–100 del rischio di crollo e volatilità: unisce volatilità, credito, tassi, valutazioni, tendenza, sentimento, economia e modello statistico.")
+        except Exception:  # noqa: BLE001
+            pass
     for i in sem:
         help_all.setdefault(i["key"], i["read"])
         if i["key"] not in chartdata:
@@ -855,13 +875,13 @@ def build(ctx: dict, out=None) -> None:
     page = lambda k, inner: f"<div class='pg' id='p-{k}'>{inner}</div>"
     p_oggi = (f"<a id='oggi'></a>{live_html}"
               f"<section class='hero {LEVEL_CLASS[worst]}'><div class='hlk'>Il giudizio di oggi</div><div class='hl1'>{verdict}</div>"
-              f"<div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div><div class='heroin'>{chips}</div>{sem_line}"
+              f"<div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div>{armor_index.hero_html(aix)}<div class='heroin'>{chips}</div>{sem_line}"
               f"<div class='hrow'>{risks_box}{opps_box}</div><ul class='simple'>{simple_html}</ul><div class='hl3'>{esc(note_rel)}</div></section>"
-              f"{disc_line}{bilancio.day_html(bil)}<h2>Gli indici più importanti</h2>{semafori.html(sem, keys_only=True)}{ten_line}{guide}")
+              f"{disc_line}{bilancio.day_html(bil)}<h2>Gli indici più importanti</h2>{parts.valuations_mini(vcards)}{semafori.html(sem, keys_only=True)}{ten_line}{guide}")
     p_indici = ("<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
                 "<div class='explain'><p>Ogni scheda mostra il valore di oggi, un <b>semaforo</b> (verde = tranquillo, giallo = attenzione, rosso = allarme), come si legge l'indice e quando preoccuparsi. "
-                "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>"
-                f"<div class='card'><h3 style='margin-top:0'>Coerenza dei segnali</h3>{insight.coherence_html(coh)}</div>" + semafori.html(sem))
+                "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>" +
+                armor_index.detail_html(aix) + f"<div class='card'><h3 style='margin-top:0'>Coerenza dei segnali</h3>{insight.coherence_html(coh)}</div>" + semafori.html(sem))
     p_val = (f"<h2>Quanto è «caro» il mercato: P/E e P/S in tempo reale</h2>{parts.valuation_block(vcards, ctxs, cape)}")
     p_graf = f"<h2>Grafici interattivi</h2>{parts.charts_section(chip_opts)}"
     p_prev = (f"<h2>Previsioni per periodo</h2><div class='explain'><p><b>Cosa vedi qui.</b> Ogni scheda risponde a una domanda: <i>«da oggi, quanto è probabile che il prezzo scenda di almeno X% rispetto al massimo raggiunto in quel periodo?»</i> "
@@ -918,6 +938,7 @@ TEMPLATE = """<!doctype html><html lang='it'><head><meta charset='utf-8'><meta n
 header{display:flex;justify-content:space-between;margin-bottom:12px}h1{margin:0;font-size:28px;letter-spacing:.5px}h2{font-size:18px;margin:26px 0 10px}h3{margin:0 0 8px;font-size:16px}
 .muted{color:var(--mu);font-size:13px}.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;overflow-x:auto}
 .hero{border-radius:16px;padding:22px;border:1px solid var(--bd)}.hero.ok{background:var(--okbg)}.hero.warn{background:var(--warnbg)}.hero.bad{background:var(--badbg)}
+.hchip .l.up{color:var(--ok)}.hchip .l.mo{font-size:11px;color:var(--mu)}
 .hl1{font-size:34px;font-weight:700}.hero.ok .hl1{color:var(--ok)}.hero.warn .hl1{color:var(--warn)}.hero.bad .hl1{color:var(--bad)}.hl2{margin-top:4px;font-size:16px}.hl3.stress{color:var(--bad);font-weight:600}.hl3,.hl4{margin-top:6px;color:var(--mu);font-size:13px}
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-top:12px}
 .hzh{display:flex;justify-content:space-between;align-items:center}.ratio{font-size:13px;color:var(--mu);margin-bottom:8px}
@@ -949,7 +970,7 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();

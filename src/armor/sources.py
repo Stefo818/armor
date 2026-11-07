@@ -191,26 +191,28 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
     st = store.read_status()
     # Yahoo Finance: scarico in parallelo, con tempo massimo complessivo (una fonte lenta non blocca le altre)
     import time as _t
-    from concurrent.futures import ThreadPoolExecutor
+    from .guard import run_parallel
     t0 = _t.time()
     ids = [sid for sid in YF if not (only and sid not in only)]
 
-    def _job(sid):
-        old = store.load(sid)
-        start = None if (full or old.empty) else (old.index[-1] - timedelta(days=12)).strftime("%Y-%m-%d")
-        return fetch_yf(sid, start)
-    ex = ThreadPoolExecutor(max_workers=6)
-    futs = {sid: ex.submit(_job, sid) for sid in ids}
-    deadline = _t.time() + 240
+    def _mk(sid):
+        def _job():
+            old = store.load(sid)
+            start = None if (full or old.empty) else (old.index[-1] - timedelta(days=12)).strftime("%Y-%m-%d")
+            return fetch_yf(sid, start)
+        return _job
+    res = run_parallel({sid: _mk(sid) for sid in ids}, workers=6, deadline=240)
     n_ok = 0
-    for sid, f in futs.items():
-        try:
-            n = store.upsert(sid, f.result(timeout=max(1.0, deadline - _t.time())))
-            store.set_status(st, sid, True, "", n)
-            n_ok += 1
-        except Exception as e:  # noqa: BLE001
-            store.set_status(st, sid, False, str(e) or type(e).__name__)
-    ex.shutdown(wait=False, cancel_futures=True)
+    for sid in ids:
+        kind, val = res[sid]
+        if kind == "ok":
+            try:
+                store.set_status(st, sid, True, "", store.upsert(sid, val))
+                n_ok += 1
+                continue
+            except Exception as e:  # noqa: BLE001
+                val = str(e)
+        store.set_status(st, sid, False, val)
     print(f"[dati] Yahoo Finance: {n_ok}/{len(ids)} serie in {_t.time() - t0:.0f}s", flush=True)
     t1 = _t.time()
     fred_fails = 0

@@ -86,7 +86,7 @@ SPEC = [
 ]
 SPEC_BY = {s[0]: s for s in SPEC}
 LIGHT_TXT = {"ok": "Tranquillo", "wa": "Attenzione", "ba": "Allarme", "na": "Informativo"}
-KEY_ORDER = ["vix", "cape_m", "pe_m", "ps_m", "hy_oas", "t10y3m", "dd252", "pc_oi"]
+KEY_ORDER = ["vix", "pc_oi", "pe_m", "ps_m", "cape_m", "rv21", "hy_oas", "nfci", "t10y3m", "move", "skew", "dd252"]
 
 
 def _arch_series(col: str) -> pd.Series:

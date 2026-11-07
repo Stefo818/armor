@@ -190,12 +190,11 @@ def snapshot_ai_capex() -> float:
 def update_extras(st: dict, only: list[str] | None = None) -> None:
     today = pd.Timestamp(datetime.now(timezone.utc).date())
 
-    from concurrent.futures import ThreadPoolExecutor
-    pool = ThreadPoolExecutor(max_workers=4)
-    futs = []
+    from .guard import run_parallel
+    tasks: dict = {}
 
     def run(ids: list[str], fn, as_series: bool = True):
-        futs.append(pool.submit(_run, ids, fn))
+        tasks[ids[0]] = (lambda ids=ids, fn=fn: _run(ids, fn))
 
     def _run(ids: list[str], fn):
         if only and not set(ids) & set(only):
@@ -231,6 +230,10 @@ def update_extras(st: dict, only: list[str] | None = None) -> None:
     run(["breadth50", "breadth200", "nh_nl"], fetch_breadth)
     run(["top_ps", "top_pe", "top_fcf_yield"], snapshot_fundamentals)
     run(["ai_capex_ocf"], snapshot_ai_capex)
-    for f in futs:   # i passaggi lenti girano insieme: si aspetta che finiscano tutti
-        f.result()
-    pool.shutdown(wait=False)
+    import time as _t
+    t0 = _t.time()
+    out = run_parallel(tasks, workers=4, deadline=480)   # i passaggi lenti girano insieme, con tempo massimo
+    for k, (kind, v) in out.items():
+        if kind == "err":
+            print(f"[extras] {k} non completato: {v[:100]}", flush=True)
+    print(f"[extras] completati in {_t.time() - t0:.0f}s", flush=True)
