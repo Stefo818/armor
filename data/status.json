@@ -5,7 +5,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 24831,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "vix": {
   "ok": true,
@@ -13,7 +13,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9283,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "vix3m": {
   "ok": true,
@@ -21,7 +21,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5111,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "vix9d": {
   "ok": true,
@@ -29,7 +29,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 3986,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "vvix": {
   "ok": true,
@@ -37,7 +37,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4985,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "skew": {
   "ok": true,
@@ -45,7 +45,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9207,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "move": {
   "ok": true,
@@ -53,7 +53,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5932,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "nasdaq100": {
   "ok": true,
@@ -61,7 +61,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 10356,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "vt": {
   "ok": true,
@@ -69,7 +69,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4621,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "hyg": {
   "ok": true,
@@ -77,7 +77,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4927,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "ief": {
   "ok": true,
@@ -85,7 +85,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6109,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "rsp": {
   "ok": true,
@@ -93,7 +93,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5919,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "spy": {
   "ok": true,
@@ -101,7 +101,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 8502,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "gold": {
   "ok": true,
@@ -109,7 +109,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6573,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "wti": {
   "ok": true,
@@ -117,7 +117,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6580,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "dxy": {
   "ok": true,
@@ -125,7 +125,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 14181,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "eurusd": {
   "ok": true,
@@ -133,7 +133,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5951,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "vwce_de": {
   "ok": true,
@@ -141,159 +141,159 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1851,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:27 UTC"
  },
  "baa10y": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=25)",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 10212,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:28 UTC"
  },
  "t10y2y": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=25)",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 12606,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "t10y3m": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 11215,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "hy_oas": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 786,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "ig_oas": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 785,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "nfci": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 2913,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "stlfsi": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 1714,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "real10y": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 5966,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "be10y": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5967,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "dgs10": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 16197,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "dgs2": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 12605,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "fedfunds": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 26426,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "usd_broad": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 5222,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "epu": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 15284,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "icsa": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-10-31",
   "rows": 3122,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "unrate": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 945,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "cpi": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 956,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "equity_value": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 305,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "gdp": {
-  "ok": true,
-  "msg": "",
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
   "new_rows": 0,
   "last_date": "2026-07-01",
   "rows": 319,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "pput": {
   "ok": true,
@@ -301,7 +301,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 10163,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "ps_m": {
   "ok": true,
@@ -309,7 +309,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 102,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "cape_m": {
   "ok": true,
@@ -317,7 +317,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1871,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "pe_m": {
   "ok": true,
@@ -325,7 +325,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1872,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "aaii_bull": {
   "ok": false,
@@ -333,7 +333,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "aaii_bear": {
   "ok": false,
@@ -341,7 +341,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "aaii_spread": {
   "ok": false,
@@ -349,94 +349,390 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "gpr": {
   "ok": true,
   "msg": "",
-  "new_rows": 15281,
+  "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "gpr_threat": {
   "ok": true,
   "msg": "",
-  "new_rows": 15281,
+  "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "gpr_act": {
   "ok": true,
   "msg": "",
-  "new_rows": 15281,
+  "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "fear_greed": {
   "ok": true,
   "msg": "",
-  "new_rows": 250,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 250,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "breadth50": {
   "ok": true,
   "msg": "",
-  "new_rows": 452,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 452,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "breadth200": {
   "ok": true,
   "msg": "",
-  "new_rows": 302,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 302,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "nh_nl": {
   "ok": true,
   "msg": "",
-  "new_rows": 302,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 302,
-  "checked_at": "2026-11-07 14:37 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "top_ps": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-07",
   "rows": 1,
-  "checked_at": "2026-11-07 14:38 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "top_pe": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-07",
   "rows": 1,
-  "checked_at": "2026-11-07 14:38 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "top_fcf_yield": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-07",
   "rows": 1,
-  "checked_at": "2026-11-07 14:38 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
  },
  "ai_capex_ocf": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 0,
+  "last_date": "2026-11-07",
+  "rows": 1,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "stoxx50": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 4916,
+  "last_date": "2026-11-06",
+  "rows": 4916,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "dax": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 9827,
+  "last_date": "2026-11-06",
+  "rows": 9827,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "ftsemib": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7370,
+  "last_date": "2026-11-06",
+  "rows": 7370,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "nikkei": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 15201,
+  "last_date": "2026-11-06",
+  "rows": 15201,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "eem": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 5931,
+  "last_date": "2026-11-06",
+  "rows": 5931,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xlk": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xlf": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xle": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xlv": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xly": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xlp": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xli": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xlu": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xlb": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 7012,
+  "last_date": "2026-11-06",
+  "rows": 7012,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xlre": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 2787,
+  "last_date": "2026-11-06",
+  "rows": 2787,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "sec_xlc": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 2109,
+  "last_date": "2026-11-06",
+  "rows": 2109,
+  "checked_at": "2026-11-07 20:27 UTC"
+ },
+ "umcsent": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "philly": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "empire": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "dgorder": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "neworder": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "indpro": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "payems": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "retail": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "walcl": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "wresbal": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "rrp": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "tga": {
+  "ok": false,
+  "msg": "FRED non raggiungibile: saltata (si aggiorna dal PC)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "val_pe_vwce": {
   "ok": true,
   "msg": "",
   "new_rows": 1,
   "last_date": "2026-11-07",
   "rows": 1,
-  "checked_at": "2026-11-07 14:38 UTC"
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "val_ps_vwce": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1,
+  "last_date": "2026-11-07",
+  "rows": 1,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "val_pe_sp500": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1,
+  "last_date": "2026-11-07",
+  "rows": 1,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "val_ps_sp500": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1,
+  "last_date": "2026-11-07",
+  "rows": 1,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "val_pe_ndx": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1,
+  "last_date": "2026-11-07",
+  "rows": 1,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "val_ps_ndx": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1,
+  "last_date": "2026-11-07",
+  "rows": 1,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "cot_lev_net": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 149,
+  "last_date": "2026-11-03",
+  "rows": 149,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "cot_am_net": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 149,
+  "last_date": "2026-11-03",
+  "rows": 149,
+  "checked_at": "2026-11-07 20:29 UTC"
+ },
+ "cot_dealer_net": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 149,
+  "last_date": "2026-11-03",
+  "rows": 149,
+  "checked_at": "2026-11-07 20:29 UTC"
  }
 }
