@@ -168,9 +168,9 @@ JS = r"""
 <script>
 (function(){
 var RANGES=[['1h','1 ora',3600],['6h','6 ore',21600],['1d','1 giorno',86400],['1w','1 settimana',604800],['1m','1 mese',2592000],['3m','3 mesi',7862400],['6m','6 mesi',15724800],['1y','1 anno',31536000],['3y','3 anni',94608000],['5y','5 anni',157680000],['max','Max',0]];
-var DATA=null,cbs=[];
-function load(cb){if(DATA)return cb(DATA);cbs.push(cb);if(cbs.length>1)return;
-fetch('data.json?'+Date.now()).then(function(r){return r.json()}).then(function(j){DATA=j.series||{};cbs.forEach(function(f){f(DATA)})}).catch(function(){DATA={};cbs.forEach(function(f){f(DATA)})})}
+var DATA={};
+function load(cb,key){if(DATA[key])return cb(DATA);
+fetch('series/'+encodeURIComponent(key)+'.json?'+Date.now()).then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.d)DATA[key]=j;cb(DATA)}).catch(function(){cb(DATA)})}
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
 function series(s){var D=[];for(var i=0;i<s.d.length;i++)D.push([s.d[i]*86400,s.v[i]]);var I=[],I1=[],I10=[];if(s.i){for(var j=0;j<s.i.t.length;j++)I.push([s.i.t[j],s.i.v[j]]);if(s.i.t1)for(var a=0;a<s.i.t1.length;a++)I1.push([s.i.t1[a],s.i.v1[a]]);if(s.i.t10)for(var b=0;b<s.i.t10.length;b++)I10.push([s.i.t10[b],s.i.v10[b]])}return{D:D,I:I,I1:I1,I10:I10}}
@@ -214,11 +214,12 @@ function setRange(r){stopLive();st.range=r;var cn=root.querySelector('.clive');i
 function show(key){load(function(D){var s=D[key];st.key=key;st.s=s;if(!s){title.textContent='Grafico non disponibile';stats.innerHTML='';st.P=[];draw(null);rbox.innerHTML='';help.textContent='Questo dato non è ancora stato scaricato.';return}
 st.dec=s.dec==null?2:s.dec;title.innerHTML='<h3 style="margin:0 0 4px">'+s.l+'</h3>';help.textContent=(window.HELP&&window.HELP[key])||'';
 var av=avail(s);rbox.innerHTML='';RANGES.forEach(function(r){var b=document.createElement('button');b.textContent=r[1];b.dataset.r=r[0];b.disabled=!av[r[0]];b.onclick=function(){setRange(r[0])};rbox.appendChild(b)});
-var want=st.range;if(!av[want]||(want==='1h'&&false)){want=['3m','1m','1y','max'].filter(function(r){return av[r]})[0]||'max'}setRange(want)})}
+var want=st.range;if(!av[want]||(want==='1h'&&false)){want=['3m','1m','1y','max'].filter(function(r){return av[r]})[0]||'max'}setRange(want)},key)}
 function move(ev){var m=cv._m;if(!m)return;var r=cv.getBoundingClientRect(),x=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;var P=m.P,lo=0,hi=P.length-1;while(hi-lo>1){var mid=(lo+hi)>>1;if(m.X(P[mid][0])<x)lo=mid;else hi=mid}var i=Math.abs(m.X(P[lo][0])-x)<Math.abs(m.X(P[hi][0])-x)?lo:hi;draw(i)}
 cv.addEventListener('mousemove',move);cv.addEventListener('touchstart',move,{passive:true});cv.addEventListener('touchmove',move,{passive:true});cv.addEventListener('mouseleave',function(){draw(null)});cv.addEventListener('touchend',function(){setTimeout(function(){draw(null)},1500)});
 window.addEventListener('resize',function(){draw(null)});
 return{show:show,stop:stopLive,redraw:function(){draw(null)}}}
+window.armorMount=mount;
 var modal=document.getElementById('cm'),mv=null;
 function openChart(key){if(!modal)return;modal.classList.add('show');if(!mv)mv=mount(modal.querySelector('.cbody'));mv.show(key)}
 if(modal){modal.addEventListener('click',function(e){if(e.target===modal||e.target.classList.contains('cx')){modal.classList.remove('show');if(mv&&mv.stop)mv.stop()}});document.addEventListener('keydown',function(e){if(e.key==='Escape')modal.classList.remove('show')})}
@@ -433,3 +434,34 @@ var h=(location.hash||'').slice(1),s=null;try{s=localStorage.getItem('armor_tab'
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[data-go]');if(a){e.preventDefault();show(a.dataset.go)}})})();
 </script>
 """
+
+
+def _split_js():
+    """Divide JS in nucleo (grafico a finestra, sempre caricato) e parti legate a pagine caricate dopo (grafico incorporato, registro)."""
+    j = JS
+    i = j.index("var emb=")
+    k = j.index("window.showM=")
+    r = j.index("/* registro */")
+    e = j.index("})();", r)
+    core = j[:i] + j[k:r] + j[e:]
+    wrap = lambda body: "<script>(function(){var mount=window.armorMount;" + body + "})();</script>"
+    return core, {"embedchart": wrap(j[i:k]), "regsel": wrap(j[r:e])}
+
+
+JS_FULL = JS
+JS, LATE_JS = _split_js()
+
+
+# ---- caricamento a richiesta delle pagine (sito): nucleo comune
+LAZY_CORE = r"""window.armorInject=function(el,html){var t=document.createElement('template');t.innerHTML=html;var sc=[].slice.call(t.content.querySelectorAll('script')).map(function(s){var n=document.createElement('script');n.text=s.textContent;s.parentNode.removeChild(s);return n});el.innerHTML='';el.appendChild(t.content);sc.forEach(function(n){el.appendChild(n)})};
+window.armorEnsure=function(id){var p=document.getElementById('p-'+id);if(!p||!p.dataset.src||p.dataset.state)return;p.dataset.state='load';
+fetch(p.dataset.src+'?'+Date.now()).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){window.armorInject(p,t);p.dataset.state='ok';if(window.armorPaint)window.armorPaint();document.dispatchEvent(new Event('tabshown'));window.dispatchEvent(new Event('resize'))})
+.catch(function(){p.dataset.state='';p.innerHTML='<p class="muted">Pagina non caricata (sei offline?). Riprova tra poco.</p>'})};
+var _dk=null,_dkc=[];window.armorDockReady=false;
+window.armorLoadDock=function(cb){if(window.armorDockReady)return cb&&cb();if(cb)_dkc.push(cb);if(_dk)return;_dk=1;
+fetch('pages/dock.html?'+Date.now()).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){var tp=document.createElement('template');tp.innerHTML=t;
+tp.content.querySelectorAll('[data-dpane]').forEach(function(n){var id=n.dataset.dpane;if(id==='_cal'){document.getElementById('caltpl').innerHTML=n.innerHTML}else{var q=document.getElementById('d-'+id);if(q)window.armorInject(q,n.innerHTML)}});
+window.armorDockReady=true;_dkc.forEach(function(f){f()});_dkc=[];if(window.armorPaint)window.armorPaint()}).catch(function(){_dk=null;var q=document.querySelector('#dock .dpane.on');if(q)q.innerHTML='<p class="muted">Contenuto non caricato (sei offline?).</p>'})};"""
+TABS_JS_LAZY = ("<script>" + LAZY_CORE + "</script>" + TABS_JS.replace(
+    "B.forEach(function(b){b.classList.toggle('on',b.dataset.p===id)});", "B.forEach(function(b){b.classList.toggle('on',b.dataset.p===id)});if(window.armorEnsure)window.armorEnsure(id);", 1))
+assert "armorEnsure(id)" in TABS_JS_LAZY

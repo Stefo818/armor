@@ -171,11 +171,16 @@ def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=pri
         preds["MV-logit"] = pd.DataFrame(model_mv.mv_preds(p, dates, "logit", 63))
         log("[valuta] multi-variabile (alberi) ...")
         preds["MV-GBM"] = pd.DataFrame(model_mv.mv_preds(p, dates, "gbm", 126))
+        log("[valuta] multi-variabile + famiglie dell'Indice (logistica, alberi) ...")
+        preds["MVF-logit"] = pd.DataFrame(model_mv.mv_preds(p, dates, "logit", 63, fam=True))
+        preds["MVF-GBM"] = pd.DataFrame(model_mv.mv_preds(p, dates, "gbm", 126, fam=True))
         if cache:
             pickle.dump(preds, open(cache, "wb"))
     ftgt = lambda df: df[df.kind != "q"]
-    set1 = {m: ftgt(d) for m, d in preds.items()}
+    set1 = {m: ftgt(d) for m, d in preds.items() if not m.startswith("MVF")}
     rows1, cal1 = _score(p, dates, set1, "modelli", step)
+    setF = {m: ftgt(d) for m, d in preds.items() if m in ("A1", "FHS", "MV-logit", "MV-GBM") or m.startswith("MVF")}
+    rowsF, calF = _score(p, dates, setF, "famiglie", step)
     log("[valuta] combinazione, taratura e ritorno al normale ...")
     base_fn = lambda hz, k, t: purged_base(p, dates, hz, k, t)
     out_fn = lambda hz, k, t: outcome(p, dates, hz, k, t)
@@ -203,8 +208,8 @@ def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=pri
     except Exception as e:  # noqa: BLE001
         log("[valuta] importanza: " + str(e)[:60])
     wsum = comb.groupby(["hz", "kind", "thr"]).tail(1)[["hz", "kind", "thr", "w", "bss5"]].to_dict("records") if len(comb) else []
-    res = {"date": pd.Timestamp.now().strftime("%Y-%m-%d"), "start": start, "step": step, "sims": sims, "metrics": rows1 + rows2,
-           "calibration": cal1 + cal2, "adozione": adopt, "adozione_B": adoptB, "intervalli": cov, "ensemble": state, "abilita_ultima": wsum, "importanza_gbm_3m": imp,
+    res = {"date": pd.Timestamp.now().strftime("%Y-%m-%d"), "start": start, "step": step, "sims": sims, "metrics": rows1 + rowsF + rows2,
+           "calibration": cal1 + calF + cal2, "adozione": adopt, "adozione_B": adoptB, "intervalli": cov, "ensemble": state, "abilita_ultima": wsum, "importanza_gbm_3m": imp,
            "note": "Stessa regola per tutti i modelli; frequenza normale con soli esiti gia' maturati; A1 non modella i rialzi."}
     try:
         ensemble.registra_tentativo(res, DATA / "models.json")

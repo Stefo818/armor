@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import armor_index, chiaro, extra13, salute, spiega
+from . import armor_index, chiaro, extra13, learning, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -549,7 +549,8 @@ def challengers_html():
     return "".join(out)
 
 
-def build(ctx: dict, out=None) -> None:
+def build(ctx: dict, out=None, lazy: bool = False) -> None:
+    """lazy=True (sito): solo «Oggi» e' nella pagina; le altre pagine e l'Assistente si caricano da pages/*.html alla prima apertura."""
     date: pd.Timestamp = ctx["date"]
     pred, spot = ctx["pred"], ctx["spot"]
     p = closed_sp500()
@@ -707,7 +708,6 @@ def build(ctx: dict, out=None) -> None:
     rep_an = analysis.load_latest()
     arch_an = analysis.load_archive(14)
     chartdata = sitedata.build(INDICATORS, vw, sp, indicator_series)
-    sitedata.write(out.parent / "data.json", chartdata)
     reg = registry.read()
     if len(reg):
         reg.to_csv(out.parent / "registro.csv", index=False)
@@ -831,7 +831,8 @@ def build(ctx: dict, out=None) -> None:
         if len(ss) > 5 and k not in chartdata:
             chartdata[k] = {"l": name, "dec": 2, **sitedata.ser_payload(ss, 2)}
     labels_all.update({k: v["l"] for k, v in chartdata.items()})
-    sitedata.write(out.parent / "data.json", chartdata)
+    if lazy:   # una serie per file (series/<chiave>.json): si scarica solo quando si apre un grafico
+        sitedata.write(out.parent / "data.json", chartdata)
     coh = insight.coherence(sem) if sem else {"gruppi": [], "discordanti": False, "calmi": [], "tesi": [], "note": []}
     try:
         ind10 = decennio.indicators(p, sem)
@@ -879,10 +880,21 @@ def build(ctx: dict, out=None) -> None:
                 f"<a href='#indici' data-go='indici'>Vedi tutti i semafori ›</a></div>") if sem else ""
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
-    pages = [("oggi", "Oggi"), ("indici", "Indici"), ("valutazioni", "Valutazioni"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"), ("contesto", "Contesto"),
-             ("portafoglio", "Il mio VWCE"), ("storico", "Storico"), ("allarmi", "Allarmi")]
+    pages = [("oggi", "Oggi"), ("indici", "Indici"), ("valutazioni", "Valutazioni"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
+             ("fiducia", "Quanto fidarsi"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("allarmi", "Allarmi")]
     nav = "<nav class='pgnav'>" + "".join(f"<button data-p='{k}'>{l}</button>" for k, l in pages) + "</nav>"
-    page = lambda k, inner: f"<div class='pg' id='p-{k}'>{inner}</div>"
+    lazy_pages: dict[str, str] = {}
+
+    def page(k, inner):
+        if not lazy or k == "oggi":
+            return f"<div class='pg' id='p-{k}'>{inner}</div>"
+        late = ""
+        for marker, js in (("id='epcanvas'", f"<script>{insight.EP_JS}</script>"), ("id='alkey'", f"<script>{parts.AL_JS}</script>"),
+                           ("id='embedchart'", parts.LATE_JS["embedchart"]), ("id='regsel'", parts.LATE_JS["regsel"]), ("id='pacamt'", ui.PAC_JS)):
+            if marker in inner:
+                late += js
+        lazy_pages[k] = inner + late
+        return f"<div class='pg' id='p-{k}' data-src='pages/{k}.html'><p class='mu'>Caricamento…</p></div>"
     def _safe(fn, what):
         try:
             return fn()
@@ -893,12 +905,18 @@ def build(ctx: dict, out=None) -> None:
     div = extra13.divergence(sp, aix)
     n_pru = sum(1 for x in sigs if x["verdict"] == "negativo")
     topbtns = "<div class='topbtns'><button class='btn pri' data-cal='1'>Calendario eventi</button><button class='btn' data-dock='oggi'>Assistente e analisi</button><button class='btn' data-dock='gloss'>Glossario</button></div>"
-    p_oggi = (f"<a id='oggi'></a>{topbtns}{extra13.oggi_html(aix, div, soon, n_pru)}{extra13.divergence_html(div)}{parts.valuations_mini(vcards)}{live_html}"
-              f"<section class='hero {LEVEL_CLASS[worst]}'><div class='hlk'>Il giudizio di oggi</div><div class='hl1'>{verdict}</div>"
-              f"<div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div>{chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}{armor_index.hero_html(aix)}{sem_line}"
-              f"<div class='hrow'>{risks_box}{opps_box}</div><div class='hl3'>{esc(note_rel)}</div></section>"
-              f"{disc_line}<h2>Gli indici più importanti</h2>{semafori.html(sem, keys_only=True)}{ten_line}{guide}")
-    p_indici = ("<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
+    hero_old = (f"<section class='hero {LEVEL_CLASS[worst]}'><div class='hlk'>Il giudizio di oggi</div><div class='hl1'>{verdict}</div>"
+                f"<div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div>{sem_line}"
+                f"<div class='hrow'>{risks_box}{opps_box}</div><div class='hl3'>{esc(note_rel)}</div></section>"
+                f"{disc_line}<h2>Gli indici più importanti</h2>{semafori.html(sem, keys_only=True)}{ten_line}{guide}")
+    # «Oggi» in 5 blocchi: 1 cosa faccio, 2 Indice Armor + probabilita', 3 calo o rialzo (+ Perche?), 4 P/E e P/S, 5 prossimo evento
+    more = ("<div class='more'>Per i dettagli: <a href='#indici' data-go='indici'>Indici</a> · <a href='#previsioni' data-go='previsioni'>Previsioni</a> · "
+            "<a href='#fiducia' data-go='fiducia'>Quanto fidarsi</a> · <a href='#storico' data-go='storico'>Storico</a> · oppure apri l'Assistente in basso.</div>")
+    p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>"
+              f"<section class='b5'>{armor_index.hero_html(aix)}</section>"
+              f"<section class='b5'>{chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}</section>"
+              f"<section class='b5'>{parts.valuations_mini(vcards)}</section>{ui.next_event_html(today_d)}{more}")
+    p_indici = (hero_old + "<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
                 "<div class='explain'><p>Ogni scheda mostra il valore di oggi, un <b>semaforo</b> (verde = tranquillo, giallo = attenzione, rosso = allarme), come si legge l'indice e quando preoccuparsi. "
                 "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>" +
                 armor_index.detail_html(aix) + f"<div class='card'><h3 style='margin-top:0'>Coerenza dei segnali</h3>{insight.coherence_html(coh)}</div>" + semafori.html(sem)
@@ -920,7 +938,8 @@ def build(ctx: dict, out=None) -> None:
     p_an = (f"<h2>Analisi giornaliera: indici, confronto col passato e notizie</h2>{parts.analysis_section(rep_an, arch_an)}"
             f"<h2 style='margin-top:26px'>Gli ultimi 10 anni a confronto con oggi</h2><div class='card'>{_safe(lambda: decennio.html(ind10, tr10), 'Analisi dei 10 anni')}</div>"
             f"<h2 style='margin-top:26px'>Rapporto settimanale</h2>{bilancio.weekly_html(wk)}")
-    p_pf = parts.portfolio_section()
+    p_pf = ui.PAC_HTML + live_html + parts.portfolio_section()
+    p_fid = ("<h2>Quanto mi posso fidare di Armor?</h2>" + _safe(lambda: ui.fiducia_html(sp, live=learning.live_table(sp)), "Pagina di fiducia"))
     p_sto = (f"<h2>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero.</p>"
              f"<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (tra parentesi l'intervallo dell'80% dei casi). <i>Variazione</i>: rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>"
              f"<h2>Previsto contro reale</h2><div class='card'>{pv}</div>"
@@ -930,34 +949,49 @@ def build(ctx: dict, out=None) -> None:
              + det('Confronto degli indicatori con il passato', comparison_html(date, sp, p) + "<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = verso più rischio, verde = verso meno rischio.</p>")
              + det('Affidabilità del modello (test dal 2000)', avh) + det('Variabili provate e non adottate', chal_html) + det('Dati, fonti e archivio', dc) + gloss)
     p_al = ("<h2>Allarmi personali</h2>" + parts.alerts_section(al_opts, al_now))
-    from . import learning
-    p_sto = p_sto + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Salute dei dati</h2>" + _safe(lambda: salute.html(salute.compute()), "Salute dei dati") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
+    p_sto = p_sto + "<h2>Rapporto mensile</h2>" + _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile") + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Salute dei dati</h2>" + _safe(lambda: salute.html(salute.compute()), "Salute dei dati") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
     vix_s = store.load("vix")
     cal_html = _safe(lambda: extra13.calendar_html(_date.today(), sp, vix_s), "Calendario")
     headline = (f"Indice Armor {aix['value']:.0f}/100 · " if aix else "") + verdict
-    dock = extra13.dock_html(headline, [
+    dock_tabs = [
         ("oggi", "Oggi cosa faccio", extra13.oggi_html(aix, div, soon, n_pru) + extra13.divergence_html(div) + "" + bilancio.day_html(bil)),
         ("ai", "Analisi di oggi", parts.analysis_section(rep_an, arch_an)),
         ("dieci", "Ultimi 10 anni", _safe(lambda: decennio.html(ind10, tr10), "Analisi dei 10 anni")),
         ("sett", "Rapporto settimanale", bilancio.weekly_html(wk)),
+        ("mens", "Rapporto mensile", _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile")),
         ("pag", "Pagella", _safe(extra13.pagella_html, "Pagella")),
         ("cal", "Calendario", "<p>Si apre il calendario con tutti gli eventi.</p><button class='btn pri' data-cal='1'>Apri il calendario</button>"),
         ("gloss", "Glossario", extra13.glossario_html()),
-    ]).replace("{{CAL}}", cal_html)
+    ]
+    if lazy:   # l'Assistente si carica alla prima apertura (pages/dock.html)
+        dock_frag = "".join(f"<div data-dpane='{k}'>{h}</div>" for k, _l, h in dock_tabs) + f"<div data-dpane='_cal'>{cal_html}</div>"
+        lazy_pages["dock"] = dock_frag
+        dock = extra13.dock_html(headline, [(k, l, "<p class='mu'>Caricamento…</p>") for k, l, _h in dock_tabs]).replace("{{CAL}}", "")
+    else:
+        dock = extra13.dock_html(headline, dock_tabs).replace("{{CAL}}", cal_html)
+
+    dock_js = extra13.DOCK_JS_LAZY if lazy else extra13.DOCK_JS
+    tabs_js = parts.TABS_JS_LAZY if lazy else parts.TABS_JS
     body = f"""
 <header><div><h1>Armor</h1><div class='muted'>Quanto è rischioso il mercato oggi per il tuo VWCE · dati del {date.strftime('%d/%m/%Y')} · pagina generata {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div></header>
 {nav}
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
-{page('oggi', p_oggi)}{page('indici', p_indici)}{page('valutazioni', p_val)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('contesto', p_ctx)}
+{page('oggi', p_oggi)}{page('indici', p_indici)}{page('valutazioni', p_val)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
 {page('portafoglio', p_pf)}{page('storico', p_sto)}{page('allarmi', p_al)}
 {dock}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>
 <script>window.HELP={json.dumps(help_all, ensure_ascii=False)};window.LABELS={json.dumps(labels_all, ensure_ascii=False)};</script>
 {parts.MODAL}
-{extra13.DOCK_JS}<script>{insight.EP_JS}</script><script>{parts.AL_JS}</script>{parts.TABS_JS}
+{dock_js}{'' if lazy else '<script>' + insight.EP_JS + '</script><script>' + parts.AL_JS + '</script>' + ui.PAC_JS}{tabs_js}
 """
-    out.write_text(TEMPLATE.replace("{{BODY}}", body), encoding="utf-8")
+    out.write_text(TEMPLATE.replace("{{JS}}", parts.JS if lazy else parts.JS_FULL).replace("{{BODY}}", body), encoding="utf-8")
+    if lazy:
+        pd_ = out.parent / "pages"
+        pd_.mkdir(exist_ok=True)
+        for k, h in lazy_pages.items():
+            (pd_ / f"{k}.html").write_text(h, encoding="utf-8")
+        print("Pagine caricate a richiesta:", ", ".join(sorted(lazy_pages)))
     print("Cruscotto creato:", out)
 
 
@@ -1001,7 +1035,7 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+ui.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();
@@ -1012,7 +1046,7 @@ var c=el.querySelector('.lqc');if(q.chg!=null){var bad=el.dataset.k==='vix';var 
 c.innerHTML=(up?'▲ ':'▼ ')+fmt(Math.abs(q.chg)*100,2)+'% <span class="muted">'+(q.open?'mercato aperto':'mercato chiuso')+'</span>'}});
 var u=new Date(L.updated),m=Math.round((now-u)/60000),i=document.getElementById('liveinfo');
 if(i){i.textContent='Prezzi con ritardo di circa 15 minuti · aggiornati '+(m<1?'ora':(m===1?'1 minuto fa':(m<90?m+' minuti fa':Math.round(m/60)+' ore fa')))+' ('+u.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')'}}
-paint(window.LIVE);
+paint(window.LIVE);window.armorPaint=function(){paint(window.LIVE)};
 function refresh(){fetch('live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(L){window.LIVE=L;paint(L)}).catch(function(){})}
 if(location.protocol.indexOf('http')===0){refresh();setInterval(refresh,300000);setInterval(function(){paint(window.LIVE)},60000)}
 function off(){var b=document.getElementById('offline');if(!b)return;if(navigator.onLine){b.style.display='none'}else{b.style.display='';b.textContent='Sei offline: mostro gli ultimi dati salvati sul telefono.'}}
@@ -1020,4 +1054,4 @@ window.addEventListener('online',off);window.addEventListener('offline',off);off
 var loaded=Date.now();document.addEventListener('visibilitychange',function(){if(!document.hidden&&Date.now()-loaded>900000&&navigator.onLine&&location.protocol.indexOf('http')===0)location.reload()});
 if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){navigator.serviceWorker.register('sw.js').catch(function(){})}
 })();
-</script>"""+parts.JS+"""</body></html>"""
+</script>"""+"{{JS}}"+"""</body></html>"""

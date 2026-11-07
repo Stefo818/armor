@@ -502,3 +502,7 @@ CSS = """
 .hmt td.hm{min-width:30px;height:28px;text-align:center;color:#fff;font-weight:700;border-radius:5px;padding:0}
 details.gl{border:1px solid var(--bd);border-radius:10px;padding:0 12px;margin:6px 0;background:var(--card)}details.gl summary{padding:10px 0;font-weight:700;color:var(--tx)}.glq{width:100%;padding:10px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;margin:4px 0 8px}
 """
+
+
+DOCK_JS_LAZY = (DOCK_JS.replace("function set(o){", "function set(o){if(o&&window.armorLoadDock)window.armorLoadDock();", 1)
+                .replace("function openCal(){", "function openCal(){if(window.armorLoadDock&&!window.armorDockReady){window.armorLoadDock(openCal);return}", 1))

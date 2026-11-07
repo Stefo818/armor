@@ -119,6 +119,12 @@ def morning_message(today: date | None = None) -> dict | None:
     return {"title": "Agenda di oggi", "priority": 3, "tags": ["sunrise"], "message": "\n".join(lines)}
 
 
+def important_today(today: date | None = None) -> bool:
+    """True se oggi c'e' un evento importante (peso >= 3): solo allora l'agenda del mattino diventa una notifica."""
+    today = today or date.today()
+    return any(e["date"] == today.isoformat() and e["peso"] >= 3 for e in calendario.events(today, 1))
+
+
 # ---------------------------------------------------------------- settimanale
 def weekly(pred: dict, regime: str | None, sem_items: list[dict], news_hist: dict | None = None, today: date | None = None) -> dict:
     today = today or date.today()

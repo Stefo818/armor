@@ -24,6 +24,12 @@ def forecast(write: bool = True) -> dict:
     spot = float(v.reindex([t], method="ffill").iloc[0]) if not v.empty else float("nan")
     n = journal.append(t.strftime("%Y-%m-%d"), spot, pred, model=mid) if write else 0
     print(f"Previsioni del {t.date()}: {n} nuove righe nel diario")
+    if write:
+        try:   # 4.1 modalita' ombra: i motori sfidanti scrivono nel diario a parte (non influenzano l'app)
+            from . import shadow
+            shadow.run(p, t, pred, spot)
+        except Exception as e:  # noqa: BLE001
+            print("[ombra] errore:", str(e)[:100])
     return {"date": t, "pred": pred, "spot": spot, "eng": eng, "fitted": fitted, "model": mid}
 
 
@@ -120,13 +126,21 @@ def daily_report(ctx: dict, nws: dict | None, force_week: bool = False) -> None:
     d = bilancio.day_summary(ctx["pred"], prev, reg, nws, semaforo=semafori.overall(sem))
     bilancio.REPORTS.mkdir(parents=True, exist_ok=True)
     (bilancio.REPORTS / "bilancio-latest.json").write_text(_j.dumps(d, ensure_ascii=False), encoding="utf-8")
-    alerts.send([bilancio.evening_message(d)])
+    # nessun avviso quotidiano del bilancio (3.4): l'app lo mostra; l'avviso parte solo per i cambiamenti importanti
     if force_week or datetime.now().weekday() == 4:
         w = bilancio.weekly(ctx["pred"], reg, sem)
         bilancio.weekly_save(w)
-        alerts.send([{"title": "Rapporto settimanale pronto", "priority": 3, "tags": ["newspaper"],
-                      "message": "\n".join(["Da guardare la prossima settimana:"] + [f"{i + 1}. {x}" for i, x in enumerate(w["watch"][:3])])}])
+        alerts.queue({"title": "Rapporto settimanale pronto", "tags": ["newspaper"],
+                      "message": "\n".join(["Da guardare la prossima settimana:"] + [f"{i + 1}. {x}" for i, x in enumerate(w["watch"][:3])])})
         print("Rapporto settimanale salvato")
+    try:   # 4.4 rapporto mensile: il 1 del mese (o alla prima esecuzione utile dopo)
+        from . import rapporto
+        m = rapporto.run(p, force=False)
+        if m and m.get("nuovo"):
+            alerts.queue(rapporto.message(m))
+            print("Rapporto mensile salvato:", m["mese"])
+    except Exception as e:  # noqa: BLE001
+        print("Rapporto mensile non generato:", str(e)[:100])
 
 
 def mattina() -> None:
@@ -137,8 +151,8 @@ def mattina() -> None:
         print("Prezzi non aggiornati:", str(e)[:80])
     m = bilancio.morning_message()
     print(m["message"] if m else "Niente da segnalare stamattina")
-    if m:
-        alerts.send([m])
+    if m and bilancio.important_today():   # 3.4: l'agenda parte come notifica solo se oggi c'e' un evento importante
+        alerts.notify_once([m])
 
 
 def run_alerts(ctx: dict) -> None:
@@ -152,7 +166,18 @@ def run_alerts(ctx: dict) -> None:
         vix = float(lv["price"])
     move = (q.get("vwce") or {}).get("chg")
     ev = calendario.next_big(calendario.events(days=7))
-    alerts.run(ctx, r["nome"], vix, ev, move * 100 if move is not None else None)
+    aix_band, div = None, None
+    try:
+        from . import armor_index, extra13
+        sp_ = closed_sp500()
+        aix = armor_index.compute(sp_)
+        if aix:
+            aix_band = armor_index.band(aix["value"])[0]
+            d = extra13.divergence(sp_, aix)
+            div = bool(d["active"]) if d else None
+    except Exception as e:  # noqa: BLE001
+        print("[avvisi] indice/divergenza non disponibili:", str(e)[:80])
+    alerts.run(ctx, r["nome"], vix, ev, move * 100 if move is not None else None, aix_band, div)
 
 
 def tutto(skip_download: bool = False) -> None:
@@ -208,7 +233,7 @@ def costruisci_sito(live_first: bool = False) -> None:
                 store.upsert(sid, ser)
     except Exception as e:  # noqa: BLE001
         print("[valuations] non lette dal sito:", str(e)[:100])
-    build(forecast(write=False), out=site / "index.html")
+    build(forecast(write=False), out=site / "index.html", lazy=True)
     if live.LIVE_FILE.exists():
         shutil.copy(live.LIVE_FILE, site / "live.json")
     for f in (ROOT / "web").glob("*"):
@@ -248,8 +273,19 @@ def main() -> None:
     elif cmd == "valuta-modelli":
         from . import modeleval
         step = int(sys.argv[2]) if len(sys.argv) > 2 else 5
+        try:   # 2.2: verifica annuale dei pesi dell'Indice Armor (al massimo una volta l'anno)
+            from . import armor_index
+            from .features import closed_sp500
+            w = armor_index.check_weights(closed_sp500())
+            print(f"[pesi indice] adottati: {w['adopted']} (eventi migliorati {w['better_events']}/3, verifica del {w['date']})")
+        except Exception as e:  # noqa: BLE001
+            print("[pesi indice] errore:", str(e)[:100])
         r = modeleval.evaluate(step=step)
         print(modeleval.table(r))
+    elif cmd == "rapporto-mensile":
+        from . import rapporto
+        r = rapporto.run(closed_sp500(), force=True)
+        print(rapporto.html(r)[:2000] if r else "nessun rapporto")
     elif cmd == "sfide":
         from . import challenger
         print(challenger.run().to_string(index=False))
@@ -281,7 +317,7 @@ def main() -> None:
     elif cmd == "verifica-diario":
         print(journal.verify())
     else:
-        print("Comandi: tutto | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | report | verifica-diario")
+        print("Comandi: tutto | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | report | verifica-diario")
 
 
 if __name__ == "__main__":

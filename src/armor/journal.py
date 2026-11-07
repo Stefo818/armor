@@ -16,15 +16,16 @@ def _h(prev: str, row: dict) -> str:
     return hashlib.sha256(payload.encode()).hexdigest()[:20]
 
 
-def read() -> pd.DataFrame:
-    if not JOURNAL.exists():
+def read(path=None) -> pd.DataFrame:
+    path = path or JOURNAL
+    if not path.exists():
         return pd.DataFrame(columns=COLS)
-    return pd.read_csv(JOURNAL, dtype={"prev_hash": str, "hash": str})
+    return pd.read_csv(path, dtype={"prev_hash": str, "hash": str})
 
 
-def append(asof: str, spot: float, pred: dict, model: str = MODEL_VERSION) -> int:
-    """Registra la previsione di oggi (una riga per orizzonte). Idempotente: non duplica."""
-    df = read()
+def append(asof: str, spot: float, pred: dict, model: str = MODEL_VERSION, path=None) -> int:
+    """Registra la previsione di oggi (una riga per orizzonte). Idempotente: non duplica. path: diario alternativo (modalita' ombra)."""
+    df = read(path)
     prev = df["hash"].iloc[-1] if len(df) else "GENESIS"
     added = 0
     rows = []
@@ -36,9 +37,7 @@ def append(asof: str, spot: float, pred: dict, model: str = MODEL_VERSION) -> in
                "thr1": thrs[0], "p1": round(r["p"][thrs[0]], 5),
                "thr2": thrs[1] if len(thrs) > 1 else "", "p2": round(r["p"][thrs[1]], 5) if len(thrs) > 1 else "",
                "base1": round(r["base"][thrs[0]], 5), "ratio": round(r["ratio"], 4), "level": r["level"],
-               "q10": round(r.get("ret", {}).get("q10", float("nan")), 5),
-               "q50": round(r.get("ret", {}).get("q50", float("nan")), 5),
-               "q90": round(r.get("ret", {}).get("q90", float("nan")), 5)}
+               **{q: (round(float(r["ret"][q]), 5) if r.get("ret") and r["ret"].get(q) == r["ret"].get(q) else "") for q in ("q10", "q50", "q90")}}
         row["prev_hash"] = prev
         row["hash"] = _h(prev, row)
         prev = row["hash"]
@@ -46,13 +45,13 @@ def append(asof: str, spot: float, pred: dict, model: str = MODEL_VERSION) -> in
         added += 1
     if rows:
         out = pd.concat([df, pd.DataFrame(rows)], ignore_index=True)[COLS]
-        out.to_csv(JOURNAL, index=False)
+        out.to_csv(path or JOURNAL, index=False)
     return added
 
 
-def verify() -> tuple[bool, str]:
+def verify(path=None) -> tuple[bool, str]:
     """Controlla che nessuna riga del diario sia stata modificata."""
-    df = read()
+    df = read(path)
     prev = "GENESIS"
     for i, r in df.iterrows():
         row = {c: ("" if pd.isna(r[c]) else r[c]) for c in COLS}

@@ -29,6 +29,7 @@ GROUPS = {
     "Modello statistico Armor": (14, [("risk_1m", "pct", None, None), ("risk_3m", "pct", None, None)]),
 }
 LAGS = {"daily": 5, "weekly": 10, "monthly": 45}
+WEIGHTS_FILE = DATA / "armor_weights.json"
 WINDOW = 2520   # circa 10 anni di sedute
 START_EVAL = "2000-01-01"
 CACHE = DATA / "armor_index_eval.json"
@@ -104,6 +105,18 @@ def build_scores(sp: pd.Series) -> tuple[pd.DataFrame, dict]:
     return pd.DataFrame(cols, index=idx), last
 
 
+def weights_in_use() -> dict:
+    """Pesi delle famiglie: quelli fissi, oppure quelli stimati se la verifica annuale (check_weights) li ha adottati."""
+    w = {g: float(GROUPS[g][0]) for g in GROUPS}
+    try:
+        c = json.loads(WEIGHTS_FILE.read_text(encoding="utf-8"))
+        if c.get("adopted") and set(c.get("weights_est", {})) == set(w):
+            return {g: float(c["weights_est"][g]) for g in w}
+    except Exception:  # noqa: BLE001
+        pass
+    return w
+
+
 def combine(S: pd.DataFrame) -> tuple[pd.Series, pd.DataFrame]:
     """Indice 1-100 e punteggi di famiglia (NaN se mancano più di metà degli indicatori della famiglia)."""
     G = {}
@@ -115,7 +128,7 @@ def combine(S: pd.DataFrame) -> tuple[pd.Series, pd.DataFrame]:
         n = S[keys].notna().sum(axis=1)
         G[g] = S[keys].mean(axis=1).where(n >= max(1, np.ceil(len(items) / 2)))
     G = pd.DataFrame(G)
-    w = pd.Series({g: GROUPS[g][0] for g in GROUPS})
+    w = pd.Series(weights_in_use())
     ok = G.notna()
     wsum = (ok * w).sum(axis=1)
     val = (G.fillna(0) * w).sum(axis=1) / wsum.replace(0, np.nan)
@@ -135,8 +148,8 @@ def _auc(score: pd.Series, y: pd.Series) -> float:
     return float((r[d["y"] == 1].sum() - n1 * (n1 + 1) / 2) / (n1 * n0))
 
 
-def evaluate(sp: pd.Series, idx: pd.Series) -> dict:
-    """Verifica storica onesta: indice di ieri contro eventi dei giorni successivi (dal 2000)."""
+def events(sp: pd.Series) -> tuple[dict, pd.Series]:
+    """Eventi futuri (NaN dove l'esito non e' ancora noto): calo>=5% in 21 sedute, calo>=10% in 63, volatilita'>=25% nelle 21 successive."""
     p = sp[sp.index >= "1995-01-01"]
     n = len(p)
     v = p.values
@@ -153,8 +166,34 @@ def evaluate(sp: pd.Series, idx: pd.Series) -> dict:
         "dd5_21": pd.Series(np.where(np.isnan(fut_min21), np.nan, (fut_min21 <= -0.05).astype(float)), index=p.index),
         "vol25_21": pd.Series(np.where(fvol.isna(), np.nan, (fvol >= 25).astype(float)), index=p.index),
     }
+    return ev, pd.Series(fut_min63, index=p.index)
+
+
+def iso_probs(idx: pd.Series, ev: dict, v: float, start: str = START_EVAL, band: float = 5.0) -> dict:
+    """Dall'indice alla probabilita' (2.1): regressione isotonica crescente tra l'indice del giorno e l'evento nei giorni successivi,
+    solo con esiti gia' noti. Restituisce per ogni evento la probabilita' con indice = v, la frequenza media (normale) e i giorni simili."""
+    from sklearn.isotonic import IsotonicRegression
+    out = {"v": float(v), "events": {}}
+    x0 = idx[start:].dropna()
+    for k, y in ev.items():
+        d = pd.concat([x0.rename("i"), y.reindex(x0.index).rename("y")], axis=1).dropna()
+        if len(d) < 200 or d["y"].sum() < 20:
+            continue
+        m = IsotonicRegression(increasing=True, y_min=0, y_max=1, out_of_bounds="clip").fit(d["i"].values, d["y"].values)
+        out["events"][k] = {"p": float(m.predict([v])[0]), "base": float(d["y"].mean()),
+                            "n_near": int(((d["i"] - v).abs() <= band).sum()), "n": int(len(d))}
+    return out
+
+
+def evaluate(sp: pd.Series, idx: pd.Series) -> dict:
+    """Verifica storica onesta: indice di ieri contro eventi dei giorni successivi (dal 2000)."""
+    ev, fm63 = events(sp)
+    p = sp[sp.index >= "1995-01-01"]
+    fut_min63 = fm63.values
     lag = idx.shift(1)[START_EVAL:]
-    out = {"auc": {}, "base": {}, "buckets": [], "n_days": int(lag.notna().sum()), "from": str(lag.dropna().index[0].date()) if lag.notna().any() else None}
+    vnow = idx.dropna()
+    prob = iso_probs(idx, ev, float(vnow.iloc[-1])) if len(vnow) else {}
+    out = {"prob": prob, "auc": {}, "base": {}, "buckets": [], "n_days": int(lag.notna().sum()), "from": str(lag.dropna().index[0].date()) if lag.notna().any() else None}
     for k, y in ev.items():
         y = y.reindex(lag.index)
         out["auc"][k] = _auc(lag, y)
@@ -203,7 +242,7 @@ def compute(sp: pd.Series, use_cache: bool = True) -> dict | None:
                 if key in S and pd.notna(S.loc[t, key]):
                     nm = semafori.SPEC_BY[key][1] if key in semafori.SPEC_BY else {"risk_1m": "Probabilità di calo a 1 mese (Armor)", "risk_3m": "Probabilità di calo a 3 mesi (Armor)"}.get(key, key)
                     its.append({"key": key, "name": nm, "score": float(S.loc[t, key]), "value": last.get(key)})
-            groups.append({"name": g, "weight": w, "score": None if pd.isna(sc) else float(sc), "items": its})
+            groups.append({"name": g, "weight": weights_in_use()[g], "score": None if pd.isna(sc) else float(sc), "items": its})
         prev = float(idx.iloc[-6]) if len(idx) > 6 else val
         return {"value": val, "date": t, "hist": idx, "groups": groups, "eval": ev, "change5": val - prev, "G": G, "S": S}
     except Exception as e:  # noqa: BLE001
@@ -237,6 +276,19 @@ def thermometer(v: float, h: int = 150) -> str:
             f"<text x='68' y='{bot + 2}' font-size='9' text-anchor='end' fill='currentColor'>1</text></svg>")
 
 
+def prob_line(d: dict | None) -> str:
+    """Frase sull'indice come probabilita' storica (isotonica)."""
+    try:
+        e = d["eval"]["prob"]["events"]
+        v = d["eval"]["prob"]["v"]
+        a, b = e["dd10_63"], e["dd5_21"]
+        f = lambda x: f"{x * 100:.0f}%"
+        return (f"Con un indice a {v:.0f}, in passato un calo ≥10% entro 3 mesi è arrivato nel <b>{f(a['p'])}</b> dei casi (normale {f(a['base'])}); "
+                f"un calo ≥5% entro 1 mese nel <b>{f(b['p'])}</b> (normale {f(b['base'])}).")
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def hero_html(d: dict | None) -> str:
     if not d:
         return ""
@@ -247,7 +299,7 @@ def hero_html(d: dict | None) -> str:
     return (f"<div class='aix' data-chart='armor_index'><div class='aixt'>{thermometer(v)}</div>"
             f"<div class='aixb'><div class='aixk'>Indice Armor</div><div class='aixv' style='color:{color(v)}'>{v:.0f}<span>/100</span></div>"
             f"<div class='aixl' style='color:{color(v)}'>Rischio {name}</div><div class='aixd'>{_h.escape(txt)}</div>"
-            f"<div class='aixc'>{arrow} {ch:+.0f} punti in 5 sedute · <a href='#indici' data-go='indici'>Come è calcolato ›</a></div></div></div>")
+            f"<div class='aixp'>{prob_line(d)}</div><div class='aixc'>{arrow} {ch:+.0f} punti in 5 sedute · <a href='#indici' data-go='indici'>Come è calcolato ›</a></div></div></div>")
 
 
 def _pc(x) -> str:
@@ -282,6 +334,7 @@ def detail_html(d: dict | None) -> str:
     f = lambda k: "n.d." if np.isnan(auc[k]) else f"{auc[k]:.2f}".replace(".", ",")
     return (f"<div class='card'><h3 style='margin-top:0'>Indice Armor: come è calcolato</h3>"
             f"<p>Oggi l'indice vale <b>{v:.0f}</b> su 100 (<b>rischio {name}</b>). {_h.escape(txt)}</p>"
+            f"<p>{prob_line(d)} <span class='mu'>(regressione isotonica sui giorni dal 2000, solo esiti già noti; giorni con indice simile: {d['eval'].get('prob', {}).get('events', {}).get('dd10_63', {}).get('n_near', 'n.d.')}; i giorni vicini non sono indipendenti)</span></p>"
             "<p class='mu'>1 = rischio minimo, 100 = rischio altissimo di crollo e volatilità. Unisce decine di indicatori in 8 famiglie con pesi fissi. "
             "Ogni indicatore pesa per il 60% dalle soglie dei semafori e per il 40% da quanto il valore è alto o basso rispetto agli ultimi 10 anni.</p>"
             f"<table><tr><th>Famiglia</th><th>Peso</th><th>Rischio (1–100)</th><th></th></tr>{rows}</table>"
@@ -298,7 +351,96 @@ def detail_html(d: dict | None) -> str:
 CSS = """
 .aix{display:flex;gap:14px;align-items:center;background:rgba(255,255,255,.55);border-radius:14px;padding:10px 14px;margin:10px 0;cursor:pointer;color:var(--fg)}
 .aixb{flex:1;min-width:0}.aixk{font-size:12px;font-weight:700;text-transform:uppercase;opacity:.7}.aixv{font-size:44px;font-weight:800;line-height:1.05}.aixv span{font-size:16px;opacity:.6}
-.aixl{font-weight:800;font-size:16px}.aixd{font-size:13px;margin-top:2px}.aixc{font-size:12px;opacity:.75;margin-top:4px}
+.aixp{font-size:13px;margin-top:6px}.aixl{font-weight:800;font-size:16px}.aixd{font-size:13px;margin-top:2px}.aixc{font-size:12px;opacity:.75;margin-top:4px}
 .gb{width:120px;height:9px;background:rgba(128,128,128,.25);border-radius:5px;overflow:hidden}.gb i{display:block;height:100%}
 @media (prefers-color-scheme:dark){.aix{background:rgba(255,255,255,.08)}}
 """
+
+
+# ---------- 2.3 famiglie come variabili del modello ----------
+FAM_MV = ["Paura e stress dei mercati", "Credito e liquidità", "Tassi e obbligazioni", "Valutazioni", "Tendenza dei prezzi", "Economia reale"]
+FAM_LAG = {"Valutazioni": 30, "Economia reale": 30, "Credito e liquidità": 5}   # sedute di ritardo (dati mensili/settimanali); le altre 1
+FAM_SHORT = {"Paura e stress dei mercati": "fam_paura", "Credito e liquidità": "fam_credito", "Tassi e obbligazioni": "fam_tassi",
+             "Valutazioni": "fam_valut", "Tendenza dei prezzi": "fam_tend", "Economia reale": "fam_econ"}
+
+
+def family_features(sp: pd.Series) -> pd.DataFrame:
+    """Punteggi 0-1 delle famiglie con storia lunga, spostati del ritardo di pubblicazione (nessuno sguardo al futuro).
+    Escluse: «Sentimento e ampiezza» (storia corta) e «Modello statistico Armor» (circolare: usa le previsioni del modello stesso)."""
+    S, _ = build_scores(sp)
+    _i, G = combine(S)
+    out = {}
+    for g in FAM_MV:
+        if g in G:
+            out[FAM_SHORT[g]] = G[g].shift(FAM_LAG.get(g, 1))
+    return pd.DataFrame(out)
+
+
+# ---------- 2.2 pesi stimati contro pesi fissi ----------
+def _auc_np(score, y) -> float:
+    return _auc(pd.Series(score), pd.Series(y))
+
+
+def fit_weights_logit(G: np.ndarray, Y: list, lam: float = 1e-3) -> np.ndarray:
+    """Coefficienti >= 0 sulle famiglie (una logistica per evento con intercetta propria, coefficienti condivisi)."""
+    from scipy.optimize import minimize
+    k = G.shape[1]
+    ne = len(Y)
+
+    def f(th):
+        c, b = th[:k], th[k:]
+        tot = 0.0
+        for j, (m, y) in enumerate(Y):
+            z = G[m] @ c + b[j]
+            tot += np.mean(np.logaddexp(0, z) - y * z)
+        return tot / ne + lam * float(c @ c)
+    r = minimize(f, np.r_[np.ones(k), np.full(ne, -2.0)], method="L-BFGS-B", bounds=[(0, None)] * k + [(None, None)] * ne)
+    return r.x[:k]
+
+
+def check_weights(sp: pd.Series, today=None, force: bool = False, train_end: str = "2012-09-30", test_start: str = "2013-01-01") -> dict:
+    """Verifica dei pesi (2.2). Pesi stimati con dati fino a train_end (con 63 sedute di distanza dai test); li adotta solo se l'AUC
+    dal 2013 migliora di almeno 0,02 su almeno 2 eventi su 3 rispetto ai pesi fissi. Si rifa' al massimo una volta l'anno."""
+    today = pd.Timestamp(today) if today is not None else pd.Timestamp.now().normalize()
+    if WEIGHTS_FILE.exists() and not force:
+        try:
+            c = json.loads(WEIGHTS_FILE.read_text(encoding="utf-8"))
+            if (today - pd.Timestamp(c["date"])).days < 365:
+                return c
+        except Exception:  # noqa: BLE001
+            pass
+    S, _ = build_scores(sp)
+    _i, G = combine(S)
+    names = list(GROUPS)
+    Gf = G[names].shift(1)                                   # solo informazioni del giorno prima
+    Gf = Gf.apply(lambda r: r.fillna(r.mean()), axis=1)      # famiglia mancante = media delle altre
+    ev, _fm = events(sp)
+    Gf = Gf.dropna(how="any")
+    wf = np.array([GROUPS[g][0] for g in names], float)
+    tr = Gf[(Gf.index >= START_EVAL) & (Gf.index <= train_end)]
+    te = Gf[Gf.index >= test_start]
+    Y = []
+    for k in ("dd5_21", "dd10_63", "vol25_21"):
+        y = ev[k].reindex(tr.index)
+        m = y.notna().values
+        Y.append((np.where(m)[0], y.values[m]))
+    # nota: gli indici in Y si riferiscono alle righe di tr
+    c = fit_weights_logit(tr.values, [(m, y) for m, y in Y])
+    west = c / c.sum() * 100 if c.sum() > 0 else wf
+    res = {"date": str(today.date()), "train_end": train_end, "test_start": test_start, "auc_fixed": {}, "auc_est": {}, "gain": {}}
+    better = 0
+    for k in ("dd5_21", "dd10_63", "vol25_21"):
+        y = ev[k].reindex(te.index)
+        af, ae = _auc_np((te.values @ wf)[y.notna().values], y.dropna().values), _auc_np((te.values @ west)[y.notna().values], y.dropna().values)
+        res["auc_fixed"][k], res["auc_est"][k], res["gain"][k] = af, ae, ae - af
+        better += int(ae - af >= 0.02)
+    res["better_events"] = better
+    res["adopted"] = bool(better >= 2)
+    res["weights_fixed"] = {g: float(w) for g, w in zip(names, wf)}
+    res["weights_est"] = {g: float(w) for g, w in zip(names, west)}
+    res["rule"] = "adottati solo se l'AUC dal 2013 migliora di almeno 0,02 su 2 eventi su 3; verifica al massimo una volta l'anno"
+    try:
+        WEIGHTS_FILE.write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    return res

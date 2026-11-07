@@ -1,6 +1,6 @@
 # CONTINUA_DA_QUI — stato del progetto Armor
 
-Ultimo aggiornamento: 2026-11-07 (patch 17: FASE 1 completa. Modello in uso: ancora A1).
+Ultimo aggiornamento: 2026-11-07 (patch 18: FASI 2, 3 e 4 (4.1, 4.3, 4.4) fatte. Modello in uso: ancora A1).
 
 ## Cosa c'è
 App PWA su GitHub Pages (https://stefo818.github.io/armor/), repo Stefo818/armor. Workflow: Aggiornamento giornaliero (23:30 UTC, lun-ven), Notizie e analisi, Sito Armor (ogni 15 min), Convalida mensile, Allarmi personali, Agenda del mattino.
@@ -117,5 +117,25 @@ Con il passo 21 (più veloce) i numeri sono molto simili.
 1. Creare la chiave su https://fred.stlouisfed.org/docs/api/api_key.html
 2. GitHub → repo armor → Settings → Secrets and variables → Actions → New repository secret: `FRED_API_KEY`.
 
+## FASI 2, 3, 4 (patch 18)
+**FASE 2 — Indice Armor** (`armor_index.py`, `learning.py`, `model_mv.py`)
+- 2.1 `iso_probs`: regressione isotonica (indice del giorno → evento dopo), solo esiti noti. Frase in «Oggi» e in Indici: «Con un indice a X, in passato un calo ≥10% entro 3 mesi è arrivato nel Y% dei casi (normale Z%)». Oggi: indice 50 → calo 10% a 3 mesi 16% (normale 17%).
+- 2.2 `check_weights` (comando `valuta-modelli`, al massimo 1 volta l'anno, scrive `data/armor_weights.json`): pesi stimati (logistica con coefficienti ≥0, fit fino a set 2012, prova dal 2013). **Non adottati**: AUC dal 2013 peggiore o uguale su tutti e 3 gli eventi (−0,018, −0,007, +0,002). Restano i pesi fissi 22/18/8/12/12/8/6/14. `combine()` usa `weights_in_use()`.
+- 2.3 le famiglie dell'Indice (6 con storia lunga; escluse «Sentimento e ampiezza» per storia corta e «Modello statistico» perché circolare), spostate del ritardo di pubblicazione (30 sedute per mensili, 5 credito, 1 le altre), entrano nel modello multi-variabile (`MVEngine(fam=True)`, modelli `MVF-logit`, `MVF-GBM`, set «famiglie» in `model_eval.json`). **Non migliorano**: a 3 e 6 mesi restano peggiori di A1 (BSS 3m −0,11/−0,05, 6m −0,32/−0,18 contro A1 +0,02/+0,01). Sono solo in ombra.
+- 2.4 `learning.index_live_auc`: AUC dal vivo dell'Indice (registro giornaliero), mostrata in Storico solo con ≥40 esiti con evento (ora «in raccolta»), più tabella per fascia.
+**FASE 3 — App** (`ui.py`, `report.py`, `parts.py`, `sitedata.py`, `alerts.py`)
+- 3.1 «Oggi» = 5 blocchi (Cosa faccio, Indice+probabilità, Calo/Rialzo con «Perché?», P/E e P/S, Prossimo evento). Il vecchio giudizio con semafori, rischi e opportunità è in cima alla pagina Indici; i prezzi live nella pagina «Il mio VWCE e PAC».
+- 3.2 pagina «Quanto fidarsi»: grafico di taratura (10 gruppi) per ogni orizzonte da `model_eval.json` (set «modelli», modello A1), BSS con intervallo, copertura intervalli, frase onesta (`ui.verdict`: «batte» solo se l'intervallo al 90% è tutto sopra 0). Oggi: nessun orizzonte batte il normale con certezza; a 3 e 6 mesi dal 2013 A1 è peggio del normale.
+- 3.3 velocità: `site/series/<chiave>.json` (una serie per file, caricata solo all'apertura del grafico), `data.json` ridotto a indice (2 KB); in `index.html` c'è solo «Oggi» (59 KB, 17 KB compressi) e le altre pagine e l'Assistente si caricano da `site/pages/*.html` alla prima apertura (`build(..., lazy=True)`; il file locale `Armor_dashboard.html` resta tutto in una pagina). Service worker v7.
+- 3.4 notifiche (`alerts.py`): solo cambiamenti (fascia Indice Armor, divergenza attivata, evento importante oggi/domani, previsione a 1 mese da basso/normale a elevato/alto, VWCE ±3%); massimo 1 al giorno (`pick_daily`, altrimenti elenca gli altri cambiamenti nel testo); rapporti settimanale/mensile in coda a priorità bassa (partono solo se non c'è altro); niente più bilancio serale né agenda del mattino (solo se c'è un evento importante). Gli allarmi personali sono fuori dal limite.
+- 3.5 «Il mio PAC» (pagina «Il mio VWCE e PAC»): importo e data di inizio in localStorage del telefono (chiave `armor_pac_v1`), versato, valore stimato, prezzo medio di carico, effetto dei cali (tabella −5/−10/−20%), calo massimo dall'inizio. Nessun consiglio di vendita.
+**FASE 4**
+- 4.1 modalità ombra (`shadow.py`): ogni giorno FHS, MV-logit, MV-GBM, MVF-GBM e «Combinato (pesi)» scrivono in `data/journal_shadow.csv` (stessa catena di firme, `journal.verify(path)`). Confronto dal vivo in Storico → «Apprendimento»; serve almeno ~6 mesi. Il modello in uso resta A1.
+- 4.4 rapporto mensile (`rapporto.py`): generato alla prima esecuzione giornaliera dal 1° del mese (`data/reports/mensile-AAAA-MM.json`), in Storico e nell'Assistente; comando `python -m armor rapporto-mensile`.
+- 4.3 FinBERT nei modelli (`news_signal.py`): pronto e SPENTO (`ATTIVO = False`, servono ≥548 giorni di `news_sent_macro` nel registro e la regola di adozione). Per accenderlo: `ATTIVO = True` e collegare `model_mv.news_extra` in `MVEngine`. Prima data utile = prima riga del registro con tono + 18 mesi.
+- Test: 39 passano. Verifica UI con Playwright a 430 px: tutte le pagine si caricano a richiesta, nessun errore in console, PAC (calcolo e persistenza dopo ricarica), grafico a finestra, Assistente e calendario funzionanti.
+
 ## Prossimo passo
-FASE 2 del PIANO_ARMOR.md (Indice Armor più utile). Prima, decidere con l'utente se mettere FHS in modalità ombra (4.1). Non cambiare il modello in uso senza la regola di adozione.
+1. Controllare dopo 2-3 giorni che `data/journal_shadow.csv` cresca e che il giornaliero resti sotto i 15 minuti.
+2. FASE 4.2 (taratura dal vivo) quando ci sono ≥250 previsioni scadute; confronto in ombra dopo ~6 mesi (decidere su FHS).
+3. Nuova Convalida mensile: rifà `model_eval.json`, pesi (solo se è passato un anno) e prova del combinato.

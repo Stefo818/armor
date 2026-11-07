@@ -17,8 +17,11 @@ from .features import price_features
 EXTRA = ["log_vix", "vix_chg21", "vrp", "baa10y", "baa_chg21", "t10y3m", "nfci"]
 FEATS_MV = FEATURES + EXTRA
 # segno noto del legame con il rischio di calo (+1 sale, -1 scende, 0 libero): solo dove e' ovvio
-MONOTONE = {"rv21": 1, "rv63": 1, "worst_day": -1, "log_vix": 1, "baa10y": 1, "nfci": 1}
-FEAT_IT = {"log_vix": "VIX (paura implicita)", "vix_chg21": "variazione del VIX in un mese", "vrp": "VIX meno volatilità reale",
+FAM = ["fam_paura", "fam_credito", "fam_tassi", "fam_valut", "fam_tend", "fam_econ"]   # famiglie dell'Indice Armor (2.3)
+MONOTONE = {"fam_paura": 1, "fam_credito": 1, "rv21": 1, "rv63": 1, "worst_day": -1, "log_vix": 1, "baa10y": 1, "nfci": 1}
+FEAT_IT = {"fam_paura": "famiglia «Paura e stress»", "fam_credito": "famiglia «Credito e liquidità»", "fam_tassi": "famiglia «Tassi»",
+           "fam_valut": "famiglia «Valutazioni»", "fam_tend": "famiglia «Tendenza dei prezzi»", "fam_econ": "famiglia «Economia reale»",
+           "log_vix": "VIX (paura implicita)", "vix_chg21": "variazione del VIX in un mese", "vrp": "VIX meno volatilità reale",
            "baa10y": "spread delle obbligazioni aziendali", "baa_chg21": "variazione dello spread in un mese",
            "t10y3m": "curva dei tassi 10 anni - 3 mesi", "nfci": "condizioni finanziarie (NFCI)"}
 MIN_ROWS = 1000   # circa 4 anni di storia prima della prima previsione
@@ -40,11 +43,23 @@ def mv_extra(idx: pd.DatetimeIndex, rv21: pd.Series | None = None) -> pd.DataFra
     return f
 
 
+def news_extra(idx: pd.DatetimeIndex) -> pd.DataFrame | None:
+    """4.3: tono delle notizie come variabile. Restituisce None finche' il modulo e' spento o la storia e' troppo corta."""
+    from . import news_signal
+    try:
+        return news_signal.feature(idx)
+    except Exception:  # noqa: BLE001
+        return None
+
+
 class MVEngine(E2):
-    def __init__(self, close: pd.Series, algo: str = "logit"):
+    def __init__(self, close: pd.Series, algo: str = "logit", fam: bool = False):
         p = close.dropna().astype(float)
         rv21 = price_features(p)["rv21"]
         extra = mv_extra(p.index, rv21)[EXTRA]
+        if fam:   # 2.3: punteggi delle famiglie dell'Indice Armor, gia' spostati del ritardo di pubblicazione
+            from .armor_index import family_features
+            extra = extra.join(family_features(p).reindex(p.index))
         super().__init__(p, extra=extra, algo=algo)
 
     def _new_model(self):
@@ -55,9 +70,9 @@ class MVEngine(E2):
         return make_pipeline(StandardScaler(), LogisticRegression(C=LOGIT_C, max_iter=1000))
 
 
-def mv_preds(p: pd.Series, dates, algo: str = "logit", refit_every: int = 63) -> list[dict]:
+def mv_preds(p: pd.Series, dates, algo: str = "logit", refit_every: int = 63, fam: bool = False) -> list[dict]:
     """Previsioni walk-forward dei cali: a ogni data il modello usa solo esiti gia' maturati (purge incorporato)."""
-    eng = MVEngine(p, algo)
+    eng = MVEngine(p, algo, fam)
     first = eng.F.index[0]
     rows, fitted, last = [], None, -10 ** 9
     for t in dates:

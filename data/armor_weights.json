@@ -1,0 +1,43 @@
+{
+ "date": "2026-11-07",
+ "train_end": "2012-09-30",
+ "test_start": "2013-01-01",
+ "auc_fixed": {
+  "dd5_21": 0.6137097885501677,
+  "dd10_63": 0.581099383561089,
+  "vol25_21": 0.7915860131127068
+ },
+ "auc_est": {
+  "dd5_21": 0.5959353916436184,
+  "dd10_63": 0.5742626629188909,
+  "vol25_21": 0.7939311702970773
+ },
+ "gain": {
+  "dd5_21": -0.01777439690654925,
+  "dd10_63": -0.006836720642198091,
+  "vol25_21": 0.00234515718437045
+ },
+ "better_events": 0,
+ "adopted": false,
+ "weights_fixed": {
+  "Paura e stress dei mercati": 22.0,
+  "Credito e liquidità": 18.0,
+  "Tassi e obbligazioni": 8.0,
+  "Valutazioni": 12.0,
+  "Tendenza dei prezzi": 12.0,
+  "Sentimento e ampiezza": 8.0,
+  "Economia reale": 6.0,
+  "Modello statistico Armor": 14.0
+ },
+ "weights_est": {
+  "Paura e stress dei mercati": 11.971607137445295,
+  "Credito e liquidità": 29.584607504577736,
+  "Tassi e obbligazioni": 6.304942232732223,
+  "Valutazioni": 15.173021820068314,
+  "Tendenza dei prezzi": 17.736245085088783,
+  "Sentimento e ampiezza": 2.304294023065099,
+  "Economia reale": 9.15948012392432,
+  "Modello statistico Armor": 7.765802073098219
+ },
+ "rule": "adottati solo se l'AUC dal 2013 migliora di almeno 0,02 su 2 eventi su 3; verifica al massimo una volta l'anno"
+}

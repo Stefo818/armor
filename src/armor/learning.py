@@ -77,6 +77,65 @@ def guard(sp: pd.Series) -> dict:
     return {"degraded": bad, "rows": t.to_dict("records")}
 
 
+MIN_EVENTS_AUC = 40   # esiti con evento necessari per mostrare l'AUC dal vivo dell'Indice
+EV_NAMES = {"dd5_21": "calo ≥5% in 1 mese", "dd10_63": "calo ≥10% in 3 mesi", "vol25_21": "volatilità >25% nel mese dopo"}
+
+
+def index_live_auc(idx: pd.Series, ev: dict) -> dict:
+    """AUC dal vivo dell'Indice Armor (2.4): solo giorni salvati nel registro con esito ormai noto. Mostrata solo con >= 40 esiti con evento."""
+    from .armor_index import BANDS, _auc
+    out = {"events": {}, "bands": [], "n_days": int(len(idx))}
+    for k, y in ev.items():
+        yy = y.reindex(idx.index)
+        m = yy.notna()
+        n, ne = int(m.sum()), int(yy[m].sum()) if m.any() else 0
+        auc = _auc(idx[m], yy[m]) if ne >= MIN_EVENTS_AUC and n - ne >= MIN_EVENTS_AUC else None
+        out["events"][k] = {"n": n, "n_events": ne, "auc": None if auc is None or auc != auc else float(auc)}
+    lo = 0
+    for lim, name, _t in BANDS:
+        x = idx[(idx >= lo) & (idx < lim)]
+        row = {"band": name, "n": int(len(x))}
+        for k, y in ev.items():
+            yy = y.reindex(x.index).dropna()
+            row[k] = float(yy.mean()) if len(yy) else None
+            row[k + "_n"] = int(len(yy))
+        out["bands"].append(row)
+        lo = lim
+    return out
+
+
+def index_live_html(sp: pd.Series) -> str:
+    try:
+        from . import armor_index
+        reg = registry.read()
+        if reg.empty or "armor_index" not in reg:
+            raise ValueError("registro vuoto")
+        r = reg[["date", "armor_index"]].dropna()
+        idx = pd.Series(r["armor_index"].astype(float).values, index=pd.to_datetime(r["date"]))
+        ev, _ = armor_index.events(sp)
+        d = index_live_auc(idx, ev)
+    except Exception:  # noqa: BLE001
+        return "<p class='mu'>Indice Armor dal vivo: in raccolta.</p>"
+    rows = ""
+    for k, v in d["events"].items():
+        a = ("<b>" + f"{v['auc']:.2f}".replace(".", ",") + "</b>") if v["auc"] is not None else f"in raccolta: servono {MIN_EVENTS_AUC} esiti con evento (ora {v['n_events']})"
+        rows += f"<tr><td>{EV_NAMES[k]}</td><td>{v['n']}</td><td>{v['n_events']}</td><td>{a}</td></tr>"
+    bands = "".join(f"<tr><td>{b['band']}</td><td>{b['n']}</td><td>{'n.d.' if b['dd10_63'] is None else str(round(b['dd10_63'] * 100)) + '%'}</td>"
+                    f"<td>{'n.d.' if b['dd5_21'] is None else str(round(b['dd5_21'] * 100)) + '%'}</td></tr>" for b in d["bands"] if b["n"])
+    return ("<h3>Indice Armor: verifica dal vivo</h3><div class='scroll'><table><tr><th>Evento</th><th>Giorni con esito</th><th>Con evento</th><th>AUC dal vivo (0,50 = caso)</th></tr>"
+            + rows + "</table></div>"
+            + (f"<div class='scroll'><table><tr><th>Fascia</th><th>Giorni salvati</th><th>Calo ≥10% a 3 mesi</th><th>Calo ≥5% a 1 mese</th></tr>{bands}</table></div>" if bands else "")
+            + "<p class='mu'>Conta solo da quando Armor salva ogni giorno l'indice. I giorni vicini non sono indipendenti: servono molti mesi per un giudizio solido.</p>")
+
+
+def _shadow(sp: pd.Series) -> str:
+    try:
+        from . import shadow
+        return shadow.html(sp)
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def html(sp: pd.Series) -> str:
     e = _h.escape
     t = live_table(sp)
@@ -99,4 +158,4 @@ def html(sp: pd.Series) -> str:
             "<div class='explain'><p>Ogni giorno Armor: <b>1)</b> salva tutti i dati; <b>2)</b> ricalcola il modello includendo anche i nuovi giorni e gli esiti ormai noti; "
             "<b>3)</b> confronta le previsioni scadute con quello che è successo davvero; <b>4)</b> ogni mese prova nuove variabili e nuovi algoritmi e adotta solo quelli nettamente migliori. "
             "Se il modello in uso, sui dati reali, va nettamente peggio del «normale», il controllo mensile torna al modello di base.</p></div>"
-            + saved + body + "</div>")
+            + saved + body + index_live_html(sp) + _shadow(sp) + "</div>")

@@ -74,6 +74,19 @@ def build(indicators: list, vwce: pd.Series, sp: pd.Series, indicator_series) ->
 
 
 def write(path, data: dict) -> None:
+    """Scrive un file per ogni serie (series/<chiave>.json, caricato solo quando si apre il grafico) e un data.json minuscolo con l'indice.
+    Cosi' la pagina iniziale non scarica piu' 1,4 MB di storici."""
+    import re
     from datetime import datetime, timezone
-    path.write_text(json.dumps({"built": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "series": data},
-                               separators=(",", ":")), encoding="utf-8")
+    d = path.parent / "series"
+    d.mkdir(parents=True, exist_ok=True)
+    keep = set()
+    for k, v in data.items():
+        name = re.sub(r"[^A-Za-z0-9_.-]", "_", k)
+        (d / f"{name}.json").write_text(json.dumps(v, separators=(",", ":")), encoding="utf-8")
+        keep.add(f"{name}.json")
+    for f in d.glob("*.json"):   # serie non piu' prodotte
+        if f.name not in keep:
+            f.unlink()
+    path.write_text(json.dumps({"built": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "series": {k: {"l": v.get("l"), "n": len(v.get("d", []))} for k, v in data.items()}}, separators=(",", ":")), encoding="utf-8")

@@ -464,3 +464,124 @@ def test_intervallo_verificato_dal_vivo(monkeypatch):
     r1, _ = spiega.ret_display("1m", ret)           # gia' a posto: invariato
     assert r1 == ret
     assert spiega.ret_display("6m", ret) == (ret, "")
+
+
+def test_indice_probabilita_isotonica_e_pesi():
+    from armor import armor_index as A
+    rng = np.random.default_rng(0)
+    idx = pd.Series(rng.uniform(1, 100, 3000), index=pd.bdate_range("2000-01-03", periods=3000))
+    y = pd.Series((rng.random(3000) < 0.05 + 0.4 * idx.values / 100).astype(float), index=idx.index)
+    y.iloc[-30:] = np.nan                                  # esiti non ancora noti
+    r = A.iso_probs(idx, {"dd10_63": y}, 80.0)["events"]["dd10_63"]
+    lo = A.iso_probs(idx, {"dd10_63": y}, 10.0)["events"]["dd10_63"]
+    assert r["p"] > lo["p"] + 0.15 and 0 <= lo["p"] <= r["p"] <= 1 and r["n"] == 2970
+    # pesi: coefficienti >= 0, la famiglia informativa pesa di piu'
+    G = rng.random((2000, 3))
+    yy = (rng.random(2000) < 0.1 + 0.6 * G[:, 0]).astype(float)
+    c = A.fit_weights_logit(G, [(np.arange(2000), yy)])
+    assert (c >= 0).all() and c[0] > 3 * max(c[1], c[2])
+
+
+def test_famiglie_senza_sguardo_al_futuro(monkeypatch):
+    from armor import armor_index as A
+    idx = pd.bdate_range("2000-01-03", periods=200)
+    G = pd.DataFrame({g: np.arange(200, dtype=float) for g in A.GROUPS}, index=idx)
+    monkeypatch.setattr(A, "build_scores", lambda sp: (pd.DataFrame(index=idx), {}))
+    monkeypatch.setattr(A, "combine", lambda S: (None, G))
+    f = A.family_features(pd.Series(1.0, index=idx))
+    assert f["fam_valut"].iloc[100] == 70.0 and f["fam_paura"].iloc[100] == 99.0 and f["fam_credito"].iloc[100] == 95.0
+    assert f["fam_paura"].iloc[:1].isna().all() and "fam_sent" not in f
+
+
+def test_auc_indice_dal_vivo_soglia_40_esiti():
+    from armor import learning
+    rng = np.random.default_rng(1)
+    idx = pd.Series(rng.uniform(1, 100, 400), index=pd.bdate_range("2026-01-01", periods=400))
+    ev_pochi = pd.Series((np.arange(400) < 10).astype(float), index=idx.index)
+    ev_molti = pd.Series((rng.random(400) < 0.1 + 0.5 * idx.values / 100).astype(float), index=idx.index)
+    d = learning.index_live_auc(idx, {"a": ev_pochi, "b": ev_molti})
+    assert d["events"]["a"]["auc"] is None and d["events"]["b"]["auc"] > 0.6 and d["events"]["b"]["n_events"] >= 40
+
+
+def test_notifiche_massimo_una_al_giorno_e_solo_cambiamenti():
+    from armor import alerts
+    pred = {"1m": {"level": "Elevato"}, "3m": {"level": "Normale"}}
+    st = {"levels": {"1m": "Normale"}, "aix_band": "moderato", "divergence": False}
+    m, new = alerts.detect(st, pred, "Calma", 18.0, None, None, "2026-11-09", aix_band="elevato", divergence=True)
+    assert len(m) == 3 and {x["title"].split(":")[0] for x in m} >= {"Rischio in aumento a 1 mese", "Indice Armor", "Allarme divergenza attivato"}
+    m2, _ = alerts.detect(new, pred, "Calma", 18.0, None, None, "2026-11-09", aix_band="elevato", divergence=True)
+    assert m2 == []                                                     # nessuna ripetizione
+    out, st2 = alerts.pick_daily(m, [], new, "2026-11-09")
+    assert len(out) == 1 and "Altri cambiamenti" in out[0]["message"] and out[0]["priority"] == 4
+    out2, _ = alerts.pick_daily(m, [], st2, "2026-11-09")
+    assert out2 == []                                                   # gia' partita una notifica oggi
+    pend = [{"title": "Rapporto settimanale pronto", "message": "x", "priority": 2}]
+    assert alerts.pick_daily([], pend, {}, "2026-11-10")[0][0]["title"] == "Rapporto settimanale pronto"
+    # nessun avviso per un livello che cambia in modi non richiesti (es. 3m, o 1m da elevato a normale)
+    assert alerts.detect({"levels": {"1m": "Elevato", "3m": "Basso"}}, {"1m": {"level": "Normale"}, "3m": {"level": "Alto"}}, None, None, None, None, "d")[0] == []
+
+
+def test_ombra_diario_catena_e_punteggi(tmp_path):
+    from armor import journal, shadow
+    pred = {"1m": {"p": {5: 0.3, 10: 0.1}, "base": {5: 0.2, 10: 0.05}, "ratio": 2.0, "level": "Alto"}}   # senza quantili (come i modelli ombra)
+    path = tmp_path / "ombra.csv"
+    assert journal.append("2020-01-02", 100.0, pred, model="FHS", path=path) == 1
+    assert journal.append("2020-01-02", 100.0, pred, model="FHS", path=path) == 0
+    assert journal.append("2020-01-02", 100.0, pred, model="MV-GBM", path=path) == 1
+    assert journal.verify(path)[0]
+    sp = _prezzi_finti(3000)
+    sp.index = pd.bdate_range("2019-06-03", periods=3000)
+    main = pd.DataFrame([{"asof": "2020-01-02", "horizon": "1m", "model": "A1", "p1": 0.25, "base1": 0.2, "thr1": 5}])
+    sc = shadow.scores_from(journal.read(path), main, sp)
+    assert set(sc.model) == {"FHS", "MV-GBM", "A1"} and (sc.n == 1).all()
+
+
+def test_rapporto_mensile_e_notizie_spente():
+    from armor import news_signal, rapporto
+    sp = _prezzi_finti(1500)
+    first = pd.Timestamp(sp.index[600]).replace(day=1)
+    reg = {"champion": "A1", "versions": [], "tentativi": [{"id": "E1", "data": first.strftime("%Y-%m-15"), "adottato": False, "campione": "A1"}]}
+    d = rapporto.build(first, sp, pd.DataFrame(), pd.DataFrame(), reg, pd.DataFrame(), None)
+    assert "mercato" in d and "non adottata" in d["modello"]["cambiamenti"][0]
+    assert "non adottata" in rapporto.html(d) and "Rapporto mensile Armor" in rapporto.message(d)["title"]
+    idx = pd.bdate_range("2024-01-01", periods=900)
+    regd = pd.DataFrame({"date": idx.strftime("%Y-%m-%d"), "news_sent_macro": np.linspace(-1, 1, 900)})
+    assert news_signal.feature(idx, regd) is None                      # spento
+    news_signal.ATTIVO = True
+    try:
+        assert news_signal.feature(idx[:200], regd.iloc[:200]) is None   # storia corta
+        f = news_signal.feature(idx, regd)
+        s = news_signal.storia(regd)
+        assert abs(f["news_tone21"].loc[idx[700]] - s.rolling(21, min_periods=10).mean().loc[idx[699]]) < 1e-9   # spostato di un giorno
+    finally:
+        news_signal.ATTIVO = False
+
+
+def test_pagina_fiducia_e_prossimo_evento():
+    from datetime import date
+    from armor import ui
+    assert ui.verdict(0.05, 0.01, 0.1, -0.03)[0] == "ok" and "peggio" in ui.verdict(0.05, 0.01, 0.1, -0.03)[1]
+    assert ui.verdict(0.03, -0.02, 0.1, 0.0)[0] == "warn" and ui.verdict(-0.01, -0.1, 0.0, None)[0] == "bad"
+    assert "<svg" in ui.calib_svg([(0.05, 0.04), (0.2, 0.25)]) and ui.calib_svg([]) == ""
+    rows, cal = [], []
+    for hz, thr in (("10g", 5), ("1m", 10), ("3m", 10), ("6m", 10)):
+        rows.append({"set": "modelli", "model": "A1", "hz": hz, "thr": thr, "kind": "down", "bss": 0.05, "bss_lo": 0.01, "bss_hi": 0.1, "auc": 0.7,
+                     "bss_2013_26": -0.05, "n": 100, "da": "1995-01-01"})
+        cal.append({"set": "modelli", "model": "A1", "hz": hz, "thr": thr, "kind": "down", "prev": 0.1, "real": 0.12, "n": 10})
+    h = ui.fiducia_html(ev={"metrics": rows, "calibration": cal, "intervalli": {}})
+    assert "batte la media storica" in h and "peggio" in h and h.count("<svg") == 4
+    assert "non è ancora disponibile" in ui.fiducia_html(ev={})
+    assert "Prossimo evento" in ui.next_event_html(date(2026, 11, 7))
+
+
+def test_dati_per_serie_e_js_a_caricamento_tardivo(tmp_path):
+    import json
+    from armor import parts, sitedata
+    data = {"vwce": {"l": "VWCE", "dec": 2, "d": [1, 2], "v": [1.0, 2.0]}, "a/b": {"l": "X", "dec": 0, "d": [1], "v": [3.0]}}
+    (tmp_path / "series").mkdir()
+    (tmp_path / "series" / "vecchia.json").write_text("{}")
+    sitedata.write(tmp_path / "data.json", data)
+    assert json.loads((tmp_path / "series" / "vwce.json").read_text())["v"] == [1.0, 2.0] and (tmp_path / "series" / "a_b.json").exists()
+    assert not (tmp_path / "series" / "vecchia.json").exists() and (tmp_path / "data.json").stat().st_size < 500
+    assert "series/" in parts.JS and "var emb=" not in parts.JS and "var emb=" in parts.LATE_JS["embedchart"] and "var emb=" in parts.JS_FULL
+    assert "armorEnsure(id)" in parts.TABS_JS_LAZY
