@@ -18,7 +18,7 @@ jobs:
           PYTHONPATH: src
         run: |
           python -m armor valida
-          python -m armor sfide
+          python -m armor migliora
       - run: |
           git config user.name "armor-bot"
           git config user.email "armor-bot@users.noreply.github.com"

@@ -108,3 +108,16 @@ def test_extras_pure_functions():
     out = extras.compute_breadth(px)
     assert {"breadth50", "breadth200", "nh_nl"} <= set(out.columns)
     assert out["breadth200"].dropna().between(0, 100).all()
+
+
+def test_live_parse_chart():
+    from armor import live
+    day = 86400
+    base = 1_700_000_000 // day * day
+    ts = [base + 3600, base + 7200, base + day + 3600, base + day + 7200]
+    js = {"chart": {"result": [{"meta": {"gmtoffset": 0, "regularMarketPrice": 103.0, "regularMarketTime": ts[-1],
+                                         "currentTradingPeriod": {"regular": {"start": ts[-1] - 1000, "end": ts[-1] + 1000}}},
+                                "timestamp": ts, "indicators": {"quote": [{"close": [100.0, 101.0, None, 102.0]}]}}]}}
+    q = live.parse_chart(js, now_ts=ts[-1] + 60)
+    assert q["price"] == 103.0 and q["prev"] == 101.0 and q["open"] is True
+    assert abs(q["chg"] - (103 / 101 - 1)) < 1e-9

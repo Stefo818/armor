@@ -19,7 +19,8 @@ def reliability(auc13: float, bss_all: float, auc_all: float) -> str:
 
 def run(start: str = "2000-01-01", step: int = 5, refit_every: int = 63) -> pd.DataFrame:
     p = closed_sp500()
-    eng = {"armor": Engine(p), "semplice": Engine(p, BASELINE_FEATURES)}
+    from .autoimprove import champion_engine
+    eng = {"armor": champion_engine(p)[0], "semplice": Engine(p, BASELINE_FEATURES)}
     idx = p.index
     last_ok = {hz: idx[-1 - n] for hz, n in HORIZONS.items()}
     test = idx[(idx >= start)][::step]

@@ -1,0 +1,23 @@
+{
+  "id": "/armor/",
+  "name": "Armor - rischio cali VWCE",
+  "short_name": "Armor",
+  "description": "Quanto è rischioso il mercato oggi per il tuo VWCE: previsioni, prezzi e storico, sempre aggiornati",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e1a3a",
+  "theme_color": "#0e1a3a",
+  "lang": "it",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Previsioni", "url": "./#previsioni", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]},
+    {"name": "Storico", "url": "./#storico", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]}
+  ]
+}

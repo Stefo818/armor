@@ -4,3 +4,5 @@ __pycache__/
 .pytest_cache/
 Armor_dashboard.html
 *.zip
+
+site/

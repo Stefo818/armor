@@ -1,0 +1,11 @@
+{
+ "champion": "A1",
+ "versions": [
+  {
+   "id": "A1",
+   "extra": [],
+   "date": "2026-11-07",
+   "note": "Versione iniziale: otto variabili sui prezzi dell'S&P 500."
+  }
+ ]
+}

@@ -1,0 +1,2 @@
+month,model,score,score_a1,vs_a1,vs_prev,promoted,tested,per_hz
+2026-11,A1,0.69,0.69,0.0,,,12,"{""10g"": 12.47, ""1m"": 0.95, ""3m"": -3.87, ""6m"": -6.77}"

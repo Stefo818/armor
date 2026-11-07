@@ -5,7 +5,9 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
-from . import journal, store
+import json
+
+from . import journal, live as livemod, store
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_ret, price_features, vwce_series
@@ -241,29 +243,108 @@ def comparison_html(date, sp, p):
     return "".join(out)
 
 
+def one_in(p):
+    return f"circa 1 volta su {max(int(round(1 / p)), 1)}" if p and p > 0 else "quasi mai"
+
+
 def horizon_card(hz, r, spot, rel):
     lev = r["level"]
     prim = PRIMARY[hz]
-    thrs = sorted(r["p"])
-    lines = "".join(
-        f"<div class='prow'><span>Calo di almeno {t}% entro {HZ_LABEL[hz]}</span><b>{pct(r['p'][t])}</b>"
-        f"<span class='muted'>normale: {pct(r['base'][t])}</span></div>" for t in thrs)
+    pp, bb = r["p"][prim], r["base"][prim]
+    words = {"Basso": "più basso del solito", "Normale": "nella norma", "Elevato": "più alto del solito", "Alto": "molto più alto del solito"}[lev]
+    main = (f"<div class='big'>{pct(pp, 0)}</div><div class='bigl'>probabilità di un calo di almeno <b>{prim}%</b> entro {HZ_LABEL[hz]}</div>"
+            f"<div class='plain'>{one_in(pp).capitalize()}. Di solito è {pct(bb, 0)} ({one_in(bb)}): oggi è <b>{words}</b>.</div>")
+    other = "".join(f"<div class='prow'><span>Calo di almeno {t}% entro {HZ_LABEL[hz]}</span><b>{pct(r['p'][t])}</b></div>"
+                    for t in sorted(r["p"]) if t != prim)
     ret = r.get("ret")
     rtxt = ""
     if ret:
-        tgt = f" → circa {it(spot * (1 + ret['q50']), 2)} € (da {it(spot * (1 + ret['q10']), 2)} a {it(spot * (1 + ret['q90']), 2)})" if spot == spot else ""
-        rtxt = (f"<div class='hyp'><span class='lab'>Ipotesi di rendimento (mediana)</span><b>{pct(ret['q50'], 1, True)}</b>"
-                f"<span class='muted'>intervallo 80%: {pct(ret['q10'], 1, True)} … {pct(ret['q90'], 1, True)}{tgt}</span></div>")
+        tgt = f" ≈ {it(spot * (1 + ret['q50']), 2)} €" if spot == spot else ""
+        rtxt = (f"<div class='hyp'><span class='lab'>Se andasse come in passato in situazioni simili</span>"
+                f"<b>{pct(ret['q50'], 1, True)}</b><span class='muted'>rendimento tipico{tgt}. Nell'80% dei casi tra {pct(ret['q10'], 1, True)} e {pct(ret['q90'], 1, True)}. "
+                "È un'indicazione di tendenza, non una promessa.</span></div>")
     drv = ""
     if r.get("drivers"):
         d = r["drivers"][:2]
         drv = "<div class='drv'>Pesa di più: " + "; ".join(
-            f"{FEAT_IT[f]} ({'↑ rischio' if c > 0 else '↓ rischio'})" for f, c in d) + "</div>"
+            f"{FEAT_IT[f]} ({'più rischio' if c > 0 else 'meno rischio'})" for f, c in d) + "</div>"
     relhtml = ""
     if rel:
-        relhtml = f"<span class='badge {REL_CLASS[rel[0]]}' title='{esc(rel[1])}'>{REL_TXT[rel[0]]}</span>"
+        txt = {"Utile": "Nei test passati questa stima ha funzionato.", "Debole": "Nei test passati questa stima ha funzionato poco: usala solo come indizio.",
+               "Non affidabile": "Nei test passati questa stima non ha funzionato: ignorala."}[rel[0]]
+        relhtml = f"<span class='badge {REL_CLASS[rel[0]]}' title='{esc(rel[1])}'>{REL_TXT[rel[0]]}</span><div class='muted'>{txt}</div>"
     return (f"<div class='card hz'><div class='hzh'><h3>{HZ_LABEL[hz]}</h3><span class='badge {LEVEL_CLASS[lev]}'>Rischio {lev.lower()}</span></div>"
-            f"<div class='ratio'>{it(r['ratio'], 1)}× la frequenza storica</div>{lines}{rtxt}{drv}<div class='relrow'>{relhtml}</div></div>")
+            f"{main}{other}{rtxt}{drv}<div class='relrow'>{relhtml}</div></div>")
+
+
+def live_bar(date):
+    lv = livemod.load()
+    q = lv.get("quotes", {})
+    cards = []
+    for key in ("vwce", "sp500", "sp_fut", "vix", "eurusd"):
+        x = q.get(key)
+        if not x:
+            continue
+        dec = 4 if key == "eurusd" else 2
+        cls = "" if x.get("chg") is None else ("up" if x["chg"] >= 0 else "dn")
+        bad_up = key == "vix"
+        if bad_up and cls:
+            cls = "dn" if cls == "up" else "up"
+        chg = "" if x.get("chg") is None else f"{'▲' if x['chg'] >= 0 else '▼'} {abs(x['chg']) * 100:.2f}%".replace(".", ",")
+        big = " big1" if key == "vwce" else ""
+        cards.append(f"<div class='lq{big}' data-k='{key}'><div class='lqn'>{esc(x['name'])}</div>"
+                     f"<div class='lqp'>{it(x['price'], dec)}{(' ' + x['ccy']) if x.get('ccy') else ''}</div>"
+                     f"<div class='lqc {cls}'>{chg} <span class='muted'>{'mercato aperto' if x.get('open') else 'mercato chiuso'}</span></div></div>")
+    if not cards:
+        return ("<div class='livebar'><div class='muted'>Prezzi in tempo reale non ancora scaricati: avvia l'aggiornamento "
+                "(o attendi il prossimo aggiornamento automatico).</div></div>")
+    return (f"<div class='livebar'><div class='lqrow'>{''.join(cards)}</div>"
+            "<div class='muted' id='liveinfo'></div></div>"
+            f"<script>window.LIVE={json.dumps(lv, ensure_ascii=False)};</script>")
+
+
+def improvement_html():
+    imp = read_csv(DATA / "improvement.csv")
+    try:
+        reg = json.loads((DATA / "models.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        reg = {"champion": "A1", "versions": []}
+    out = []
+    if len(imp):
+        r = imp.iloc[-1]
+        vp = r.get("vs_prev")
+        vp_txt = "primo calcolo: il confronto parte dal prossimo mese" if pd.isna(vp) else (
+            f"<b class='{'okc' if vp >= 0 else 'dn'}'>{'+' if vp >= 0 else '−'}{it(abs(vp), 2)}</b> punti rispetto al mese scorso")
+        va = r["vs_a1"]
+        out.append(f"<div class='scorebox'><div><div class='lab'>Indice Armor (mese {esc(str(r['month']))})</div><div class='big'>{it(r['score'], 1)}</div>"
+                   f"<div class='muted'>Modello in uso: <b>{esc(str(r['model']))}</b></div></div>"
+                   f"<div><div class='lab'>Cambiamento</div><div class='plain'>{vp_txt}.<br>Rispetto alla versione iniziale A1: "
+                   f"<b>{'+' if va >= 0 else '−'}{it(abs(va), 2)}</b> punti.</div></div></div>")
+        rows = "".join(f"<tr><td>{esc(str(x['month']))}</td><td>{esc(str(x['model']))}</td><td>{it(x['score'], 2)}</td>"
+                       f"<td>{'—' if pd.isna(x['vs_prev']) else ('+' if x['vs_prev'] >= 0 else '−') + it(abs(x['vs_prev']), 2)}</td>"
+                       f"<td>{esc(str(x['promoted'])) if isinstance(x['promoted'], str) and x['promoted'] else '—'}</td></tr>" for _, x in imp.iloc[::-1].head(12).iterrows())
+        try:
+            ph = json.loads(r["per_hz"])
+            out.append("<p class='muted'>Punteggio per periodo (sopra 0 = il modello batte la frequenza storica): " + "; ".join(
+                f"{HZ_LABEL[h]} {'+' if v >= 0 else '−'}{it(abs(v), 1)}" for h, v in ph.items()) +
+                ". L'indice complessivo è basso perché a 3 e 6 mesi il modello non ha mai funzionato davvero: è il margine su cui l'app proverà a migliorare.</p>")
+        except Exception:  # noqa: BLE001
+            pass
+        out.append("<table><thead><tr><th>Mese</th><th>Modello</th><th>Indice Armor</th><th>Variazione</th><th>Nuovo modello adottato</th></tr></thead><tbody>" + rows + "</tbody></table>")
+    else:
+        out.append("<p class='muted'>Il primo indice mensile verrà calcolato dal controllo automatico di inizio mese.</p>")
+    out.append("<details><summary>Come migliora l'app da sola</summary><div class='expl'>"
+               "<p><b>Ogni giorno</b> il modello si riaddestra con tutti i dati noti fino a ieri: più storia, stime più solide.</p>"
+               "<p><b>Ogni mese</b> Armor prova da sola nuove variabili (valutazioni, credito, paura, geopolitica, ampiezza di mercato...) aggiungendole una alla volta. "
+               "Una variabile entra nel modello solo se migliora le previsioni in modo netto e in entrambi i periodi di prova (2000-2012 e dal 2013), su almeno due orizzonti. "
+               "Altrimenti viene scartata. Dopo un cambio di modello ne passano almeno 90 giorni prima del successivo, per non rincorrere il caso.</p>"
+               "<p><b>L'indice Armor</b> è la media di quanto il modello batte la semplice frequenza storica dei cali, nei test dal 2013 (indice di Brier ×100). "
+               "Più è alto, meglio il modello prevede i cali; zero significa «come dire sempre la frequenza storica». "
+               "La variazione mensile può derivare dai dati nuovi anche senza cambiare modello. È una misura sui test passati, non una garanzia sul futuro.</p></div></details>")
+    if reg.get("versions"):
+        rows = "".join(f"<tr><td>{esc(v['id'])}{' (in uso)' if v['id'] == reg['champion'] else ''}</td><td>{esc(v['date'])}</td><td style='text-align:left'>{esc(v['note'])}</td></tr>" for v in reg["versions"])
+        out.append("<details><summary>Versioni del modello</summary><table><thead><tr><th>Versione</th><th>Data</th><th>Cosa cambia</th></tr></thead><tbody>" + rows + "</tbody></table></details>")
+    return "".join(out)
 
 
 def primary_prob(r):
@@ -397,7 +478,7 @@ def challengers_html():
     return "".join(out)
 
 
-def build(ctx: dict) -> None:
+def build(ctx: dict, out=None) -> None:
     date: pd.Timestamp = ctx["date"]
     pred, spot = ctx["pred"], ctx["spot"]
     p = closed_sp500()
@@ -544,33 +625,70 @@ def build(ctx: dict) -> None:
     hist_html = history_html(date, pred, hist, jr, outc)
     chal_html = challengers_html()
 
+    imp_html = improvement_html()
+    live_html = live_bar(date)
+    lvl_word = {"Basso": "basso", "Normale": "nella norma", "Elevato": "più alto del normale", "Alto": "alto"}[worst]
+    r1 = pred.get("1m", {})
+    simple = []
+    if r3:
+        simple.append(f"Su 100 situazioni simili a quella di oggi, circa <b>{int(round(r3['p'][10] * 100))}</b> sono state seguite da un calo di almeno 10% "
+                      f"entro 3 mesi (normalmente circa {int(round(r3['base'][10] * 100))}).")
+    simple.append("Armor <b>non prevede se il mercato salirà o scenderà</b>: nei test la direzione non è prevedibile. Misura quanto è probabile un calo importante.")
+    simple.append("Per chi investe a lungo con un PAC i cali fanno parte del percorso: questa pagina serve a capire in che clima si investe, non a indovinare il momento giusto.")
+    simple_html = "".join(f"<li>{x}</li>" for x in simple)
+    guide = """<details class='guide' open><summary>Come leggere questa pagina (30 secondi)</summary><div class='expl'>
+<p><b>1. In alto</b> trovi i prezzi di adesso e il giudizio del giorno: <span class='badge ok'>verde</span> = clima tranquillo, <span class='badge warn'>giallo</span> = prudenza, <span class='badge bad'>rosso</span> = rischio alto.</p>
+<p><b>2. Previsioni</b>: per ogni periodo (10 giorni, 1, 3, 6 mesi) vedi la probabilità di un calo importante e se è sopra o sotto il normale.</p>
+<p><b>3. Storico</b>: tutte le previsioni passate, con cosa è successo davvero.</p>
+<p><b>4. Dettagli per esperti</b>: tabelle e test. Puoi ignorarli: sono chiusi di proposito.</p>
+<p>Le stime sono probabilità basate sul passato, non certezze e non consigli di investimento.</p></div></details>"""
+    gloss = """<details><summary>Piccolo dizionario</summary><div class='expl'>
+<p><b>Calo</b>: di quanto il prezzo scende dal massimo raggiunto in un periodo. «Calo di almeno 10%» = a un certo punto il prezzo è 10% sotto il massimo.</p>
+<p><b>Probabilità</b>: 8% vuol dire circa 8 volte su 100, in situazioni simili nel passato.</p>
+<p><b>Orizzonte</b>: per quanto tempo guardiamo avanti (10 giorni, 1 mese, 3 mesi, 6 mesi).</p>
+<p><b>PAC</b>: piano di accumulo, cioè acquisti ripetuti ogni mese.</p>
+<p><b>VIX</b>: l'«indice della paura». Sopra 25-30 il mercato è nervoso.</p>
+<p><b>S&P 500</b>: indice delle 500 maggiori società USA, usato qui perché ha quasi un secolo di storia; VWCE ne segue l'andamento in modo molto simile.</p>
+<p><b>CAPE / prezzo-fatturato</b>: quanto è «caro» il mercato rispetto agli utili o ai ricavi. Caro non significa che scenderà presto.</p>
+<p><b>Walk-forward</b>: test onesto: a ogni data il modello usa solo ciò che si sapeva allora, mai il futuro.</p>
+<p><b>AUC e Brier (BSS)</b>: voti del modello. AUC 0,5 = tirare una moneta, 1 = perfetto. BSS sopra 0 = meglio di dire sempre «la frequenza storica».</p></div></details>"""
+    def det(title, inner, hint=""):
+        return f"<details class='exp'><summary>{title}</summary><div class='card scroll'>{inner}</div></details>"
     body = f"""
-<header><div><h1>Armor</h1><div class='muted'>Rischio di cali su VWCE · aggiornato ai dati del {date.strftime('%d/%m/%Y')} · generato {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div></header>
+<header><div><h1>Armor</h1><div class='muted'>Quanto è rischioso il mercato oggi per il tuo VWCE · dati del {date.strftime('%d/%m/%Y')} · pagina generata {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div></header>
+<nav class='nav'><a href='#oggi'>Oggi</a><a href='#previsioni'>Previsioni</a><a href='#segnali'>Segnali</a><a href='#storico'>Storico</a><a href='#miglioramento'>Come va l'app</a><a href='#dettagli'>Dettagli</a></nav>
+<div id='offline' class='banner' style='display:none'></div>
 {stale_txt}
+<a id='oggi'></a>{live_html}
 <section class='hero {LEVEL_CLASS[worst]}'>
+  <div class='hlk'>Il giudizio di oggi</div>
   <div class='hl1'>{verdict}</div>
-  <div class='hl2'>{esc(why)}</div>
+  <div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div>
+  <ul class='simple'>{simple_html}</ul>
   <div class='hl3'>{esc(note_rel)}</div>
   <div class='hl3 stress'>{esc(stress_note)}</div>
-  <div class='hl4'>VWCE: {it(spot, 2)} € · Armor stima il rischio di cali, non la direzione: nei test la direzione non è prevedibile.</div>
 </section>
-<h2>Previsioni per orizzonte</h2><div class='grid4'>{cards}</div>
-<h2>Storico delle previsioni</h2><div class='card scroll'>{hist_html}</div>
-<div class='grid2'><div class='card'><h3>VWCE ultimi 2 anni</h3>{ch_price}</div><div class='card'><h3>VIX ultimi 2 anni</h3>{ch_vix}</div></div>
-<h2>Segnali di attenzione</h2><div class='card'>{flags_html}</div>
-<h2>Confronto con il passato</h2><div class='card scroll'>{comparison_html(date, sp, p)}<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = cambiamento verso più rischio, verde = verso meno rischio.</p></div>
-<h2>Previsto contro reale</h2><div class='card'>{pv}</div>
-<h2>Affidabilità del modello</h2><div class='card scroll'>{avh}</div>
-<h2>Variabili provate e non adottate</h2><div class='card scroll'>{chal_html}</div>
-<h2>Dati e archivio</h2><div class='card scroll'>{dc}</div>
-<footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza.</footer>
+{guide}
+<h2 id='previsioni'>Previsioni per periodo</h2><div class='grid4'>{cards}</div>
+<h2 id='segnali'>Segnali di attenzione</h2><p class='muted'>Situazioni di stress del mercato che, in passato, hanno preceduto più spesso cali importanti. «ATTIVO» = presente oggi.</p><div class='card'>{flags_html}</div>
+<h2 id='storico'>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero.</p><div class='card scroll'>{hist_html}</div>
+<h2>Previsto contro reale</h2><p class='muted'>Quando una previsione scade, qui vedi quanto si è sbagliata.</p><div class='card'>{pv}</div>
+<h2 id='miglioramento'>Come va l'app: miglioramento automatico</h2><div class='card scroll'>{imp_html}</div>
+<h2 id='dettagli'>Dettagli per esperti</h2><p class='muted'>Tabelle e test dietro le stime. Non servono per leggere il giudizio: aprile solo se vuoi approfondire.</p>
+{det('Confronto degli indicatori con il passato', comparison_html(date, sp, p) + "<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = verso più rischio, verde = verso meno rischio.</p>")}
+{det('Affidabilità del modello (test dal 2000)', avh)}
+{det('Variabili provate e non adottate', chal_html)}
+{det('Dati, fonti e archivio', dc)}
+{gloss}
+<footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>
 """
-    REPORT_HTML.write_text(TEMPLATE.replace("{{BODY}}", body), encoding="utf-8")
-    print("Cruscotto creato:", REPORT_HTML)
+    out = out or REPORT_HTML
+    out.write_text(TEMPLATE.replace("{{BODY}}", body), encoding="utf-8")
+    print("Cruscotto creato:", out)
 
 
 TEMPLATE = """<!doctype html><html lang='it'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Armor - rischio cali VWCE</title><style>
+<title>Armor - rischio cali VWCE</title><meta name='theme-color' content='#0e1a3a'><link rel='manifest' href='manifest.webmanifest'><link rel='icon' href='favicon.png'><link rel='apple-touch-icon' href='apple-touch-icon.png'><meta name='apple-mobile-web-app-capable' content='yes'><meta name='mobile-web-app-capable' content='yes'><style>
 :root{--bg:#f4f6f9;--card:#fff;--tx:#1b2330;--mu:#667085;--bd:#e3e8ef;--ok:#1f8f55;--warn:#c77d0a;--bad:#c0392b;--ac:#2a6fdb;--okbg:#e7f5ee;--warnbg:#fdf3e1;--badbg:#fbe9e7}
 @media(prefers-color-scheme:dark){:root{--bg:#0e131b;--card:#161d28;--tx:#e8edf5;--mu:#93a0b4;--bd:#263040;--ok:#4cc38a;--warn:#f0b54a;--bad:#ff7a6b;--ac:#6ea4ff;--okbg:#12301f;--warnbg:#3a2c10;--badbg:#3d1a16}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif;padding:16px;max-width:1200px;margin:auto}
@@ -591,4 +709,38 @@ tr.grp td{background:var(--bg);font-weight:700;text-align:left;font-size:12px;te
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tab{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:6px 14px;border-radius:99px;font:inherit;cursor:pointer}.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 details{margin-top:10px}summary{cursor:pointer;color:var(--ac)}h3{margin-top:16px}
 @media(max-width:600px){body{padding:10px}.hl1{font-size:28px}}
-</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script></body></html>"""
+
+html{scroll-behavior:smooth;scroll-padding-top:56px}body{font-size:16px;line-height:1.55}
+.nav{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;padding:8px 0;background:var(--bg);margin:0 -2px 8px;-webkit-overflow-scrolling:touch}
+.nav a{white-space:nowrap;padding:8px 14px;border:1px solid var(--bd);border-radius:99px;background:var(--card);color:var(--tx);text-decoration:none;font-size:14px;font-weight:600}
+.livebar{margin-bottom:12px}.lqrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.lq{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.lq.big1{grid-column:span 2;border-color:var(--ac)}
+.lqn{font-size:13px;color:var(--mu);font-weight:600}.lqp{font-size:26px;font-weight:700;letter-spacing:-.3px}.big1 .lqp{font-size:36px}.lqc{font-size:14px;font-weight:600}
+.up,.okc{color:var(--ok)}.dn{color:var(--bad)}#liveinfo{margin-top:6px}
+.hlk{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--mu);font-weight:700}
+ul.simple{margin:12px 0 4px;padding-left:20px}ul.simple li{margin:6px 0}
+.guide,details.exp{margin:12px 0}details>summary{cursor:pointer;font-weight:700;padding:10px 4px}details.exp>summary{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;color:var(--tx)}
+details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}details.exp>.card{border-top-left-radius:0;border-top-right-radius:0;border-top:0}
+.expl{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:6px 16px}.expl p{margin:10px 0}
+.big{font-size:44px;font-weight:800;line-height:1.05}.bigl{font-size:15px;margin-top:2px}.plain{margin:8px 0;font-size:15px}
+.scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+.hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
+@media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
+</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+(function(){
+function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function paint(L){if(!L||!L.quotes)return;var now=Date.now();
+document.querySelectorAll('.lq').forEach(function(el){var q=L.quotes[el.dataset.k];if(!q)return;var d=el.dataset.k==='eurusd'?4:2;
+el.querySelector('.lqp').textContent=fmt(q.price,d)+(q.ccy?' '+q.ccy:'');
+var c=el.querySelector('.lqc');if(q.chg!=null){var bad=el.dataset.k==='vix';var up=q.chg>=0;c.className='lqc '+((up!==bad)?'up':'dn');
+c.innerHTML=(up?'▲ ':'▼ ')+fmt(Math.abs(q.chg)*100,2)+'% <span class="muted">'+(q.open?'mercato aperto':'mercato chiuso')+'</span>'}});
+var u=new Date(L.updated),m=Math.round((now-u)/60000),i=document.getElementById('liveinfo');
+if(i){i.textContent='Prezzi con ritardo di circa 15 minuti · aggiornati '+(m<1?'ora':(m===1?'1 minuto fa':(m<90?m+' minuti fa':Math.round(m/60)+' ore fa')))+' ('+u.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')'}}
+paint(window.LIVE);
+function refresh(){fetch('live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(L){window.LIVE=L;paint(L)}).catch(function(){})}
+if(location.protocol.indexOf('http')===0){refresh();setInterval(refresh,300000);setInterval(function(){paint(window.LIVE)},60000)}
+function off(){var b=document.getElementById('offline');if(!b)return;if(navigator.onLine){b.style.display='none'}else{b.style.display='';b.textContent='Sei offline: mostro gli ultimi dati salvati sul telefono.'}}
+window.addEventListener('online',off);window.addEventListener('offline',off);off();
+if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){navigator.serviceWorker.register('sw.js').catch(function(){})}
+})();
+</script></body></html>"""
