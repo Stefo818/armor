@@ -194,7 +194,9 @@ def update_extras(st: dict, only: list[str] | None = None) -> None:
         if only and not set(ids) & set(only):
             return
         try:
-            res = fn()
+            print(f"[extras] {ids[0]} ...", flush=True)
+            from .guard import with_timeout
+            res = with_timeout(fn, 420 if ids[0] == "breadth50" else 240, ids[0])
             if isinstance(res, dict):
                 for sid, s in res.items():
                     new = store.upsert(sid, s if isinstance(s, pd.Series) else pd.Series({today: float(s)}))
@@ -207,6 +209,7 @@ def update_extras(st: dict, only: list[str] | None = None) -> None:
             else:
                 store.set_status(st, ids[0], True, "", store.upsert(ids[0], pd.Series({today: float(res)})))
         except Exception as e:  # noqa: BLE001
+            print(f"[extras] {ids[0]} ERRORE: {str(e)[:120]}", flush=True)
             for sid in ids:
                 store.set_status(st, sid, False, str(e))
 

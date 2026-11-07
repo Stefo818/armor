@@ -27,12 +27,17 @@ def forecast(write: bool = True) -> dict:
 
 def tutto(skip_download: bool = False) -> None:
     if not skip_download:
-        st = sources.update_all()
+        from .guard import with_timeout
+        try:
+            st = with_timeout(sources.update_all, 900, "download dati")
+        except TimeoutError as ex:
+            print("ATTENZIONE:", ex)
+            st = store.read_status()
         bad = [k for k, v in st.items() if not v["ok"]]
         print(f"Dati aggiornati. Fonti con problemi: {', '.join(bad) if bad else 'nessuna'}")
         try:
             from .archive import archive_spy_options
-            print("Archivio opzioni SPY:", archive_spy_options())
+            print("Archivio opzioni SPY:", with_timeout(archive_spy_options, 240, "opzioni SPY"))
         except Exception as e:  # noqa: BLE001
             print("Archivio opzioni SPY non riuscito:", str(e)[:120])
     try:

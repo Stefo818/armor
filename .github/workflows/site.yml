@@ -17,6 +17,9 @@ concurrency:
 jobs:
   sito:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: '1'
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
