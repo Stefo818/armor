@@ -5,7 +5,7 @@ from datetime import datetime
 import pandas as pd
 
 from . import journal, sources, store
-from .config import MODEL_VERSION
+from .config import DATA, MODEL_VERSION
 from .features import closed_sp500, vwce_series
 from .model import Engine
 
@@ -31,6 +31,13 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
     from .guard import with_timeout
     from .report import INDICATORS
     nws = news.load_latest()
+    if fetch_news and nws.get("model") == "FinBERT":
+        try:  # notizie gia' analizzate con FinBERT da poche ore: non si rifanno (il workflow delle notizie ha il modello, quello giornaliero potrebbe no)
+            age = (datetime.utcnow() - datetime.strptime(nws["fetched"], "%Y-%m-%dT%H:%M:%SZ")).total_seconds() / 3600
+            if age < 6:
+                fetch_news = False
+        except Exception:  # noqa: BLE001
+            pass
     if fetch_news:
         try:
             nws = with_timeout(news.run, 360, "notizie")
@@ -43,10 +50,37 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
     except Exception as e:  # noqa: BLE001
         print("Analisi giornaliera non riuscita:", str(e)[:150])
     try:
+        from . import calendario, holdings
+        holdings.refresh()
+        ev = with_timeout(lambda: calendario.fetch_earnings(dict(news.TOP20)), 120, "trimestrali")
+        import json as _j
+        (DATA / "calendar.json").write_text(_j.dumps(ev, ensure_ascii=False), encoding="utf-8")
+        print("Trimestrali trovate:", len(ev))
+    except Exception as e:  # noqa: BLE001
+        print("Calendario/composizione non aggiornati:", str(e)[:100])
+    try:
+        run_alerts(ctx)
+    except Exception as e:  # noqa: BLE001
+        print("Avvisi non elaborati:", str(e)[:100])
+    try:
         n = registry.append(registry.row_for(ctx["date"], ctx["pred"], INDICATORS, ctx["spot"], news.summary(nws)))
         print("Registro dati:", n, "giorni")
     except Exception as e:  # noqa: BLE001
         print("Registro non aggiornato:", str(e)[:150])
+
+
+def run_alerts(ctx: dict) -> None:
+    from . import alerts, calendario, live, regime
+    r = regime.compute(closed_sp500())
+    vx = store.load("vix")
+    vix = float(vx.iloc[-1]) if len(vx) else None
+    q = live.load().get("quotes", {})
+    lv = q.get("vix") or {}
+    if lv.get("price"):
+        vix = float(lv["price"])
+    move = (q.get("vwce") or {}).get("chg")
+    ev = calendario.next_big(calendario.events(days=7))
+    alerts.run(ctx, r["nome"], vix, ev, move * 100 if move is not None else None)
 
 
 def tutto(skip_download: bool = False) -> None:

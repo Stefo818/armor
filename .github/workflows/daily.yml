@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
 jobs:
   aggiorna:
     runs-on: ubuntu-latest
@@ -20,18 +23,7 @@ jobs:
       - name: Aggiorna dati, previsioni e diario
         env:
           PYTHONPATH: src
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python -m armor tutto
       - name: Salva i dati nel repository
-        run: |
-          git config user.name "armor-bot"
-          git config user.email "armor-bot@users.noreply.github.com"
-          git config merge.ours.driver true
-          git add data
-          git diff --cached --quiet && exit 0
-          git commit -m "Aggiornamento automatico dati"
-          for i in 1 2 3 4; do
-            if git pull --rebase -X theirs && git push; then exit 0; fi
-            git rebase --abort 2>/dev/null || true
-            sleep 8
-          done
-          exit 1
+        run: bash scripts/salva.sh "Aggiornamento automatico dati" data

@@ -18,7 +18,8 @@ CAPE_QUINT = DATA / "cape_quintili.csv"
 class E2(Engine):
     """Motore con variabili extra; common = date in cui tutte le variabili sono disponibili."""
 
-    def __init__(self, close, extra=None, common=None):
+    def __init__(self, close, extra=None, common=None, algo="logit"):
+        self.algo = algo
         self.p = close.dropna()
         self.feats = FEATURES + ([] if extra is None else list(extra.columns))
         F = price_features(self.p)[FEATURES]
@@ -114,10 +115,36 @@ def run() -> pd.DataFrame:
                          "dBSS_2000_12": round(dbe, 4), "dBSS_2013_26": round(dbl, 4),
                          "dAUC_2000_12": round(dae, 3), "dAUC_2013_26": round(dal, 3),
                          "dBSS_tutto": round(ma[1] - ma[0], 4), "test_da": start.strftime("%Y-%m-%d"), "esito": esito})
+    rows += algo_test(p)
     out = pd.DataFrame(rows)
     out.to_csv(CHALLENGERS, index=False)
     cape_test(p)
     return out
+
+
+ALGO_NAME = "Algoritmo: gradient boosting"
+
+
+def algo_test(p: pd.Series, extra=None) -> list[dict]:
+    """Stesse regole delle variabili, ma cambia il tipo di modello (alberi potenziati invece della regressione logistica)."""
+    idx = p.index
+    ok = extra.dropna().index if extra is not None else None
+    A, B = E2(p, extra, ok), E2(p, extra, ok, algo="gbm")
+    start = max(pd.Timestamp("2000-01-01"), idx[0] + pd.DateOffset(years=25))
+    d = _evaluate(A, B, idx, start, step=21, refit=252)
+    rows = []
+    for (hz, thr), g in d.groupby(["hz", "thr"]):
+        me, ml, ma = (_metrics(g[g.t.dt.year < 2013]), _metrics(g[g.t.dt.year >= 2013]), _metrics(g))
+        dbe, dbl = me[1] - me[0], ml[1] - ml[0]
+        dae, dal = me[3] - me[2], ml[3] - ml[2]
+        main = thr == PRIMARY[hz]
+        esito = "periodo di test troppo breve" if np.isnan(dbe) or np.isnan(dbl) else (
+            "CANDIDATA" if (main and dbe > 0.01 and dbl > 0.01 and dae > 0 and dal > 0) else "scartata")
+        rows.append({"variabile": ALGO_NAME, "target": f"{hz}_{thr}", "principale": int(main), "n": len(g),
+                     "dBSS_2000_12": round(dbe, 4), "dBSS_2013_26": round(dbl, 4), "dAUC_2000_12": round(dae, 3),
+                     "dAUC_2013_26": round(dal, 3), "dBSS_tutto": round(ma[1] - ma[0], 4),
+                     "test_da": start.strftime("%Y-%m-%d"), "esito": esito})
+    return rows
 
 
 def cape_test(p: pd.Series) -> None:

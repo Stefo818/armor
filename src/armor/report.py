@@ -707,6 +707,8 @@ def build(ctx: dict, out=None) -> None:
     reg = registry.read()
     if len(reg):
         reg.to_csv(out.parent / "registro.csv", index=False)
+    ctx_html = parts.context_section(p)
+    pf_html = parts.portfolio_section()
     lvl_word = {"Basso": "basso", "Normale": "nella norma", "Elevato": "più alto del normale", "Alto": "alto"}[worst]
     # ---- parte alta: giudizio, rischi, opportunità
     chips = ""
@@ -731,7 +733,17 @@ def build(ctx: dict, out=None) -> None:
     sp_c = next((c for c in vcards if c["key"] == "sp500"), None)
     if sp_c and sp_c.get("pe"):
         val_line = f" Il mercato è {'caro' if (sp_c.get('pe_pct') or 0) >= 80 else ('nella norma' if (sp_c.get('pe_pct') or 50) >= 30 else 'economico')} rispetto alla storia (P/E S&amp;P 500 {it(sp_c['pe'], 1)})."
-    simple = [f"<b>Cosa dice la pagina in breve.</b> {oneline}{val_line}",
+    ctx_line = ""
+    try:
+        from . import calendario as _cal, regime as _reg
+        _r = _reg.compute(p)
+        _e = _cal.next_big(_cal.events(days=30))
+        ctx_line = f" Regime di mercato: <b>{_r['nome'].lower()}</b>."
+        if _e:
+            ctx_line += f" Prossimo evento chiave: {_e['nome']} ({'oggi' if _e['giorni'] == 0 else 'domani' if _e['giorni'] == 1 else 'tra ' + str(_e['giorni']) + ' giorni'})."
+    except Exception:  # noqa: BLE001
+        pass
+    simple = [f"<b>Cosa dice la pagina in breve.</b> {oneline}{val_line}{ctx_line}",
               "Armor <b>non prevede se il mercato salirà o scenderà</b>: stima quanto è probabile un calo (o una risalita) importante, confrontando oggi con tutta la storia.",
               "Per chi investe con un PAC i cali fanno parte del percorso: la pagina serve a capire in che clima si investe, non a indovinare il momento."]
     simple_html = "".join(f"<li>{x}</li>" for x in simple)
@@ -774,7 +786,7 @@ def build(ctx: dict, out=None) -> None:
     chip_opts = [(k, l) for k, l in chip_defs if k in chartdata and (chartdata[k]["d"] or chartdata[k].get("i"))]
     body = f"""
 <header><div><h1>Armor</h1><div class='muted'>Quanto è rischioso il mercato oggi per il tuo VWCE · dati del {date.strftime('%d/%m/%Y')} · pagina generata {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div></header>
-<nav class='nav'><a href='#oggi'>Oggi</a><a href='#valutazioni'>Valutazioni</a><a href='#grafici'>Grafici</a><a href='#previsioni'>Previsioni</a><a href='#analisi'>Analisi</a><a href='#storico'>Storico</a><a href='#registro'>Registro</a><a href='#miglioramento'>Come va l'app</a><a href='#dettagli'>Dettagli</a></nav>
+<nav class='nav'><a href='#oggi'>Oggi</a><a href='#valutazioni'>Valutazioni</a><a href='#grafici'>Grafici</a><a href='#previsioni'>Previsioni</a><a href='#contesto'>Contesto</a><a href='#portafoglio'>Cambio e fondo</a><a href='#analisi'>Analisi</a><a href='#storico'>Storico</a><a href='#registro'>Registro</a><a href='#miglioramento'>Come va l'app</a><a href='#dettagli'>Dettagli</a></nav>
 <div id='offline' class='banner' style='display:none'></div>
 {stale_txt}
 <a id='oggi'></a>{live_html}
@@ -796,9 +808,11 @@ def build(ctx: dict, out=None) -> None:
 <p><b>«Se andasse come in passato»</b> è il rendimento tipico che si è visto dopo giorni simili a quelli di oggi: un ordine di grandezza, non una previsione di prezzo. L'<b>affidabilità</b> dice se, nei test sul passato, quella stima ha funzionato davvero.</p></div>
 <div class='grid4'>{cards}</div>
 <h3 style='margin-top:22px'>Cali e risalite a tutte le soglie (1% … 20%)</h3><div class='card scroll'>{parts.matrix_html(mat, sim)}</div>
+{ctx_html}
 <h2 id='segnali'>Quali indici danno segnali positivi o negativi</h2><div class='card scroll'>{parts.signals_html(sigs)}</div>
 <h3 style='margin-top:22px'>Segnali di stress del mercato</h3>
 <div class='explain'><p><b>Cosa sono.</b> Condizioni di stress (VIX alto, credito che si irrigidisce, curva dei tassi invertita...). Per ognuna trovi se oggi è <b>ATTIVA</b> e, nella storia, quante volte è stata seguita da un calo di almeno 10% entro 3 mesi, confrontato con la frequenza normale. Sono statistiche del passato: indicano un clima, non il momento in cui il mercato scenderà.</p></div><div class='card'>{flags_html}</div>
+{pf_html}
 <h2 id='analisi'>Analisi giornaliera: indici, confronto col passato e notizie</h2>{parts.analysis_section(rep_an, arch_an)}
 <h2 id='storico'>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero. Il grafico mostra come cambia nel tempo la probabilità di un calo (scegli il periodo con i pulsanti); la tabella elenca ogni previsione fatta.</p>
 <div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma, 2× = il doppio del solito. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (e, tra parentesi, l'intervallo in cui cade l'80% dei casi). <i>Variazione</i>: di quanto la probabilità è cambiata rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando la previsione si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>

@@ -174,3 +174,39 @@ def test_news_parse_and_sentiment():
     assert en[1]["label"] == "positivo" and "Intelligenza artificiale e chip" in en[1]["themes"]
     data = news.collect(get=lambda url: xml, now=now)
     assert len(data["items"]) == 2          # i duplicati tra feed diversi vengono eliminati
+
+
+def test_calendario_e_avvisi():
+    from datetime import date
+    from armor import alerts, calendario
+    ev = calendario.events(date(2026, 11, 7), 45)
+    assert any(e["tipo"] == "FOMC" and e["date"] == "2026-12-09" for e in ev)
+    assert calendario.next_big(ev, date(2026, 11, 7))["giorni"] == 3
+    pred = {"1m": {"level": "Elevato"}}
+    m, new = alerts.detect({"levels": {"1m": "Normale"}}, pred, None, 31.0, None, None, "2026-11-09")
+    assert len(m) == 1 and new["levels"]["1m"] == "Elevato"
+    m2, _ = alerts.detect(new, pred, None, 31.0, None, None, "2026-11-09")
+    assert m2 == []   # nessuna ripetizione
+    sent = []
+    class R:  # finto server
+        ok = True
+    assert alerts.send(m, "t", post=lambda *a, **k: sent.append(k["json"]) or R()) == 1 and sent[0]["topic"] == "t"
+
+
+def test_volatilita_regime_fx():
+    import numpy as np, pandas as pd
+    from armor import regime, volatility
+    rng = np.random.default_rng(1)
+    idx = pd.bdate_range("1990-01-01", periods=6000)
+    vol = np.where((np.arange(6000) // 500) % 3 == 2, 0.025, 0.007)
+    p = pd.Series(100 * np.exp(np.cumsum(rng.normal(0.0003, vol))), index=idx)
+    v = volatility.forecast(p, pd.Series(dtype=float))
+    assert v["attesa"] > 0 and v["bassa"] < v["attesa"] < v["alta"]
+    r = regime.compute(p)
+    assert r["nome"] in regime.NAMES and abs(sum(r["prob"]) - 1) < 1e-6
+
+
+def test_news_scorer_iniettato():
+    from armor import news
+    out = news.collect(get=lambda u: "<rss><channel></channel></rss>", scorer=lambda t: [])
+    assert out["model"] == "vocabolario"

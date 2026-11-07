@@ -50,11 +50,12 @@ def _extra_frame(names: list[str], idx) -> pd.DataFrame | None:
 def champion_engine(p: pd.Series):
     """Motore del modello in uso. Se le variabili extra non sono aggiornate, ripiega su A1 (e lo dice)."""
     info = champion_info()
+    algo = info.get("algo", "logit")
     if not info["extra"]:
-        return Engine(p), info["id"]
+        return Engine(p, algo=algo), info["id"]
     try:
         ex = _extra_frame(info["extra"], p.index)
-        eng = challenger.E2(p, ex, ex.dropna().index)
+        eng = challenger.E2(p, ex, ex.dropna().index, algo=algo)
         if eng.F.index[-1] != p.dropna().index[-1] and Engine(p).F.index[-1] == p.dropna().index[-1]:
             raise ValueError("variabili extra non aggiornate")
         return eng, info["id"]
@@ -80,22 +81,39 @@ def consider_promotion(ch: pd.DataFrame, p: pd.Series, reg: dict) -> str | None:
         return None
     c = ch[(ch.get("principale", 0) == 1) & (ch["esito"] == "CANDIDATA")]
     counts = c.groupby("variabile").size()
-    best = [v for v, n in counts.sort_values(ascending=False).items() if n >= MIN_PASSING_TARGETS and v not in cur["extra"]]
+    algo_n = int(counts.get(challenger.ALGO_NAME, 0))
+    best = [v for v, n in counts.sort_values(ascending=False).items()
+            if n >= MIN_PASSING_TARGETS and v not in cur["extra"] and v != challenger.ALGO_NAME]
+    if not best and algo_n >= MIN_PASSING_TARGETS and cur.get("algo", "logit") == "logit":
+        ex = _extra_frame(cur["extra"], p.index)
+        ok_idx = ex.dropna().index if ex is not None else None
+        A, B = challenger.E2(p, ex, ok_idx), challenger.E2(p, ex, ok_idx, algo="gbm")
+        start = max(pd.Timestamp("2000-01-01"), p.index[0] + pd.DateOffset(years=25))
+        d = challenger._evaluate(A, B, p.index, start, step=21, refit=252)
+        passed = [hz for hz in ("10g", "1m", "3m", "6m") if _rule(d, hz)[0]]
+        if len(passed) < MIN_PASSING_TARGETS:
+            return None
+        new_id = f"A{len(reg['versions']) + 1}"
+        reg["versions"].append({"id": new_id, "extra": list(cur["extra"]), "algo": "gbm", "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                                "note": f"Nuovo tipo di modello (gradient boosting): migliora su {', '.join(passed)} sia nel 2000-12 sia dal 2013."})
+        reg["champion"] = new_id
+        save_registry(reg)
+        return new_id
     if not best:
         return None
     name = best[0]
     names = cur["extra"] + [name]
     ex = _extra_frame(names, p.index)
     ok_idx = ex.dropna().index
-    A = challenger.E2(p, _extra_frame(cur["extra"], p.index), ok_idx)
-    B = challenger.E2(p, ex, ok_idx)
+    A = challenger.E2(p, _extra_frame(cur["extra"], p.index), ok_idx, algo=cur.get("algo", "logit"))
+    B = challenger.E2(p, ex, ok_idx, algo=cur.get("algo", "logit"))
     start = max(pd.Timestamp("2000-01-01"), ok_idx[0] + pd.DateOffset(years=12))
     d = challenger._evaluate(A, B, p.index, start)
     passed = [hz for hz in ("10g", "1m", "3m", "6m") if _rule(d, hz)[0]]
     if len(passed) < MIN_PASSING_TARGETS:
         return None
     new_id = f"A{len(reg['versions']) + 1}"
-    reg["versions"].append({"id": new_id, "extra": names, "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+    reg["versions"].append({"id": new_id, "extra": names, "algo": cur.get("algo", "logit"), "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
                             "note": f"Aggiunta la variabile «{name}»: migliora il modello su {', '.join(passed)} sia nel 2000-12 sia dal 2013."})
     reg["champion"] = new_id
     save_registry(reg)
@@ -108,7 +126,8 @@ def score(p: pd.Series) -> dict:
     ex = _extra_frame(info["extra"], p.index)
     ok_idx = ex.dropna().index if ex is not None else None
     A = challenger.E2(p, None, ok_idx)
-    B = challenger.E2(p, ex, ok_idx) if ex is not None else A
+    algo = info.get("algo", "logit")
+    B = challenger.E2(p, ex, ok_idx, algo=algo) if (ex is not None or algo != "logit") else A
     d = challenger._evaluate(A, B, p.index, SCORE_FROM, step=10)
     a, b, per = [], [], {}
     for hz in ("10g", "1m", "3m", "6m"):

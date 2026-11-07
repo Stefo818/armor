@@ -105,7 +105,7 @@ def fetch_yf(sid: str, start: str | None) -> pd.Series:
 
 
 def fetch_fred(code: str) -> pd.Series:
-    r = _get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}")
+    r = _get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}", tries=2, timeout=25)
     df = pd.read_csv(io.StringIO(r.text))
     df.columns = ["date", "value"]
     df["date"] = pd.to_datetime(df["date"])
@@ -183,12 +183,18 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
             store.set_status(st, sid, True, "", n)
         except Exception as e:  # noqa: BLE001
             store.set_status(st, sid, False, str(e))
+    fred_fails = 0
     for sid, code in FRED.items():
         if only and sid not in only:
             continue
+        if fred_fails >= 2:  # FRED non risponde: si salta il resto invece di aspettare per ogni serie
+            store.set_status(st, sid, False, "FRED non raggiungibile: saltata (si aggiorna dal PC)")
+            continue
         try:
             store.set_status(st, sid, True, "", store.upsert(sid, fetch_fred(code)))
+            fred_fails = 0
         except Exception as e:  # noqa: BLE001
+            fred_fails += 1
             store.set_status(st, sid, False, str(e))
     for sid, url in CBOE.items():
         if only and sid not in only:

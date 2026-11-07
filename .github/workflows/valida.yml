@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
 jobs:
   valida:
     runs-on: ubuntu-latest
@@ -22,15 +25,5 @@ jobs:
         run: |
           python -m armor valida
           python -m armor migliora
-      - run: |
-          git config user.name "armor-bot"
-          git config user.email "armor-bot@users.noreply.github.com"
-          git add data
-          git diff --cached --quiet && exit 0
-          git commit -m "Convalida mensile"
-          for i in 1 2 3 4; do
-            if git pull --rebase -X theirs && git push; then exit 0; fi
-            git rebase --abort 2>/dev/null || true
-            sleep 8
-          done
-          exit 1
+      - name: Salva i dati nel repository
+        run: bash scripts/salva.sh "Convalida mensile" data

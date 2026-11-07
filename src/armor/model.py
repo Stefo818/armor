@@ -3,6 +3,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -23,7 +24,16 @@ def level_of(ratio: float) -> str:
 class Engine:
     """Tiene prezzi, variabili ed esiti futuri. fit(cut) usa SOLO esiti gia' noti alla data cut."""
 
-    def __init__(self, close: pd.Series, feats: list[str] | None = None):
+    algo = "logit"
+
+    def _new_model(self):
+        if self.algo == "gbm":   # alberi potenziati: molto prudenti (poche foglie, apprendimento lento) per non adattarsi al rumore
+            return HistGradientBoostingClassifier(max_depth=3, learning_rate=0.04, max_iter=120, min_samples_leaf=250,
+                                                  l2_regularization=5.0, random_state=0)
+        return make_pipeline(StandardScaler(), LogisticRegression(C=LOGIT_C, max_iter=1000))
+
+    def __init__(self, close: pd.Series, feats: list[str] | None = None, algo: str = "logit"):
+        self.algo = algo
         self.p = close.dropna().astype(float)
         self.feats = feats or FEATURES
         self.F = price_features(self.p)[self.feats].dropna()
@@ -48,7 +58,7 @@ class Engine:
                 if y.sum() < MIN_EVENTS or y.nunique() < 2:
                     info["models"][thr] = None
                     continue
-                m = make_pipeline(StandardScaler(), LogisticRegression(C=LOGIT_C, max_iter=1000))
+                m = self._new_model()
                 m.fit(X.values, y.values)
                 info["models"][thr] = m
             pm = info["models"].get(PRIMARY[hz])
@@ -81,8 +91,9 @@ class Engine:
                 w = tr[lo:hi]
                 res["ret"] = {"q10": float(np.quantile(w, .10)), "q50": float(np.quantile(w, .50)),
                               "q90": float(np.quantile(w, .90)), "mean": float(w.mean()), "n": int(len(w))}
-                sc, lg = pm.named_steps["standardscaler"], pm.named_steps["logisticregression"]
-                contrib = lg.coef_[0] * sc.transform(x)[0]
-                res["drivers"] = sorted(zip(self.feats, contrib), key=lambda t: -abs(t[1]))
+                if hasattr(pm, "named_steps"):
+                    sc, lg = pm.named_steps["standardscaler"], pm.named_steps["logisticregression"]
+                    contrib = lg.coef_[0] * sc.transform(x)[0]
+                    res["drivers"] = sorted(zip(self.feats, contrib), key=lambda t: -abs(t[1]))
             out[hz] = res
         return out

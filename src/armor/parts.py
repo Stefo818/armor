@@ -134,7 +134,7 @@ def analysis_section(rep: dict, archive: list[dict]) -> str:
     return (f"<div class='muted'>Analisi dei dati al {e(rep['date'])} · generata {e(gen)} UTC · si aggiorna ogni notte e più volte al giorno per le notizie</div>"
             f"<div class='analysis'>{rep['html']}</div>{arch}"
             "<div class='explain'><p><b>Come è fatta.</b> Ogni frase nasce da un numero: valori attuali, confronto con il passato (percentile, cosa è successo dopo le volte in cui l'indicatore era a questo livello) e lettura in parole semplici. "
-            "Le notizie sono titoli e descrizioni da fonti pubbliche, ordinati per rilevanza, con un giudizio automatico positivo/negativo basato su un vocabolario finanziario: non è la lettura di un analista né di un'intelligenza artificiale, e può sbagliare il tono. Non è consulenza finanziaria.</p></div>")
+            "Le notizie sono titoli e descrizioni da fonti pubbliche, ordinati per rilevanza, con un giudizio automatico positivo/negativo (modello gratuito FinBERT, addestrato su testi finanziari, quando disponibile; altrimenti un vocabolario di parole finanziarie). Si analizzano titolo e breve descrizione, non l'articolo intero: non è la lettura di un analista e può sbagliare il tono. Non è consulenza finanziaria.</p></div>")
 
 
 CSS = """
@@ -234,3 +234,44 @@ rs.onchange=render;document.getElementById('regq').oninput=render}
 """
 
 MODAL = ("<div id='cm' class='cmodal'><div class='cbox'><button class='cx' aria-label='Chiudi'>×</button><div class='cbody'></div></div></div>")
+
+
+def _safe(fn, label):
+    try:
+        return fn()
+    except Exception as e:  # noqa: BLE001
+        return f"<p class='mu'>{label} non disponibile oggi ({type(e).__name__}).</p>"
+
+
+def context_section(p) -> str:
+    """Regime di mercato, volatilità attesa e calendario eventi."""
+    import json
+    from datetime import date
+    from . import calendario, regime, volatility
+    from .config import DATA
+
+    def cal():
+        try:
+            earn = json.loads((DATA / "calendar.json").read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            earn = []
+        return calendario.html(calendario.events(date.today(), 45, earn))
+    return ("<h2 id='contesto'>Contesto: regime, volatilità attesa e calendario</h2>"
+            "<h3>Regime di mercato</h3><div class='card'>" + _safe(lambda: regime.html(regime.compute(p)), "Regime") + "</div>"
+            "<h3 style='margin-top:18px'>Volatilità attesa nel prossimo mese</h3><div class='card'>" + _safe(lambda: volatility.html(volatility.forecast(p)), "Previsione della volatilità") + "</div>"
+            "<h3 style='margin-top:18px'>Prossimi eventi che muovono i mercati</h3><div class='card scroll'>" + _safe(cal, "Calendario") + "</div>")
+
+
+def portfolio_section() -> str:
+    from . import fx, holdings
+    return ("<h2 id='portafoglio'>Il tuo VWCE: rischio di cambio e cosa contiene</h2>"
+            "<h3>Cambio EUR/USD</h3><div class='card'>" + _safe(lambda: fx.html(fx.compute()), "Cambio") + "</div>"
+            "<h3 style='margin-top:18px'>Composizione del fondo e concentrazione</h3><div class='card'>" + _safe(lambda: holdings.html(holdings.load()), "Composizione") + "</div>")
+
+
+CSS += """
+.kc{background:var(--bg);border-radius:12px;padding:12px}.kc .k{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.03em}.kc .v{font-size:30px;font-weight:800;line-height:1.15}.kc .s{font-size:13px;color:var(--mu)}
+.kc.ok .v{color:var(--ok)}.kc.wa .v{color:var(--warn)}.kc.ba .v{color:var(--bad)}
+.bar{height:8px;background:var(--bd);border-radius:4px;min-width:60px}.bar i{display:block;height:100%;background:var(--ac);border-radius:4px}
+table.cal tr.hi td{background:var(--warnbg)}
+"""

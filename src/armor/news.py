@@ -10,6 +10,7 @@ from urllib.parse import quote
 
 import requests
 
+from . import finbert
 from .config import DATA
 
 NEWS_DIR = DATA / "news"
@@ -126,7 +127,7 @@ def enrich(items: list[dict], now: datetime, kind: str, group: str) -> list[dict
     return out
 
 
-def collect(get=None, now: datetime | None = None) -> dict:
+def collect(get=None, now: datetime | None = None, scorer=None) -> dict:
     now = now or datetime.now(timezone.utc)
     get = get or _get_text
     items, errors, seen = [], [], set()
@@ -149,8 +150,20 @@ def collect(get=None, now: datetime | None = None) -> dict:
             seen.add(k)
             fresh.append(it)
         items += enrich(fresh[:25], now, kind, group)
+    model = "vocabolario"
+    try:
+        sc = (scorer or finbert.score)([i["title"] for i in items])
+        if sc and len(sc) == len(items):
+            for it, v in zip(items, sc):
+                it["sent_lex"] = it["sent"]
+                it["sent"] = round(0.75 * v + 0.25 * it["sent"], 2)
+                it["label"] = label_of(it["sent"])
+                it["score"] = importance(it, now)
+            model = "FinBERT"
+    except Exception as e:  # noqa: BLE001
+        errors.append(f"finbert: {str(e)[:60]}")
     items.sort(key=lambda x: -x["score"])
-    return {"fetched": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "items": items, "errors": errors}
+    return {"fetched": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "items": items, "errors": errors, "model": model}
 
 
 def summary(news: dict) -> dict:
@@ -173,7 +186,7 @@ def run() -> dict:
     files = sorted(p for p in NEWS_DIR.glob("20*.json"))
     for p in files[:-45]:
         p.unlink()
-    print(f"Notizie: {len(news['items'])} titoli, {len(news['errors'])} fonti con errore")
+    print(f"Notizie: {len(news['items'])} titoli, {len(news['errors'])} fonti con errore, analisi: {news.get('model')}")
     for e in news["errors"][:5]:
         print("ERR", e)
     return news
