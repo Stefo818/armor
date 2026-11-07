@@ -216,3 +216,76 @@ CSS = """
 .vtrack b{position:absolute;top:-6px;width:4px;height:22px;background:var(--tx);border-radius:2px}.vtrack b em{position:absolute;bottom:26px;left:-40px;width:84px;text-align:center;font-style:normal;font-size:11px;font-weight:600;color:var(--mu)}
 .vtrack b.c2{opacity:.55;top:-2px;height:14px}.vtrack b.c2 em{bottom:auto;top:18px}.vtrack b.c3{background:var(--ac)}
 """
+
+
+# ---------------------------------------------------------------- riquadro principale: calo o rialzo?
+HZ_WORD = {"10g": "nei prossimi 10 giorni", "1m": "nel prossimo mese", "3m": "nei prossimi 3 mesi", "6m": "nei prossimi 6 mesi"}
+
+
+def _rel(p, b):
+    if not b:
+        return "nella norma"
+    r = p / b
+    return "più alta del normale" if r > 1.25 else ("più bassa del normale" if r < 0.8 else "nella norma")
+
+
+def balance_html(pred, mat, feat_it, n_neg=0, n_tot=0):
+    from .config import HORIZONS
+    rows, votes = "", {"calo": 0, "rialzo": 0, "pari": 0}
+    for hz in HORIZONS:
+        if hz not in pred or hz not in mat:
+            continue
+        thr = PRIMARY[hz]
+        try:
+            pdn, bdn = pred[hz]["p"][thr], pred[hz]["base"][thr]
+            up = mat[hz]["up"][thr]
+        except Exception:  # noqa: BLE001
+            continue
+        pup, bup = up["p"], up["base"]
+        cls, words = verdict_words(pdn, pup)
+        tot = max(pdn + pup, 1e-9)
+        wd = max(pdn / tot * 100, 12)
+        wu = max(pup / tot * 100, 12)
+        k = "calo" if pdn > pup * 1.25 else ("rialzo" if pup > pdn * 1.25 else "pari")
+        if hz in ("1m", "3m", "6m"):
+            votes[k] += 1
+        chip = {"calo": ("bad", "più probabile il calo"), "rialzo": ("ok", "più probabile il rialzo"), "pari": ("warn", "equilibrio")}[k]
+        if max(pdn, pup) < 0.12:
+            chip = ("ok", "tutto tranquillo")
+        rows += (f"<div class='bal'><div class='balh'><b>{HZ_LABEL[hz]}</b><span class='badge {chip[0]}'>{chip[1]}</span></div>"
+                 f"<div class='tugn'><span class='dn'>Calo ≥{thr}%: <b>{P(pdn)}</b></span><span class='up'>Rialzo ≥{thr}%: <b>{P(pup)}</b></span></div>"
+                 f"<div class='tug'><div class='td' style='width:{wd:.0f}%'></div><div class='tu' style='width:{wu:.0f}%'></div></div>"
+                 f"<div class='mu'>Rispetto al normale: probabilità di calo {_rel(pdn, bdn)} (normale {P(bdn)}), di rialzo {_rel(pup, bup)} (normale {P(bup)}).</div></div>")
+    if not rows:
+        return ""
+    if votes["rialzo"] > votes["calo"]:
+        head, hc = "Oggi è più probabile un <b>rialzo</b> che un calo.", "ok"
+    elif votes["calo"] > votes["rialzo"]:
+        head, hc = "Oggi è più probabile un <b>calo</b> che un rialzo.", "bad"
+    else:
+        head, hc = "Calo e rialzo oggi sono <b>in equilibrio</b>.", "warn"
+    why = []
+    try:
+        m3 = mat["3m"]
+        why.append(f"Nei {m3['n_analog']} giorni passati più simili a oggi (per volatilità, distanza dai massimi e andamento recente), a 3 mesi l'S&amp;P 500 è salito nel "
+                   f"<b>{P(m3['ret_analog']['pos'])}</b> dei casi (su tutti i giorni: {P(m3['ret_base']['pos'])}).")
+    except Exception:  # noqa: BLE001
+        pass
+    for hz in ("1m", "3m"):
+        d = (pred.get(hz) or {}).get("drivers") or []
+        if d:
+            txt = "; ".join(f"{e(feat_it.get(f, f))} ({'spinge verso più rischio' if c > 0 else 'spinge verso meno rischio'})" for f, c in d[:2])
+            why.append(f"Per {HZ_LABEL[hz]} pesa soprattutto: {txt}.")
+    if n_tot:
+        why.append(f"{n_neg} indicatori su {n_tot} sono in zona di prudenza (vedi sotto i rischi e gli elementi favorevoli).")
+    why.append("I mercati salgono più spesso di quanto scendano: per questo conta il confronto con il «normale», non solo il numero.")
+    return (f"<div class='balbox'><div class='vd {hc} big'>{head}</div>{rows}"
+            "<details open><summary><b>Perché?</b></summary><ul class='simple'>" + "".join(f"<li>{w}</li>" for w in why) + "</ul></details></div>")
+
+
+CSS += """
+.balbox{margin:12px 0}.vd.big{font-size:20px;font-weight:700;padding:12px 14px}.bal{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin:8px 0}
+.balh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:15px}
+.tugn{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}.tugn b{font-size:18px}.tug{display:flex;height:12px;border-radius:9px;overflow:hidden;font-size:13px;color:#fff}.tug div{display:flex;align-items:center;padding:0 10px;white-space:nowrap;overflow:hidden}
+.tug .td{background:var(--bad)}.tug .tu{background:var(--ok);justify-content:flex-end}.tug b{margin-left:4px;font-size:16px}
+"""

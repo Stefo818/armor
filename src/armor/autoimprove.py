@@ -142,7 +142,19 @@ def run() -> pd.DataFrame:
     p = closed_sp500()
     ch = challenger.run()
     reg = registry()
-    promoted = consider_promotion(ch, p, reg)
+    rolled = ""
+    try:   # controllo sui dati reali: se il modello in uso va nettamente peggio del normale, si torna al modello di base
+        from . import learning
+        g = learning.guard(p)
+        if g["degraded"] and reg["champion"] != MODEL_VERSION:
+            reg["versions"].append({"id": MODEL_VERSION + "r", "extra": [], "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                                    "note": "Ritorno al modello di base: nei dati reali il modello in uso andava nettamente peggio del normale."})
+            reg["champion"] = MODEL_VERSION + "r"
+            rolled = "ritorno al modello di base"
+            print("ATTENZIONE: modello in uso peggiore del normale sui dati reali, torno al modello di base")
+    except Exception as e:  # noqa: BLE001
+        print("Controllo sui dati reali non eseguito:", str(e)[:100])
+    promoted = consider_promotion(ch, p, reg) if not rolled else rolled
     save_registry(reg)
     s = score(p)
     old = pd.read_csv(IMPROVEMENT) if IMPROVEMENT.exists() else pd.DataFrame(columns=["month", "model", "score", "score_a1", "vs_a1", "vs_prev", "promoted", "tested", "per_hz"])

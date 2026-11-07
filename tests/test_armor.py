@@ -276,3 +276,19 @@ def test_chiaro_e_extra13():
     c = extra13.calendar_html(sp.index[-1].date(), sp, vix)
     assert "Calendario degli eventi" in c and "Previsti" not in c
     assert "Oggi cosa faccio" in extra13.oggi_html(None, None, [], 0)
+
+
+def test_rapporti_capovolti_e_apprendimento(tmp_path, monkeypatch):
+    import pandas as pd
+    from armor import store, valuations, learning
+    monkeypatch.setattr(store, "SERIES", tmp_path)
+    monkeypatch.setattr("armor.config.SERIES", tmp_path)
+    assert abs(valuations.norm(0.04) - 25) < 1e-9 and valuations.norm(24.5) == 24.5
+    df = pd.DataFrame({"Price/Earnings": [0.0397], "Price/Sales": [0.29]}, index=["x"]).T
+    out = valuations.parse_equity_holdings(df.rename(columns={"x": 0}))
+    assert 24 < out["pe"] < 26 and 3 < out["ps"] < 4
+    store.upsert("val_pe_sp500", pd.Series({pd.Timestamp("2026-11-01"): 0.04, pd.Timestamp("2026-11-02"): 25.0}))
+    valuations.repair()
+    assert (store.load("val_pe_sp500") > 1).all()
+    t = learning.live_table(pd.Series(dtype=float))
+    assert t.empty or "bss" in t

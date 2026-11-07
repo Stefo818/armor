@@ -19,7 +19,7 @@ def keys(indicators: list) -> list[str]:
     return ks + [k for k in EXTRA_KEYS if k not in ks]
 
 
-def row_for(date: pd.Timestamp, pred: dict, indicators: list, spot: float, news_summary: dict | None = None) -> dict:
+def row_for(date: pd.Timestamp, pred: dict, indicators: list, spot: float, news_summary: dict | None = None, extra: dict | None = None) -> dict:
     row = {"date": date.strftime("%Y-%m-%d")}
     for k in keys(indicators):
         s = store.load(k)
@@ -37,6 +37,8 @@ def row_for(date: pd.Timestamp, pred: dict, indicators: list, spot: float, news_
     if news_summary:
         for k, v in news_summary.items():
             row[k] = v
+    for k, v in (extra or {}).items():
+        row[k] = v
     return row
 
 

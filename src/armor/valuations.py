@@ -16,6 +16,22 @@ FUNDS = {
 }
 
 
+def norm(v: float) -> float:
+    """Yahoo (Morningstar) a volte dà il rapporto capovolto (0,04 invece di 25 per il P/E): si rimette per il verso giusto."""
+    return 1.0 / v if 0 < v < 1 else v
+
+
+def repair() -> None:
+    """Corregge le serie val_* già salvate al contrario."""
+    for sid in [f"val_{m}_{k}" for k in FUNDS for m in ("pe", "ps")]:
+        s = store.load(sid)
+        if len(s) and (s < 1).any():
+            fixed = s.where(~((s > 0) & (s < 1)), 1.0 / s)
+            out = fixed.rename("value").rename_axis("date").reset_index()
+            out["date"] = out["date"].dt.strftime("%Y-%m-%d")
+            out.to_csv(store.path(sid), index=False, float_format="%.6g")
+
+
 def parse_equity_holdings(df: pd.DataFrame) -> dict[str, float]:
     """Estrae P/E e P/S dalla tabella dei fondi di Yahoo (righe 'Price/Earnings', 'Price/Sales')."""
     out = {}
@@ -26,9 +42,9 @@ def parse_equity_holdings(df: pd.DataFrame) -> dict[str, float]:
             continue
         v = float(row.iloc[0])
         if "price/earnings" in low and v > 0:
-            out["pe"] = v
+            out["pe"] = norm(v)
         elif "price/sales" in low and v > 0:
-            out["ps"] = v
+            out["ps"] = norm(v)
     return out
 
 
@@ -89,6 +105,7 @@ def from_constituents(t, n: int = 25) -> dict[str, float]:
 
 def snapshot() -> dict[str, float]:
     """Salva i rapporti di oggi: serie val_pe_<chiave> e val_ps_<chiave>."""
+    repair()
     today = pd.Timestamp(datetime.now(timezone.utc).date())
     res, errs = {}, []
     for key, (sym, *_rest) in FUNDS.items():
@@ -106,12 +123,15 @@ def snapshot() -> dict[str, float]:
 
 def _price_at(series_key: str, d: pd.Timestamp):
     s = store.load(series_key)
+    if s.empty:
+        return None
     s = s[s.index <= d]
     return float(s.iloc[-1]) if len(s) else None
 
 
 def current() -> list[dict]:
     """Rapporti attuali per le tre schede: valore ricalcolato col prezzo di adesso + contesto storico."""
+    repair()
     q = livemod.load().get("quotes", {})
     cards = []
     for key, (sym, name, pkey, lkey) in FUNDS.items():
@@ -125,6 +145,7 @@ def current() -> list[dict]:
                 p1 = live_p if live_p else _price_at(pkey, pd.Timestamp.now().normalize())
                 scale = (p1 / p0) if (p0 and p1) else 1.0
                 card[m] = v0 * scale
+                card["p1"], card["lkey"], card["asof"] = p1, lkey, d.strftime("%d/%m/%Y")
                 card["src"] = f"Rapporti dei fondi del {d.strftime('%d/%m/%Y')}, aggiornati con il prezzo di adesso"
                 if len(s) >= 30:
                     card[m + "_pct"] = float((s < card[m]).mean() * 100)
@@ -143,6 +164,9 @@ def current() -> list[dict]:
                     card[m + "_pct"] = float((s < card[m]).mean() * 100)
                     card[m + "_avg"] = float(s.mean())
                     card[m + "_since"] = s.index[0].year
+        for m, lo, hi in (("pe", 5, 150), ("ps", 0.3, 40)):
+            if card[m] is not None and not (lo <= card[m] <= hi):
+                card[m] = None
         if card["pe"] is None and card["ps"] is None:
             card["note"] = "Dato non ancora disponibile: compare dopo il primo aggiornamento che riesce a leggerlo."
         cards.append(card)

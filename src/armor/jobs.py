@@ -4,6 +4,8 @@ from datetime import datetime
 
 import pandas as pd
 
+from .config import PRIMARY
+
 from . import journal, sources, store
 from .config import DATA, MODEL_VERSION
 from .features import closed_sp500, vwce_series
@@ -67,7 +69,25 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
     except Exception as e:  # noqa: BLE001
         print("Avvisi non elaborati:", str(e)[:100])
     try:
-        n = registry.append(registry.row_for(ctx["date"], ctx["pred"], INDICATORS, ctx["spot"], news.summary(nws)))
+        extra = {}
+        try:
+            from . import armor_index, outlook
+            sp_ = closed_sp500()
+            mat = outlook.probability_matrix(sp_)
+            for hz in mat:
+                u = mat[hz]["up"][PRIMARY[hz]]
+                extra[f"pup_{hz}"] = round(u["p"], 5)
+                extra[f"bup_{hz}"] = round(u["base"], 5)
+            aix = armor_index.compute(sp_)
+            if aix:
+                armor_index.save_history(aix)
+                extra["armor_index"] = round(aix["value"], 2)
+                for g in aix["groups"]:
+                    if g["score"] is not None:
+                        extra["aix_" + g["name"].split()[0].lower()] = round(g["score"], 4)
+        except Exception as e:  # noqa: BLE001
+            print("Probabilità di rialzo / Indice Armor non salvati:", str(e)[:100])
+        n = registry.append(registry.row_for(ctx["date"], ctx["pred"], INDICATORS, ctx["spot"], news.summary(nws), extra))
         print("Registro dati:", n, "giorni")
     except Exception as e:  # noqa: BLE001
         print("Registro non aggiornato:", str(e)[:150])
@@ -143,6 +163,12 @@ def tutto(skip_download: bool = False) -> None:
     daily_extras(ctx)
     n = journal.update_outcomes(vwce_series(), closed_sp500())
     print(f"Esiti verificati a scadenza: {n}")
+    try:
+        from . import learning
+        t = learning.update(closed_sp500())
+        print(f"[apprendimento] confronti con la realtà aggiornati: {len(t)} righe")
+    except Exception as e:  # noqa: BLE001
+        print("[apprendimento] non aggiornato:", str(e)[:100])
     ok, msg = journal.verify()
     print("Integrita' diario:", msg if ok else "ERRORE - " + msg)
     from .report import build

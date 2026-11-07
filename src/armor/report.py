@@ -387,7 +387,7 @@ def improvement_html():
         vp_txt = "primo calcolo: il confronto parte dal prossimo mese" if pd.isna(vp) else (
             f"<b class='{'okc' if vp >= 0 else 'dn'}'>{'+' if vp >= 0 else '−'}{it(abs(vp), 2)}</b> punti rispetto al mese scorso")
         va = r["vs_a1"]
-        out.append(f"<div class='scorebox'><div><div class='lab'>Indice Armor (mese {esc(str(r['month']))})</div><div class='big'>{it(r['score'], 1)}</div>"
+        out.append(f"<div class='scorebox'><div><div class='lab'>Punteggio del modello (mese {esc(str(r['month']))})</div><div class='big'>{it(r['score'], 1)}</div>"
                    f"<div class='muted'>Modello in uso: <b>{esc(str(r['model']))}</b></div></div>"
                    f"<div><div class='lab'>Cambiamento</div><div class='plain'>{vp_txt}.<br>Rispetto alla versione iniziale A1: "
                    f"<b>{'+' if va >= 0 else '−'}{it(abs(va), 2)}</b> punti.</div></div></div>")
@@ -401,7 +401,7 @@ def improvement_html():
                 ". L'indice complessivo è basso perché a 3 e 6 mesi il modello non ha mai funzionato davvero: è il margine su cui l'app proverà a migliorare.</p>")
         except Exception:  # noqa: BLE001
             pass
-        out.append("<table><thead><tr><th>Mese</th><th>Modello</th><th>Indice Armor</th><th>Variazione</th><th>Nuovo modello adottato</th></tr></thead><tbody>" + rows + "</tbody></table>")
+        out.append("<table><thead><tr><th>Mese</th><th>Modello</th><th>Punteggio</th><th>Variazione</th><th>Nuovo modello adottato</th></tr></thead><tbody>" + rows + "</tbody></table>")
     else:
         out.append("<p class='muted'>Il primo indice mensile verrà calcolato dal controllo automatico di inizio mese.</p>")
     out.append("<details><summary>Come migliora l'app da sola</summary><div class='expl'>"
@@ -409,7 +409,7 @@ def improvement_html():
                "<p><b>Ogni mese</b> Armor prova da sola nuove variabili (valutazioni, credito, paura, geopolitica, ampiezza di mercato...) aggiungendole una alla volta. "
                "Una variabile entra nel modello solo se migliora le previsioni in modo netto e in entrambi i periodi di prova (2000-2012 e dal 2013), su almeno due orizzonti. "
                "Altrimenti viene scartata. Dopo un cambio di modello ne passano almeno 90 giorni prima del successivo, per non rincorrere il caso.</p>"
-               "<p><b>L'indice Armor</b> è la media di quanto il modello batte la semplice frequenza storica dei cali, nei test dal 2013 (indice di Brier ×100). "
+               "<p><b>Il punteggio del modello</b> è la media di quanto il modello batte la semplice frequenza storica dei cali, nei test dal 2013 (indice di Brier ×100). "
                "Più è alto, meglio il modello prevede i cali; zero significa «come dire sempre la frequenza storica». "
                "La variazione mensile può derivare dai dati nuovi anche senza cambiare modello. È una misura sui test passati, non una garanzia sul futuro.</p></div></details>")
     if reg.get("versions"):
@@ -739,9 +739,9 @@ def build(ctx: dict, out=None) -> None:
     n_neg = sum(1 for x in sigs if x["verdict"] == "negativo")
     n_pos = sum(1 for x in sigs if x["verdict"] == "positivo")
     oneline = (f"{n_neg} indicatori su {len(sigs)} sono in zona sfavorevole, {n_pos} in zona favorevole, {len(sigs) - n_neg - n_pos} neutri." if sigs else "")
-    risks_box = ("<div class='hbox r'><h4>Rischi da tenere d'occhio</h4><ul>" + ("".join(li(x) for x in neg) or "<li>Nessun indicatore in zona sfavorevole.</li>")
+    risks_box = ("<div class='hbox r'><h4>Cosa pesa verso il calo</h4><ul>" + ("".join(li(x) for x in neg) or "<li>Nessun indicatore in zona sfavorevole.</li>")
                  + (f"<li>{esc(stress_note)}</li>" if stress_note else "") + "</ul></div>")
-    opps_box = ("<div class='hbox o'><h4>Elementi favorevoli</h4><ul>" + ("".join(li(x) for x in pos) or "<li>Nessun indicatore chiaramente favorevole.</li>")
+    opps_box = ("<div class='hbox o'><h4>Cosa pesa verso il rialzo</h4><ul>" + ("".join(li(x) for x in pos) or "<li>Nessun indicatore chiaramente favorevole.</li>")
                 + "</ul></div>")
     val_line = ""
     sp_c = next((c for c in vcards if c["key"] == "sp500"), None)
@@ -893,11 +893,11 @@ def build(ctx: dict, out=None) -> None:
     div = extra13.divergence(sp, aix)
     n_pru = sum(1 for x in sigs if x["verdict"] == "negativo")
     topbtns = "<div class='topbtns'><button class='btn pri' data-cal='1'>Calendario eventi</button><button class='btn' data-dock='oggi'>Assistente e analisi</button><button class='btn' data-dock='gloss'>Glossario</button></div>"
-    p_oggi = (f"<a id='oggi'></a>{topbtns}{extra13.oggi_html(aix, div, soon, n_pru)}{extra13.divergence_html(div)}{live_html}"
+    p_oggi = (f"<a id='oggi'></a>{topbtns}{extra13.oggi_html(aix, div, soon, n_pru)}{extra13.divergence_html(div)}{parts.valuations_mini(vcards)}{live_html}"
               f"<section class='hero {LEVEL_CLASS[worst]}'><div class='hlk'>Il giudizio di oggi</div><div class='hl1'>{verdict}</div>"
-              f"<div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div>{armor_index.hero_html(aix)}<div class='heroin'>{chips}</div>{sem_line}"
-              f"<div class='hrow'>{risks_box}{opps_box}</div><ul class='simple'>{simple_html}</ul><div class='hl3'>{esc(note_rel)}</div></section>"
-              f"{disc_line}<h2>Gli indici più importanti</h2>{parts.valuations_mini(vcards)}{semafori.html(sem, keys_only=True)}{ten_line}{guide}")
+              f"<div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div>{chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}{armor_index.hero_html(aix)}{sem_line}"
+              f"<div class='hrow'>{risks_box}{opps_box}</div><div class='hl3'>{esc(note_rel)}</div></section>"
+              f"{disc_line}<h2>Gli indici più importanti</h2>{semafori.html(sem, keys_only=True)}{ten_line}{guide}")
     p_indici = ("<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
                 "<div class='explain'><p>Ogni scheda mostra il valore di oggi, un <b>semaforo</b> (verde = tranquillo, giallo = attenzione, rosso = allarme), come si legge l'indice e quando preoccuparsi. "
                 "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>" +
@@ -930,7 +930,8 @@ def build(ctx: dict, out=None) -> None:
              + det('Confronto degli indicatori con il passato', comparison_html(date, sp, p) + "<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = verso più rischio, verde = verso meno rischio.</p>")
              + det('Affidabilità del modello (test dal 2000)', avh) + det('Variabili provate e non adottate', chal_html) + det('Dati, fonti e archivio', dc) + gloss)
     p_al = ("<h2>Allarmi personali</h2>" + parts.alerts_section(al_opts, al_now))
-    p_sto = p_sto + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella")
+    from . import learning
+    p_sto = p_sto + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
     vix_s = store.load("vix")
     cal_html = _safe(lambda: extra13.calendar_html(_date.today(), sp, vix_s), "Calendario")
     headline = (f"Indice Armor {aix['value']:.0f}/100 · " if aix else "") + verdict
