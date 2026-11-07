@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import armor_index, chiaro, extra13, salute
+from . import armor_index, chiaro, extra13, salute, spiega
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -315,16 +315,16 @@ def horizon_card(hz, r, spot, rel):
             f"<div class='plain'>{one_in(pp).capitalize()}. Di solito è {pct(bb, 0)} ({one_in(bb)}): oggi è <b>{words}</b>.</div>")
     other = "".join(f"<div class='prow'><span>Calo di almeno {t}% entro {HZ_LABEL[hz]}</span><b>{pct(r['p'][t])}</b></div>"
                     for t in sorted(r["p"]) if t != prim)
-    ret = r.get("ret")
+    ret, cop = spiega.ret_display(hz, r.get("ret"))
     rtxt = ""
     if ret:
         tgt = f" ≈ {it(spot * (1 + ret['q50']), 2)} €" if spot == spot else ""
         rtxt = (f"<div class='hyp'><span class='lab'>Se andasse come in passato in situazioni simili</span>"
                 f"<b>{pct(ret['q50'], 1, True)}</b><span class='muted'>rendimento tipico{tgt}. Nell'80% dei casi tra {pct(ret['q10'], 1, True)} e {pct(ret['q90'], 1, True)}. "
-                "È un'indicazione di tendenza, non una promessa.</span></div>")
+                f"{cop} È un'indicazione di tendenza, non una promessa.</span></div>")
     drv = ""
     if r.get("drivers"):
-        d = r["drivers"][:2]
+        d = r["drivers"][:3]
         drv = "<div class='drv'>Pesa di più: " + "; ".join(
             f"{FEAT_IT[f]} ({'più rischio' if c > 0 else 'meno rischio'})" for f, c in d) + "</div>"
     relhtml = ""

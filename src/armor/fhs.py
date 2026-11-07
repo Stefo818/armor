@@ -171,4 +171,7 @@ def backtest_preds(p: pd.Series, dates, refit_every: int = 252, sims: int = 2000
             for kind in ("down", "up"):
                 for thr, c in res[hz][kind].items():
                     rows.append({"date": t, "hz": hz, "kind": kind, "thr": thr, "p": c["p"]})
+            ra = res[hz]["ret_analog"]   # quantili del rendimento finale (per gli intervalli): kind="q", thr=10/50/90
+            for q in (10, 50, 90):
+                rows.append({"date": t, "hz": hz, "kind": "q", "thr": q, "p": ra["q%d" % q]})
     return rows

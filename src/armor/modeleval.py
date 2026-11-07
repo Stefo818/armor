@@ -84,10 +84,71 @@ def a1_preds(p: pd.Series, dates, refit_every: int = 63) -> list[dict]:
             if hz in pr:
                 for thr in TARGETS[hz]:
                     rows.append({"date": t, "hz": hz, "kind": "down", "thr": thr, "p": pr[hz]["p"][thr]})
+                ra = pr[hz].get("ret")   # quantili del rendimento (intervallo 80% mostrato dall'app)
+                if ra:
+                    for q in (10, 50, 90):
+                        rows.append({"date": t, "hz": hz, "kind": "q", "thr": q, "p": ra["q%d" % q]})
     return rows
 
 
-def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=print) -> dict:
+def _score(p, dates, preds: dict, label: str, step: int, kinds_thr=None):
+    """Metriche per bersaglio sulle date comuni a tutti i modelli disponibili per quel bersaglio."""
+    out_rows, calib = [], []
+    targets = sorted({(r.hz, r.kind, int(r.thr)) for df in preds.values() for r in df.drop_duplicates(["hz", "kind", "thr"]).itertuples()
+                      if r.kind in ("down", "up") and r.thr in TARGETS[r.hz]},
+                     key=lambda x: (x[1] != "down", list(HORIZONS).index(x[0]), x[2]))
+    for hz, kind, thr in targets:
+        y = outcome(p, dates, hz, kind, thr)
+        base = purged_base(p, dates, hz, kind, thr)
+        common = y.dropna().index
+        sel = {}
+        for m, df in preds.items():
+            g = df[(df.hz == hz) & (df.kind == kind) & (df.thr == thr)].set_index("date")["p"].dropna()
+            if len(g):
+                sel[m] = g
+        if not sel:
+            continue
+        for m in sel:
+            common = common.intersection(sel[m].index)
+        if len(common) < 30:
+            continue
+        yy, bb = y.loc[common].values, base.loc[common].values
+        err_b = (bb - yy) ** 2
+        yrs = common.year
+        for m in ["Normale"] + list(sel):
+            pp = bb if m == "Normale" else sel[m].loc[common].values
+            err = (pp - yy) ** 2
+            brier, brier_b = float(err.mean()), float(err_b.mean())
+            bss = 1 - brier / brier_b if brier_b > 0 else float("nan")
+            lo, hi = block_ci(err, err_b, step) if m != "Normale" else (float("nan"), float("nan"))
+            pc = np.clip(pp, 1e-4, 1 - 1e-4)
+            ll = float(-(yy * np.log(pc) + (1 - yy) * np.log(1 - pc)).mean())
+
+            def bss_sub(mask):
+                if mask.sum() < 20:
+                    return float("nan")
+                bb_ = ((bb[mask] - yy[mask]) ** 2).mean()
+                return float(1 - ((pp[mask] - yy[mask]) ** 2).mean() / bb_) if bb_ > 0 else float("nan")
+            out_rows.append({"set": label, "kind": kind, "hz": hz, "thr": thr, "model": m, "n": int(len(common)),
+                             "da": str(common[0].date()), "freq": float(yy.mean()), "brier": brier,
+                             "bss": bss, "bss_lo": lo, "bss_hi": hi, "logloss": ll, "auc": auc(pp, yy) if m != "Normale" else 0.5,
+                             "bss_1990_2012": bss_sub(yrs < 2013), "bss_2000_12": bss_sub((yrs >= 2000) & (yrs < 2013)),
+                             "bss_2013_26": bss_sub(yrs >= 2013)})
+            if m != "Normale":
+                try:
+                    q = pd.qcut(pd.Series(pp), 10, duplicates="drop")
+                    for _, x in pd.DataFrame({"p": pp, "y": yy}).groupby(q, observed=True):
+                        calib.append({"set": label, "kind": kind, "hz": hz, "thr": thr, "model": m, "prev": float(x.p.mean()), "real": float(x.y.mean()), "n": int(len(x))})
+                except Exception:  # noqa: BLE001
+                    pass
+    return out_rows, calib
+
+
+def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=print, cache: str | None = None) -> dict:
+    """cache: file pickle facoltativo con le previsioni dei singoli modelli (solo per le prove locali)."""
+    import os
+    import pickle
+    from . import ensemble, model_mv
     p = closed_sp500()
     vix = None
     try:
@@ -97,63 +158,61 @@ def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=pri
     except Exception:  # noqa: BLE001
         pass
     dates = p.index[p.index >= start][::step]
-    preds = {}
-    log(f"[valuta] A1 su {len(dates)} date ...")
-    preds["A1"] = pd.DataFrame(a1_preds(p, dates))
-    log("[valuta] FHS ...")
-    preds["FHS"] = pd.DataFrame(fhs.backtest_preds(p, dates, sims=sims))
-    if vix is not None:
-        log("[valuta] FHS + VIX ...")
-        preds["FHS+VIX"] = pd.DataFrame(fhs.backtest_preds(p, dates, sims=sims, vix=vix, w=0.5))
-    # il rendimento del primo anno dopo l'inizio non ha storia sufficiente: si valuta dove tutti i modelli hanno previsioni
-    out_rows, calib = [], []
-    targets = sorted({(r.hz, r.kind, int(r.thr)) for r in preds["FHS"].itertuples() if (r.kind == "down" and r.thr in TARGETS[r.hz]) or (r.kind == "up" and r.thr in TARGETS[r.hz])},
-                     key=lambda x: (x[1] != "down", list(HORIZONS).index(x[0]), x[2]))
-    for hz, kind, thr in targets:
-        y = outcome(p, dates, hz, kind, thr)
-        base = purged_base(p, dates, hz, kind, thr)
-        common = y.dropna().index
-        sel = {}
-        for m, df in preds.items():
-            g = df[(df.hz == hz) & (df.kind == kind) & (df.thr == thr)].set_index("date")["p"]
-            if len(g):
-                sel[m] = g
-        if not sel:
-            continue
-        for m in sel:
-            common = common.intersection(sel[m].index)
-        common = common[(common >= pd.Timestamp(start) + pd.DateOffset(years=5))] if False else common
-        yy, bb = y.loc[common].values, base.loc[common].values
-        err_b = (bb - yy) ** 2
-        for m in ["Normale"] + list(sel):
-            pp = bb if m == "Normale" else sel[m].loc[common].values
-            err = (pp - yy) ** 2
-            brier, brier_b = float(err.mean()), float(err_b.mean())
-            bss = 1 - brier / brier_b if brier_b > 0 else float("nan")
-            lo, hi = block_ci(err, err_b, step) if m != "Normale" else (float("nan"), float("nan"))
-            pc = np.clip(pp, 1e-4, 1 - 1e-4)
-            ll = float(-(yy * np.log(pc) + (1 - yy) * np.log(1 - pc)).mean())
-            yrs = common.year
-            def bss_sub(mask):
-                if mask.sum() < 20:
-                    return float("nan")
-                bb_ = ((bb[mask] - yy[mask]) ** 2).mean()
-                return float(1 - ((pp[mask] - yy[mask]) ** 2).mean() / bb_) if bb_ > 0 else float("nan")
-            out_rows.append({"kind": kind, "hz": hz, "thr": thr, "model": m, "n": int(len(common)), "freq": float(yy.mean()), "brier": brier,
-                             "bss": bss, "bss_lo": lo, "bss_hi": hi, "logloss": ll, "auc": auc(pp, yy) if m != "Normale" else 0.5,
-                             "bss_1990_2012": bss_sub(yrs < 2013), "bss_2013_26": bss_sub(yrs >= 2013)})
-            if m != "Normale":
-                try:
-                    q = pd.qcut(pd.Series(pp), 10, duplicates="drop")
-                    for b, x in pd.DataFrame({"p": pp, "y": yy}).groupby(q, observed=True):
-                        calib.append({"kind": kind, "hz": hz, "thr": thr, "model": m, "prev": float(x.p.mean()), "real": float(x.y.mean()), "n": int(len(x))})
-                except Exception:  # noqa: BLE001
-                    pass
-    res = {"date": pd.Timestamp.now().strftime("%Y-%m-%d"), "start": start, "step": step, "sims": sims, "metrics": out_rows, "calibration": calib,
-           "note": "Stessa regola per tutti i modelli; frequenza normale con soli esiti già maturati; A1 non modella i rialzi."}
+    preds = pickle.load(open(cache, "rb")) if cache and os.path.exists(cache) else {}
+    if not preds:
+        log(f"[valuta] A1 su {len(dates)} date ...")
+        preds["A1"] = pd.DataFrame(a1_preds(p, dates))
+        log("[valuta] FHS ...")
+        preds["FHS"] = pd.DataFrame(fhs.backtest_preds(p, dates, sims=sims))
+        if vix is not None:
+            log("[valuta] FHS + VIX ...")
+            preds["FHS+VIX"] = pd.DataFrame(fhs.backtest_preds(p, dates, sims=sims, vix=vix, w=0.5))
+        log("[valuta] multi-variabile (logistica) ...")
+        preds["MV-logit"] = pd.DataFrame(model_mv.mv_preds(p, dates, "logit", 63))
+        log("[valuta] multi-variabile (alberi) ...")
+        preds["MV-GBM"] = pd.DataFrame(model_mv.mv_preds(p, dates, "gbm", 126))
+        if cache:
+            pickle.dump(preds, open(cache, "wb"))
+    ftgt = lambda df: df[df.kind != "q"]
+    set1 = {m: ftgt(d) for m, d in preds.items()}
+    rows1, cal1 = _score(p, dates, set1, "modelli", step)
+    log("[valuta] combinazione, taratura e ritorno al normale ...")
+    base_fn = lambda hz, k, t: purged_base(p, dates, hz, k, t)
+    out_fn = lambda hz, k, t: outcome(p, dates, hz, k, t)
+    comb, state = ensemble.combine(p, dates, set1, base_fn, out_fn, step=step)
+    combB, _ = ensemble.combine(p, dates, set1, base_fn, out_fn, step=step, isotonic=False)   # variante B: scelta a posteriori, solo informativa
+    cols = ["date", "hz", "kind", "thr", "p"]
+    set2 = {"A1": set1["A1"], "FHS": set1["FHS"], "Combinato": comb[cols], "Combinato-B": combB[cols]}
+    rows2, cal2 = _score(p, dates, set2, "finale", step)
+    adopt = ensemble.adoption(pd.DataFrame(rows2))
+    adoptB = ensemble.adoption(pd.DataFrame(rows2), model="Combinato-B")
+    log(f"[valuta] regola di adozione: {'SUPERATA' if adopt['adopt'] else 'non superata'}")
+    cov = {}
+    for nome in ("A1", "FHS"):
+        q = preds[nome][preds[nome].kind == "q"]
+        for hz in HORIZONS:
+            try:
+                cov.setdefault(hz, {})[nome] = ensemble.coverage(ensemble.interval_scale(q, p, dates, hz))
+            except Exception as e:  # noqa: BLE001
+                log("[valuta] intervalli " + hz + ": " + str(e)[:60])
+    imp = []
     try:
-        EVAL_JSON.write_text(json.dumps(res, ensure_ascii=False), encoding="utf-8")
-        f = preds["FHS"]
+        from . import spiega
+        eng = model_mv.MVEngine(p, "gbm")
+        imp = spiega.perm_importance(eng, eng.fit(eng.p.index[-1]), "3m")
+    except Exception as e:  # noqa: BLE001
+        log("[valuta] importanza: " + str(e)[:60])
+    wsum = comb.groupby(["hz", "kind", "thr"]).tail(1)[["hz", "kind", "thr", "w", "bss5"]].to_dict("records") if len(comb) else []
+    res = {"date": pd.Timestamp.now().strftime("%Y-%m-%d"), "start": start, "step": step, "sims": sims, "metrics": rows1 + rows2,
+           "calibration": cal1 + cal2, "adozione": adopt, "adozione_B": adoptB, "intervalli": cov, "ensemble": state, "abilita_ultima": wsum, "importanza_gbm_3m": imp,
+           "note": "Stessa regola per tutti i modelli; frequenza normale con soli esiti gia' maturati; A1 non modella i rialzi."}
+    try:
+        ensemble.registra_tentativo(res, DATA / "models.json")
+    except Exception as e:  # noqa: BLE001
+        log("[valuta] registro tentativi non riuscito: " + str(e)[:80])
+    try:
+        EVAL_JSON.write_text(json.dumps(res, ensure_ascii=False, default=float), encoding="utf-8")
+        f = ftgt(preds["FHS"])
         f = f[f.thr.isin([PRIMARY[h] for h in HORIZONS]) | f.thr.isin([5, 10])]
         f.assign(date=f["date"].dt.strftime("%Y-%m-%d")).to_csv(FHS_CSV, index=False, float_format="%.4f")
     except Exception as e:  # noqa: BLE001
@@ -162,11 +221,17 @@ def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=pri
 
 
 def table(res: dict) -> str:
-    """Tabella di testo per il log: una riga per bersaglio, colonne per modello (Brier / BSS / AUC)."""
+    """Tabella di testo per il log: una riga per bersaglio e modello (Brier / BSS / AUC), un blocco per insieme di date."""
     df = pd.DataFrame(res["metrics"])
-    lines = [f"{'bersaglio':<16}{'modello':<10}{'n':>5}{'freq':>7}{'Brier':>9}{'BSS':>8}{'[90%]':>16}{'AUC':>7}{'BSS90-12':>10}{'BSS13-26':>10}"]
-    for (kind, hz, thr), g in df.groupby(["kind", "hz", "thr"], sort=False):
-        for _, r in g.iterrows():
-            ci = "" if np.isnan(r.bss_lo) else f"[{r.bss_lo:+.2f},{r.bss_hi:+.2f}]"
-            lines.append(f"{('calo' if kind == 'down' else 'rialzo') + ' ' + hz + ' ' + str(thr) + '%':<16}{r.model:<10}{int(r.n):>5}{r.freq:>7.3f}{r.brier:>9.4f}{r.bss:>+8.3f}{ci:>16}{r.auc:>7.3f}{r.bss_1990_2012:>+10.3f}{r.bss_2013_26:>+10.3f}")
+    if "set" not in df:
+        df["set"] = "modelli"
+    lines = []
+    for lab, gs in df.groupby("set", sort=False):
+        lines.append(f"== {lab} ==")
+        lines.append(f"{'bersaglio':<16}{'modello':<10}{'n':>5}{'freq':>7}{'Brier':>9}{'BSS':>8}{'[90%]':>16}{'AUC':>7}{'BSS00-12':>10}{'BSS13-26':>10}")
+        for (kind, hz, thr), g in gs.groupby(["kind", "hz", "thr"], sort=False):
+            for _, r in g.iterrows():
+                ci = "" if np.isnan(r.bss_lo) else f"[{r.bss_lo:+.2f},{r.bss_hi:+.2f}]"
+                b2 = r.get("bss_2000_12", float("nan"))
+                lines.append(f"{('calo' if kind == 'down' else 'rialzo') + ' ' + hz + ' ' + str(thr) + '%':<16}{r.model:<10}{int(r.n):>5}{r.freq:>7.3f}{r.brier:>9.4f}{r.bss:>+8.3f}{ci:>16}{r.auc:>7.3f}{b2:>+10.3f}{r.bss_2013_26:>+10.3f}")
     return "\n".join(lines)

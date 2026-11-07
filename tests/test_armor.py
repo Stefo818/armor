@@ -367,3 +367,100 @@ def test_valutazione_modelli_purged_e_auc():
     assert abs(modeleval.auc([0.1, 0.2, 0.8, 0.9] * 10, [0, 0, 1, 1] * 10) - 1.0) < 1e-9
     lo, hi = modeleval.block_ci(np.full(200, 0.9), np.full(200, 1.0), 5)
     assert abs(lo - 0.1) < 1e-6 and abs(hi - 0.1) < 1e-6
+
+
+def _prezzi_finti(n=3000, seed=3):
+    rng = np.random.default_rng(seed)
+    vol = np.where((np.arange(n) // 250) % 3 == 2, 0.02, 0.008)
+    r = rng.standard_normal(n) * vol + 0.0003
+    return pd.Series(100 * np.exp(np.cumsum(r)), index=pd.bdate_range("2000-01-03", periods=n))
+
+
+def test_mv_nessuno_sguardo_al_futuro(monkeypatch):
+    """Le variabili esterne alla data t non cambiano se si cambiano i dati futuri; il ritardo e' rispettato."""
+    from armor import model_mv
+    idx = pd.bdate_range("2000-01-03", periods=600)
+    rng = np.random.default_rng(0)
+    base = {k: pd.Series(rng.random(600) + 1, index=idx) for k in ("vix", "baa10y", "t10y3m", "nfci")}
+    base["vix"] = base["vix"] * 20
+
+    def mk(d):
+        return lambda k: d[k]
+    monkeypatch.setattr(model_mv.store, "load", mk(base))
+    rv = pd.Series(0.1, index=idx)
+    a = model_mv.mv_extra(idx, rv)
+    mod = {k: v.copy() for k, v in base.items()}
+    for k in mod:
+        mod[k].iloc[400:] = 999.0
+    monkeypatch.setattr(model_mv.store, "load", mk(mod))
+    b = model_mv.mv_extra(idx, rv)
+    pd.testing.assert_frame_equal(a.iloc[:400], b.iloc[:400])
+    # NFCI ritardato di 5 giorni: il valore al giorno 399 non usa il dato del giorno 399 ma di prima
+    t = idx[300]   # i ritardi sono in giorni di calendario
+    assert a["nfci"].loc[t] == base["nfci"].asof(t - pd.Timedelta(days=5))
+    assert a["baa10y"].loc[t] == base["baa10y"].asof(t - pd.Timedelta(days=1))
+
+
+def test_ensemble_pesi_monotonia_e_ritorno_al_normale():
+    from armor import ensemble
+    rng = np.random.default_rng(1)
+    y = (rng.random(2000) < 0.2).astype(float)
+    buono = np.clip(0.1 + 0.2 * y + rng.normal(0, 0.05, 2000), 0.01, 0.99)   # informativo
+    rumore = np.clip(rng.random(2000), 0.01, 0.99)
+    w = ensemble.fit_weights(np.column_stack([buono, rumore]), y)
+    assert abs(w.sum() - 1) < 1e-9 and (w >= 0).all() and w[0] > 0.8
+    m = ensemble.monotonize({5: 0.3, 10: 0.4, 15: 0.1})
+    assert m[5] >= m[10] >= m[15]
+
+
+def test_ensemble_walk_forward_senza_abilita_torna_al_normale():
+    """Se i modelli sono rumore puro, dopo il periodo di prova l'abilita' misurata e' <= 0 e p = normale."""
+    from armor import ensemble, modeleval
+    p = _prezzi_finti(3000)
+    dates = p.index[300::5]
+    rng = np.random.default_rng(5)
+    rows = []
+    for t in dates:
+        for hz in ensemble.HORIZONS:
+            for thr in ensemble.TARGETS[hz]:
+                for k in ("down", "up"):
+                    rows.append({"date": t, "hz": hz, "kind": k, "thr": thr, "p": float(rng.random())})
+    pr = pd.DataFrame(rows)
+    preds = {m: pr.copy() for m in ("A1", "FHS", "MV-logit", "MV-GBM")}
+    bf = lambda hz, k, t: modeleval.purged_base(p, dates, hz, k, t)
+    of = lambda hz, k, t: modeleval.outcome(p, dates, hz, k, t)
+    df, st = ensemble.combine(p, dates, preds, bf, of, step=5)
+    tail = df[df.date > dates[-300]]
+    assert len(tail) > 0 and tail.w.mean() < 0.35   # rumore: poca fiducia
+    ok = df.groupby(["date", "hz", "kind"]).apply(lambda g: (g.sort_values("thr").p.diff().dropna() <= 1e-12).all())
+    assert ok.all()
+
+
+def test_intervalli_conformali_e_spiegazioni():
+    from armor import ensemble, spiega
+    p = _prezzi_finti(2500)
+    dates = p.index[300::5]
+    rng = np.random.default_rng(2)
+    rows = []
+    for t in dates:   # intervalli troppo stretti di proposito: il conformale deve allargarli
+        for hz in ensemble.HORIZONS:
+            rows += [{"date": t, "hz": hz, "kind": "q", "thr": 10, "p": -0.01}, {"date": t, "hz": hz, "kind": "q", "thr": 50, "p": 0.0},
+                     {"date": t, "hz": hz, "kind": "q", "thr": 90, "p": 0.01}]
+    q = pd.DataFrame(rows)
+    c = ensemble.coverage(ensemble.interval_scale(q, p, dates, "1m"))
+    assert c["copertura_conformale"] > c["copertura_grezza"] + 0.2 and abs(c["copertura_conformale"] - 0.8) < 0.08
+    assert len(spiega.cause_logit([("rv21", 0.9), ("dd252", -0.4), ("mom63", 0.01)])) == 2
+    assert "sopra" in spiega.cause_fhs(0.30, 0.15)
+
+
+def test_intervallo_verificato_dal_vivo(monkeypatch):
+    from armor import spiega
+    ev = {"intervalli": {"3m": {"A1": {"copertura_grezza": 0.89, "copertura_conformale": 0.80, "k_ultimo": 0.8, "n": 100}},
+                         "1m": {"A1": {"copertura_grezza": 0.81, "copertura_conformale": 0.79, "k_ultimo": 0.95, "n": 100}}}}
+    monkeypatch.setattr(spiega, "_eval", lambda: ev)
+    ret = {"q10": -0.10, "q50": 0.02, "q90": 0.14}
+    r3, t3 = spiega.ret_display("3m", ret)          # fuori da 80% +- 3: si stringe attorno a q50
+    assert abs((r3["q90"] - r3["q10"]) - 0.8 * 0.24) < 1e-9 and "80%" in t3
+    r1, _ = spiega.ret_display("1m", ret)           # gia' a posto: invariato
+    assert r1 == ret
+    assert spiega.ret_display("6m", ret) == (ret, "")

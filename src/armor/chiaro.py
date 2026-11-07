@@ -4,6 +4,7 @@ import html as _h
 import numpy as np
 
 from .config import HZ_LABEL, PRIMARY
+from . import spiega
 from .outlook import SCEN_NAMES
 
 e = _h.escape
@@ -57,11 +58,11 @@ def horizon_simple(hz, r, mat_hz, spot, rel, old_card_html):
     if pup is not None:
         rows += (f"<div class='pr'><div class='pl'>Salire di almeno {prim}%</div><div class='pn'>{P(pup)}</div>{bar(pup, bup, 'var(--ok)')}"
                  f"<div class='pt'>Su 100 situazioni come questa, circa <b>{round(pup * 100)}</b> vedono un rialzo così (di solito {round(bup * 100)}).</div></div>")
-    ret = r.get("ret")
+    ret, cop = spiega.ret_display(hz, r.get("ret"))
     typ = ""
     if ret:
         typ = (f"<div class='sc3'><div><span>Caso brutto</span><b class='dn'>{S(ret['q10'])}</b></div><div><span>Caso tipico</span><b>{S(ret['q50'])}</b></div>"
-               f"<div><span>Caso buono</span><b class='up'>{S(ret['q90'])}</b></div></div><div class='mu'>Cosa è successo dopo in passato in situazioni simili (8 volte su 10 il risultato è stato tra il caso brutto e il buono).</div>")
+               f"<div><span>Caso buono</span><b class='up'>{S(ret['q90'])}</b></div></div><div class='mu'>Cosa è successo dopo in passato in situazioni simili (8 volte su 10 il risultato è stato tra il caso brutto e il buono). {cop}</div>")
     relw = ""
     if rel:
         relw = {"Utile": "<span class='badge ok'>Stima affidabile nei test</span>", "Debole": "<span class='badge warn'>Stima debole: usala solo come indizio</span>",
@@ -274,8 +275,11 @@ def balance_html(pred, mat, feat_it, n_neg=0, n_tot=0):
     for hz in ("1m", "3m"):
         d = (pred.get(hz) or {}).get("drivers") or []
         if d:
-            txt = "; ".join(f"{e(feat_it.get(f, f))} ({'spinge verso più rischio' if c > 0 else 'spinge verso meno rischio'})" for f, c in d[:2])
+            txt = "; ".join(f"{e(feat_it.get(f, f))} ({'spinge verso più rischio' if c > 0 else 'spinge verso meno rischio'})" for f, c in d[:3])
             why.append(f"Per {HZ_LABEL[hz]} pesa soprattutto: {txt}.")
+    lf = spiega.linea_fhs()
+    if lf:
+        why.append(e(lf) + " (stima del motore a simulazione).")
     if n_tot:
         why.append(f"{n_neg} indicatori su {n_tot} sono in zona di prudenza (vedi sotto i rischi e gli elementi favorevoli).")
     why.append("I mercati salgono più spesso di quanto scendano: per questo conta il confronto con il «normale», non solo il numero.")

@@ -7,5 +7,31 @@
    "date": "2026-11-07",
    "note": "Versione iniziale: otto variabili sui prezzi dell'S&P 500."
   }
+ ],
+ "tentativi": [
+  {
+   "id": "E1-combinato",
+   "data": "2026-11-07",
+   "adottato": false,
+   "regola": "BSS meglio di A1 su >=2 orizzonti sia 2000-12 sia 2013-26, nessun peggioramento oltre 0,01",
+   "orizzonti_meglio_2000_12": 0,
+   "orizzonti_meglio_2013_26": 2,
+   "peggiorati": [
+    "10g",
+    "1m",
+    "3m",
+    "6m"
+   ],
+   "campione": "A1",
+   "variante_B_a_posteriori": {
+    "nota": "senza taratura isotonica, scelta DOPO aver visto i risultati: non adottabile",
+    "regola_superata": false,
+    "peggiorati": [
+     "10g",
+     "3m",
+     "6m"
+    ]
+   }
+  }
  ]
 }
