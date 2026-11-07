@@ -149,7 +149,7 @@ def flags_table(panel, p):
 
 
 INDICATORS = [
-    ("Prezzi", [("S&P 500", "sp500", 0, 0), ("VWCE (€)", "vwce", 0, 2), ("Distanza dai massimi 1 anno (S&P)", "dd252", -1, "pct")]),
+    ("Prezzi", [("S&P 500 (indice, ultimo prezzo)", "sp500", 0, 0), ("VWCE (€, ultimo prezzo)", "vwce", 0, 2), ("Distanza dai massimi 1 anno (S&P)", "dd252", -1, "pct")]),
     ("Volatilità e opzioni", [("VIX", "vix", 1, 1), ("VIX a 3 mesi / VIX (sotto 1 = inversione)", "vterm", -1, 2),
                              ("VVIX", "vvix", 1, 1), ("SKEW", "skew", 1, 1), ("MOVE (volatilità obbligazioni)", "move", 1, 1)]),
     ("Credito e liquidità", [("Spread High Yield (punti)", "hy_oas", 1, 2), ("Spread BAA-10Y (punti)", "baa10y", 1, 2),
@@ -177,12 +177,65 @@ INDICATORS = [
         ("Volatilità implicita ATM a 30 giorni", "spy_iv_atm_30d", 1, 3), ("Skew put 95% (premio sulle put)", "spy_put_skew_95", 1, 3)]),
 ]
 
+INDICATOR_HELP = {
+    "sp500": "Livello dell'indice. Serve come riferimento: i cali si misurano da qui.",
+    "vwce": "Prezzo del tuo ETF in euro.",
+    "dd252": "Di quanto il prezzo è sotto il massimo dell'ultimo anno. 0% = sui massimi; −10% o meno = correzione in corso.",
+    "vix": "Paura del mercato (volatilità attesa a 30 giorni). Sotto 20 tranquillo, sopra 30 panico.",
+    "vterm": "VIX a 3 mesi diviso VIX a 30 giorni. Sotto 1 il mercato teme di più il breve periodo: segnale di stress.",
+    "vvix": "Quanto è instabile lo stesso VIX. Alto = il mercato non sa più quanta paura avere.",
+    "skew": "Quanto costano le assicurazioni contro i crolli (opzioni put). Alto = gli esperti si proteggono.",
+    "move": "Il «VIX» delle obbligazioni. Alto = tensione sui titoli di Stato.",
+    "hy_oas": "Quanto interesse in più pagano le aziende USA più rischiose rispetto allo Stato. Sale quando cresce la paura di fallimenti.",
+    "baa10y": "Come sopra, per aziende di buona qualità. Sale nei periodi di stress.",
+    "nfci": "Indice della Fed di Chicago: sopra 0 il credito è più difficile del normale, sotto 0 è facile.",
+    "t10y3m": "Tassi a 10 anni meno tassi a 3 mesi. Sotto 0 (curva invertita) in passato ha preceduto molte recessioni, con anticipo anche di un anno.",
+    "t10y2y": "Tassi a 10 anni meno tassi a 2 anni. Stessa idea: sotto 0 è un segnale di cautela.",
+    "real10y": "Tasso a 10 anni al netto dell'inflazione. Alto = soldi costosi, le azioni faticano di più.",
+    "usd_broad": "Forza del dollaro contro le altre valute. Un dollaro forte stringe le condizioni finanziarie globali.",
+    "cape_m": "Prezzo diviso gli utili medi degli ultimi 10 anni. Sopra 30 il mercato è caro: non dice quando scenderà, ma i rendimenti dei prossimi anni tendono a essere più bassi.",
+    "pe_m": "Prezzo diviso gli utili dell'ultimo anno. Più alto = il mercato è più caro.",
+    "ps_m": "Valore delle società diviso i loro ricavi. Sopra 3 è caro rispetto alla storia.",
+    "eq_gdp": "Valore delle azioni USA diviso il PIL. Più alto = Borsa «gonfiata» rispetto all'economia.",
+    "gold": "Prezzo dell'oro in dollari. Sale quando gli investitori cercano rifugio.",
+    "wti": "Petrolio americano in dollari al barile. Sale = costi più alti per l'economia.",
+    "epu": "Indice di incertezza sulle politiche economiche (basato sulle notizie). Alto = più incertezza.",
+    "rsp_spy": "Confronta le 500 società tutte con lo stesso peso (RSP) con quelle pesate per dimensione (SPY). In calo = il mercato regge solo grazie a poche grandi aziende.",
+    "aaii_spread": "Sondaggio settimanale tra piccoli investitori: % rialzisti meno % ribassisti. Estremi di entusiasmo o paura spesso arrivano vicino a svolte, ma non è un segnale affidabile da solo.",
+    "fear_greed": "Indice CNN che riassume 7 misure di sentimento: 0 = paura estrema, 100 = euforia.",
+    "breadth200": "Quante delle 500 società sono sopra la propria media a 200 giorni. Basso = pochi titoli sostengono il mercato.",
+    "breadth50": "Come sopra, ma sulla media a 50 giorni (più veloce).",
+    "nh_nl": "Società ai massimi a 52 settimane meno quelle ai minimi. Negativo = più titoli in difficoltà che in forza.",
+    "gpr": "Indice di rischio geopolitico (guerre, terrorismo, tensioni) basato sulle notizie. Alto = più tensione nel mondo.",
+    "gpr_threat": "Parte dell'indice GPR basata sulle minacce di conflitto.",
+    "gpr_act": "Parte dell'indice GPR basata su eventi già accaduti (guerre, attentati).",
+    "top_ps": "Valore delle 30 maggiori società USA diviso i loro ricavi. Alto = i colossi sono cari.",
+    "top_pe": "Prezzo/utili previsti dei 30 colossi. Alto = i colossi sono cari.",
+    "top_fcf_yield": "Quanta cassa generano i 30 colossi rispetto al loro valore. Basso = pagati molto per quello che incassano.",
+    "ai_capex_ocf": "Quanta parte della cassa operativa Microsoft, Google, Amazon, Meta, Oracle investe in capex (soprattutto AI). Vicino o sopra 1 = spendono più di quanto incassano.",
+    "spy_pc_volume": "Rapporto put/call sui volumi di SPY. Sopra 1 più scommesse al ribasso (o protezioni).",
+    "spy_pc_open_interest": "Come sopra, ma su tutti i contratti ancora aperti.",
+    "spy_iv_atm_30d": "Volatilità attesa a 30 giorni ricavata dalle opzioni su SPY (0,20 = 20%).",
+    "spy_put_skew_95": "Quanto costano in più le put 5% sotto il prezzo rispetto a quelle al prezzo attuale. Alto = più paura di un calo.",
+}
+
+
+def _with_live(s: pd.Series, key: str) -> pd.Series:
+    """Sostituisce l'ultimo valore con il prezzo piu' recente (live), se piu' nuovo della chiusura."""
+    q = livemod.load().get("quotes", {}).get(key)
+    if not q or s is None or s.empty:
+        return s
+    t = pd.Timestamp(q["time"]).tz_localize(None).normalize()
+    s = s.copy()
+    s.loc[max(t, s.index[-1]) if t <= s.index[-1] + pd.Timedelta(days=4) else s.index[-1]] = q["price"]
+    return s.sort_index()
+
 
 def indicator_series(key, sp, p):
     if key == "sp500":
-        return sp
+        return _with_live(sp, "sp500")
     if key == "vwce":
-        return vwce_series()
+        return _with_live(vwce_series(), "vwce")
     if key == "dd252":
         return price_features(p)["dd252"] * 100
     if key == "vterm":
@@ -239,7 +292,8 @@ def comparison_html(date, sp, p):
                 cells.append(f"<td>{txt}{small}</td>")
             if all(v is None for v in vals):
                 cells = ["<td colspan='6' class='muted'>dato non disponibile o non aggiornato</td>"]
-            out.append(f"<tr><td>{esc(label)}</td>{''.join(cells)}</tr>")
+            hp = INDICATOR_HELP.get(key, "")
+            out.append(f"<tr><td>{esc(label)}<div class='ihelp'>{esc(hp)}</div></td>{''.join(cells)}</tr>")
     out.append("</tbody></table>")
     return "".join(out)
 
@@ -278,6 +332,15 @@ def horizon_card(hz, r, spot, rel):
             f"{main}{other}{rtxt}{drv}<div class='relrow'>{relhtml}</div></div>")
 
 
+LIVE_HELP = {
+    "vwce": "Il prezzo del tuo ETF, in euro, all'ultimo scambio su qualsiasi borsa tedesca o italiana. La variazione è rispetto alla chiusura precedente.",
+    "sp500": "Indice delle 500 maggiori società USA. È il termometro che Armor usa per stimare i rischi.",
+    "sp_fut": "Contratti sull'S&P 500 negoziati quasi 24 ore su 24: anticipano dove aprirà Wall Street.",
+    "vix": "L'«indice della paura»: sotto 20 il mercato è tranquillo, sopra 25-30 è nervoso. Qui il rosso significa che sta salendo (più paura).",
+    "eurusd": "Quanti dollari vale 1 euro. Il VWCE investe in dollari: se l'euro sale, a parità di mercato il VWCE in euro scende un po'.",
+}
+
+
 def live_bar(date):
     lv = livemod.load()
     q = lv.get("quotes", {})
@@ -295,12 +358,15 @@ def live_bar(date):
         big = " big1" if key == "vwce" else ""
         cards.append(f"<div class='lq{big}' data-k='{key}'><div class='lqn'>{esc(x['name'])}</div>"
                      f"<div class='lqp'>{it(x['price'], dec)}{(' ' + x['ccy']) if x.get('ccy') else ''}</div>"
-                     f"<div class='lqc {cls}'>{chg} <span class='muted'>{'mercato aperto' if x.get('open') else 'mercato chiuso'}</span></div></div>")
+                     f"<div class='lqc {cls}'>{chg} <span class='muted'>{'mercato aperto' if x.get('open') else 'mercato chiuso'}</span></div>"
+                     f"<div class='lqt muted'></div><div class='lqh muted'>{LIVE_HELP[key]}</div></div>")
     if not cards:
         return ("<div class='livebar'><div class='muted'>Prezzi in tempo reale non ancora scaricati: avvia l'aggiornamento "
                 "(o attendi il prossimo aggiornamento automatico).</div></div>")
+    err = lv.get("errors") or []
+    errtxt = (f"<div class='muted'>Alcune sedi non hanno risposto: {esc('; '.join(err[:4]))}. Si usa quella più recente disponibile.</div>" if err else "")
     return (f"<div class='livebar'><div class='lqrow'>{''.join(cards)}</div>"
-            "<div class='muted' id='liveinfo'></div></div>"
+            f"<div class='muted' id='liveinfo'></div>{errtxt}</div>"
             f"<script>window.LIVE={json.dumps(lv, ensure_ascii=False)};</script>")
 
 
@@ -670,10 +736,15 @@ def build(ctx: dict, out=None) -> None:
   <div class='hl3 stress'>{esc(stress_note)}</div>
 </section>
 {guide}
-<h2 id='previsioni'>Previsioni per periodo</h2><div class='grid4'>{cards}</div>
-<h2 id='segnali'>Segnali di attenzione</h2><p class='muted'>Situazioni di stress del mercato che, in passato, hanno preceduto più spesso cali importanti. «ATTIVO» = presente oggi.</p><div class='card'>{flags_html}</div>
-<h2 id='storico'>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero.</p><div class='card scroll'>{hist_html}</div>
-<h2>Previsto contro reale</h2><p class='muted'>Quando una previsione scade, qui vedi quanto si è sbagliata.</p><div class='card'>{pv}</div>
+<h2 id='previsioni'>Previsioni per periodo</h2>
+<div class='explain'><p><b>Cosa vedi qui.</b> Ogni scheda risponde a una domanda: <i>«da oggi, quanto è probabile che il prezzo scenda di almeno X% rispetto al massimo raggiunto in quel periodo?»</i> Il numero grande è la probabilità. Subito sotto c'è il confronto con il normale: se oggi è più alta del solito, il clima è più pericoloso.</p>
+<p><b>Il livello</b> (in alto a destra di ogni scheda) confronta la probabilità di oggi con quella abituale: <span class='badge ok'>basso</span> meno di 0,6 volte, <span class='badge ok'>normale</span> fino a 1,3 volte, <span class='badge warn'>elevato</span> fino a 2 volte, <span class='badge bad'>alto</span> oltre 2 volte.</p>
+<p><b>«Se andasse come in passato»</b> è il rendimento tipico che si è visto dopo giorni simili a quelli di oggi. È un ordine di grandezza, non una previsione di prezzo. L'<b>affidabilità</b> dice se, nei test sul passato, quella stima ha funzionato davvero.</p></div>
+<div class='grid4'>{cards}</div>
+<h2 id='segnali'>Segnali di attenzione</h2><div class='explain'><p><b>Cosa sono.</b> Condizioni di stress del mercato (VIX alto, credito che si irrigidisce, curva dei tassi invertita...). Per ognuna trovi se oggi è <b>ATTIVA</b> e, nella storia, quante volte è stata seguita da un calo di almeno 10% entro 3 mesi, confrontato con la frequenza normale. Più alte sono le percentuali rispetto al normale, più il segnale è serio. Sono statistiche del passato: indicano un clima, non il momento in cui il mercato scenderà.</p></div><div class='card'>{flags_html}</div>
+<h2 id='storico'>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero. Il grafico mostra come cambia nel tempo la probabilità di un calo (scegli il periodo con i pulsanti); la tabella elenca ogni previsione fatta.</p>
+<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma, 2× = il doppio del solito. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (e, tra parentesi, l'intervallo in cui cade l'80% dei casi). <i>Variazione</i>: di quanto la probabilità è cambiata rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando la previsione si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza: quanto è andato davvero il VWCE e di quanto la stima si è sbagliata.</p></div><div class='card scroll'>{hist_html}</div>
+<h2>Previsto contro reale</h2><div class='explain'><p><b>Cosa vedi.</b> Quando una previsione scade, qui confrontiamo il rendimento che Armor aveva ipotizzato con quello reale. <i>Scostamento</i> = reale − previsto: se è molto diverso da zero, la stima era lontana. Subito sotto c'è il test sul passato: ci dice quanto di solito sbaglia, così sai quanta fiducia dare a queste stime.</p></div><div class='card'>{pv}</div>
 <h2 id='miglioramento'>Come va l'app: miglioramento automatico</h2><div class='card scroll'>{imp_html}</div>
 <h2 id='dettagli'>Dettagli per esperti</h2><p class='muted'>Tabelle e test dietro le stime. Non servono per leggere il giudizio: aprile solo se vuoi approfondire.</p>
 {det('Confronto degli indicatori con il passato', comparison_html(date, sp, p) + "<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = verso più rischio, verde = verso meno rischio.</p>")}
@@ -716,7 +787,7 @@ html{scroll-behavior:smooth;scroll-padding-top:56px}body{font-size:16px;line-hei
 .nav a{white-space:nowrap;padding:8px 14px;border:1px solid var(--bd);border-radius:99px;background:var(--card);color:var(--tx);text-decoration:none;font-size:14px;font-weight:600}
 .livebar{margin-bottom:12px}.lqrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .lq{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.lq.big1{grid-column:span 2;border-color:var(--ac)}
-.lqn{font-size:13px;color:var(--mu);font-weight:600}.lqp{font-size:26px;font-weight:700;letter-spacing:-.3px}.big1 .lqp{font-size:36px}.lqc{font-size:14px;font-weight:600}
+.explain{background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;padding:2px 16px;margin:8px 0 12px;font-size:14px}.explain p{margin:10px 0}.ihelp{font-size:12px;color:var(--mu);font-weight:400;margin-top:2px;max-width:420px;line-height:1.35}.lqt{font-size:12px;margin-top:2px}.lqh{font-size:12px;margin-top:6px;line-height:1.35}.lqn{font-size:13px;color:var(--mu);font-weight:600}.lqp{font-size:26px;font-weight:700;letter-spacing:-.3px}.big1 .lqp{font-size:36px}.lqc{font-size:14px;font-weight:600}
 .up,.okc{color:var(--ok)}.dn{color:var(--bad)}#liveinfo{margin-top:6px}
 .hlk{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--mu);font-weight:700}
 ul.simple{margin:12px 0 4px;padding-left:20px}ul.simple li{margin:6px 0}
@@ -733,6 +804,7 @@ function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maxim
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();
 document.querySelectorAll('.lq').forEach(function(el){var q=L.quotes[el.dataset.k];if(!q)return;var d=el.dataset.k==='eurusd'?4:2;
 el.querySelector('.lqp').textContent=fmt(q.price,d)+(q.ccy?' '+q.ccy:'');
+var tt=el.querySelector('.lqt');if(tt&&q.time){var qd=new Date(q.time);tt.textContent='Ultimo scambio: '+qd.toLocaleString('it-IT',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+(q.venue?' · '+q.venue:'')}
 var c=el.querySelector('.lqc');if(q.chg!=null){var bad=el.dataset.k==='vix';var up=q.chg>=0;c.className='lqc '+((up!==bad)?'up':'dn');
 c.innerHTML=(up?'▲ ':'▼ ')+fmt(Math.abs(q.chg)*100,2)+'% <span class="muted">'+(q.open?'mercato aperto':'mercato chiuso')+'</span>'}});
 var u=new Date(L.updated),m=Math.round((now-u)/60000),i=document.getElementById('liveinfo');

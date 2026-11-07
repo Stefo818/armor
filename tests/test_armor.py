@@ -130,3 +130,21 @@ def test_aaii_to_series():
                      index=pd.to_datetime(["2026-10-29", "2026-11-05"]))
     s = aaii.to_series(d)
     assert abs(s["aaii_spread"].iloc[-1] + 10) < 1e-9 and abs(s["aaii_bull"].iloc[0] - 40) < 1e-9
+
+
+def test_best_vwce_picks_latest_venue():
+    from armor import live
+    day = 86400
+    base = 1_700_000_000 // day * day
+    def js(price, t, cp=None):
+        ts = [base - day + 100, base - day + 200, t]
+        return {"chart": {"result": [{"meta": {"gmtoffset": 0, "currentTradingPeriod": {"regular": {"start": 0, "end": 1}}},
+                                      "timestamp": ts, "indicators": {"quote": [{"close": [cp or price, cp or price, price]}]}}]}}
+    data = {"VWCE.DE": js(165.84, base + 17 * 3600), "VWCE.MU": js(165.08, base + 23 * 3600), "VWCE.F": js(250.0, base + 23 * 3600 + 60)}
+    def get(sym):
+        if sym in data:
+            return data[sym]
+        raise RuntimeError("404")
+    errs = []
+    q = live.best_vwce(get, errs)
+    assert q["venue"] == "Monaco/gettex" and abs(q["price"] - 165.08) < 1e-9   # 250 scartato come anomalo

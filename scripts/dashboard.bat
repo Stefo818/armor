@@ -1,3 +1,2 @@
 @echo off
-cd /d "%~dp0.."
-start "" Armor_dashboard.html
+start "" https://stefo818.github.io/armor/

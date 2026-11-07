@@ -7,6 +7,9 @@ import requests
 from .config import DATA
 
 LIVE_FILE = DATA / "live.json"
+VWCE_VENUES = [  # sedi su cui il VWCE e' quotato in euro: vince l'ultimo scambio (alcune restano aperte fino alle 22-23)
+    ("VWCE.DE", "Xetra"), ("VWCE.MI", "Borsa Italiana"), ("VWCE.F", "Francoforte"), ("VWCE.SG", "Stoccarda"),
+    ("VWCE.MU", "Monaco/gettex"), ("VWCE.BE", "Berlino"), ("VWCE.DU", "Düsseldorf")]
 QUOTES = {  # chiave: (simbolo Yahoo, nome, valuta)
     "vwce": ("VWCE.DE", "VWCE", "€"),
     "sp500": ("^GSPC", "S&P 500", ""),
@@ -42,6 +45,28 @@ def parse_chart(js: dict, now_ts: float | None = None) -> dict:
             "time": datetime.fromtimestamp(t_last, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "open": is_open}
 
 
+def best_vwce(get, errors: list) -> dict:
+    """Legge tutte le sedi e sceglie l'ultimo scambio (a parita', la prima della lista: Xetra)."""
+    found = []
+    for sym, venue in VWCE_VENUES:
+        try:
+            q = parse_chart(get(sym))
+            q.update(name="VWCE", ccy="€", symbol=sym, venue=venue)
+            found.append(q)
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"{sym}: {str(e)[:60]}")
+    if not found:
+        raise RuntimeError("nessuna sede raggiungibile")
+    ref = found[0]["price"]
+    ok = [q for q in found if abs(q["price"] / ref - 1) < 0.03] or found   # scarta prezzi anomali
+    t_max = max(q["time"] for q in ok)
+    from datetime import datetime as _d
+    recent = [q for q in ok if (_d.fromisoformat(t_max[:-1]) - _d.fromisoformat(q["time"][:-1])).total_seconds() <= 300]
+    best = recent[0]
+    best["alts"] = {q["venue"]: [round(q["price"], 2), q["time"]] for q in ok}
+    return best
+
+
 def fetch_all(get=None) -> dict:
     get = get or (lambda sym: requests.get(URL.format(sym=requests.utils.quote(sym)), headers=UA, timeout=20).json())
     old = {}
@@ -52,8 +77,11 @@ def fetch_all(get=None) -> dict:
     quotes, errors = dict(old.get("quotes", {})), []
     for key, (sym, name, ccy) in QUOTES.items():
         try:
-            q = parse_chart(get(sym))
-            q.update(name=name, ccy=ccy, symbol=sym)
+            if key == "vwce":
+                q = best_vwce(get, errors)
+            else:
+                q = parse_chart(get(sym))
+                q.update(name=name, ccy=ccy, symbol=sym)
             quotes[key] = q
         except Exception as e:  # noqa: BLE001
             errors.append(f"{key}: {str(e)[:80]}")
@@ -67,7 +95,7 @@ def run() -> dict:
     LIVE_FILE.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     for k, q in out["quotes"].items():
         c = "" if q.get("chg") is None else f"{q['chg'] * 100:+.2f}%"
-        print(f"{k:8s} {q['price']:>10.2f} {c:>8s}  {q['time']}  {'aperto' if q['open'] else 'chiuso'}")
+        print(f"{k:8s} {q['price']:>10.2f} {c:>8s}  {q['time']}  {'aperto' if q['open'] else 'chiuso'}  {q.get('venue', '')}")
     for e in out["errors"]:
         print("ERR", e)
     return out

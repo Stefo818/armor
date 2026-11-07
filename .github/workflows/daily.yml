@@ -25,5 +25,13 @@ jobs:
         run: |
           git config user.name "armor-bot"
           git config user.email "armor-bot@users.noreply.github.com"
+          git config merge.ours.driver true
           git add data
-          git diff --cached --quiet || (git commit -m "Aggiornamento automatico dati" && git pull --rebase && git push)
+          git diff --cached --quiet && exit 0
+          git commit -m "Aggiornamento automatico dati"
+          for i in 1 2 3 4; do
+            if git pull --rebase -X theirs && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 8
+          done
+          exit 1
