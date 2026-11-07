@@ -2,305 +2,329 @@
  "sp500": {
   "ok": true,
   "msg": "",
-  "new_rows": 138,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 24831,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "vix": {
   "ok": true,
   "msg": "",
-  "new_rows": 77,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9283,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "vix3m": {
   "ok": true,
   "msg": "",
-  "new_rows": 67,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5111,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "vix9d": {
   "ok": true,
   "msg": "",
-  "new_rows": 3986,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 3986,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "vvix": {
   "ok": true,
   "msg": "",
-  "new_rows": 40,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4985,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "skew": {
   "ok": true,
   "msg": "",
-  "new_rows": 53,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9207,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "move": {
   "ok": true,
   "msg": "",
-  "new_rows": 46,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5932,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "nasdaq100": {
   "ok": true,
   "msg": "",
-  "new_rows": 10356,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 10356,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "vt": {
   "ok": true,
   "msg": "",
-  "new_rows": 47,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4621,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "hyg": {
   "ok": true,
   "msg": "",
-  "new_rows": 71,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4927,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "ief": {
   "ok": true,
   "msg": "",
-  "new_rows": 25,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6109,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "rsp": {
   "ok": true,
   "msg": "",
-  "new_rows": 5919,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5919,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "spy": {
   "ok": true,
   "msg": "",
-  "new_rows": 8502,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 8502,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "gold": {
   "ok": true,
   "msg": "",
-  "new_rows": 6573,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6573,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "wti": {
   "ok": true,
   "msg": "",
-  "new_rows": 6580,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6580,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "dxy": {
   "ok": true,
   "msg": "",
-  "new_rows": 14181,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 14181,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "eurusd": {
   "ok": true,
   "msg": "",
-  "new_rows": 34,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5951,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "vwce_de": {
   "ok": true,
   "msg": "",
-  "new_rows": 28,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1851,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "baa10y": {
   "ok": true,
   "msg": "",
-  "new_rows": 35,
+  "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 10212,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "t10y2y": {
   "ok": true,
   "msg": "",
-  "new_rows": 71,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 12606,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "t10y3m": {
   "ok": true,
   "msg": "",
-  "new_rows": 47,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 11215,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "hy_oas": {
   "ok": true,
   "msg": "",
-  "new_rows": 786,
+  "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 786,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "ig_oas": {
   "ok": true,
   "msg": "",
-  "new_rows": 785,
+  "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 785,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "nfci": {
   "ok": true,
   "msg": "",
-  "new_rows": 2913,
+  "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 2913,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "stlfsi": {
   "ok": true,
   "msg": "",
-  "new_rows": 1714,
+  "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 1714,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "real10y": {
   "ok": true,
   "msg": "",
-  "new_rows": 5966,
+  "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 5966,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "be10y": {
   "ok": true,
   "msg": "",
-  "new_rows": 5967,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5967,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "dgs10": {
   "ok": true,
   "msg": "",
-  "new_rows": 16197,
+  "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 16197,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "dgs2": {
   "ok": true,
   "msg": "",
-  "new_rows": 12605,
+  "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 12605,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "fedfunds": {
   "ok": true,
   "msg": "",
-  "new_rows": 26426,
+  "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 26426,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "usd_broad": {
   "ok": true,
   "msg": "",
-  "new_rows": 5222,
+  "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 5222,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "epu": {
   "ok": true,
   "msg": "",
-  "new_rows": 15284,
+  "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 15284,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "icsa": {
   "ok": true,
   "msg": "",
-  "new_rows": 3122,
+  "new_rows": 0,
   "last_date": "2026-10-31",
   "rows": 3122,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "unrate": {
   "ok": true,
   "msg": "",
-  "new_rows": 945,
+  "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 945,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "cpi": {
   "ok": true,
   "msg": "",
-  "new_rows": 956,
+  "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 956,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "equity_value": {
   "ok": true,
   "msg": "",
-  "new_rows": 305,
+  "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 305,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "gdp": {
   "ok": true,
   "msg": "",
-  "new_rows": 319,
+  "new_rows": 0,
   "last_date": "2026-07-01",
   "rows": 319,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
  },
  "pput": {
   "ok": true,
   "msg": "",
-  "new_rows": 10163,
+  "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 10163,
-  "checked_at": "2026-11-07 13:44 UTC"
+  "checked_at": "2026-11-07 13:59 UTC"
+ },
+ "ps_m": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 0,
+  "last_date": "2026-11-06",
+  "rows": 102,
+  "checked_at": "2026-11-07 13:59 UTC"
+ },
+ "cape_m": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1871,
+  "last_date": "2026-11-06",
+  "rows": 1871,
+  "checked_at": "2026-11-07 13:59 UTC"
+ },
+ "pe_m": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1872,
+  "last_date": "2026-11-06",
+  "rows": 1872,
+  "checked_at": "2026-11-07 13:59 UTC"
  }
 }
