@@ -58,6 +58,9 @@ FRED = {
     "usd_broad": "DTWEXBGS", "epu": "USEPUINDXD",
     "icsa": "ICSA", "unrate": "UNRATE", "cpi": "CPIAUCSL",
     "equity_value": "NCBEILQ027S", "gdp": "GDP",
+    "umcsent": "UMCSENT", "philly": "GACDFSA066MSFRBPHI", "empire": "GACDISA066MSFRBNY", "dgorder": "DGORDER", "neworder": "NEWORDER",
+    "indpro": "INDPRO", "payems": "PAYEMS", "retail": "RSAFS",
+    "walcl": "WALCL", "wresbal": "WRESBAL", "rrp": "RRPONTSYD", "tga": "WTREGEN",
 }
 
 CBOE = {"pput": "https://cdn.cboe.com/api/global/us_indices/daily_prices/PPUT_History.csv"}

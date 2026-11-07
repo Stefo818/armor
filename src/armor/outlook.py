@@ -126,13 +126,29 @@ def _aligned(key: str, idx: pd.DatetimeIndex, lag: int, limit: int) -> pd.Series
     return full.reindex(idx)
 
 
+SCEN_EDGES = [-0.10, -0.03, 0.03, 0.10]
+SCEN_NAMES = ["Forte calo (oltre −10%)", "Calo moderato (−10% … −3%)", "Laterale (−3% … +3%)", "Rialzo moderato (+3% … +10%)", "Forte rialzo (oltre +10%)"]
+
+
+def scenario_probs(r: pd.Series) -> list[float]:
+    """Quota di casi in ciascuno dei 5 scenari di rendimento finale a 3 mesi."""
+    r = r.dropna()
+    if r.empty:
+        return [float("nan")] * 5
+    b = np.searchsorted(SCEN_EDGES, r.values, side="right")
+    return [float((b == i).mean()) for i in range(5)]
+
+
 def signal_table(p: pd.Series, h: str = "3m") -> list[dict]:
     """Per ogni indicatore: valore oggi, percentile storico, e che cosa e' successo all'S&P 500 nei 3 mesi dopo
     le volte in cui l'indicatore era nella stessa fascia (quintile) di oggi."""
     p = p.dropna()
     n = HORIZONS[h]
     dd, rt = fwd_maxdd(p, n), fwd_ret(p, n)
+    upm = fwd_maxup(p, n)
     ok_idx = p.index[:-n]
+    base_up = float((upm.loc[ok_idx] >= 0.10).mean())
+    base_sc = scenario_probs(rt.loc[ok_idx])
     base_dd = float((dd.loc[ok_idx] <= -0.10).mean())
     base_ret = float(rt.loc[ok_idx].mean())
     out = []
@@ -164,7 +180,8 @@ def signal_table(p: pd.Series, h: str = "3m") -> list[dict]:
             verdict = "positivo"
         else:
             verdict = "neutro"
-        out.append({"key": key, "name": name, "now": now, "pct": pct, "quintile": int(q) + 1, "n": m,
+        out.append({"up10": float((upm[mask] >= 0.10).mean()), "base_up10": base_up, "scen": scenario_probs(rt[mask]), "base_scen": base_sc,
+                    "key": key, "name": name, "now": now, "pct": pct, "quintile": int(q) + 1, "n": m,
                     "freq_dd10": freq, "base_dd10": base_dd, "ratio": ratio, "ret": ret, "base_ret": base_ret,
                     "pos": pos, "verdict": verdict, "since": hist.index[0].strftime("%Y")})
     return out

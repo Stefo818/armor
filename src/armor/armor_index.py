@@ -205,7 +205,7 @@ def compute(sp: pd.Series, use_cache: bool = True) -> dict | None:
                     its.append({"key": key, "name": nm, "score": float(S.loc[t, key]), "value": last.get(key)})
             groups.append({"name": g, "weight": w, "score": None if pd.isna(sc) else float(sc), "items": its})
         prev = float(idx.iloc[-6]) if len(idx) > 6 else val
-        return {"value": val, "date": t, "hist": idx, "groups": groups, "eval": ev, "change5": val - prev}
+        return {"value": val, "date": t, "hist": idx, "groups": groups, "eval": ev, "change5": val - prev, "G": G, "S": S}
     except Exception as e:  # noqa: BLE001
         print("Indice Armor non calcolato:", str(e)[:120], flush=True)
         return None

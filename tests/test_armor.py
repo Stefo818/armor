@@ -259,3 +259,20 @@ def test_run_parallel_non_blocca():
     from armor.guard import run_parallel
     r = run_parallel({"a": lambda: 1, "b": lambda: time.sleep(5)}, workers=2, deadline=0.5)
     assert r["a"] == ("ok", 1) and r["b"][0] == "err"
+
+
+def test_chiaro_e_extra13():
+    import pandas as pd
+    from armor import chiaro, extra13
+    pr = [0.05, 0.15, 0.4, 0.3, 0.1]
+    assert "stk" in chiaro.stacked(pr) and chiaro.P(0.123, 0) == "12%"
+    h = chiaro.horizon_simple("1m", {"p": {10: 0.03}, "base": {10: 0.05}, "level": "Normale", "ret": {"q10": -.05, "q50": .01, "q90": .06}},
+                              {"up": {10: {"p": 0.02, "base": 0.03}}}, 100.0, ("Utile", ""), "<i>old</i>")
+    assert "Nessun movimento forte" in h and "Salire di almeno" in h
+    out = extra13.glossario_html()
+    assert "VIX" in out and "Esempio" in out
+    sp = pd.Series(100 + pd.Series(range(120)).values * 0.1, index=pd.bdate_range("2026-06-01", periods=120))
+    vix = pd.Series(18.0, index=sp.index)
+    c = extra13.calendar_html(sp.index[-1].date(), sp, vix)
+    assert "Calendario degli eventi" in c and "Previsti" not in c
+    assert "Oggi cosa faccio" in extra13.oggi_html(None, None, [], 0)

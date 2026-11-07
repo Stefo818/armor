@@ -257,7 +257,7 @@ def context_section(p) -> str:
     """Regime di mercato, volatilità attesa e calendario eventi."""
     import json
     from datetime import date
-    from . import calendario, regime, volatility
+    from . import calendario, chiaro, regime, volatility
     from .config import DATA
 
     def cal():
@@ -268,8 +268,8 @@ def context_section(p) -> str:
         return calendario.html(calendario.events(date.today(), 45, earn))
     return ("<h2 id='contesto'>Contesto: regime, volatilità attesa e calendario</h2>"
             "<h3>Regime di mercato</h3><div class='card'>" + _safe(lambda: regime.html(regime.compute(p)), "Regime") + "</div>"
-            "<h3 style='margin-top:18px'>Volatilità attesa nel prossimo mese</h3><div class='card'>" + _safe(lambda: volatility.html(volatility.forecast(p)), "Previsione della volatilità") + "</div>"
-            "<h3 style='margin-top:18px'>Prossimi eventi che muovono i mercati</h3><div class='card scroll'>" + _safe(cal, "Calendario") + "</div>")
+            "<h3 style='margin-top:18px'>Volatilità attesa nel prossimo mese</h3><div class='card'>" + _safe(lambda: chiaro.volatility_simple(volatility.forecast(p)), "Previsione della volatilità") + "</div>"
+            "<h3 style='margin-top:18px'>Prossimi eventi che muovono i mercati <button class='btn pri' data-cal='1' style='margin-left:8px'>Apri il calendario completo</button></h3><div class='card scroll'>" + _safe(cal, "Calendario") + "</div>")
 
 
 def portfolio_section() -> str:
