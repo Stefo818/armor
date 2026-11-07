@@ -25,5 +25,10 @@ jobs:
         run: |
           python -m armor valida
           python -m armor migliora
+      - name: Valutazione dei modelli (A1 contro FHS)
+        continue-on-error: true
+        env:
+          PYTHONPATH: src
+        run: python -m armor valuta-modelli
       - name: Salva i dati nel repository
         run: bash scripts/salva.sh "Convalida mensile" data

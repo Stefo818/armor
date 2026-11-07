@@ -245,6 +245,11 @@ def main() -> None:
         from . import validate
         r = validate.run()
         print(r[r.model == "armor"].to_string(index=False))
+    elif cmd == "valuta-modelli":
+        from . import modeleval
+        step = int(sys.argv[2]) if len(sys.argv) > 2 else 5
+        r = modeleval.evaluate(step=step)
+        print(modeleval.table(r))
     elif cmd == "sfide":
         from . import challenger
         print(challenger.run().to_string(index=False))

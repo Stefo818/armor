@@ -311,3 +311,59 @@ def test_fase0_fred_stooq_salute_registro():
     assert "VIX" in salute.red_names(rows) and "Fermo" in salute.html(rows)
     row = {"date": "2026-11-06", "armor_index": 50}
     assert "pup_1m" in registry.check(row) and "date" not in registry.check(row)
+
+
+def _garch_series(n=4000, seed=3):
+    import numpy as np
+    import pandas as pd
+    rng = np.random.default_rng(seed)
+    om, al, be = 0.02, 0.08, 0.90
+    s2, r = 1.0, []
+    for _ in range(n):
+        e = np.sqrt(s2) * rng.standard_t(7) / np.sqrt(7 / 5)
+        r.append(e + 0.03)
+        s2 = om + al * e * e + be * s2
+    p = 100 * np.exp(np.cumsum(np.array(r) / 100))
+    return pd.Series(p, index=pd.bdate_range("2005-01-03", periods=n))
+
+
+def test_fhs_stima_simulazione_e_nessun_futuro():
+    import numpy as np
+    from armor import fhs
+    p = _garch_series()
+    r = fhs.log_returns(p)
+    pr = fhs.fit(r.values)
+    assert 0.9 < pr["persistence"] < 1.0 and pr["nu"] > 2.5 and abs(pr["z"].std() - 1) < 1e-6
+    f = fhs.forecast(p, sims=1500, seed=1)
+    for hz in ("10g", "1m", "3m", "6m"):
+        d = [f[hz]["down"][t]["p"] for t in sorted(f[hz]["down"])]
+        u = [f[hz]["up"][t]["p"] for t in sorted(f[hz]["up"])]
+        assert all(a >= b - 1e-12 for a, b in zip(d, d[1:])) and all(a >= b - 1e-12 for a, b in zip(u, u[1:]))   # soglie più alte = meno probabili
+        assert abs(sum(f[hz]["scen"]) - 1) < 1e-9
+    # più alta la varianza iniziale, più probabili i cali grandi
+    lo = fhs.summarize(fhs.simulate(pr, 0.3, 1500, seed=2))["1m"]["down"][5]["p"]
+    hi = fhs.summarize(fhs.simulate(pr, 6.0, 1500, seed=2))["1m"]["down"][5]["p"]
+    assert hi > lo + 0.2
+    # nessuno sguardo al futuro: stessa data, dati futuri diversi -> stessa previsione
+    t = p.index[2500]
+    a = fhs.forecast(p, date=t, sims=800, seed=5)["1m"]["down"][5]["p"]
+    p2 = p.copy()
+    p2[p2.index > t] = p2[p2.index > t] * 3
+    b = fhs.forecast(p2, date=t, sims=800, seed=5)["1m"]["down"][5]["p"]
+    assert a == b
+
+
+def test_valutazione_modelli_purged_e_auc():
+    import numpy as np
+    import pandas as pd
+    from armor import modeleval
+    p = _garch_series(1500)
+    dates = p.index[800::50]
+    b1 = modeleval.purged_base(p, dates, "1m", "down", 5)
+    p2 = p.copy()
+    p2[p2.index > dates[3]] *= 0.5     # il futuro cambia drasticamente
+    b2 = modeleval.purged_base(p2, dates, "1m", "down", 5)
+    assert np.allclose(b1.iloc[:3].values, b2.iloc[:3].values)   # la frequenza «normale» a t non dipende dal futuro
+    assert abs(modeleval.auc([0.1, 0.2, 0.8, 0.9] * 10, [0, 0, 1, 1] * 10) - 1.0) < 1e-9
+    lo, hi = modeleval.block_ci(np.full(200, 0.9), np.full(200, 1.0), 5)
+    assert abs(lo - 0.1) < 1e-6 and abs(hi - 0.1) < 1e-6
