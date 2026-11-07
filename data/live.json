@@ -1,0 +1,56 @@
+{
+ "updated": "2026-11-07T14:38:04Z",
+ "quotes": {
+  "vwce": {
+   "price": 165.84,
+   "prev": 165.89999389648438,
+   "chg": -0.00036162687577800945,
+   "time": "2026-11-06T16:36:06Z",
+   "open": false,
+   "name": "VWCE",
+   "ccy": "€",
+   "symbol": "VWCE.DE"
+  },
+  "sp500": {
+   "price": 7376.86,
+   "prev": 7356.72998046875,
+   "chg": 0.00273627271691268,
+   "time": "2026-11-06T21:37:09Z",
+   "open": false,
+   "name": "S&P 500",
+   "ccy": "",
+   "symbol": "^GSPC"
+  },
+  "sp_fut": {
+   "price": 7402.0,
+   "prev": 7390.5,
+   "chg": 0.0015560516879777886,
+   "time": "2026-11-06T21:59:59Z",
+   "open": false,
+   "name": "Futures S&P 500",
+   "ccy": "",
+   "symbol": "ES=F"
+  },
+  "vix": {
+   "price": 25.64,
+   "prev": 28.149999618530273,
+   "chg": -0.08916517415787162,
+   "time": "2026-11-06T21:15:01Z",
+   "open": false,
+   "name": "VIX (paura)",
+   "ccy": "",
+   "symbol": "^VIX"
+  },
+  "eurusd": {
+   "price": 1.1143,
+   "prev": 1.1230907440185547,
+   "chg": -0.00782727848606446,
+   "time": "2026-11-06T22:29:32Z",
+   "open": false,
+   "name": "Cambio EUR/USD",
+   "ccy": "",
+   "symbol": "EURUSD=X"
+  }
+ },
+ "errors": []
+}
