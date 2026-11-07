@@ -1,0 +1,322 @@
+{
+ "sp500": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 138,
+  "last_date": "2026-11-06",
+  "rows": 24831,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "vix": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 77,
+  "last_date": "2026-11-06",
+  "rows": 9283,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "vix3m": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 67,
+  "last_date": "2026-11-06",
+  "rows": 5111,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "vix9d": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 3986,
+  "last_date": "2026-11-06",
+  "rows": 3986,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "vvix": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 40,
+  "last_date": "2026-11-06",
+  "rows": 4985,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "skew": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 53,
+  "last_date": "2026-11-06",
+  "rows": 9207,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "move": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 46,
+  "last_date": "2026-11-06",
+  "rows": 5932,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "nasdaq100": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 10356,
+  "last_date": "2026-11-06",
+  "rows": 10356,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "vt": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 47,
+  "last_date": "2026-11-06",
+  "rows": 4621,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "hyg": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 71,
+  "last_date": "2026-11-06",
+  "rows": 4927,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "ief": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 25,
+  "last_date": "2026-11-06",
+  "rows": 6109,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "rsp": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 5919,
+  "last_date": "2026-11-06",
+  "rows": 5919,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "spy": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 8502,
+  "last_date": "2026-11-06",
+  "rows": 8502,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "gold": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 6573,
+  "last_date": "2026-11-06",
+  "rows": 6573,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "wti": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 6580,
+  "last_date": "2026-11-06",
+  "rows": 6580,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "dxy": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 14181,
+  "last_date": "2026-11-06",
+  "rows": 14181,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "eurusd": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 34,
+  "last_date": "2026-11-06",
+  "rows": 5951,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "vwce_de": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 28,
+  "last_date": "2026-11-06",
+  "rows": 1851,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "baa10y": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 35,
+  "last_date": "2026-11-05",
+  "rows": 10212,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "t10y2y": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 71,
+  "last_date": "2026-11-06",
+  "rows": 12606,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "t10y3m": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 47,
+  "last_date": "2026-11-06",
+  "rows": 11215,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "hy_oas": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 786,
+  "last_date": "2026-11-05",
+  "rows": 786,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "ig_oas": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 785,
+  "last_date": "2026-11-05",
+  "rows": 785,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "nfci": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 2913,
+  "last_date": "2026-10-30",
+  "rows": 2913,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "stlfsi": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1714,
+  "last_date": "2026-10-30",
+  "rows": 1714,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "real10y": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 5966,
+  "last_date": "2026-11-05",
+  "rows": 5966,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "be10y": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 5967,
+  "last_date": "2026-11-06",
+  "rows": 5967,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "dgs10": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 16197,
+  "last_date": "2026-11-05",
+  "rows": 16197,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "dgs2": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 12605,
+  "last_date": "2026-11-05",
+  "rows": 12605,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "fedfunds": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 26426,
+  "last_date": "2026-11-05",
+  "rows": 26426,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "usd_broad": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 5222,
+  "last_date": "2026-10-30",
+  "rows": 5222,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "epu": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 15284,
+  "last_date": "2026-11-05",
+  "rows": 15284,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "icsa": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 3122,
+  "last_date": "2026-10-31",
+  "rows": 3122,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "unrate": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 945,
+  "last_date": "2026-10-01",
+  "rows": 945,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "cpi": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 956,
+  "last_date": "2026-09-01",
+  "rows": 956,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "equity_value": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 305,
+  "last_date": "2026-04-01",
+  "rows": 305,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "gdp": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 319,
+  "last_date": "2026-07-01",
+  "rows": 319,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "pput": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 10163,
+  "last_date": "2026-11-06",
+  "rows": 10163,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "cape": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1713,
+  "last_date": "2023-09-30",
+  "rows": 1713,
+  "checked_at": "2026-11-07 13:44 UTC"
+ },
+ "pe_trailing": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1830,
+  "last_date": "2023-06-30",
+  "rows": 1830,
+  "checked_at": "2026-11-07 13:44 UTC"
+ }
+}
