@@ -7,7 +7,7 @@ import pandas as pd
 
 import json
 
-from . import journal, live as livemod, store
+from . import analysis, journal, live as livemod, outlook, parts, registry, sitedata, store, valuations
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_ret, price_features, vwce_series
@@ -293,7 +293,7 @@ def comparison_html(date, sp, p):
             if all(v is None for v in vals):
                 cells = ["<td colspan='6' class='muted'>dato non disponibile o non aggiornato</td>"]
             hp = INDICATOR_HELP.get(key, "")
-            out.append(f"<tr><td>{esc(label)}<div class='ihelp'>{esc(hp)}</div></td>{''.join(cells)}</tr>")
+            out.append(f"<tr><td data-chart='{key}'>{esc(label)}<div class='ihelp'>{esc(hp)}</div></td>{''.join(cells)}</tr>")
     out.append("</tbody></table>")
     return "".join(out)
 
@@ -356,7 +356,7 @@ def live_bar(date):
             cls = "dn" if cls == "up" else "up"
         chg = "" if x.get("chg") is None else f"{'▲' if x['chg'] >= 0 else '▼'} {abs(x['chg']) * 100:.2f}%".replace(".", ",")
         big = " big1" if key == "vwce" else ""
-        cards.append(f"<div class='lq{big}' data-k='{key}'><div class='lqn'>{esc(x['name'])}</div>"
+        cards.append(f"<div class='lq{big}' data-k='{key}' data-chart='{key}'><div class='lqn'>{esc(x['name'])}</div>"
                      f"<div class='lqp'>{it(x['price'], dec)}{(' ' + x['ccy']) if x.get('ccy') else ''}</div>"
                      f"<div class='lqc {cls}'>{chg} <span class='muted'>{'mercato aperto' if x.get('open') else 'mercato chiuso'}</span></div>"
                      f"<div class='lqt muted'></div><div class='lqh muted'>{LIVE_HELP[key]}</div></div>")
@@ -694,36 +694,87 @@ def build(ctx: dict, out=None) -> None:
 
     imp_html = improvement_html()
     live_html = live_bar(date)
+    out = out or REPORT_HTML
+    # ---- analisi dettagliate
+    mat = outlook.probability_matrix(p)
+    sim = outlook.similar_days(p)
+    sigs = outlook.signal_table(p)
+    vcards = valuations.current()
+    rep_an = analysis.load_latest()
+    arch_an = analysis.load_archive(14)
+    chartdata = sitedata.build(INDICATORS, vw, sp, indicator_series)
+    sitedata.write(out.parent / "data.json", chartdata)
+    reg = registry.read()
+    if len(reg):
+        reg.to_csv(out.parent / "registro.csv", index=False)
     lvl_word = {"Basso": "basso", "Normale": "nella norma", "Elevato": "più alto del normale", "Alto": "alto"}[worst]
-    r1 = pred.get("1m", {})
-    simple = []
-    if r3:
-        simple.append(f"Su 100 situazioni simili a quella di oggi, circa <b>{int(round(r3['p'][10] * 100))}</b> sono state seguite da un calo di almeno 10% "
-                      f"entro 3 mesi (normalmente circa {int(round(r3['base'][10] * 100))}).")
-    simple.append("Armor <b>non prevede se il mercato salirà o scenderà</b>: nei test la direzione non è prevedibile. Misura quanto è probabile un calo importante.")
-    simple.append("Per chi investe a lungo con un PAC i cali fanno parte del percorso: questa pagina serve a capire in che clima si investe, non a indovinare il momento giusto.")
+    # ---- parte alta: giudizio, rischi, opportunità
+    chips = ""
+    for hz in HORIZONS:
+        if hz not in pred:
+            continue
+        r_ = pred[hz]
+        chips += (f"<div class='hchip'><div class='t'>{HZ_LABEL[hz].upper()}</div><div class='p'>{pct(r_['p'][PRIMARY[hz]], 0)}</div>"
+                  f"<div class='l'>calo ≥{PRIMARY[hz]}% · <span class='badge {LEVEL_CLASS[r_['level']]}'>{r_['level'].lower()}</span></div></div>")
+    neg = sorted([x for x in sigs if x["verdict"] == "negativo"], key=lambda x: -x["ratio"])[:3]
+    pos = sorted([x for x in sigs if x["verdict"] == "positivo"], key=lambda x: x["ratio"])[:3]
+    li = lambda x: (f"<li data-chart='{x['key']}'><b>{esc(x['name'])}</b> {it(x['now'], 2)}: in passato calo ≥10% a 3 mesi nel {pct(x['freq_dd10'], 0)} "
+                    f"dei casi (normale {pct(x['base_dd10'], 0)})</li>")
+    n_neg = sum(1 for x in sigs if x["verdict"] == "negativo")
+    n_pos = sum(1 for x in sigs if x["verdict"] == "positivo")
+    oneline = (f"{n_neg} indicatori su {len(sigs)} sono in zona sfavorevole, {n_pos} in zona favorevole, {len(sigs) - n_neg - n_pos} neutri." if sigs else "")
+    risks_box = ("<div class='hbox r'><h4>Rischi da tenere d'occhio</h4><ul>" + ("".join(li(x) for x in neg) or "<li>Nessun indicatore in zona sfavorevole.</li>")
+                 + (f"<li>{esc(stress_note)}</li>" if stress_note else "") + "</ul></div>")
+    opps_box = ("<div class='hbox o'><h4>Elementi favorevoli</h4><ul>" + ("".join(li(x) for x in pos) or "<li>Nessun indicatore chiaramente favorevole.</li>")
+                + "</ul></div>")
+    val_line = ""
+    sp_c = next((c for c in vcards if c["key"] == "sp500"), None)
+    if sp_c and sp_c.get("pe"):
+        val_line = f" Il mercato è {'caro' if (sp_c.get('pe_pct') or 0) >= 80 else ('nella norma' if (sp_c.get('pe_pct') or 50) >= 30 else 'economico')} rispetto alla storia (P/E S&amp;P 500 {it(sp_c['pe'], 1)})."
+    simple = [f"<b>Cosa dice la pagina in breve.</b> {oneline}{val_line}",
+              "Armor <b>non prevede se il mercato salirà o scenderà</b>: stima quanto è probabile un calo (o una risalita) importante, confrontando oggi con tutta la storia.",
+              "Per chi investe con un PAC i cali fanno parte del percorso: la pagina serve a capire in che clima si investe, non a indovinare il momento."]
     simple_html = "".join(f"<li>{x}</li>" for x in simple)
-    guide = """<details class='guide' open><summary>Come leggere questa pagina (30 secondi)</summary><div class='expl'>
-<p><b>1. In alto</b> trovi i prezzi di adesso e il giudizio del giorno: <span class='badge ok'>verde</span> = clima tranquillo, <span class='badge warn'>giallo</span> = prudenza, <span class='badge bad'>rosso</span> = rischio alto.</p>
-<p><b>2. Previsioni</b>: per ogni periodo (10 giorni, 1, 3, 6 mesi) vedi la probabilità di un calo importante e se è sopra o sotto il normale.</p>
-<p><b>3. Storico</b>: tutte le previsioni passate, con cosa è successo davvero.</p>
-<p><b>4. Dettagli per esperti</b>: tabelle e test. Puoi ignorarli: sono chiusi di proposito.</p>
+    guide = """<details class='guide'><summary>Come leggere questa pagina (30 secondi)</summary><div class='expl'>
+<p><b>In alto</b>: prezzi di adesso (toccali per aprire il grafico) e il giudizio del giorno. <span class='badge ok'>verde</span> = clima tranquillo, <span class='badge warn'>giallo</span> = prudenza, <span class='badge bad'>rosso</span> = rischio alto.</p>
+<p><b>Valutazioni</b>: quanto è «caro» il mercato (P/E e P/S). <b>Grafici</b>: ogni indice con intervalli da 6 ore a tutta la storia. <b>Previsioni</b>: probabilità di cali e risalite a 10 giorni, 1, 3 e 6 mesi, con i momenti passati più simili. <b>Analisi</b>: il report quotidiano su tutti gli indici e sulle notizie. <b>Storico</b> e <b>Registro</b>: tutto ciò che Armor ha previsto e salvato giorno per giorno.</p>
 <p>Le stime sono probabilità basate sul passato, non certezze e non consigli di investimento.</p></div></details>"""
     gloss = """<details><summary>Piccolo dizionario</summary><div class='expl'>
 <p><b>Calo</b>: di quanto il prezzo scende dal massimo raggiunto in un periodo. «Calo di almeno 10%» = a un certo punto il prezzo è 10% sotto il massimo.</p>
+<p><b>Risalita</b>: di quanto il prezzo sale sopra il livello di oggi in un periodo.</p>
 <p><b>Probabilità</b>: 8% vuol dire circa 8 volte su 100, in situazioni simili nel passato.</p>
 <p><b>Orizzonte</b>: per quanto tempo guardiamo avanti (10 giorni, 1 mese, 3 mesi, 6 mesi).</p>
 <p><b>PAC</b>: piano di accumulo, cioè acquisti ripetuti ogni mese.</p>
 <p><b>VIX</b>: l'«indice della paura». Sopra 25-30 il mercato è nervoso.</p>
-<p><b>S&P 500</b>: indice delle 500 maggiori società USA, usato qui perché ha quasi un secolo di storia; VWCE ne segue l'andamento in modo molto simile.</p>
-<p><b>CAPE / prezzo-fatturato</b>: quanto è «caro» il mercato rispetto agli utili o ai ricavi. Caro non significa che scenderà presto.</p>
-<p><b>Walk-forward</b>: test onesto: a ogni data il modello usa solo ciò che si sapeva allora, mai il futuro.</p>
+<p><b>S&P 500 / Nasdaq 100</b>: indici delle 500 maggiori società USA e delle 100 maggiori società tecnologiche quotate al Nasdaq. VWCE segue l'intero mercato mondiale, per circa due terzi USA.</p>
+<p><b>P/E, P/S, CAPE</b>: quanto è «caro» il mercato rispetto agli utili, ai ricavi o agli utili medi di 10 anni.</p>
+<p><b>Walk-forward</b>: test onesto: a ogni data il modello usa solo ciò che si sapeva allora.</p>
 <p><b>AUC e Brier (BSS)</b>: voti del modello. AUC 0,5 = tirare una moneta, 1 = perfetto. BSS sopra 0 = meglio di dire sempre «la frequenza storica».</p></div></details>"""
-    def det(title, inner, hint=""):
+    def det(title, inner):
         return f"<details class='exp'><summary>{title}</summary><div class='card scroll'>{inner}</div></details>"
+    help_all = dict(INDICATOR_HELP)
+    help_all.update({k: v for k, v in LIVE_HELP.items()})
+    help_all.update({"val_pe_vwce": "Quanti euro si pagano per ogni euro di utile annuo delle società del mercato mondiale.", "val_ps_vwce": "Quanti euro si pagano per ogni euro di ricavi.",
+                     "val_pe_sp500": "P/E dell'S&P 500 (dati del fondo).", "val_ps_sp500": "Prezzo/fatturato dell'S&P 500 (dati del fondo).",
+                     "val_pe_ndx": "P/E del Nasdaq 100.", "val_ps_ndx": "Prezzo/fatturato del Nasdaq 100.",
+                     "risk_1m": "Probabilità stimata da Armor di un calo ≥10% nel mese successivo, ricostruita giorno per giorno dal 2000.",
+                     "risk_3m": "Probabilità stimata da Armor di un calo ≥10% nei 3 mesi successivi.", "risk_6m": "Probabilità stimata da Armor di un calo ≥10% nei 6 mesi successivi.",
+                     "risk_10g": "Probabilità stimata da Armor di un calo ≥5% nei 10 giorni successivi."})
+    labels_all = {k: v["l"] for k, v in chartdata.items()}
+    labels_all.update({"date": "Data", "vwce_ultimo": "VWCE ultimo (€)", "p_10g": "Prob. calo ≥5% a 10 giorni", "p_1m": "Prob. calo ≥10% a 1 mese",
+                       "p_3m": "Prob. calo ≥10% a 3 mesi", "p_6m": "Prob. calo ≥10% a 6 mesi", "livello_10g": "Livello 10 giorni", "livello_1m": "Livello 1 mese",
+                       "livello_3m": "Livello 3 mesi", "livello_6m": "Livello 6 mesi", "news_sent_macro": "Tono notizie macro", "news_neg_macro": "Notizie macro negative",
+                       "news_pos_macro": "Notizie macro positive", "news_n": "Notizie lette"})
+    chip_defs = [("vwce", "VWCE"), ("sp500", "S&P 500"), ("ndx", "Nasdaq 100"), ("vt", "Azioni mondiali (VT)"), ("vix", "VIX"), ("eurusd", "EUR/USD"),
+                 ("risk_10g", "Rischio calo 10 giorni"), ("risk_1m", "Rischio calo 1 mese"), ("risk_3m", "Rischio calo 3 mesi"), ("risk_6m", "Rischio calo 6 mesi"),
+                 ("pe_m", "P/E S&P 500"), ("ps_m", "P/S S&P 500"), ("cape_m", "CAPE"), ("val_pe_vwce", "P/E VWCE"), ("val_pe_ndx", "P/E Nasdaq"),
+                 ("hy_oas", "Spread High Yield"), ("baa10y", "Spread BAA"), ("t10y3m", "Curva 10Y-3M"), ("dgs10", "Rendimento 10 anni"), ("real10y", "Tasso reale"),
+                 ("gold", "Oro"), ("wti", "Petrolio"), ("usd_broad", "Dollaro"), ("unrate", "Disoccupazione"), ("aaii_spread", "Sentiment AAII"), ("gpr", "Geopolitica"),
+                 ("skew", "SKEW"), ("nfci", "Condizioni finanziarie")]
+    chip_opts = [(k, l) for k, l in chip_defs if k in chartdata and (chartdata[k]["d"] or chartdata[k].get("i"))]
     body = f"""
 <header><div><h1>Armor</h1><div class='muted'>Quanto è rischioso il mercato oggi per il tuo VWCE · dati del {date.strftime('%d/%m/%Y')} · pagina generata {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div></header>
-<nav class='nav'><a href='#oggi'>Oggi</a><a href='#previsioni'>Previsioni</a><a href='#segnali'>Segnali</a><a href='#storico'>Storico</a><a href='#miglioramento'>Come va l'app</a><a href='#dettagli'>Dettagli</a></nav>
+<nav class='nav'><a href='#oggi'>Oggi</a><a href='#valutazioni'>Valutazioni</a><a href='#grafici'>Grafici</a><a href='#previsioni'>Previsioni</a><a href='#analisi'>Analisi</a><a href='#storico'>Storico</a><a href='#registro'>Registro</a><a href='#miglioramento'>Come va l'app</a><a href='#dettagli'>Dettagli</a></nav>
 <div id='offline' class='banner' style='display:none'></div>
 {stale_txt}
 <a id='oggi'></a>{live_html}
@@ -731,20 +782,28 @@ def build(ctx: dict, out=None) -> None:
   <div class='hlk'>Il giudizio di oggi</div>
   <div class='hl1'>{verdict}</div>
   <div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div>
+  <div class='heroin'>{chips}</div>
+  <div class='hrow'>{risks_box}{opps_box}</div>
   <ul class='simple'>{simple_html}</ul>
   <div class='hl3'>{esc(note_rel)}</div>
-  <div class='hl3 stress'>{esc(stress_note)}</div>
 </section>
 {guide}
+<h2 id='valutazioni'>Quanto è «caro» il mercato: P/E e P/S in tempo reale</h2>{parts.valuations_html(vcards)}
+<h2 id='grafici'>Grafici interattivi</h2>{parts.charts_section(chip_opts)}
 <h2 id='previsioni'>Previsioni per periodo</h2>
 <div class='explain'><p><b>Cosa vedi qui.</b> Ogni scheda risponde a una domanda: <i>«da oggi, quanto è probabile che il prezzo scenda di almeno X% rispetto al massimo raggiunto in quel periodo?»</i> Il numero grande è la probabilità. Subito sotto c'è il confronto con il normale: se oggi è più alta del solito, il clima è più pericoloso.</p>
 <p><b>Il livello</b> (in alto a destra di ogni scheda) confronta la probabilità di oggi con quella abituale: <span class='badge ok'>basso</span> meno di 0,6 volte, <span class='badge ok'>normale</span> fino a 1,3 volte, <span class='badge warn'>elevato</span> fino a 2 volte, <span class='badge bad'>alto</span> oltre 2 volte.</p>
-<p><b>«Se andasse come in passato»</b> è il rendimento tipico che si è visto dopo giorni simili a quelli di oggi. È un ordine di grandezza, non una previsione di prezzo. L'<b>affidabilità</b> dice se, nei test sul passato, quella stima ha funzionato davvero.</p></div>
+<p><b>«Se andasse come in passato»</b> è il rendimento tipico che si è visto dopo giorni simili a quelli di oggi: un ordine di grandezza, non una previsione di prezzo. L'<b>affidabilità</b> dice se, nei test sul passato, quella stima ha funzionato davvero.</p></div>
 <div class='grid4'>{cards}</div>
-<h2 id='segnali'>Segnali di attenzione</h2><div class='explain'><p><b>Cosa sono.</b> Condizioni di stress del mercato (VIX alto, credito che si irrigidisce, curva dei tassi invertita...). Per ognuna trovi se oggi è <b>ATTIVA</b> e, nella storia, quante volte è stata seguita da un calo di almeno 10% entro 3 mesi, confrontato con la frequenza normale. Più alte sono le percentuali rispetto al normale, più il segnale è serio. Sono statistiche del passato: indicano un clima, non il momento in cui il mercato scenderà.</p></div><div class='card'>{flags_html}</div>
+<h3 style='margin-top:22px'>Cali e risalite a tutte le soglie (1% … 20%)</h3><div class='card scroll'>{parts.matrix_html(mat, sim)}</div>
+<h2 id='segnali'>Quali indici danno segnali positivi o negativi</h2><div class='card scroll'>{parts.signals_html(sigs)}</div>
+<h3 style='margin-top:22px'>Segnali di stress del mercato</h3>
+<div class='explain'><p><b>Cosa sono.</b> Condizioni di stress (VIX alto, credito che si irrigidisce, curva dei tassi invertita...). Per ognuna trovi se oggi è <b>ATTIVA</b> e, nella storia, quante volte è stata seguita da un calo di almeno 10% entro 3 mesi, confrontato con la frequenza normale. Sono statistiche del passato: indicano un clima, non il momento in cui il mercato scenderà.</p></div><div class='card'>{flags_html}</div>
+<h2 id='analisi'>Analisi giornaliera: indici, confronto col passato e notizie</h2>{parts.analysis_section(rep_an, arch_an)}
 <h2 id='storico'>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero. Il grafico mostra come cambia nel tempo la probabilità di un calo (scegli il periodo con i pulsanti); la tabella elenca ogni previsione fatta.</p>
-<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma, 2× = il doppio del solito. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (e, tra parentesi, l'intervallo in cui cade l'80% dei casi). <i>Variazione</i>: di quanto la probabilità è cambiata rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando la previsione si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza: quanto è andato davvero il VWCE e di quanto la stima si è sbagliata.</p></div><div class='card scroll'>{hist_html}</div>
-<h2>Previsto contro reale</h2><div class='explain'><p><b>Cosa vedi.</b> Quando una previsione scade, qui confrontiamo il rendimento che Armor aveva ipotizzato con quello reale. <i>Scostamento</i> = reale − previsto: se è molto diverso da zero, la stima era lontana. Subito sotto c'è il test sul passato: ci dice quanto di solito sbaglia, così sai quanta fiducia dare a queste stime.</p></div><div class='card'>{pv}</div>
+<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma, 2× = il doppio del solito. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (e, tra parentesi, l'intervallo in cui cade l'80% dei casi). <i>Variazione</i>: di quanto la probabilità è cambiata rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando la previsione si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>
+<h2>Previsto contro reale</h2><div class='explain'><p><b>Cosa vedi.</b> Quando una previsione scade, qui confrontiamo il rendimento che Armor aveva ipotizzato con quello reale. <i>Scostamento</i> = reale − previsto. Sotto c'è il test sul passato: ci dice quanto di solito sbaglia.</p></div><div class='card'>{pv}</div>
+<h2 id='registro'>Registro dei dati giornalieri</h2>{parts.registry_section()}
 <h2 id='miglioramento'>Come va l'app: miglioramento automatico</h2><div class='card scroll'>{imp_html}</div>
 <h2 id='dettagli'>Dettagli per esperti</h2><p class='muted'>Tabelle e test dietro le stime. Non servono per leggere il giudizio: aprile solo se vuoi approfondire.</p>
 {det('Confronto degli indicatori con il passato', comparison_html(date, sp, p) + "<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = verso più rischio, verde = verso meno rischio.</p>")}
@@ -753,8 +812,9 @@ def build(ctx: dict, out=None) -> None:
 {det('Dati, fonti e archivio', dc)}
 {gloss}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>
+<script>window.HELP={json.dumps(help_all, ensure_ascii=False)};window.LABELS={json.dumps(labels_all, ensure_ascii=False)};</script>
+{parts.MODAL}
 """
-    out = out or REPORT_HTML
     out.write_text(TEMPLATE.replace("{{BODY}}", body), encoding="utf-8")
     print("Cruscotto creato:", out)
 
@@ -798,7 +858,7 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();
@@ -814,6 +874,7 @@ function refresh(){fetch('live.json?'+Date.now(),{cache:'no-store'}).then(functi
 if(location.protocol.indexOf('http')===0){refresh();setInterval(refresh,300000);setInterval(function(){paint(window.LIVE)},60000)}
 function off(){var b=document.getElementById('offline');if(!b)return;if(navigator.onLine){b.style.display='none'}else{b.style.display='';b.textContent='Sei offline: mostro gli ultimi dati salvati sul telefono.'}}
 window.addEventListener('online',off);window.addEventListener('offline',off);off();
+var loaded=Date.now();document.addEventListener('visibilitychange',function(){if(!document.hidden&&Date.now()-loaded>900000&&navigator.onLine&&location.protocol.indexOf('http')===0)location.reload()});
 if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){navigator.serviceWorker.register('sw.js').catch(function(){})}
 })();
-</script></body></html>"""
+</script>"""+parts.JS+"""</body></html>"""

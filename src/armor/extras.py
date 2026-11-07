@@ -215,6 +215,8 @@ def update_extras(st: dict, only: list[str] | None = None) -> None:
 
     from .aaii import fetch_aaii
     run(["aaii_bull", "aaii_bear", "aaii_spread"], fetch_aaii)
+    from .valuations import snapshot as snapshot_valuations
+    run(["val_pe_vwce", "val_ps_vwce", "val_pe_sp500", "val_ps_sp500", "val_pe_ndx", "val_ps_ndx"], snapshot_valuations)
     run(["gpr", "gpr_threat", "gpr_act"], fetch_gpr)
     run(["fear_greed"], fetch_fear_greed)
     run(["breadth50", "breadth200", "nh_nl"], fetch_breadth)

@@ -1,0 +1,36 @@
+name: Notizie e analisi Armor
+on:
+  schedule:
+    - cron: '5 6,10,14,18 * * 1-5'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  notizie:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Notizie e analisi
+        env:
+          PYTHONPATH: src
+        run: python -m armor notizie
+      - name: Salva
+        run: |
+          git config user.name "armor-bot"
+          git config user.email "armor-bot@users.noreply.github.com"
+          git add data/news data/reports data/registry
+          git diff --cached --quiet && exit 0
+          git commit -m "Notizie e analisi automatiche"
+          for i in 1 2 3 4; do
+            if git pull --rebase -X theirs && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 8
+          done
+          exit 1

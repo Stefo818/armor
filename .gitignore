@@ -11,3 +11,7 @@ site/
 sentiment.xls
 dati_manuali/
 data/series/aaii_*.csv
+
+data/intraday.json
+data.json
+registro.csv

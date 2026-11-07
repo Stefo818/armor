@@ -16,7 +16,11 @@ QUOTES = {  # chiave: (simbolo Yahoo, nome, valuta)
     "sp_fut": ("ES=F", "Futures S&P 500", ""),
     "vix": ("^VIX", "VIX (paura)", ""),
     "eurusd": ("EURUSD=X", "Cambio EUR/USD", ""),
+    "vt": ("VT", "VT (azioni mondiali in dollari)", "$"),
+    "ndx": ("^NDX", "Nasdaq 100", ""),
 }
+HIDDEN_IN_BAR = {"vt", "ndx"}   # servono per le valutazioni e i grafici, non per la barra in alto
+INTRADAY_FILE = DATA / "intraday.json"
 URL = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=5m&range=5d"
 UA = {"User-Agent": "Mozilla/5.0 (Armor personal dashboard)"}
 
@@ -40,7 +44,7 @@ def parse_chart(js: dict, now_ts: float | None = None) -> dict:
     now_ts = now_ts or datetime.now(timezone.utc).timestamp()
     reg = (meta.get("currentTradingPeriod") or {}).get("regular") or {}
     is_open = bool(reg and reg.get("start", 0) <= now_ts <= reg.get("end", 0)) and now_ts - t_last < 3600
-    return {"price": float(price), "prev": float(prev) if prev else None,
+    return {"_pts": [(int(t), float(c)) for t, c in pts], "price": float(price), "prev": float(prev) if prev else None,
             "chg": (float(price) / float(prev) - 1) if prev else None,
             "time": datetime.fromtimestamp(t_last, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "open": is_open}
 
@@ -85,20 +89,36 @@ def fetch_all(get=None) -> dict:
             quotes[key] = q
         except Exception as e:  # noqa: BLE001
             errors.append(f"{key}: {str(e)[:80]}")
-    out = {"updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "quotes": quotes, "errors": errors}
+    intraday = {}
+    for k, q in quotes.items():
+        pts = q.pop("_pts", None)
+        if pts:
+            intraday[k] = {"t": [t for t, _ in pts], "v": [round(c, 4) for _, c in pts]}
+    out = {"updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "quotes": quotes, "errors": errors,
+           "_intraday": intraday}
     return out
 
 
 def run() -> dict:
     out = fetch_all()
     LIVE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    intraday = out.pop("_intraday", {})
     LIVE_FILE.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    if intraday:
+        INTRADAY_FILE.write_text(json.dumps(intraday), encoding="utf-8")
     for k, q in out["quotes"].items():
         c = "" if q.get("chg") is None else f"{q['chg'] * 100:+.2f}%"
         print(f"{k:8s} {q['price']:>10.2f} {c:>8s}  {q['time']}  {'aperto' if q['open'] else 'chiuso'}  {q.get('venue', '')}")
     for e in out["errors"]:
         print("ERR", e)
     return out
+
+
+def load_intraday() -> dict:
+    try:
+        return json.loads(INTRADAY_FILE.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
 
 
 def load() -> dict:

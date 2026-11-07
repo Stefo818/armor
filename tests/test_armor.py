@@ -148,3 +148,29 @@ def test_best_vwce_picks_latest_venue():
     errs = []
     q = live.best_vwce(get, errs)
     assert q["venue"] == "Monaco/gettex" and abs(q["price"] - 165.08) < 1e-9   # 250 scartato come anomalo
+
+
+def test_valuations_parse_and_scale(tmp_path, monkeypatch):
+    import pandas as pd
+    from armor import valuations
+    df = pd.DataFrame({"VT": [19.5, 2.4, 3.1], "Category Average": [18.0, 2.0, 2.9]},
+                      index=["Price/Earnings", "Price/Sales", "Price/Book"])
+    m = valuations.parse_equity_holdings(df)
+    assert m == {"pe": 19.5, "ps": 2.4}
+
+
+def test_news_parse_and_sentiment():
+    from datetime import datetime, timezone
+    from armor import news
+    xml = """<rss><channel>
+      <item><title>Stocks plunge as war fears grow - Reuters</title><link>http://x/1</link><pubDate>Fri, 06 Nov 2026 14:00:00 GMT</pubDate><description>&lt;p&gt;Markets tumble&lt;/p&gt;</description></item>
+      <item><title>Nvidia beats estimates, shares surge on AI chip demand</title><link>http://x/2</link><pubDate>Fri, 06 Nov 2026 15:00:00 GMT</pubDate><description>Record revenue</description></item>
+    </channel></rss>"""
+    items = news.parse_rss(xml)
+    assert items[0]["source"] == "Reuters" and items[0]["title"].startswith("Stocks plunge")
+    now = datetime(2026, 11, 7, tzinfo=timezone.utc)
+    en = news.enrich(items, now, "macro", "Mercati")
+    assert en[0]["label"] == "negativo" and "Guerre e geopolitica" in en[0]["themes"]
+    assert en[1]["label"] == "positivo" and "Intelligenza artificiale e chip" in en[1]["themes"]
+    data = news.collect(get=lambda url: xml, now=now)
+    assert len(data["items"]) == 2          # i duplicati tra feed diversi vengono eliminati

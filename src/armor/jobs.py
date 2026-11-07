@@ -25,6 +25,30 @@ def forecast(write: bool = True) -> dict:
     return {"date": t, "pred": pred, "spot": spot, "eng": eng, "fitted": fitted}
 
 
+def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
+    """Notizie, analisi giornaliera e riga del registro. Ogni passo e' protetto: se uno fallisce, gli altri continuano."""
+    from . import analysis, live, news, registry, valuations
+    from .guard import with_timeout
+    from .report import INDICATORS
+    nws = news.load_latest()
+    if fetch_news:
+        try:
+            nws = with_timeout(news.run, 360, "notizie")
+        except Exception as e:  # noqa: BLE001
+            print("Notizie non scaricate:", str(e)[:100])
+    try:
+        rep = analysis.generate(ctx["date"], ctx["pred"], ctx["spot"], closed_sp500(), live.load(), nws, valuations.current())
+        analysis.save(rep)
+        print("Analisi giornaliera salvata:", rep["date"], len(rep["html"]), "caratteri")
+    except Exception as e:  # noqa: BLE001
+        print("Analisi giornaliera non riuscita:", str(e)[:150])
+    try:
+        n = registry.append(registry.row_for(ctx["date"], ctx["pred"], INDICATORS, ctx["spot"], news.summary(nws)))
+        print("Registro dati:", n, "giorni")
+    except Exception as e:  # noqa: BLE001
+        print("Registro non aggiornato:", str(e)[:150])
+
+
 def tutto(skip_download: bool = False) -> None:
     if not skip_download:
         from .guard import with_timeout
@@ -46,6 +70,7 @@ def tutto(skip_download: bool = False) -> None:
     except Exception as e:  # noqa: BLE001
         print('Prezzi live non scaricati:', str(e)[:100])
     ctx = forecast()
+    daily_extras(ctx)
     n = journal.update_outcomes(vwce_series(), closed_sp500())
     print(f"Esiti verificati a scadenza: {n}")
     ok, msg = journal.verify()
@@ -97,6 +122,9 @@ def main() -> None:
     elif cmd == "sfide":
         from . import challenger
         print(challenger.run().to_string(index=False))
+    elif cmd == "notizie":
+        ctx = forecast(write=False)
+        daily_extras(ctx, fetch_news=True)
     elif cmd == "migliora":
         from . import autoimprove
         print(autoimprove.run().tail(3).to_string(index=False))
@@ -113,7 +141,7 @@ def main() -> None:
     elif cmd == "verifica-diario":
         print(journal.verify())
     else:
-        print("Comandi: tutto | senza-download | diagnosi | valida | sfide | migliora | live | sito | dati-completi | report | verifica-diario")
+        print("Comandi: tutto | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | report | verifica-diario")
 
 
 if __name__ == "__main__":

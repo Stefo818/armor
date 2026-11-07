@@ -25,6 +25,12 @@ def fwd_maxdd(p: pd.Series, h: int) -> pd.Series:
     return np.minimum(m / p - 1, 0.0)
 
 
+def fwd_maxup(p: pd.Series, h: int) -> pd.Series:
+    """Rialzo massimo rispetto al prezzo di oggi nelle h sedute successive (valore >= 0)."""
+    m = p[::-1].rolling(h, min_periods=h).max()[::-1].shift(-1)
+    return np.maximum(m / p - 1, 0.0)
+
+
 def fwd_ret(p: pd.Series, h: int) -> pd.Series:
     return p.shift(-h) / p - 1
 
