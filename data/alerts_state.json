@@ -6,5 +6,7 @@
   "6m": "Basso"
  },
  "regime": "Calma",
- "vix": "stress"
+ "vix": "stress",
+ "aix_band": "moderato",
+ "divergence": false
 }
