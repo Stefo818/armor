@@ -139,6 +139,14 @@ Due misure fatte l'8/11/2026 con `fhs.fit` (S&P 500 dal 1950) e `fhs.simulate` (
   - 3 mesi o più: anni.
 - Le revisioni intermedie già programmate (prima: 10 maggio 2027, solo descrittiva) e il divieto di guardare i risultati per decidere fuori da quelle date.
 - Dichiarazione onesta: a 3-12 mesi la prova dal vivo richiede anni. Nel frattempo vale la verifica storica, con un controllo dal vivo «non peggiore».
+- **Regola di adozione storica (per migliorare subito senza aspettare anni)**, da scrivere nel protocollo PRIMA di verificare il motore della Fase 2. A ogni orizzonte, una variante del motore diventa riferimento ufficiale al posto di A1 solo se, sulla verifica walk-forward 1994-oggi con `verifica.py`, valgono tutte queste condizioni:
+  1. differenza di Brier rispetto ad A1 con intervallo bootstrap al 90% tutto a favore della variante, sia sul campione intero sia sui sottocampioni non sovrapposti (media degli sfasamenti);
+  2. BSS positivo sia nel 1994-2012 sia nel 2013-oggi;
+  3. pendenza di calibrazione tra 0,8 e 1,2;
+  4. copertura della fascia 10-90 tra il 77% e l'83%;
+  5. PBO sotto 0,5 tra le varianti provate.
+
+  Si confrontano al massimo le varianti pre-registrate della Fase 2, con correzione di Holm. Se una variante passa, in app è etichettata «adottato sulla verifica storica, in conferma dal vivo». Se il diario dal vivo, alle date del protocollo, la mostra peggiore di A1 oltre l'intervallo di confidenza, si torna ad A1. Se nessuna variante passa, A1 resta e il motore resta sperimentale.
 
 **Accettazione**: `verifica.py` testato con dati sintetici di cui si conosce il risultato (bootstrap, finestre non sovrapposte, episodi, PBO su configurazioni casuali ≈ 0,5); tabella in app; protocollo scritto e registrato.
 
@@ -174,7 +182,7 @@ Criteri di scelta, in ordine:
 4. a parità, la variante più semplice.
 
 - **Verifica walk-forward** 1994-oggi, una data ogni 5 sedute, parametri rifatti ogni anno. Metriche con `verifica.py` sugli stessi giorni di A1.
-- **In app**: il motore entra come «sperimentale» nelle schede e in una nuova sezione «Scenari a 1 settimana - 1 anno» (fasce, probabilità di perdita e drawdown, P(fine in negativo) contro la frequenza storica). Diventa riferimento solo secondo il protocollo della Fase 1.
+- **In app**: il motore entra come «sperimentale» (o come riferimento, agli orizzonti in cui supera la regola di adozione storica della Fase 1d) nelle schede e in una nuova sezione «Scenari a 1 settimana - 1 anno» (fasce, probabilità di perdita e drawdown, P(fine in negativo) contro la frequenza storica). Diventa riferimento solo secondo il protocollo della Fase 1.
 - **Accettazione**: coerenza verificata da test (P a 6 mesi ≥ P a 3 mesi; P(calo ≥20%) ≤ P(calo ≥10%)); code sotto controllo (nessun percorso oltre limiti dichiarati; curtosi misurata); tabella di verifica delle varianti nel registro.
 
 ### Fase 3 — VWCE in euro (patch 30) [solido]
