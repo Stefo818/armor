@@ -24,3 +24,5 @@ scratch/
 # Documenti di lavoro
 *.docx
 *.pdf
+
+data/affidabilita.json
