@@ -1188,3 +1188,107 @@ def test_affidabilita_instabilita_su_finestre_diverse(monkeypatch):
     assert r["acceso"] is True and "10%" in r["dettaglio"] and "20%" in r["dettaglio"]
     monkeypatch.setattr(fhs, "forecast", lambda pp, sims=0, seed=0, fit_start="", **k: {hz: {"down": {10: {"p": 0.1}, 5: {"p": 0.1}}} for hz in ("1m", "3m")})
     assert A.segnale_instabilita(p, p.index[-1])["acceso"] is False
+
+
+def test_pac_simulatore_caso_deterministico_e_prudente():
+    import numpy as np
+    from armor import pacsim
+    r = 50                                              # +0,5% al mese, costante
+    g = 1.005
+    C, M, n = 1000.0, 100.0, 60
+    atteso = C * g ** n + M * sum(g ** k for k in range(1, n + 1))
+    s = pacsim.patrimonio([r] * n, C, M)["serie"]
+    assert abs(s[-1]["valore"] - atteso) < 1e-6 and s[-1]["versato"] == C + M * n and s[-1]["mdd"] == 0
+    # TER: il patrimonio scende del costo annuo; costo per acquisto: ogni rata netta; scenario prudente: 3 punti all'anno in meno
+    f = 0.9986 ** (1 / 12)
+    s2 = pacsim.patrimonio([r] * 12, 0.0, 100.0, ter=0.14)["serie"][-1]["valore"]
+    assert abs(s2 - 100 * sum((g * f) ** k for k in range(1, 13))) < 1e-6
+    assert abs(pacsim.patrimonio([r] * 1, 0.0, 100.0, costo=2.0)["serie"][0]["valore"] - 98 * g) < 1e-9
+    p = pacsim.patrimonio([r] * 12, 1000.0, 0.0, prudente=True)["serie"][-1]["valore"]
+    assert abs(p - 1000 * (g * 0.97 ** (1 / 12)) ** 12) < 1e-6
+    # giorno di acquisto: più tardi nel mese = meno rendimento nel primo mese
+    assert pacsim.patrimonio([100], 0, 100, giorno=28)["serie"][0]["valore"] < pacsim.patrimonio([100], 0, 100, giorno=1)["serie"][0]["valore"]
+    # sospensione: liquidità ferma = soldi non investiti (senza rendimento); investita alla ripresa = lump sum con un solo costo
+    fer = pacsim.patrimonio([r] * 6, 0.0, 100.0, sospendi=3, modo="ferma")["serie"][-1]["valore"]
+    inv = pacsim.patrimonio([r] * 6, 0.0, 100.0, sospendi=3, modo="inv")["serie"][-1]["valore"]
+    assert abs(fer - (300.0 + 100 * sum(g ** k for k in range(1, 4)))) < 1e-9 and inv > fer
+    # drawdown del patrimonio: un calo del 10% dopo un mese di salita
+    m = pacsim.patrimonio([0, -1000], 1000.0, 0.0)["serie"]
+    assert abs(m[-1]["mdd"] + 0.10) < 1e-12
+
+
+def test_pac_percorsi_e_bootstrap_mensile():
+    import numpy as np
+    import pandas as pd
+    from armor import pacsim
+    idx = pd.bdate_range("2008-06-02", periods=4500)
+    p = pd.Series(100 * np.exp(np.cumsum(np.random.default_rng(1).normal(0.0004, 0.01, 4500))), index=idx)
+    d = pacsim.costruisci(p, n_paths=300, mesi=60, seme=5)
+    a = np.array(d["paths"])
+    assert a.shape == (300, 60) and d["ter"] == 0.14 and d["mesi_storici"] > 150
+    assert a.min() > -9000 and a.max() < 20000                                  # nessun rendimento mensile oltre i limiti (−90% / +200%)
+    d2 = pacsim.costruisci(p, n_paths=300, mesi=60, seme=5)
+    assert d2["paths"] == d["paths"]                                            # seme fisso = stesso risultato
+
+
+def test_pac_javascript_uguale_al_python():
+    import numpy as np
+    from armor import pacsim
+    try:
+        from playwright.sync_api import sync_playwright
+        pw = sync_playwright().start()
+        br = pw.chromium.launch()
+    except Exception:  # noqa: BLE001
+        import pytest
+        pytest.skip("browser non disponibile")
+    try:
+        pg = br.new_page()
+        pg.set_content("<html><body>" + pacsim.HTML + pacsim.JS + "</body></html>")
+        rng = np.random.default_rng(3)
+        paths = np.rint(rng.normal(60, 450, (40, 60))).astype(int).tolist()
+        o = {"C": 3000, "M": 150, "d": 15, "cost": 1.5, "ter": 0.14, "sosp": 3, "modo": "inv", "prud": True}
+        pg.evaluate("d=>window.__pacsim.setData(d)", {"paths": paths, "prudente": 0.03, "n": 40, "mesi": 60, "mesi_storici": 200, "rendimento_storico_annuo": 0.1})
+        js = pg.evaluate("o=>{const r=window.__pacsim.stat(o);return {w60:r[60].raw,w12:r[12].raw,d60:r[60].mddMed,below:r[60].below}}", o)
+        py = [pacsim.patrimonio(x, 3000, 150, 15, 1.5, 0.14, True, 3, "inv")["serie"] for x in paths]
+        assert np.allclose(js["w60"], [s[59]["valore"] for s in py], rtol=1e-9) and np.allclose(js["w12"], [s[11]["valore"] for s in py], rtol=1e-9)
+        assert abs(js["d60"] - float(np.median([s[59]["mdd"] for s in py]))) < 1e-9
+    finally:
+        br.close(); pw.stop()
+
+
+def test_pacsim_costo_storico():
+    from armor import pacsim
+    a = pacsim.patrimonio([0] * 3, 1000.0, 100.0)["serie"][-1]
+    b = pacsim.patrimonio([0] * 3, 1000.0, 100.0, K=700.0)["serie"][-1]
+    assert a["versato"] == 1300.0 and b["versato"] == 1000.0 and a["valore"] == b["valore"]
+    assert "pskc" in pacsim.HTML and "o.K>0" in pacsim.JS
+
+
+def test_vrp_componenti_e_regressioni():
+    import numpy as np, pandas as pd
+    from armor import vrp
+    rng = np.random.default_rng(3)
+    n = 1500
+    idx = pd.bdate_range("2008-01-01", periods=n)
+    c = pd.Series(1000 * np.exp(np.cumsum(rng.normal(0, 0.01, n))), index=idx)
+    o = c.shift(1).fillna(c.iloc[0]) * np.exp(rng.normal(0, 0.003, n))
+    h = np.maximum(o, c) * 1.004
+    l = np.minimum(o, c) * 0.996
+    x = vrp.componenti(o, h, l, c)
+    yz = vrp.yang_zhang(x).dropna()
+    assert 100 < yz.mean() < 5000 and (yz > 0).all()           # %² annui (vol ~16%: ≈ 250-ish)
+    vix = pd.Series(16.0, index=idx)
+    t = vrp.tabella(x, vix)
+    prev = vrp.previsioni_varianza(t)
+    # nessun anticipo: la previsione alla data d non usa esiti oltre d-21 (cambiare il futuro non la cambia)
+    t2 = t.copy(); t2.iloc[1300:, t2.columns.get_loc("y")] = 1e6
+    prev2 = vrp.previsioni_varianza(t2)
+    k = 1300 + 5
+    a, b = prev["HAR"].iloc[1200], prev2["HAR"].iloc[1200]
+    assert np.isfinite(a) and abs(a - b) < 1e-9
+    assert (prev["HAR"].dropna() >= vrp.FLOOR_VAR).all()
+    st = {"rho": 0.989, "s2_lr": 1.0}
+    s0 = vrp.s0_da_bersaglio(st, 400.0)
+    ev = st["s2_lr"] + st["rho"] ** np.arange(21) * (s0 - st["s2_lr"])
+    assert abs(ev.mean() * 252 - 400.0) < 1e-6
+    assert "VIX" in vrp.html() or "non ancora" in vrp.html()

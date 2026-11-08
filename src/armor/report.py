@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -891,7 +891,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             return f"<div class='pg' id='p-{k}'>{inner}</div>"
         late = ""
         for marker, js in (("id='epcanvas'", f"<script>{insight.EP_JS}</script>"), ("id='alkey'", f"<script>{parts.AL_JS}</script>"),
-                           ("id='embedchart'", parts.LATE_JS["embedchart"]), ("id='regsel'", parts.LATE_JS["regsel"]), ("id='pacamt'", ui.PAC_JS)):
+                           ("id='embedchart'", parts.LATE_JS["embedchart"]), ("id='regsel'", parts.LATE_JS["regsel"]), ("id='pacamt'", ui.PAC_JS), ("id='pscap'", pacsim.JS)):
             if marker in inner:
                 late += js
         lazy_pages[k] = inner + late
@@ -1001,12 +1001,13 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     p_an = (f"<h2>Analisi giornaliera: indici, confronto col passato e notizie</h2>{parts.analysis_section(rep_an, arch_an)}"
             f"<h2 style='margin-top:26px'>Gli ultimi 10 anni a confronto con oggi</h2><div class='card'>{_safe(lambda: decennio.html(ind10, tr10), 'Analisi dei 10 anni')}</div>"
             f"<h2 style='margin-top:26px'>Rapporto settimanale</h2>{bilancio.weekly_html(wk)}")
-    p_pf = ui.PAC_HTML + live_html + parts.portfolio_section()
+    p_pf = ui.PAC_HTML + pacsim.HTML + live_html + parts.portfolio_section()
     p_fid = ("<h2>Quanto mi posso fidare di Armor?</h2>" + _safe(lambda: ui.fiducia_html(sp, live=learning.live_table(sp)), "Pagina di fiducia")
              + "<h2 style='margin-top:26px'>Sfidanti in prova</h2><div class='card'>" + _safe(campioni.html, "Motori per orizzonte") + "</div>"
              + "<h2 style='margin-top:26px'>Verifica storica con margini d'errore</h2><div class='card'>" + _safe(verifica.html, "Verifica storica") + "</div>"
              + "<h2 style='margin-top:26px'>VWCE in euro</h2><div class='card'>" + _safe(serie_eur.html, "VWCE in euro") + "</div>"
              + "<h2 style='margin-top:26px'>Motore di percorsi: regola di adozione</h2><div class='card'>" + _safe(percorsi.html_verifica, "Percorsi verifica") + "</div>"
+             + "<h2 style='margin-top:26px'>Esperimento: premio di volatilità (in ombra)</h2><div class='card'>" + _safe(vrp.html, "VRP") + "</div>"
              + "<h2 style='margin-top:26px'>Ricerca modello: salute delle aziende, macro e storia lunga</h2><div class='card'>" + _safe(ciclico.html_ricerca, "Ricerca modello") + "</div>")
     p_sto = (f"<h2>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero.</p>"
              f"<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (tra parentesi l'intervallo dell'80% dei casi). <i>Variazione</i>: rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>"

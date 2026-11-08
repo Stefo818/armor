@@ -25,6 +25,12 @@ jobs:
           PYTHONPATH: src
         timeout-minutes: 50
         run: python -m armor ricerca
+      - name: Esperimento VRP in ombra (PROTOCOLLO_VRP.md)
+        continue-on-error: true
+        env:
+          PYTHONPATH: src
+        timeout-minutes: 40
+        run: python -m armor esperimento-vrp
       - name: Salva i risultati nel repository
         if: always()
-        run: bash scripts/salva.sh "Ricerca modello" data/ricerca
+        run: bash scripts/salva.sh "Ricerca modello" data/ricerca data/vrp_ombra.json data/protocollo_vrp_log.csv

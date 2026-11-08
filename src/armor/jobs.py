@@ -57,8 +57,10 @@ def forecast(write: bool = True) -> dict:
     try:   # scenari stimati sui rendimenti di VWCE in euro (serie a segmenti dichiarati)
         from . import serie_eur
         serie_eur.oggi()
+        from . import pacsim
+        pacsim.aggiorna()
     except Exception as e:  # noqa: BLE001
-        print("[euro] scenari non calcolati:", str(e)[:100])
+        print("[euro] scenari o percorsi del PAC non calcolati:", str(e)[:100])
     v = vwce_series()
     spot = float(v.reindex([t], method="ffill").iloc[0]) if not v.empty else float("nan")
     n = journal.append(t.strftime("%Y-%m-%d"), spot, pred, model=mid) if write else 0
@@ -274,6 +276,8 @@ def tutto(skip_download: bool = False) -> None:
     try:   # impronta del protocollo di verifica (una volta per versione del file)
         from . import verifica
         verifica.registra_protocollo()
+        from . import vrp
+        vrp.registra_protocollo()
     except Exception as e:  # noqa: BLE001
         print("[protocollo] non registrato:", str(e)[:100])
     ctx = forecast()
@@ -325,6 +329,8 @@ def costruisci_sito(live_first: bool = False) -> None:
         shutil.copy(live.LIVE_FILE, site / "live.json")
     for f in (ROOT / "web").glob("*"):
         shutil.copy(f, site / f.name)
+    if (DATA / "pac_sim.json").exists():   # percorsi mensili del simulatore PAC
+        shutil.copy(DATA / "pac_sim.json", site / "pac_sim.json")
     (site / ".nojekyll").write_text("")
     print("Sito pronto in", site)
 
@@ -393,6 +399,10 @@ def main() -> None:
     elif cmd == "serie-euro":   # segmenti, confronto tra serie e tra motori su VWCE in euro (~1 minuto)
         from . import serie_eur
         print(serie_eur.run())
+    elif cmd == "esperimento-vrp":   # Fase 6: premio di volatilità e HAR in ombra (~10 minuti)
+        from . import vrp
+        r = vrp.run()
+        print({m: x["promettente"] for m, x in r["promettenti"].items()})
     elif cmd == "verifica-percorsi":   # 12 varianti del motore di percorsi contro A1, con la regola di adozione del protocollo (lento: ~15 minuti)
         from . import percorsi
         r = percorsi.run_verifica()
