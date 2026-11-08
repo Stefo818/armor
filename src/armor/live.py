@@ -2,6 +2,7 @@
 import json
 from datetime import datetime, timezone
 
+import pandas as pd
 import requests
 
 from .config import DATA
@@ -50,8 +51,83 @@ def parse_chart(js: dict, now_ts: float | None = None) -> dict:
             "time": datetime.fromtimestamp(t_last, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "open": is_open}
 
 
-def best_vwce(get, errors: list) -> dict:
-    """Legge tutte le sedi e sceglie l'ultimo scambio (a parita', la prima della lista: Xetra)."""
+VWCE_ISIN = "IE00BK5BQT80"
+# fonti con le sedi serali (Lang & Schwarz fino alle 23, Tradegate e gettex fino alle 22): se rispondono, vince l'ultimo scambio
+EXTRA_URLS = [
+    ("onvista", "https://api.onvista.de/api/v1/instruments/FUND/ISIN:{isin}/snapshot"),
+    ("onvista", "https://api.onvista.de/api/v1/etfs/ISIN:{isin}/snapshot"),
+    ("tradegate", "https://www.tradegate.de/refresh.php?isin={isin}"),
+]
+
+
+def _num(x):
+    if isinstance(x, (int, float)):
+        return float(x)
+    try:
+        return float(str(x).replace(".", "").replace(",", ".")) if "," in str(x) else float(x)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def parse_venues(js, fonte: str) -> list:
+    """Cerca nella risposta (qualsiasi struttura) le quotazioni in euro con prezzo, ora e sede. Restituisce [{price, time, venue, prev}]."""
+    out = []
+
+    def walk(o):
+        if isinstance(o, dict):
+            price = _num(o.get("last")) if o.get("last") is not None else None
+            t = o.get("datetimeLast") or o.get("datetime") or o.get("lastTradeTime")
+            cur = o.get("isoCurrency") or o.get("currency")
+            mk = o.get("market")
+            venue = (mk.get("name") if isinstance(mk, dict) else None) or o.get("marketName") or (mk if isinstance(mk, str) else None)
+            if price and t and (cur in (None, "EUR")):
+                try:
+                    ts = pd.Timestamp(t)
+                    ts = ts.tz_convert("UTC") if ts.tzinfo else ts.tz_localize("Europe/Berlin").tz_convert("UTC")
+                    prev = _num(o.get("previousLast") or o.get("previousClose") or o.get("close") or 0) or None
+                    out.append({"price": price, "time": ts.strftime("%Y-%m-%dT%H:%M:%SZ"), "venue": str(venue or fonte), "prev": prev})
+                except Exception:  # noqa: BLE001
+                    pass
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    walk(js)
+    return out
+
+
+def parse_tradegate(js: dict, now=None) -> list:
+    """Tradegate (refresh.php) dà l'ultimo prezzo senza l'ora: si usa solo se oggi ci sono stati scambi, con ora = adesso (o le 22:00 a mercato chiuso)."""
+    last = _num(js.get("last"))
+    if not last or not _num(js.get("executions") or 0):
+        return []
+    now = pd.Timestamp(now or pd.Timestamp.now(tz="Europe/Berlin"))
+    now = now.tz_convert("Europe/Berlin") if now.tzinfo else now.tz_localize("Europe/Berlin")
+    t = min(now, now.normalize() + pd.Timedelta(hours=22))
+    prev = _num(js.get("close")) or None
+    return [{"price": last, "time": t.tz_convert("UTC").strftime("%Y-%m-%dT%H:%M:%SZ"), "venue": "Tradegate", "prev": prev}]
+
+
+def extra_venues(errors: list, get_json=None) -> list:
+    get_json = get_json or (lambda u: requests.get(u, headers=UA, timeout=15).json())
+    out, seen = [], set()
+    for fonte, url in EXTRA_URLS:
+        if fonte in seen:
+            continue
+        try:
+            js = get_json(url.format(isin=VWCE_ISIN))
+            v = parse_tradegate(js) if fonte == "tradegate" else parse_venues(js, fonte)
+            if v:
+                out += v
+                seen.add(fonte)
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"vwce {fonte}: {str(e)[:60]}")
+    return out
+
+
+def best_vwce(get, errors: list, extra: list | None = None) -> dict:
+    """Legge tutte le sedi (Yahoo + fonti serali) e sceglie l'ultimo scambio (a parità, la prima della lista: Xetra)."""
     found = []
     for sym, venue in VWCE_VENUES:
         try:
@@ -62,6 +138,12 @@ def best_vwce(get, errors: list) -> dict:
             errors.append(f"{sym}: {str(e)[:60]}")
     if not found:
         raise RuntimeError("nessuna sede raggiungibile")
+    prev_ref = found[0].get("prev")
+    for v in (extra or []):   # sedi serali: stessa struttura delle quotazioni Yahoo
+        q = {"price": v["price"], "prev": v.get("prev") or prev_ref, "time": v["time"], "open": False, "name": "VWCE", "ccy": "€",
+             "symbol": found[0]["symbol"], "venue": v["venue"]}
+        q["chg"] = (q["price"] / q["prev"] - 1) if q["prev"] else None
+        found.append(q)
     ref = found[0]["price"]
     ok = [q for q in found if abs(q["price"] / ref - 1) < 0.03] or found   # scarta prezzi anomali
     t_max = max(q["time"] for q in ok)
@@ -97,7 +179,7 @@ def fetch_all(get=None, get1=None) -> dict:
     for key, (sym, name, ccy) in QUOTES.items():
         try:
             if key == "vwce":
-                q = best_vwce(get, errors)
+                q = best_vwce(get, errors, extra_venues(errors))
             else:
                 q = parse_chart(get(sym))
                 q.update(name=name, ccy=ccy, symbol=sym)
@@ -130,6 +212,10 @@ def run() -> dict:
     LIVE_FILE.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     if intraday:
         INTRADAY_FILE.write_text(json.dumps(intraday), encoding="utf-8")
+    v = out["quotes"].get("vwce") or {}
+    if v:
+        print(f"[live] VWCE: {v.get('price')} da {v.get('venue')} alle {v.get('time')} · sedi lette: "
+              + ", ".join(f"{k} {p[0]} ({p[1][11:16]} UTC)" for k, p in (v.get("alts") or {}).items()))
     for k, q in out["quotes"].items():
         c = "" if q.get("chg") is None else f"{q['chg'] * 100:+.2f}%"
         print(f"{k:8s} {q['price']:>10.2f} {c:>8s}  {q['time']}  {'aperto' if q['open'] else 'chiuso'}  {q.get('venue', '')}")

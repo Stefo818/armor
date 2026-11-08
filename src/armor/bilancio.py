@@ -84,7 +84,8 @@ def day_summary(pred: dict, prev_levels: dict | None, regime: str | None, news: 
 
 
 def day_html(d: dict) -> str:
-    return ("<div class='card bil'><h3 style='margin-top:0'>Bilancio del giorno</h3><ul>" + "".join(f"<li>{x}</li>" for x in d["lines"]) + "</ul>"
+    from .semafori import cliccabile   # «8 rossi, 16 gialli, 35 verdi» apre la lista dei semafori
+    return ("<div class='card bil'><h3 style='margin-top:0'>Bilancio del giorno</h3><ul>" + "".join(f"<li>{cliccabile(x)}</li>" for x in d["lines"]) + "</ul>"
             f"<div class='mu'>Aggiornato il {d['date']}. Non è consulenza finanziaria.</div></div>")
 
 

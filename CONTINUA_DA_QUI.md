@@ -299,3 +299,58 @@ In tutto 159 mesi di allarme, di cui 79 falsi.
 - Controllare la prima esecuzione di Aziende VWCE (riga `[aziende]` nel log) e del margin debt.
 - Tra circa 6 mesi confrontare `ombra_ciclica.csv` con gli esiti reali.
 - I modelli promossi in futuro dalla ricerca mensile restano in ombra: per adottarli servirebbe una nuova prova su anni non usati (dopo il 2026).
+
+## PATCH 24 (tasto aggiorna, dati sempre aggiornati, VWCE serale, trimestrali chiare, contratti firmati, motore per orizzonte)
+- **Tasto «⟳ Aggiorna dati»** (`forza.py`, in alto a destra su tutte le pagine):
+  - avvia via API GitHub `site.yml` (prezzi + pagina, 3-5 min) oppure `daily.yml` (tutto, 20-30 min);
+  - segue lo stato ogni 20 s; dopo il giornaliero aspetta anche la ricostruzione del sito e poi ricarica;
+  - serve una chiave GitHub «fine-grained» (solo repository armor, permesso Actions: Read and write), salvata solo nel browser del telefono (`localStorage armor_gh_token`);
+  - banner «Dati non aggiornati» se una serie chiave è ferma (`salute.compute`, luce rossa).
+- **Dati sempre aggiornati**:
+  - `site.yml`: nuove esecuzioni alle 22:05 e 22:35 UTC (dopo le 23 italiane, chiusura di Lang & Schwarz); si ricostruisce dopo ogni workflow di dati (giornaliero, notizie, ricerca, convalida, mattino);
+  - `daily.yml`: giro di riserva alle 04:40 UTC (mar-sab);
+  - bilanci delle aziende riletti ogni giorno (`GIORNI = 1`);
+  - `sw.js` v11: le chiamate ad altri siti (API GitHub) non passano mai dalla cache.
+- **VWCE serale** (`live.py`):
+  - oltre alle 7 sedi Yahoo (Xetra 17:30, Stoccarda/gettex fino alle 22), si provano onvista (`api.onvista.de` snapshot, più sedi con orario, compresa Lang & Schwarz fino alle 23) e Tradegate (`refresh.php`, ora non indicata: usata solo con scambi del giorno, con ora = adesso o le 22:00);
+  - vince l'ultimo scambio entro ±3% da Xetra;
+  - nel log: riga `[live] VWCE: prezzo da sede alle ora · sedi lette: …`.
+  - Le due fonti nuove NON sono verificabili da qui (rete bloccata): controllare la riga `[live]` nel log di «Sito Armor». Se onvista e Tradegate non rispondono, resta l'ultima sede Yahoo (di solito 21:30-22:00).
+- **Aziende VWCE**:
+  - sempre l'ultima trimestrale con i mesi esatti (es. «lug-set 2026, 3 mesi»); le semestrali (aziende europee) sono indicate come tali;
+  - confronto con lo stesso periodo di un anno prima, oppure con il periodo precedente, dichiarato;
+  - elenco «Aumentati / Diminuiti»;
+  - ultimo anno fiscale separato.
+  - Fatturato 12 mesi = somma degli ultimi 4 trimestri (o 2 semestri, o anno fiscale).
+  - Nuovi rapporti: capitalizzazione/fatturato 12 mesi e capitalizzazione/(fatturato 12 mesi + contratti già firmati non ancora fatturati, RPO), con anni di fatturato coperti e crescita annua dei contratti.
+  - RPO dalla SEC (`data.sec.gov` companyconcept: us-gaap RevenueRemainingPerformanceObligation o ifrs-full TransactionPriceAllocatedToRemainingPerformanceObligations), richieste in fila con User-Agent «Armor personal research armor-bot@users.noreply.github.com» (variabile `SEC_USER_AGENT` per cambiarlo). Dove l'azienda non li pubblica: «non pubblicati».
+- **Un motore per ogni orizzonte** (`campioni.py`, `data/campioni.json`, rifatto in `valuta-modelli`):
+  - regola: uno sfidante (FHS, FHS+VIX) sostituisce A1 se il BSS è migliore di almeno 0,005 sia nel 2000-2012 sia nel 2013-oggi, l'AUC non è peggiore di oltre 0,01 e le altre soglie non peggiorano; vince il migliore nel sottoperiodo peggiore;
+  - esito sulla valutazione del 7/11/2026:
+
+    | Orizzonte | Motore | BSS 2000-12 | BSS 2013-26 | Battuto |
+    |---|---|---|---|---|
+    | 10 giorni | A1 | — | — | FHS peggiore nel 2013-26 (0,006 contro 0,021) |
+    | 1 mese | FHS+VIX | 0,113 | 0,052 | A1: 0,062 / 0,040 |
+    | 3 mesi | FHS+VIX | 0,084 | 0,020 | A1: 0,052 / -0,033 |
+    | 6 mesi | A1 | — | — | FHS peggiore nel 2000-12 |
+
+  - Coerenza: la probabilità di un calo entro un orizzonte più lungo non può essere più bassa della stessa soglia a un orizzonte più breve (si alza e si annota).
+  - Il diario registra `A1+FHSV(1m,3m)`; la modalità ombra riceve sempre le stime di A1 puro.
+  - Le schede delle previsioni indicano il motore e la stima di A1.
+  - Le parole delle schede non dicono più «tranquillo» quando il rischio è sopra il solito.
+  - Esempio dell'8/11: calo ≥10% entro 1 mese 11% (A1 3%), entro 3 mesi 24% (A1 8%), entro 6 mesi alzato a 24% per coerenza.
+  - È una scelta fatta guardando la valutazione esistente (un po' di scelta a posteriori): la modalità ombra continua e la regola si rifà ogni mese.
+- Test: 58 verdi.
+
+## PATCH 25 (lista dei semafori cliccabile)
+- `semafori.lista_html()` crea la finestra `#semmod` con tutti i semafori divisi per colore: a rischio (rosso), attenzione (giallo), tranquilli (verde), solo informativi.
+  - Filtri in alto; dentro ogni sezione l'ordine è dal percentile più estremo.
+  - Ogni riga mostra nome, famiglia, «monitorato», data del dato, percentile, soglie (per rossi e gialli) e valore.
+  - Toccando una riga si apre il grafico; un pulsante porta alle schede complete in Indici.
+- Si apre con qualsiasi elemento `data-semlist='all|ba|wa|ok'` (`LISTA_JS`, gestore unico sul documento, funziona anche nell'Assistente caricato dopo).
+  - Bilancio del giorno: `bilancio.day_html` rende cliccabili «N rossi, N gialli, N verdi» + «vedi la lista» con `semafori.cliccabile()`, anche sui bilanci già salvati.
+  - Oggi: nuova riga «Semafori di oggi» sotto gli indici principali.
+  - Indici: i conteggi in cima sono cliccabili.
+- Nota: il bilancio del giorno conta i semafori all'ora del giornaliero, la lista mostra i valori al momento della pagina, quindi i numeri possono differire di poco.
+- `sw.js` v12. Test 59 verdi.

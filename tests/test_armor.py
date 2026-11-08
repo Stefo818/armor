@@ -723,7 +723,8 @@ def test_aziende_analizza_trimestre_e_etichetta():
     inc = _yf_frame({"Total Revenue": [120, 110, 105, 100, 100], "Net Income": [30, 25, 22, 20, 20], "Operating Income": [40, 35, 30, 28, 25]}, dq)
     bal = _yf_frame({"Total Debt": [50, 55, 60, 60, 60], "Cash And Cash Equivalents": [40, 35, 30, 30, 30]}, dq)
     r = aziende.analizza(inc_q=inc, bal_q=bal)
-    assert r["base"] == "trimestre" and r["periodo"] == "2026-09" and r["periodo_prec"] == "2025-09"
+    assert r["base"] == "trimestre" and r["periodo"] == "lug-set 2026" and r["periodo_prec"] == "lug-set 2025"
+    assert r["rev_12m"] == 120 + 110 + 105 + 100 and "fatturato" in r["aumentati"] and "debito" in r["diminuiti"]
     assert abs(r["rev_g"] - 20) < 1e-9 and abs(r["ni_g"] - 50) < 1e-9 and abs(r["opm_d"] - (40 / 120 - 25 / 100) * 100) < 1e-9
     assert r["etichetta"] == "In miglioramento" and r["punteggio"] >= 2
     peg = aziende.analizza(inc_q=_yf_frame({"Total Revenue": [90, 100, 100, 100, 100], "Net Income": [5, 20, 20, 20, 20],
@@ -779,3 +780,79 @@ def test_box_ciclico_rende_html():
          "analoghi": {"k": 2, "mesi": [{"mese": "2000-01", "ret_12": -5.0}, {"mese": "2018-01", "ret_12": 3.0}], "rialzo_12_su_k": 1,
                       "mediana_12": -1.0, "p10_12": -5.0, "p90_12": 3.0, "calo10_12_su_k": 1}}
     assert "1 segnali accesi su 2" in ciclico.box_rischio(d) and "2000-01" in ciclico.box_simili(d)
+
+
+def test_aziende_semestrale_e_confronto_precedente():
+    from armor import aziende
+    semi = _yf_frame({"Total Revenue": [50, 45, 48], "Net Income": [5, 4, 5]}, ["2026-06-30", "2025-12-31", "2025-06-30"])
+    r = aziende.analizza(inc_q=semi)
+    assert r["q"]["mesi"] == 6 and r["q"]["tipo"] == "semestre" and r["q"]["periodo"] == "gen-giu 2026" and r["q"]["conf"] == "anno"
+    assert r["rev_12m"] == 95                                       # ultimi due semestri
+    q4 = _yf_frame({"Total Revenue": [30, 25, 24, 23]}, ["2026-09-30", "2026-06-30", "2026-03-31", "2025-12-31"])
+    ann = _yf_frame({"Total Revenue": [100, 90]}, ["2025-12-31", "2024-12-31"])
+    r2 = aziende.analizza(inc_q=q4, inc_a=ann)
+    assert r2["q"]["conf"] == "precedente" and r2["q"]["periodo_conf"] == "apr-giu 2026"
+    assert r2["base"] == "anno" and abs(r2["rev_g"] - 100 / 9) < 1e-9       # etichetta sull'anno fiscale se manca lo stesso trimestre
+    assert aziende.etichetta_periodo("2026-11-02", 3) == "ago-ott 2026"     # trimestre fiscale che finisce all'inizio di novembre
+
+
+def test_valutazione_e_rpo_sec():
+    from armor import aziende
+    js = {"units": {"USD": [{"end": "2025-09-30", "val": 300e9, "form": "10-Q"}, {"end": "2024-09-30", "val": 200e9, "form": "10-Q"},
+                            {"end": "2025-06-30", "val": 280e9, "form": "10-Q"}]}}
+    rp = aziende.parse_rpo(js)
+    assert rp["valore"] == 300e9 and rp["data"] == "2025-09-30" and abs(rp["crescita"] - 50) < 1e-9
+    rp["usd"] = rp["valore"]
+    v = aziende.valutazione(3000e9, 300e9, 1.0, rp)
+    assert abs(v["ps"] - 10) < 1e-9 and abs(v["ps_rpo"] - 5) < 1e-9 and abs(v["rpo_anni"] - 1) < 1e-9
+    assert aziende.parse_rpo({}) is None
+
+
+def test_vwce_sedi_serali_vince_ultimo_scambio():
+    from armor import live
+    js = {"quoteList": {"list": [
+        {"market": {"name": "Lang & Schwarz"}, "last": 165.62, "datetimeLast": "2023-11-14T22:59:30.000+01:00", "isoCurrency": "EUR", "previousLast": 164.9},
+        {"market": {"name": "Tradegate"}, "last": 165.55, "datetimeLast": "2023-11-14T21:58:00.000+01:00", "isoCurrency": "EUR"},
+        {"market": {"name": "NYSE"}, "last": 180.0, "datetimeLast": "2023-11-14T21:58:00.000+01:00", "isoCurrency": "USD"}]}}
+    v = live.parse_venues(js, "onvista")
+    assert {x["venue"] for x in v} == {"Lang & Schwarz", "Tradegate"}                     # quotazioni in dollari scartate
+    assert v[0]["time"] == "2023-11-14T21:59:30Z"
+    day = 86400
+    base = 1_700_000_000 // day * day
+    yah = {"chart": {"result": [{"meta": {"gmtoffset": 0, "currentTradingPeriod": {"regular": {"start": 0, "end": 1}}},
+                                 "timestamp": [base - day + 100, base + 16 * 3600], "indicators": {"quote": [{"close": [164.5, 165.1]}]}}]}}
+    q = live.best_vwce(lambda s: yah if s == "VWCE.DE" else (_ for _ in ()).throw(RuntimeError("404")), [], v)
+    assert q["venue"] == "Lang & Schwarz" and abs(q["price"] - 165.62) < 1e-9 and abs(q["chg"] - (165.62 / 164.9 - 1)) < 1e-12
+    tg = live.parse_tradegate({"last": "165,40", "executions": 12, "close": "164,80"}, now=pd.Timestamp("2023-11-14 23:30", tz="Europe/Berlin"))
+    assert tg[0]["price"] == 165.4 and tg[0]["time"] == "2023-11-14T21:00:00Z"            # mercato chiuso: ora delle 22:00
+    assert live.parse_tradegate({"last": "165,40", "executions": 0}) == []
+
+
+def test_campioni_regola_e_coerenza():
+    from armor import campioni
+    def row(model, hz, thr, b1, b2, auc=0.7, bss=None):
+        return {"set": "modelli", "kind": "down", "model": model, "hz": hz, "thr": thr, "bss_2000_12": b1, "bss_2013_26": b2, "auc": auc,
+                "bss": bss if bss is not None else (b1 + b2) / 2}
+    m = [row("A1", "1m", 10, 0.06, 0.04), row("FHS", "1m", 10, 0.11, 0.046), row("FHS+VIX", "1m", 10, 0.11, 0.052),
+         row("A1", "1m", 5, 0.04, 0.03), row("FHS", "1m", 5, 0.05, 0.04), row("FHS+VIX", "1m", 5, 0.05, 0.04),
+         row("A1", "6m", 10, 0.077, -0.077), row("FHS", "6m", 10, 0.05, -0.01)]
+    s = campioni.scegli(m)
+    assert s["1m"]["motore"] == "FHS+VIX" and s["6m"]["motore"] == "A1" and s["10g"]["motore"] == "A1"
+    pred = {"3m": {"p": {10: 0.24, 15: 0.13}, "base": {10: 0.15, 15: 0.07}, "ratio": 1.6, "level": "Elevato"},
+            "6m": {"p": {10: 0.15, 20: 0.04}, "base": {10: 0.25, 20: 0.06}, "ratio": 0.6, "level": "Basso"}}
+    campioni.coerenza(pred)
+    assert pred["6m"]["p"][10] == 0.24 and pred["6m"]["coerenza"]
+    fake = lambda p, date=None, sims=0, seed=0, vix=None, w=0: {"1m": {"down": {5: {"p": 0.3}, 10: {"p": 0.1}}}}
+    pr = {"1m": {"p": {5: 0.17, 10: 0.03}, "base": {5: 0.19, 10: 0.05}, "ratio": 0.6, "level": "Normale"}}
+    out, mid = campioni.applica(pr, None, "2026-11-06", "A1", {"orizzonti": {"1m": {"motore": "FHS"}}}, fhs_fn=fake)
+    assert out["1m"]["p"][10] == 0.1 and out["1m"]["p_a1"][10] == 0.03 and mid == "A1+FHS(1m)"
+
+
+def test_lista_semafori_e_link():
+    from armor import semafori
+    t = semafori.cliccabile("<b>Semafori:</b> 8 rossi, 16 gialli, 35 verdi.")
+    assert "data-semlist='ba'" in t and "data-semlist='all'" in t and ">8 rossi<" in t
+    items = [{"key": "vix", "name": "VIX", "group": "Paura", "value": 31.0, "dec": 1, "unit": "", "light": "ba", "date": "06/11/2026", "pct": 95.0, "zones": "z"},
+             {"key": "t10y3m", "name": "Curva", "group": "Tassi", "value": 0.6, "dec": 2, "unit": "", "light": "ok", "date": "06/11/2026", "pct": None, "zones": "z"}]
+    h = semafori.lista_html(items)
+    assert "id='semmod'" in h and "data-sml='ba'" in h and "data-sml='ok'" in h and "data-sml='wa'" not in h and "data-chart='vix'" in h

@@ -21,6 +21,13 @@ def forecast(write: bool = True) -> dict:
     t = eng.F.index[-1]
     fitted = eng.fit(t)
     pred = eng.predict(fitted, t)
+    import copy
+    pred_a1 = copy.deepcopy(pred)
+    try:   # un motore per ogni orizzonte (campioni.py): dove lo sfidante è verificato migliore, le probabilità vengono da lui
+        from . import campioni
+        pred, mid = campioni.applica(pred, p, t, mid)
+    except Exception as e:  # noqa: BLE001
+        print("[campioni] non applicati, resta A1:", str(e)[:100])
     v = vwce_series()
     spot = float(v.reindex([t], method="ffill").iloc[0]) if not v.empty else float("nan")
     n = journal.append(t.strftime("%Y-%m-%d"), spot, pred, model=mid) if write else 0
@@ -28,7 +35,7 @@ def forecast(write: bool = True) -> dict:
     if write:
         try:   # 4.1 modalita' ombra: i motori sfidanti scrivono nel diario a parte (non influenzano l'app)
             from . import shadow
-            shadow.run(p, t, pred, spot)
+            shadow.run(p, t, pred_a1, spot)
         except Exception as e:  # noqa: BLE001
             print("[ombra] errore:", str(e)[:100])
     return {"date": t, "pred": pred, "spot": spot, "eng": eng, "fitted": fitted, "model": mid}
@@ -321,6 +328,11 @@ def main() -> None:
             print("[indicatori nuovi] errore:", str(e)[:100])
         r = modeleval.evaluate(step=step)
         print(modeleval.table(r))
+        try:   # motore per ogni orizzonte, con la regola fissa di campioni.py
+            from . import campioni
+            campioni.aggiorna()
+        except Exception as e:  # noqa: BLE001
+            print("[campioni] errore:", str(e)[:100])
     elif cmd == "rapporto-mensile":
         from . import rapporto
         r = rapporto.run(closed_sp500(), force=True)

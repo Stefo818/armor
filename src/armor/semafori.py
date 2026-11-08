@@ -338,3 +338,71 @@ CSS = """
 .sem .smon{display:inline-block;font-size:10.5px;font-weight:700;color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:0 5px;margin-top:3px}
 .sem details{margin-top:6px}.sem summary{font-size:12px;font-weight:700;color:var(--ac);cursor:pointer}.sem .sw{font-size:12.5px;margin-top:4px}
 """
+
+
+# ---------------------------------------------------------------- scheda con la lista di tutti i semafori (si apre da [data-semlist])
+SEZ = [("ba", "A rischio (rosso)", "Indici oltre la soglia di allarme."), ("wa", "Attenzione (giallo)", "Indici in zona di prudenza."),
+       ("ok", "Tranquilli (verde)", "Indici nella norma."), ("na", "Solo informativi", "Indici senza soglie: servono come contesto.")]
+
+
+def lista_html(items: list[dict]) -> str:
+    """Finestra con tutti i semafori divisi per colore. Si apre toccando un elemento con data-semlist='all|ba|wa|ok'."""
+    if not items:
+        return ""
+    e = _h.escape
+    n = overall(items)
+    secs = ""
+    for k, tit, sub in SEZ:
+        its = [i for i in items if i["light"] == k]
+        if not its:
+            continue
+        its.sort(key=lambda i: (-(i.get("pct") or 0) if k in ("ba", "wa") else 0, i["group"], i["name"]))
+        rows = "".join(
+            f"<div class='smi {k}' data-chart='{e(i['key'])}'><span class='dot'></span><div class='smn'><b>{e(i['name'])}</b>"
+            f"<span>{e(i['group'])}{' · monitorato' if i['key'] in MONITORATI else ''} · dato del {i['date']}"
+            f"{(' · ' + str(round(i['pct'])) + '° percentile') if i.get('pct') is not None else ''}</span>"
+            + (f"<span class='smz'>Soglie: {e(i['zones'])}</span>" if k in ("ba", "wa") and i.get("zones") else "")
+            + f"</div><div class='smv'>{fmt(i['value'], i['dec'], i['unit'])}</div></div>" for i in its)
+        secs += f"<section data-sml='{k}'><h4><span class='dot {k}'></span>{tit} · {len(its)}</h4><p class='mu'>{sub}</p>{rows}</section>"
+    tabs = (f"<button type='button' class='btn on' data-smf='all'>Tutti · {len(items)}</button>"
+            f"<button type='button' class='btn' data-smf='ba'><span class='dot ba'></span>A rischio · {n['ba']}</button>"
+            f"<button type='button' class='btn' data-smf='wa'><span class='dot wa'></span>Attenzione · {n['wa']}</button>"
+            f"<button type='button' class='btn' data-smf='ok'><span class='dot ok'></span>Tranquilli · {n['ok']}</button>")
+    return (f"<div id='semmod' class='cmodal' role='dialog' aria-label='Tutti i semafori'><div class='cbox'><button class='cx' type='button' data-smclose aria-label='Chiudi'>×</button>"
+            f"<h3 style='margin-top:0'>Tutti i semafori</h3><p class='mu'>Valori di oggi con il loro colore. Tocca un indice per aprirne il grafico.</p>"
+            f"<div class='smtabs'>{tabs}</div>{secs}"
+            "<p><button type='button' class='btn' data-go='indici'>Schede complete con le spiegazioni</button></p></div></div>")
+
+
+LISTA_JS = r"""<script>(function(){
+function M(){return document.getElementById('semmod')}
+function filt(k){var m=M();if(!m)return;[].forEach.call(m.querySelectorAll('[data-sml]'),function(s){s.style.display=(k==='all'||s.getAttribute('data-sml')===k)?'':'none'});
+[].forEach.call(m.querySelectorAll('[data-smf]'),function(b){b.classList.toggle('on',b.getAttribute('data-smf')===k)});var b=m.querySelector('.cbox');if(b)b.scrollTop=0}
+document.addEventListener('click',function(ev){var t=ev.target.closest&&ev.target.closest('[data-semlist]');var m=M();if(!m)return;
+if(t){ev.preventDefault();ev.stopPropagation();m.classList.add('show');filt(t.getAttribute('data-semlist')||'all');return}
+var f=ev.target.closest&&ev.target.closest('[data-smf]');if(f){filt(f.getAttribute('data-smf'));return}
+if(ev.target.closest&&ev.target.closest('[data-smclose]')||ev.target===m){m.classList.remove('show');return}
+if(ev.target.closest&&ev.target.closest('#semmod [data-chart],#semmod [data-go]'))m.classList.remove('show')},true);
+})();</script>"""
+
+LISTA_CSS = """
+#semmod{z-index:27}.smtabs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}.smtabs .btn{font-size:13px;padding:6px 10px}
+.smtabs .btn.on{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+#semmod section h4{display:flex;align-items:center;gap:6px;margin:14px 0 2px;color:var(--tx)}#semmod section .mu{margin:0 0 6px;font-size:12.5px}
+.smi{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--bd);border-left-width:5px;border-radius:10px;padding:8px 10px;margin:5px 0;cursor:pointer;color:var(--tx)}
+.smi.ba{border-left-color:var(--bad)}.smi.wa{border-left-color:var(--warn)}.smi.ok{border-left-color:var(--ok)}.smi.na{border-left-color:var(--bd)}
+#semmod .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto;background:var(--mu)}
+#semmod .smi.ba .dot,#semmod .dot.ba{background:var(--bad)}#semmod .smi.wa .dot,#semmod .dot.wa{background:var(--warn)}
+#semmod .smi.ok .dot,#semmod .dot.ok{background:var(--ok)}
+.smn{flex:1;min-width:0}.smn b{display:block;font-size:13.5px}.smn span{display:block;font-size:11.5px;color:var(--mu)}.smn .smz{color:var(--tx)}
+.smv{font-weight:800;font-size:15px;white-space:nowrap}
+.semlk{color:var(--ac);font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+"""
+
+
+def cliccabile(testo: str) -> str:
+    """Trasforma «8 rossi, 16 gialli, 35 verdi» in collegamenti che aprono la lista dei semafori."""
+    import re
+    return re.sub(r"(\d+) rossi, (\d+) gialli, (\d+) verdi",
+                  lambda m: (f"<a href='#' class='semlk' data-semlist='ba'>{m.group(1)} rossi</a>, <a href='#' class='semlk' data-semlist='wa'>{m.group(2)} gialli</a>, "
+                             f"<a href='#' class='semlk' data-semlist='ok'>{m.group(3)} verdi</a> · <a href='#' class='semlk' data-semlist='all'>vedi la lista</a>"), testo)

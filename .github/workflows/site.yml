@@ -2,9 +2,10 @@ name: Sito Armor (prezzi live e app per telefono)
 on:
   schedule:
     - cron: '*/15 7-21 * * 1-5'   # ogni 15 minuti dalle 8-9 alle 22-23 ora italiana, nei giorni feriali
+    - cron: '5,35 22 * * 1-5'      # dopo le 23 italiane: prende la chiusura serale (Lang & Schwarz chiude alle 23)
     - cron: '15 6,12 * * 0,6'      # nel weekend due volte al giorno
-  workflow_run:
-    workflows: ["Aggiornamento giornaliero Armor"]
+  workflow_run:   # il sito si ricostruisce subito dopo ogni aggiornamento dei dati
+    workflows: ["Aggiornamento giornaliero Armor", "Notizie e analisi Armor", "Ricerca modello Armor", "Convalida mensile Armor", "Agenda del mattino Armor"]
     types: [completed]
   workflow_dispatch:
 permissions:

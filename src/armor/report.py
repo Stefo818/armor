@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import armor_index, aziende, chiaro, ciclico, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -876,7 +876,8 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     except Exception:  # noqa: BLE001
         al_opts, al_now = [], {}
     sc = semafori.overall(sem)
-    sem_line = (f"<div class='semsum'><span class='dot ok'></span>{sc['ok']} verdi <span class='dot wa'></span>{sc['wa']} gialli <span class='dot ba'></span>{sc['ba']} rossi "
+    sem_line = (f"<div class='semsum'><a href='#' class='semlk' data-semlist='ok'><span class='dot ok'></span>{sc['ok']} verdi</a> "
+                f"<a href='#' class='semlk' data-semlist='wa'><span class='dot wa'></span>{sc['wa']} gialli</a> <a href='#' class='semlk' data-semlist='ba'><span class='dot ba'></span>{sc['ba']} rossi</a> "
                 f"<a href='#indici' data-go='indici'>Vedi tutti i semafori ›</a></div>") if sem else ""
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
@@ -967,6 +968,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     kpi = _safe(lambda: cruscotto.kpi_html(sem, sp, vwce_series(), store.load("vix")), "Indici principali")
     p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
+              f"{('<div class=card><b>Semafori di oggi:</b> ' + sem_line + '</div>') if sem_line else ''}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
               f"<section class='b5'>{chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}</section>"
               f"{_safe(ciclico.box_rischio, 'Rischio ciclico')}{_safe(ciclico.box_simili, 'Mesi simili')}"
@@ -1000,6 +1002,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             f"<h2 style='margin-top:26px'>Rapporto settimanale</h2>{bilancio.weekly_html(wk)}")
     p_pf = ui.PAC_HTML + live_html + parts.portfolio_section()
     p_fid = ("<h2>Quanto mi posso fidare di Armor?</h2>" + _safe(lambda: ui.fiducia_html(sp, live=learning.live_table(sp)), "Pagina di fiducia")
+             + "<h2 style='margin-top:26px'>Un motore per ogni orizzonte</h2><div class='card'>" + _safe(campioni.html, "Motori per orizzonte") + "</div>"
              + "<h2 style='margin-top:26px'>Ricerca modello: salute delle aziende, macro e storia lunga</h2><div class='card'>" + _safe(ciclico.html_ricerca, "Ricerca modello") + "</div>")
     p_sto = (f"<h2>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero.</p>"
              f"<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (tra parentesi l'intervallo dell'80% dei casi). <i>Variazione</i>: rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>"
@@ -1038,18 +1041,18 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     dock_js = extra13.DOCK_JS_LAZY if lazy else extra13.DOCK_JS
     tabs_js = parts.TABS_JS_LAZY if lazy else parts.TABS_JS
     body = f"""
-<header><div><h1>Armor</h1><div class='muted'>Quanto è rischioso il mercato oggi per il tuo VWCE · dati del {date.strftime('%d/%m/%Y')} · pagina generata {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div></header>
-{nav}
+<header><div><h1>Armor</h1><div class='muted'>Quanto è rischioso il mercato oggi per il tuo VWCE · dati del {date.strftime('%d/%m/%Y')} · pagina generata {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div>{forza.HTML}</header>
+{nav}{_safe(forza.banner_dati_fermi, 'Avviso dati')}
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
 {page('oggi', p_oggi)}{page('indici', p_indici)}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
 {page('portafoglio', p_pf)}{page('storico', p_sto)}{page('allarmi', p_al)}
-{dock}
+{dock}{semafori.lista_html(sem) if sem else ''}
 <script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>
 <script>window.HELP={json.dumps(help_all, ensure_ascii=False)};window.LABELS={json.dumps(labels_all, ensure_ascii=False)};</script>
 {parts.MODAL}
-{dock_js}{'' if lazy else '<script>' + insight.EP_JS + '</script><script>' + parts.AL_JS + '</script>' + ui.PAC_JS}{tabs_js}
+{dock_js}{forza.JS}{semafori.LISTA_JS}{'' if lazy else '<script>' + insight.EP_JS + '</script><script>' + parts.AL_JS + '</script>' + ui.PAC_JS}{tabs_js}
 """
     out.write_text(TEMPLATE.replace("{{JS}}", parts.JS if lazy else parts.JS_FULL).replace("{{BODY}}", body), encoding="utf-8")
     if lazy:
@@ -1101,7 +1104,7 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+ui.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();

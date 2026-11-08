@@ -2,6 +2,7 @@ name: Aggiornamento giornaliero Armor
 on:
   schedule:
     - cron: '30 23 * * 1-5'   # dopo la chiusura di Wall Street (ora UTC)
+    - cron: '40 4 * * 2-6'    # di riserva al mattino (se il giro della sera è saltato o FRED ha pubblicato dati nella notte)
   workflow_dispatch:
 permissions:
   contents: write

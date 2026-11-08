@@ -31,10 +31,13 @@ def stacked(pr, base=None):
     return f"<div class='stk'>{segs}</div>"
 
 
-def verdict_words(pd_, pu):
+def verdict_words(pd_, pu, ratio=None):
     if pu is None:
         return ("neutro", "")
     if max(pd_, pu) < 0.12:
+        if ratio is not None and ratio >= 1.3:   # poco probabile in assoluto, ma sopra il solito: non dire «tranquillo»
+            x = f"{ratio:.1f}".replace(".", ",")
+            return ("warn", f"Un movimento forte resta poco probabile, ma il rischio di calo è <b>{x} volte</b> quello solito.")
         return ("ok", "Nessun movimento forte è probabile: scenario <b>tranquillo</b>.")
     if pd_ > pu * 1.25:
         return ("bad", "Oggi è più probabile un <b>calo</b> che un rialzo.")
@@ -51,7 +54,7 @@ def horizon_simple(hz, r, mat_hz, spot, rel, old_card_html):
         pup, bup = up["p"], up["base"]
     except Exception:  # noqa: BLE001
         pup = bup = None
-    cls, words = verdict_words(pdn, pup)
+    cls, words = verdict_words(pdn, pup, r.get("ratio"))
     lev = {"Basso": ("ok", "Rischio basso"), "Normale": ("ok", "Rischio nella norma"), "Elevato": ("warn", "Rischio elevato"), "Alto": ("bad", "Rischio alto")}[r["level"]]
     rows = (f"<div class='pr'><div class='pl'>Scendere di almeno {prim}%</div><div class='pn'>{P(pdn)}</div>{bar(pdn, bdn, 'var(--bad)')}"
             f"<div class='pt'>Su 100 situazioni come questa, circa <b>{round(pdn * 100)}</b> vedono un calo così (di solito {round(bdn * 100)}).</div></div>")
@@ -67,6 +70,12 @@ def horizon_simple(hz, r, mat_hz, spot, rel, old_card_html):
     if rel:
         relw = {"Utile": "<span class='badge ok'>Stima affidabile nei test</span>", "Debole": "<span class='badge warn'>Stima debole: usala solo come indizio</span>",
                 "Non affidabile": "<span class='badge bad'>Stima poco affidabile</span>"}[rel[0]]
+    mot = r.get("motore")
+    if mot:
+        relw += (f"<div class='mu' style='margin-top:4px'>Motore per questo orizzonte: <b>{mot}</b> (nella verifica storica più affidabile di A1, "
+                 f"che stimava {P(r['p_a1'][prim]) if r.get('p_a1') else 'n.d.'}). Dettagli in «Quanto fidarsi».</div>")
+    if r.get("coerenza"):
+        relw += "<div class='mu' style='margin-top:4px'>Alzata per coerenza: non può essere più bassa della stessa soglia a un orizzonte più breve.</div>"
     return (f"<div class='card hz2'><div class='hzh'><h3>{HZ_LABEL[hz]}</h3><span class='badge {lev[0]}'>{lev[1]}</span></div>"
             f"<div class='vd {cls}'>{words}</div>{rows}{typ}<div style='margin-top:8px'>{relw}</div>"
             f"<details><summary>Più dettagli (altre soglie, perché, affidabilità)</summary><div class='old'>{old_card_html}</div></details></div>")
@@ -243,7 +252,7 @@ def balance_html(pred, mat, feat_it, n_neg=0, n_tot=0):
         except Exception:  # noqa: BLE001
             continue
         pup, bup = up["p"], up["base"]
-        cls, words = verdict_words(pdn, pup)
+        cls, words = verdict_words(pdn, pup, pred[hz].get("ratio"))
         tot = max(pdn + pup, 1e-9)
         wd = max(pdn / tot * 100, 12)
         wu = max(pup / tot * 100, 12)
