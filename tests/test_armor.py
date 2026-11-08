@@ -970,3 +970,171 @@ def test_revisione_codice_definizioni_e_purge(monkeypatch):
     monkeypatch.setattr(store, "load", lambda sid: serie[sid])
     v = features.vwce_series()
     assert abs(v.iloc[0] - 100.0) < 1e-9 and abs(v.iloc[1] - 96.0) < 1e-9
+
+
+def _stato_finto(z=None, omega=0.02, alpha=0.03, gamma=0.10, beta=0.88, mu=0.03):
+    import numpy as np
+    from armor import percorsi as P
+    rho = alpha + gamma / 2 + beta
+    par = {"omega": omega, "alpha": alpha, "gamma": gamma, "beta": beta, "nu": 7.0, "mu": mu, "persistence": rho,
+           "z": z if z is not None else np.random.default_rng(5).standard_t(6, 5000) / np.sqrt(6 / 4), "theta": None}
+    lr = omega / (1 - rho)
+    return {"par": par, "s2_next": lr, "cap": lr * 6.0, "rho": rho, "s2_lr": lr, "emivita": float(np.log(0.5) / np.log(rho))}
+
+
+def test_percorsi_coerenza_e_caso_deterministico():
+    import numpy as np
+    from armor import percorsi as P
+    # caso deterministico: residui nulli → rendimento costante mu% al giorno → quantili tutti uguali, nessuna perdita
+    st = _stato_finto(z=np.zeros(100), mu=0.04)
+    res = P.riassumi(P.simula(st, 1.0, "T0", 500, 1))
+    for hz, n in P.ORIZZONTI.items():
+        atteso = np.exp(0.04 * n / 100) - 1
+        assert all(abs(v - atteso) < 1e-9 for v in res[hz]["ret"].values())
+        assert res[hz]["p_neg"] == 0 and all(p == 0 for p in res[hz]["down"].values()) and all(p == 0 for p in res[hz]["mdd"].values())
+    # coerenza per costruzione: più lungo = non meno probabile; soglia più alta = non più probabile; drawdown ≥ perdita da oggi
+    st = _stato_finto()
+    for tail in ("T0", "T1", "T2", "T3"):
+        res = P.riassumi(P.simula(st, st["s2_lr"] * 3, tail, 4000, 7))
+        hz = sorted(P.ORIZZONTI, key=lambda k: P.ORIZZONTI[k])
+        for kind in ("down", "mdd"):
+            for t in P.SOGLIE:
+                v = [res[h][kind][t] for h in hz]
+                assert all(a <= b + 1e-12 for a, b in zip(v, v[1:])), (tail, kind, t, v)
+            for h in hz:
+                v = [res[h][kind][t] for t in P.SOGLIE]
+                assert all(a >= b - 1e-12 for a, b in zip(v, v[1:]))
+        for h in hz:
+            for t in P.SOGLIE:
+                assert res[h]["mdd"][t] >= res[h]["down"][t] - 1e-12
+            q = list(res[h]["ret"].values())
+            assert q == sorted(q)
+            assert abs(res[h]["se"]["down"][10] - np.sqrt(res[h]["down"][10] * (1 - res[h]["down"][10]) / 4000)) < 1e-12
+
+
+def test_percorsi_controllo_code_e_varianti():
+    import numpy as np
+    from armor import percorsi as P
+    st = _stato_finto()
+    s0 = st["cap"] * 8                                  # partenza estrema: il tetto T1 e l'ancoraggio T2 devono ridurre le code
+    a = P.riassumi(P.simula(st, s0, "T0", 4000, 3), extra=True)["12m"]
+    b = P.riassumi(P.simula(st, s0, "T1", 4000, 3), extra=True)["12m"]
+    c = P.riassumi(P.simula(st, s0, "T2", 4000, 3), extra=True)["12m"]
+    assert b["estremi"]["min"] > a["estremi"]["min"] and b["curtosi"] < a["curtosi"]
+    assert c["ret"]["q95"] - c["ret"]["q5"] < a["ret"]["q95"] - a["ret"]["q5"]
+    # stessi numeri casuali: con lo stesso seme e la stessa varianza il risultato è identico
+    assert P.riassumi(P.simula(st, 1.0, "T1", 500, 9))["3m"] == P.riassumi(P.simula(st, 1.0, "T1", 500, 9))["3m"]
+    # V0 / V1 / V2: V2 non esiste senza VIX3M; V1 sposta la varianza verso il VIX
+    assert P.varianza_iniziale(st, "V2T0", 20.0, None) == (None, None)
+    s_v0 = P.varianza_iniziale(st, "V0T0", 40.0, 30.0)[0]
+    s_v1 = P.varianza_iniziale(st, "V1T0", 40.0, 30.0)[0]
+    assert s_v1 != s_v0 and abs(s_v0 - st["s2_next"]) < 1e-12
+    # V2: la media attesa dei giorni 1-21 coincide col bersaglio r21·VIX²/252, e quella dei giorni 22-63 con il bersaglio forward
+    s0, m2 = P.varianza_iniziale(st, "V2T0", 20.0, 22.0, (0.8, 0.7))
+    k = np.arange(63)
+    ev = st["s2_lr"] + st["rho"] ** k * (s0 - st["s2_lr"])
+    assert abs(ev[:21].mean() - 0.8 * 400 / 252) < 1e-9
+    fwd = (63 * 22.0 ** 2 - 21 * 20.0 ** 2) / 42
+    assert abs(ev[21:63].mean() * m2 - 0.7 * fwd / 252) < 1e-6 or m2 in (0.25, 4.0)
+    # volatilità attesa a 252 sedute e persistenza registrate
+    cv = P.curva_vol(st, st["s2_lr"] * 4)
+    assert len(cv) == 252 and cv[0] > cv[-1] > np.sqrt(st["s2_lr"] * 252) * 0.99 and st["emivita"] > 10
+
+
+def test_percorsi_rapporti_walk_forward_senza_futuro():
+    import numpy as np
+    import pandas as pd
+    from armor import percorsi as P
+    idx = pd.bdate_range("2000-01-03", periods=1800)
+    rng = np.random.default_rng(2)
+    r = pd.Series(rng.normal(0, 1.0, 1800), index=idx)
+    vix = pd.Series(np.full(1800, 16.0), index=idx)
+    d = P.rapporti_realizzata_implicita(r, vix, vix * 1.05)
+    i = 1500
+    # ritardo di 21 sedute: il rapporto «noto» alla posizione i usa solo date ≤ i−21, e cambiare i rendimenti futuri non lo modifica
+    r2 = r.copy(); r2.iloc[i + 1:] = 10.0
+    d2 = P.rapporti_realizzata_implicita(r2, vix, vix * 1.05)
+    assert P._rapporto(d, i, "r21", 21) == P._rapporto(d2, i, "r21", 21)
+    assert 0.5 <= P._rapporto(d, i, "r21", 21) <= 1.2
+    assert P._rapporto(d, 100, "r21", 21) == 0.8                 # poche date: valore predefinito
+
+
+def test_diario_v3_catena_esiti_e_manomissione(tmp_path):
+    import numpy as np
+    import pandas as pd
+    from armor import journal3
+    f = tmp_path / "j3.csv"
+    p = pd.Series(100 * np.exp(np.cumsum(np.full(300, 0.001))), index=pd.bdate_range("2024-01-01", periods=300))
+    a = str(p.index[10].date())
+    assert journal3.append_previsione(a, "Percorsi", "V1T1", {"rho": 0.98}, {"vix": 20.0}, {"1m": {"p": 0.1}}, path=f, ts="2026-11-08T00:00:00Z") == 1
+    assert journal3.append_previsione(a, "Percorsi", "V1T1", {}, {}, {}, path=f) == 0                      # idempotente
+    assert journal3.append_previsione(a, "A1", "A1", {}, {}, {"1m": {"p": 0.05}}, path=f, ts="2026-11-08T00:00:01Z") == 1
+    ok, _ = journal3.verify(f)
+    assert ok
+    n = journal3.update_outcomes(p, path=f, ts="2026-11-08T01:00:00Z")
+    assert n == 12 and journal3.update_outcomes(p, path=f) == 0                                            # 6 orizzonti × 2 modelli, una volta sola
+    e = journal3.read(f)
+    r = e[(e["kind"] == "esito") & (e["model"] == "Percorsi") & (e["horizon"] == "1m")].iloc[0]
+    import json
+    x = json.loads(r.risultati)
+    assert abs(x["rendimento"] - (np.exp(0.001 * 21) - 1)) < 1e-9 and x["mdd"] == 0.0
+    assert journal3.verify(f)[0]
+    # manomissione di una riga = catena spezzata
+    t = f.read_text(encoding="utf-8").replace('""vix"":20.0', '""vix"":99.0')
+    f.write_text(t, encoding="utf-8")
+    assert journal3.verify(f)[0] is False
+
+
+def test_adozione_applica_solo_dove_promossa():
+    from armor import percorsi as P
+    pred = {"1m": {"p": {5: 0.2, 10: 0.04}, "base": {5: 0.19, 10: 0.05}, "ratio": 0.8, "level": "Normale"},
+            "3m": {"p": {10: 0.10, 15: 0.05}, "base": {10: 0.15, 15: 0.07}, "ratio": 0.7, "level": "Normale"}}
+    res = {"1m": {"down": {5: 0.30, 10: 0.12}}, "3m": {"down": {10: 0.30, 15: 0.18}}}
+    o = {"adottate": {"1m": "V1T1"}, "varianti": {"V1T1": res}}
+    out, mid = P.applica_adozione(pred, o, "A1")
+    assert out["1m"]["p"][10] == 0.12 and out["1m"]["p_a1"][10] == 0.04 and out["1m"]["adottato"] and out["1m"]["motore"] == "Percorsi V1T1"
+    assert out["3m"]["p"][10] == 0.10 and "adottato" not in out["3m"] and mid == "A1+PERC(1m)"
+    assert P.applica_adozione({"1m": {"p": {10: 0.1}}}, {"adottate": {}}, "A1")[1] == "A1"
+
+
+def test_percorsi_html_legge_json_con_chiavi_testo(tmp_path, monkeypatch):
+    import json
+    import numpy as np
+    from armor import percorsi as P
+    st = _stato_finto()
+    res = P.riassumi(P.simula(st, st["s2_lr"], "T1", 300, 1), extra=True)
+    res["_diag"] = {"persistenza": 0.98, "emivita": 33.0, "vol_lungo": 0.16, "n_percorsi": 300}
+    res["_vol"] = [0.2, 0.18, 0.17]
+    basi = {hz: {"p_neg": 0.3, "down10": 0.1, "mdd10": 0.2} for hz in P.ORIZZONTI}
+    f = tmp_path / "oggi.json"
+    f.write_text(json.dumps({"mostrata": "V1T1", "adottate": {}, "varianti": {"V1T1": res}, "basi": basi}, default=float), encoding="utf-8")   # le chiavi numeriche diventano testo
+    monkeypatch.setattr(P, "OGGI", f)
+    h = P.html()
+    assert "Sperimentale" in h and "1 anno" in h and "Chiudere in negativo" in h
+
+
+def test_serie_euro_conversione_collegamento_e_segmenti(monkeypatch):
+    import numpy as np
+    import pandas as pd
+    from armor import serie_eur as S, store
+    idx = pd.bdate_range("2019-01-01", periods=6)
+    F = pd.Series([1.20, 1.25, 1.25, 1.10, 1.10, 1.10], index=idx)
+    usd = pd.Series([120.0, 125.0, 125.0, 121.0, 121.0, 121.0], index=idx)
+    eur = S.converti(usd, F)
+    assert np.allclose(eur.values, [100.0, 100.0, 100.0, 110.0, 110.0, 110.0])        # livello / F, caso numerico con F noto
+    # rendimento in euro: 1 + r€ = (1 + r$)·F(t−1)/F(t): VT +4,2% in dollari mentre l'euro sale da 1,25 a 1,10 → +10%
+    assert abs((eur.iloc[3] / eur.iloc[2]) - (usd.iloc[3] / usd.iloc[2]) * F.iloc[2] / F.iloc[3]) < 1e-12
+    # collegamento: un solo fattore di scala, il reale resta com'è
+    reale = pd.Series([200.0, 202.0], index=idx[4:])
+    c = S.collega(eur, reale)
+    assert c.iloc[-1] == 202.0 and abs(c.loc[idx[3]] - 110.0 * (200.0 / 110.0)) < 1e-9 and len(c) == 6
+    # segmenti dichiarati e S&P in euro etichettato solo come robustezza
+    ser = {"dexuseu": pd.Series(dtype=float), "eurusd": pd.Series(np.full(300, 1.1), index=pd.bdate_range("2008-01-01", periods=300)),
+           "vt": pd.Series(np.linspace(30, 40, 200), index=pd.bdate_range("2008-06-01", periods=200)),
+           "sp500": pd.Series(np.linspace(1000, 1500, 300), index=pd.bdate_range("2008-01-01", periods=300)),
+           "vwce_de": pd.Series(np.linspace(60, 66, 50), index=pd.bdate_range("2009-01-01", periods=50))}
+    monkeypatch.setattr(store, "load", lambda sid: ser[sid])
+    s = S.costruisci()
+    ids = [x["id"] for x in s["segmenti"]]
+    assert ids == ["b", "a", "c"] and "solo robustezza" in s["segmenti"][2]["nome"] and s["fonte_cambio"] == "Yahoo EURUSD=X"
+    assert s["vwce_eur"].index[0] == s["vt_eur"].index[0] and s["vwce_eur"].loc[ser["vwce_de"].index[0]] == 60.0

@@ -1,0 +1,96 @@
+{
+ "data": "2026-11-08",
+ "fonte_cambio": "Yahoo EURUSD=X",
+ "segmenti": [
+  {
+   "id": "b",
+   "nome": "VT convertito in euro",
+   "da": "2008-06-26",
+   "a": "2019-07-28"
+  },
+  {
+   "id": "a",
+   "nome": "VWCE.DE reale",
+   "da": "2019-07-29",
+   "a": "2026-11-06"
+  },
+  {
+   "id": "c",
+   "nome": "S&P 500 in euro (solo robustezza)",
+   "da": "2003-12-01",
+   "a": "2026-11-06"
+  }
+ ],
+ "limiti": "VT segue il FTSE Global All Cap (comprende le piccole aziende), VWCE il FTSE All-World; VT chiude alle 22:00 italiane e VWCE.DE alle 17:30 (per confrontare si usano rendimenti settimanali); ritenute sui dividendi diverse.",
+ "sovrapposizione": {
+  "da": "2019-08-02",
+  "settimane": 379,
+  "correlazione": 0.8948991958868102,
+  "diff_annua": 0.002697803930017617,
+  "vol_annua_vwce": 0.14978887943010585,
+  "vol_annua_vt": 0.16341594126614817
+ },
+ "robustezza_sp_eur": {
+  "da": "2003-12-01",
+  "ultimo": 6569.88146023886
+ },
+ "confronto_motori": {
+  "da": "2011-07-01",
+  "righe": [
+   {
+    "hz": "1m",
+    "soglia": 5,
+    "n": 762,
+    "episodi": 26,
+    "frequenza": 0.12992125984251968,
+    "brier_sp": 0.11439337106299213,
+    "brier_eur": 0.11897032972440943,
+    "bss_sp": 0.037536792456149715,
+    "bss_eur": -0.0009720326018822778,
+    "diff": {
+     "diff": 0.004576958661417323,
+     "lo": -0.0014392937335958006,
+     "hi": 0.01022410177165354,
+     "n": 762
+    },
+    "p_dm": 0.1880360744907712
+   },
+   {
+    "hz": "1m",
+    "soglia": 10,
+    "n": 762,
+    "episodi": 6,
+    "frequenza": 0.028871391076115485,
+    "brier_sp": 0.029653643044619423,
+    "brier_eur": 0.030127817585301836,
+    "bss_sp": -0.015252125572920328,
+    "bss_eur": -0.031486444897396604,
+    "diff": {
+     "diff": 0.0004741745406824147,
+     "lo": -0.0011418444225721799,
+     "hi": 0.0019930906003937003,
+     "n": 762
+    },
+    "p_dm": 0.6267831726334134
+   },
+   {
+    "hz": "3m",
+    "soglia": 10,
+    "n": 754,
+    "episodi": 7,
+    "frequenza": 0.09416445623342175,
+    "brier_sp": 0.09151378647214854,
+    "brier_eur": 0.1012035875331565,
+    "bss_sp": 0.009680695814090812,
+    "bss_eur": -0.09517778960501877,
+    "diff": {
+     "diff": 0.009689801061007955,
+     "lo": -0.0003369550895225519,
+     "hi": 0.02050854461206896,
+     "n": 754
+    },
+    "p_dm": 0.07031511219394426
+   }
+  ]
+ }
+}

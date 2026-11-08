@@ -33,6 +33,26 @@ def forecast(write: bool = True) -> dict:
                 r["avviso_coerenza"] = av
     except Exception as e:  # noqa: BLE001
         print("[sfidante] non calcolato:", str(e)[:100])
+    po = None
+    try:   # motore unico di percorsi (PIANO_ARMOR3 Fase 2): scenari + adozione orizzonte per orizzonte solo se la verifica storica del protocollo l'ha promosso
+        from . import journal3, percorsi
+        po = percorsi.oggi(p, t)
+        pred, mid = percorsi.applica_adozione(pred, po, mid)
+        ing = {"vix": po.get("vix"), "vix3m": po.get("vix3m"), "rapporti": po.get("rapporti"), "ultimi_dati": journal3.ultimi_dati()}
+        d0 = t.strftime("%Y-%m-%d")
+        if write:
+            journal3.append_previsione(d0, "A1", "A1", {"modello": "regressione logistica"}, ing,
+                                       {hz: {"p": {str(k): v for k, v in r["p_a1"].items()} if r.get("p_a1") else {str(k): v for k, v in r["p"].items()},
+                                             "base": {str(k): v for k, v in r["base"].items()}} for hz, r in pred.items()})
+            for var, res in po["varianti"].items():
+                journal3.append_previsione(d0, "Percorsi", var, res["_diag"], ing, {hz: x for hz, x in res.items() if not hz.startswith("_")})
+    except Exception as e:  # noqa: BLE001
+        print("[percorsi] non calcolati:", str(e)[:120])
+    try:   # scenari stimati sui rendimenti di VWCE in euro (serie a segmenti dichiarati)
+        from . import serie_eur
+        serie_eur.oggi()
+    except Exception as e:  # noqa: BLE001
+        print("[euro] scenari non calcolati:", str(e)[:100])
     v = vwce_series()
     spot = float(v.reindex([t], method="ffill").iloc[0]) if not v.empty else float("nan")
     n = journal.append(t.strftime("%Y-%m-%d"), spot, pred, model=mid) if write else 0
@@ -255,6 +275,11 @@ def tutto(skip_download: bool = False) -> None:
     n = journal.update_outcomes(vwce_series(), closed_sp500())
     print(f"Esiti verificati a scadenza: {n}")
     try:
+        from . import journal3
+        print(f"[diario v3] esiti nuovi: {journal3.update_outcomes(closed_sp500())}; {journal3.verify()[1]}")
+    except Exception as e:  # noqa: BLE001
+        print("[diario v3] errore:", str(e)[:100])
+    try:
         from . import learning
         t = learning.update(closed_sp500())
         print(f"[apprendimento] confronti con la realtà aggiornati: {len(t)} righe")
@@ -262,6 +287,12 @@ def tutto(skip_download: bool = False) -> None:
         print("[apprendimento] non aggiornato:", str(e)[:100])
     ok, msg = journal.verify()
     print("Integrita' diario:", msg if ok else "ERRORE - " + msg)
+    try:
+        from . import journal3
+        ok3, msg3 = journal3.verify()
+        print("Integrita' diario v3:", msg3 if ok3 else "ERRORE - " + msg3)
+    except Exception as e:  # noqa: BLE001
+        print("[diario v3] controllo non riuscito:", str(e)[:80])
     from .report import build
     build(ctx)
 
@@ -348,6 +379,18 @@ def main() -> None:
             print(verifica.tabella_testo(verifica.run_storica(step=step)))
         except Exception as e:  # noqa: BLE001
             print("[verifica] errore:", str(e)[:100])
+        try:   # VWCE in euro: segmenti e confronto tra motori, rifatto ogni mese
+            from . import serie_eur
+            serie_eur.run()
+        except Exception as e:  # noqa: BLE001
+            print("[euro] errore:", str(e)[:100])
+    elif cmd == "serie-euro":   # segmenti, confronto tra serie e tra motori su VWCE in euro (~1 minuto)
+        from . import serie_eur
+        print(serie_eur.run())
+    elif cmd == "verifica-percorsi":   # 12 varianti del motore di percorsi contro A1, con la regola di adozione del protocollo (lento: ~15 minuti)
+        from . import percorsi
+        r = percorsi.run_verifica()
+        print({hz: (o["passano"], o["scelta"]) for hz, o in r["orizzonti"].items()}, "mostrata:", r["mostrata"])
     elif cmd == "verifica":
         from . import verifica
         print(verifica.tabella_testo(verifica.run_storica()))
@@ -393,6 +436,8 @@ def main() -> None:
         build(forecast())
     elif cmd == "verifica-diario":
         print(journal.verify())
+        from . import journal3
+        print(journal3.verify())
     else:
         print("Comandi: tutto | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
 

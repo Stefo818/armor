@@ -405,3 +405,47 @@ Calo (BSS rispetto alla frequenza storica con intervallo al 90%; episodi = crisi
 Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), la **regola di adozione storica** (5 condizioni, Holm su 12, scelta tra varianti per CRPS → calibrazione → semplicità), conferma dal vivo (revisione descrittiva 10/5/2027, prima decisione 8/11/2028, finestre minime 24/8/4) e regola di ritorno ad A1. L'impronta SHA-256 viene scritta da `verifica.registra_protocollo()` in `data/protocollo_log.csv` al primo ciclo giornaliero dopo il rilascio.
 ### In app
 «Quanto fidarsi» → nuova sezione «Verifica storica con margini d'errore» (tabella per bersaglio con BSS [90%], AUC, pendenza, differenza di Brier da A1 e p con Holm). Test 63 verdi.
+
+## PATCH 28-29 (Fasi 2 e 7: motore unico di percorsi, 12 varianti, diario v3)
+### Codice
+- `percorsi.py`: dagli stessi percorsi (20.000 live, seme fisso per data, stessi numeri casuali per orizzonti e varianti) escono rendimento finale (quantili 5-95, P<0), perdita da oggi (soglie 5/10/15/20) e massimo drawdown. Orizzonti 5, 7, 21, 63, 126, 252 sedute. Errore Monte Carlo salvato (mostrato se > 0,5 punti); persistenza ed emivita del GARCH a ogni stima (oggi 0,989 → circa 63 sedute); curva della volatilità attesa a 252 sedute.
+- 12 varianti pre-registrate (V0/V1/V2 × T0/T1/T2/T3), definizioni nel docstring e in PROTOCOLLO_VERIFICA.md §3. Test: coerenza per costruzione (orizzonti, soglie, drawdown ≥ perdita), caso deterministico, controllo delle code, V2 senza VIX3M non esiste, rapporti realizzata/implicita senza sguardo al futuro.
+- `journal3.py` / `data/journal_v3.csv`: solo aggiunte, catena di hash, una riga per data/modello con versione del codice, parametri, ingressi (VIX, rapporti, data dell'ultimo dato di ogni serie chiave), tutte le probabilità e i quantili con errore MC; esiti in righe separate a scadenza (6 orizzonti). `journal3.verify()` chiamato nel ciclo giornaliero. Test con manomissione.
+- Ciclo giornaliero: `percorsi.oggi()` (scrive `data/percorsi_oggi.json`), `percorsi.applica_adozione()` (cambia i numeri principali SOLO dove `data/adozione.json` indica una variante adottata), righe nel diario v3 per A1 e per la variante mostrata.
+- App: «Scenari da 1 settimana a 1 anno» in Previsioni; «Motore di percorsi: regola di adozione» in Quanto fidarsi. Comando `python -m armor verifica-percorsi` (~15 min con il walk-forward, rifacibile).
+### Verifica walk-forward 1994-oggi (1.650 date, 3.000 percorsi, parametri rifatti ogni anno) — `data/percorsi_verifica.json`, 48 prove nel registro
+**Esito della regola di adozione: NESSUNA variante passa a nessun orizzonte. A1 resta il numero principale a tutti gli orizzonti** (`data/adozione.json` senza varianti adottate).
+| Orizzonte | A1 BSS / pendenza | Miglior variante per CRPS | Differenza di Brier da A1 [90%], p Holm | BSS 94-12 / 13-oggi | Pendenza | Copertura 10-90 |
+|---|---|---|---|---|---|---|
+| 7 sedute (≥5%) | +0,071 / 1,01 | V1T0 | −0,0014 [−0,0026; −0,0003], 0,31 | +0,13 / +0,04 | 1,01 | 84% |
+| 21 (≥10%) | +0,048 / 0,88 | V1T1 | −0,0004 [−0,0019; +0,0011], 1,0 | +0,08 / +0,02 | 0,90 | 84% |
+| 63 (≥10%) | +0,031 / 0,71 | V1T1 | −0,0019 [−0,0084; +0,0046], 1,0 | +0,07 / 0,00 | 0,93 | 84% |
+| 126 (≥10%) | +0,034 / 0,64 | V1T1 | −0,0012 [−0,0133; +0,0117], 1,0 | +0,07 / −0,01 | 1,04 | 84% |
+- A 7 sedute l'intervallo è a favore delle varianti V0/V1 senza controllo, ma Holm (p 0,31) e PBO (0,76) bloccano; a 1-3-6 mesi gli intervalli includono lo zero.
+- **Cosa migliora davvero (senza che passi la regola)**: calibrazione (pendenza 0,90-1,04 contro 0,64-0,88 di A1 a 1-6 mesi), fasce del rendimento ben centrate (copertura 10-90 tra 80 e 85%, 5-95 tra 91 e 94%), probabilità coerenti tra orizzonti e soglie, tre obiettivi dagli stessi percorsi.
+- PBO tra le 12 varianti: 0,76 / 0,38 / 0,80 / 0,67; con le sole varianti con tutte le date 1,0 / 0,80 / 0,98 / 0,92. Le varianti sono quasi lo stesso modello (molto correlate), quindi il «migliore in campione» è praticamente casuale: coerente con l'assenza di un vincitore.
+- **V2 (struttura a termine VIX/VIX3M) è peggiore**: a 3-6 mesi BSS negativo (fino a −0,19) e pendenza 0,16-0,38; il VIX3M esiste solo dal 2006 (copre 61-62% delle date di A1, quindi per protocollo non poteva essere adottato). Risultato negativo registrato.
+- T3 (blocchi riscalati) è troppo largo/prudente (copertura 89-92%, pendenza 0,4-0,9 a 1 mese); T1 (tetto) e T0 quasi uguali a 7-21 sedute; T2 = T0 fino al giorno 63.
+- **Controllo delle code (oggi, 20.000 percorsi a 252 sedute, curtosi in eccesso; storica a finestre non sovrapposte 126 sedute 2,9 e 252 sedute 1,2)**: T0 85 / 51 (percorsi da −100% a +2.941%); **T1 4,2 / 3,4 (min −74%, max +109%)**; T2 9,9 / 4,4; T3 0 (code sottili). La variante mostrata come sperimentale è **V1T1** (FHS+VIX con tetto alla varianza): CRPS medio normalizzato più basso (1,00003) tra le varianti con tutte le date.
+- Oggi (8/11 dati del 6/11, V1T1): perdita ≥10% da oggi 11% (1 mese), 25% (3 mesi), 32% (6 mesi), 39% (1 anno); chiudere in negativo 42% / 36% / 31% / 27% (storico 38% / 33% / 29% / 25%).
+### Dati nuovi (richiesta dell'utente dopo la patch 27)
+- Dopo la patch 26 non c'era ancora un giornaliero lanciato: in `data/series` mancano ancora `vix6m`, `vix1y`, `dexuseu`, `sp_open/high/low`. **Non verificabile da qui se Yahoo abbia ^VIX6M/^VIX1Y.** Se mancano, l'esperimento VRP (Fase 6a) usa solo VIX/VIX3M e l'OHLC di ^GSPC; se manca anche l'OHLC si farà quando i dati arriveranno (workflow «Ricerca modello Armor»). Piano B euro: `eurusd` di Yahoo (già presente) al posto di DEXUSEU.
+- File `top_ps.csv`, `top_pe.csv`, `top_fcf_yield.csv` (52 byte): NON sono vuoti, contengono 2 righe (7 e 8/11/2026): sono serie istantanee che si accumulano un giorno alla volta, quindi corte per costruzione.
+
+## PATCH 30 (Fase 3: VWCE in euro con segmenti dichiarati)
+- `serie_eur.py`: livello in euro = livello in dollari ÷ F (dollari per euro); F = DEXUSEU se presente, altrimenti EURUSD=X di Yahoo (oggi: **EURUSD=X**, perché `dexuseu` non è ancora scaricato). Test con un caso numerico (F noto) e verifica 1 + r€ = (1 + r$)·F(t−1)/F(t).
+- Segmenti dichiarati (`data/serie_eur.json`): (b) VT convertito in euro 26/06/2008 → 28/07/2019; (a) VWCE.DE reale dal **29/07/2019** (primo dato scaricato; il piano diceva 23/07); (c) S&P 500 in euro dal 01/12/2003, solo robustezza, mai chiamato VWCE. Limiti scritti in app (FTSE Global All Cap contro All-World, orari di chiusura, ritenute).
+- Sovrapposizione 2019-08 → oggi (379 settimane): correlazione dei rendimenti settimanali VT-euro / VWCE **0,89**; differenza di rendimento annuo (VWCE − VT in euro) +0,3 punti; volatilità annua 15% contro 16%. Quindi il segmento prima del 2019 è una stima.
+- Motore di percorsi stimato sui rendimenti di VWCE in euro (V0T1, senza VIX; 4.640 giorni dal 2008): `serie_eur.oggi()` ogni giorno, `data/percorsi_eur_oggi.json`. Oggi: perdita ≥10% da oggi 8% (1 mese), 19% (3 mesi); chiudere in negativo 37% / 31%.
+- **Confronto sugli esiti reali di VWCE in euro (luglio 2011-oggi, V0T1, 2.000 percorsi, perdita da oggi)**:
+
+  | Esito | Episodi | BSS motore S&P in dollari | BSS motore su VWCE in euro | Differenza di Brier (euro − dollari) [90%] |
+  |---|---|---|---|---|
+  | calo ≥5% in 1 mese | 26 | +0,038 | −0,001 | +0,0046 [−0,0014; +0,0102], p 0,19 |
+  | calo ≥10% in 1 mese | 6 | −0,015 | −0,031 | +0,0005 [−0,0011; +0,0020], p 0,63 |
+  | calo ≥10% in 3 mesi | 7 | +0,010 | −0,095 | +0,0097 [−0,0003; +0,0205], p 0,07 |
+
+  Conclusione: il motore sull'S&P 500 in dollari (storia dal 1950) prevede almeno altrettanto bene gli esiti di VWCE in euro; nessuna differenza è netta (pochi episodi), quello in euro resta un controllo. Il riferimento non cambia.
+- App: «Quanto fidarsi» → nuova sezione «VWCE in euro» (segmenti, sovrapposizione, scenari in euro, confronto tra motori). Comando `python -m armor serie-euro`; rifatto ogni mese da `valuta-modelli`.
+- Non fatto (bassa priorità, non verificabile da qui): scarico delle partecipazioni e dei pesi per paese dal sito Vanguard. Restano le stime «dalla capitalizzazione».
+- Test 70 verdi.
