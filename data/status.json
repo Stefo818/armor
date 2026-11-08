@@ -1,803 +1,903 @@
 {
  "sp500": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 24831,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "vix": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9283,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "vix3m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5111,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "vix9d": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 3986,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "vvix": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4985,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "skew": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9207,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "move": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5932,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "nasdaq100": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 10356,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "vt": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4621,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "hyg": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4927,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "ief": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6109,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "rsp": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5919,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "spy": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 8502,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "gold": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6573,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "wti": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6580,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "dxy": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 14181,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "eurusd": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5951,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "vwce_de": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1851,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "baa10y": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 10212,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "t10y2y": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 12606,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "t10y3m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 11215,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "hy_oas": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 786,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "ig_oas": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 785,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "nfci": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 2913,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "stlfsi": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 1714,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "real10y": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 5966,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "be10y": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5967,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "dgs10": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 16197,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "dgs2": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 12605,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "fedfunds": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 26426,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "usd_broad": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 5222,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "epu": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 15284,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "icsa": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-31",
   "rows": 3122,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "unrate": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 945,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "cpi": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 956,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "equity_value": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 305,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "gdp": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-07-01",
   "rows": 319,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "pput": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 10163,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "ps_m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 102,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "cape_m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1871,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "pe_m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1872,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "aaii_bull": {
   "ok": false,
+  "stato": "mai scaricata",
   "msg": "AAII richiede il login: scarica sentiment.xls a mano e mettilo in D:\\Armor",
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "aaii_bear": {
   "ok": false,
+  "stato": "mai scaricata",
   "msg": "AAII richiede il login: scarica sentiment.xls a mano e mettilo in D:\\Armor",
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "aaii_spread": {
   "ok": false,
+  "stato": "mai scaricata",
   "msg": "AAII richiede il login: scarica sentiment.xls a mano e mettilo in D:\\Armor",
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "gpr": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "gpr_threat": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "gpr_act": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "fear_greed": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 250,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "breadth50": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 452,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "breadth200": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 302,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "nh_nl": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 302,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "top_ps": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "top_pe": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "top_fcf_yield": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "ai_capex_ocf": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "stoxx50": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4916,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "dax": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9827,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "ftsemib": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7370,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "nikkei": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 15201,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "eem": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5931,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xlk": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xlf": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xle": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xlv": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xly": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xlp": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xli": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xlu": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xlb": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xlre": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 2787,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sec_xlc": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 2109,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "umcsent": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 677,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "philly": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 702,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "empire": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 304,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "dgorder": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 416,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "neworder": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 416,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "indpro": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 1293,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "payems": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 1054,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "retail": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 417,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "walcl": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-04",
   "rows": 1247,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "wresbal": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-04",
   "rows": 1247,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "rrp": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 3363,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "tga": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-04",
   "rows": 1247,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "val_pe_vwce": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "val_ps_vwce": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "val_pe_sp500": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "val_ps_sp500": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "val_pe_ndx": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "val_ps_ndx": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "cot_lev_net": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 149,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "cot_am_net": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 149,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "cot_dealer_net": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 149,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "anfci": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 2913,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sloos": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 147,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "credit_ratio": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2025-10-01",
   "rows": 321,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "iwm": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6652,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "smh": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6647,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "iyt": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5749,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "kre": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5127,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "copper": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6577,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "cp": {
   "ok": true,
@@ -1001,11 +1101,12 @@
  },
  "ciss": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 12229,
-  "checked_at": "2026-11-08 17:18 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "margin_debt": {
   "ok": true,
@@ -1073,50 +1174,56 @@
  },
  "vix6m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4743,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "vix1y": {
   "ok": false,
+  "stato": "mai scaricata",
   "msg": "nessun dato",
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "dexuseu": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 6979,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sp_open": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9281,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sp_high": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9281,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  },
  "sp_low": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9281,
-  "checked_at": "2026-11-08 17:17 UTC"
+  "checked_at": "2026-11-08 17:41 UTC"
  }
 }
