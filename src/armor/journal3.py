@@ -106,3 +106,58 @@ def verify(path=None) -> tuple[bool, str]:
             return False, f"diario v3: riga {i + 2} modificata o catena spezzata"
         prev = row["hash"]
     return True, f"diario v3 integro ({len(df)} righe)"
+
+
+def verifica_estrema(path=None) -> tuple[bool, int, str | None]:
+    """Rilegge il file riga per riga (senza pandas) e ricostruisce la catena da GENESIS.
+    Integro: (True, numero di righe, None). Rotto: (False, numero di riga nel file con l'intestazione come riga 1, 'prev_hash non corrisponde' | 'hash non corrisponde')."""
+    import csv
+    path = path or FILE
+    if not path.exists():
+        return True, 0, None
+    prev, n = "GENESIS", 0
+    with open(path, newline="", encoding="utf-8") as fh:
+        for i, row in enumerate(csv.DictReader(fh), start=2):
+            if row.get("prev_hash") != prev:
+                return False, i, "prev_hash non corrisponde"
+            if _h(prev, row) != row.get("hash"):
+                return False, i, "hash non corrisponde"
+            prev = row["hash"]
+            n += 1
+    return True, n, None
+
+
+def verifica(path=None) -> tuple[bool, int, str | None]:
+    """(ok, numero di righe, errore). Come verifica_estrema; in caso di errore il testo include il numero di riga."""
+    ok, n, err = verifica_estrema(path)
+    return (True, n, None) if ok else (False, n, f"riga {n}: {err}")
+
+
+def backup_settimanale(oggi=None, base=None, mantieni: int = 12) -> str | None:
+    """Una copia del diario per settimana ISO in data/journal_backups/journal_v3_AAAA-SS.csv (se non c'è già), tiene le ultime `mantieni`, aggiorna indice.json.
+    Restituisce il nome del file creato, None se la settimana era già coperta o il diario non esiste."""
+    import shutil
+    from datetime import date
+    base = base or DATA
+    src = base / "journal_v3.csv"
+    if not src.exists():
+        return None
+    oggi = oggi or date.today()
+    iso = oggi.isocalendar()
+    cart = base / "journal_backups"
+    cart.mkdir(parents=True, exist_ok=True)
+    nome = f"journal_v3_{iso[0]}-{iso[1]:02d}.csv"
+    creato = None
+    if not (cart / nome).exists():
+        shutil.copyfile(src, cart / nome)
+        creato = nome
+    files = sorted(cart.glob("journal_v3_*.csv"))
+    for vecchio in files[:-mantieni]:
+        vecchio.unlink()
+    files = files[-mantieni:]
+    indice = []
+    for f in files:
+        df = pd.read_csv(f, dtype=str, keep_default_na=False)
+        indice.append({"file": f.name, "n_righe": int(len(df)), "hash_ultima_riga": df["hash"].iloc[-1] if len(df) else ""})
+    (cart / "indice.json").write_text(json.dumps(indice, ensure_ascii=False, indent=1), encoding="utf-8")
+    return creato

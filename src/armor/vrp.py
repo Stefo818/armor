@@ -7,7 +7,7 @@ import pandas as pd
 from . import fhs, store
 from . import percorsi as P
 from . import verifica as V
-from .config import DATA, HORIZONS
+from .config import DATA
 from .features import fwd_maxdd, fwd_ret
 
 FILE = DATA / "vrp_ombra.json"
@@ -19,9 +19,9 @@ MIN_OSS, FIN_VRP = 750, 1260
 
 
 # ------------------------------------------------------------------ Yang-Zhang
-def componenti(o: pd.Series, h: pd.Series, l: pd.Series, c: pd.Series) -> pd.DataFrame:
+def componenti(o: pd.Series, h: pd.Series, lo: pd.Series, c: pd.Series) -> pd.DataFrame:
     """Per ogni seduta: parte notturna (o), di seduta (c), Rogers-Satchell (rs) e proxy giornaliero v = o² + rs, in %² (log-rendimenti ×100)."""
-    d = pd.concat([o, h, l, c], axis=1, keys=list("ohlc"), sort=True).dropna()
+    d = pd.concat([o, h, lo, c], axis=1, keys=list("ohlc"), sort=True).dropna()
     d = d[d.index >= INIZIO_DATI]
     pc = d["c"].shift(1)
     x = pd.DataFrame(index=d.index)
@@ -283,10 +283,10 @@ def run(start: str = "2011-01-03", step: int = 5, reps: int = 1000, cache: str |
     from .features import closed_sp500
     registra_protocollo()
     p = closed_sp500()
-    o, h, l = store.load("sp_open"), store.load("sp_high"), store.load("sp_low")
-    if min(len(o), len(h), len(l)) < 1000:
+    o, h, lo = store.load("sp_open"), store.load("sp_high"), store.load("sp_low")
+    if min(len(o), len(h), len(lo)) < 1000:
         raise RuntimeError("apertura/massimo/minimo di ^GSPC non disponibili: l'esperimento si rifà quando i dati arrivano")
-    x = componenti(o, h, l, p)
+    x = componenti(o, h, lo, p)
     vix = store.load("vix")
     t = tabella(x, vix)
     prev = previsioni_varianza(t)

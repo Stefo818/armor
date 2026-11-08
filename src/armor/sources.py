@@ -88,6 +88,11 @@ SHILLER_URLS = [
 ]
 
 
+def pausa(i: int) -> int:
+    """Attesa esponenziale prima di riprovare un download: 2, 4, 8 secondi."""
+    return 2 * 2 ** i
+
+
 def _get(url: str, tries: int = 3, timeout: int = 40) -> requests.Response:
     last = None
     for i in range(tries):
@@ -97,7 +102,7 @@ def _get(url: str, tries: int = 3, timeout: int = 40) -> requests.Response:
             return r
         except Exception as e:  # noqa: BLE001
             last = e
-            time.sleep(2 * (i + 1))
+            time.sleep(pausa(i))
     raise RuntimeError(str(last))
 
 
@@ -130,7 +135,7 @@ def fetch_yf(sid: str, start: str | None) -> pd.Series:
             last = "nessun dato"
         except Exception as e:  # noqa: BLE001
             last = str(e)
-        time.sleep(3 * (i + 1))
+        time.sleep(pausa(i))
     raise RuntimeError(last or "errore")
 
 
@@ -155,7 +160,7 @@ def fetch_sp_ohlc(start: str = "1990-01-01") -> dict[str, pd.Series]:
             last = "nessun dato"
         except Exception as e:  # noqa: BLE001
             last = str(e)
-        time.sleep(3 * (i + 1))
+        time.sleep(pausa(i))
     raise RuntimeError(last or "errore")
 
 

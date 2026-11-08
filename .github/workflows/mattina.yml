@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  issues: write
 jobs:
   mattina:
     runs-on: ubuntu-latest
@@ -22,3 +23,10 @@ jobs:
           PYTHONPATH: src
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python -m armor mattina
+      - name: Controllo che il diario cresca (avvisa anche se il workflow serale non è partito)
+        continue-on-error: true
+        env:
+          PYTHONPATH: src
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m armor diagnostica

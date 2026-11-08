@@ -1283,7 +1283,6 @@ def test_vrp_componenti_e_regressioni():
     # nessun anticipo: la previsione alla data d non usa esiti oltre d-21 (cambiare il futuro non la cambia)
     t2 = t.copy(); t2.iloc[1300:, t2.columns.get_loc("y")] = 1e6
     prev2 = vrp.previsioni_varianza(t2)
-    k = 1300 + 5
     a, b = prev["HAR"].iloc[1200], prev2["HAR"].iloc[1200]
     assert np.isfinite(a) and abs(a - b) < 1e-9
     assert (prev["HAR"].dropna() >= vrp.FLOOR_VAR).all()
@@ -1292,3 +1291,168 @@ def test_vrp_componenti_e_regressioni():
     ev = st["s2_lr"] + st["rho"] ** np.arange(21) * (s0 - st["s2_lr"])
     assert abs(ev.mean() * 252 - 400.0) < 1e-6
     assert "VIX" in vrp.html() or "non ancora" in vrp.html()
+
+
+# ------------------------------------------------------------------ Patch 34: integrità, diagnostica, backup
+def _diario_finto(tmp_path, n=4):
+    from armor import journal3 as J
+    f = tmp_path / "journal_v3.csv"
+    for k in range(n):
+        J.append_previsione(f"2026-11-{k + 2:02d}", "A1", "A1", {"m": 1}, {"i": k}, {"1m": {"p": {"10": 0.1 * k}}}, path=f, ts="2026-11-08T00:00:00Z")
+    return f
+
+
+def test_verifica_ok(tmp_path):
+    from armor import journal3 as J
+    f = _diario_finto(tmp_path)
+    assert J.verifica_estrema(f) == (True, 4, None)
+    assert J.verifica(f) == (True, 4, None)
+    assert J.verifica_estrema(tmp_path / "non_esiste.csv") == (True, 0, None)
+
+
+def test_verifica_rotta_prev_hash(tmp_path):
+    from armor import journal3 as J
+    f = _diario_finto(tmp_path)
+    df = J.read(f)
+    df.loc[2, "prev_hash"] = "0" * 20
+    df.to_csv(f, index=False)
+    ok, riga, err = J.verifica_estrema(f)
+    assert (ok, riga, err) == (False, 4, "prev_hash non corrisponde")      # riga 4 del file = terza riga di dati
+
+
+def test_verifica_rotta_hash(tmp_path):
+    from armor import journal3 as J
+    f = _diario_finto(tmp_path)
+    df = J.read(f)
+    df.loc[1, "risultati"] = df.loc[1, "risultati"].replace("0.1", "0.9")
+    df.to_csv(f, index=False)
+    ok, riga, err = J.verifica_estrema(f)
+    assert (ok, riga, err) == (False, 3, "hash non corrisponde")
+
+
+def test_jobs_esce_con_errore_se_diario_rotto(tmp_path, monkeypatch):
+    import pytest
+    from armor import jobs, journal3 as J
+    f = _diario_finto(tmp_path)
+    monkeypatch.setattr(J, "FILE", f)
+    jobs.controllo_diario()                         # integro: nessuna eccezione
+    df = J.read(f)
+    df.loc[1, "model"] = "X"
+    df.to_csv(f, index=False)
+    with pytest.raises(SystemExit) as e:
+        jobs.controllo_diario()
+    assert e.value.code == 1
+
+
+def test_diagnostica_heartbeat(tmp_path):
+    from datetime import date
+    from armor import diagnostica as D
+    (tmp_path / "series").mkdir()
+    (tmp_path / "series" / "sp500.csv").write_text("date,value\n2026-11-05,100\n2026-11-06,101\n")
+    (tmp_path / "series" / "altra.csv").write_text("date,value\n2020-01-01,1\n")
+    oggi = date(2026, 11, 11)      # mercoledì
+    d = D.diagnostica_heartbeat(tmp_path, oggi)                      # diario assente/vuoto
+    assert d["giorni_da_ultima"] is None and d["ultima_previsione"] is None
+    _diario_finto(tmp_path, 1)                                       # asof 2026-11-02
+    assert D.diagnostica_heartbeat(tmp_path, date(2026, 11, 2))["giorni_da_ultima"] == 0
+    assert D.diagnostica_heartbeat(tmp_path, date(2026, 11, 9))["giorni_da_ultima"] == 5       # lun 2 → lun 9 = 5 giorni lavorativi
+    assert D.diagnostica_heartbeat(tmp_path, date(2026, 11, 3))["giorni_da_ultima"] == 1
+    # il weekend non conta: da venerdì a lunedì = 1
+    assert D._lavorativi("2026-11-06", date(2026, 11, 9)) == 1
+    st = {x["nome"]: x for x in d["fonti"]}
+    assert st["sp500"]["stato"] == "warning" and st["sp500"]["giorni_ritardo"] == 5     # soglia 4 giorni
+    assert st["altra"]["stato"] == "warning" and st["vix"]["stato"] == "errore"         # vix assente
+    assert (tmp_path / "diagnostica.json").exists()
+    assert "Diario fermo da 5 giorni" in D.badge({"giorni_da_ultima": 5, "fonti": []}) and "bad" in D.badge({"giorni_da_ultima": 5, "fonti": []})
+    assert "warn" in D.badge({"giorni_da_ultima": 2, "fonti": []}) and "aggiornato oggi" in D.badge({"giorni_da_ultima": 0, "fonti": []})
+
+
+def test_avvisi_ntfy_banner_issue(tmp_path, monkeypatch):
+    from armor import diagnostica as D, store
+    monkeypatch.setattr(store, "STATUS_FILE", tmp_path / "status.json")
+    inviati, issues = [], []
+    diag = {"giorni_da_ultima": 3, "oggi": "2026-11-11", "fonti": []}
+    # senza ntfy: banner nello stato, nessuna issue sotto i 4 giorni
+    r = D.avvisi(diag, env={}, send=lambda m, t: inviati.append(m) or 1, issue=lambda *a: issues.append(a) or "aperta")
+    assert r["banner"] and not r["ntfy"] and r["issue"] is None
+    assert store.read_status()["alert_diario"]["testo"].startswith("[Armor] Diario fermo da 3 giorni")
+    # con ntfy: un solo invio al giorno
+    r = D.avvisi(diag, env={"NTFY_TOPIC": "x"}, send=lambda m, t: inviati.append(m) or 1)
+    r2 = D.avvisi(diag, env={"NTFY_TOPIC": "x"}, send=lambda m, t: inviati.append(m) or 1)
+    assert r["ntfy"] and not r2["ntfy"] and len(inviati) == 1 and inviati[0][0]["priority"] == 4
+    # 4 giorni con token: issue
+    d4 = {**diag, "giorni_da_ultima": 4}
+    r = D.avvisi(d4, env={"GITHUB_TOKEN": "t"}, issue=lambda *a: issues.append(a) or "aperta")
+    assert r["issue"] == "aperta" and issues[0][2] == "[Armor] Diario fermo da 4 giorni"
+    # rientro: l'avviso sparisce
+    D.avvisi({"giorni_da_ultima": 0, "oggi": "2026-11-12", "fonti": []}, env={})
+    assert "alert_diario" not in store.read_status()
+
+
+def test_issue_non_duplicata():
+    from datetime import date
+    from armor import diagnostica as D
+
+    class R:
+        def __init__(self, j): self.j = j
+        def json(self): return self.j
+        def raise_for_status(self): pass
+    chiamate = []
+    esistente = [{"number": 7, "title": "[Armor] Diario fermo da 4 giorni", "updated_at": "2026-11-10T08:00:00Z"}]
+    post = lambda url, **k: chiamate.append(url) or R({})
+    assert D._http_issue("t", "a/b", "[Armor] Diario fermo da 5 giorni", "{}", date(2026, 11, 11), get=lambda *a, **k: R(esistente), post=post) == "commentata"
+    assert chiamate[-1].endswith("/issues/7/comments")
+    esistente[0]["updated_at"] = "2026-11-11T01:00:00Z"
+    assert D._http_issue("t", "a/b", "x", "{}", date(2026, 11, 11), get=lambda *a, **k: R(esistente), post=post) == "esistente"
+    assert D._http_issue("t", "a/b", "[Armor] Diario fermo da 4 giorni", "{}", date(2026, 11, 11), get=lambda *a, **k: R([]), post=post) == "aperta"
+
+
+def test_backup_settimanale(tmp_path):
+    from datetime import date, timedelta
+    from armor import journal3 as J
+    _diario_finto(tmp_path)
+    cart = tmp_path / "journal_backups"
+    lun = date(2026, 1, 5)
+    assert J.backup_settimanale(lun, tmp_path) == "journal_v3_2026-02.csv"
+    assert J.backup_settimanale(lun + timedelta(days=3), tmp_path) is None                   # stessa settimana ISO
+    assert len(list(cart.glob("journal_v3_*.csv"))) == 1
+    assert J.backup_settimanale(lun + timedelta(days=7), tmp_path) == "journal_v3_2026-03.csv"
+    for k in range(2, 20):
+        J.backup_settimanale(lun + timedelta(days=7 * k), tmp_path)
+    files = sorted(cart.glob("journal_v3_*.csv"))
+    assert len(files) == 12 and files[-1].name == "journal_v3_2026-21.csv" and files[0].name == "journal_v3_2026-10.csv"
+    import json
+    idx = json.loads((cart / "indice.json").read_text())
+    assert len(idx) == 12 and idx[0]["n_righe"] == 4 and len(idx[0]["hash_ultima_riga"]) == 20
+
+
+def test_status_stato_fonte_e_backoff(tmp_path, monkeypatch):
+    import pandas as pd
+    from armor import store, sources
+    assert [sources.pausa(i) for i in range(3)] == [2, 4, 8]
+    monkeypatch.setattr(store, "load", lambda sid: pd.Series(dtype=float))
+    st = {}
+    store.set_status(st, "x", False, "errore")
+    assert st["x"]["stato"] == "mai scaricata"
+    monkeypatch.setattr(store, "load", lambda sid: pd.Series([1.0], index=pd.to_datetime(["2026-11-05"])))
+    store.set_status(st, "x", False, "errore")
+    assert st["x"]["stato"] == "ritardo"
+    store.set_status(st, "x", True)
+    assert st["x"]["stato"] == "ok"
+
+
+def test_affidabilita_html_chiaro(tmp_path, monkeypatch):
+    import json
+    from armor import affidabilita as A
+    seg = [{"id": "disaccordo", "acceso": True, "dettaglio": "1 mese: calo ≥10% → A1 3%, sfidante 11%"}, {"id": "dati", "acceso": False, "dettaglio": "tutte le serie chiave sono regolari"},
+           {"id": "mai_visto", "acceso": False, "dettaglio": "distanza dalla norma 4.1, limite 8.9"}, {"id": "errori", "acceso": None, "dettaglio": "non ancora valutabile"},
+           {"id": "instabilita", "acceso": True, "dettaglio": "a 1 mese la probabilità va da 12% a 20%"}]
+    ori = [{"hz": "1m", "soglia": 10, "a1": 0.03, "sfidante": 0.11, "normale": 0.05}]
+    f = tmp_path / "a.json"
+    f.write_text(json.dumps({"asof": "2026-11-06", "segnali": seg, "livello": "bassa", "n_accesi": 2, "avviso": "x", "orizzonti": ori}))
+    monkeypatch.setattr(A, "FILE", f)
+    h = A.html()
+    assert "Stima poco affidabile" in h and "Come muoverti" in h and "Cosa aspettarti" in h
+    assert "da 3% a 11%" in h and "0,6× a 2,2× il normale" in h and "in attesa" in h
+    f.write_text(json.dumps({"asof": "x", "segnali": seg[1:3], "livello": "alta", "n_accesi": 0, "avviso": ""}))
+    assert "Stima affidabile" in A.html()

@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  issues: write
 concurrency:
   group: armor-dati
   cancel-in-progress: false
@@ -26,6 +27,7 @@ jobs:
           PYTHONPATH: src
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         timeout-minutes: 20
         run: python -m armor tutto
       - name: Salva i dati nel repository

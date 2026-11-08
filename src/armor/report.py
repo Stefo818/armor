@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -562,7 +562,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     bt = read_csv(BACKTEST_RET)
     outc = read_csv(OUTCOMES)
     jr = journal.read()
-    status = store.read_status()
+    status = {k: v for k, v in store.read_status().items() if isinstance(v, dict) and "ok" in v}
     panel = build_panel(sp)
 
     rel = {}
@@ -966,7 +966,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
         print("Indici a 3 orizzonti non calcolati:", str(ex)[:120], flush=True)
         hz3 = None
     kpi = _safe(lambda: cruscotto.kpi_html(sem, sp, vwce_series(), store.load("vix")), "Indici principali")
-    p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>{_safe(affidabilita.html, 'Affidabilità')}"
+    p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>{_safe(diagnostica.banner, 'Avviso diario')}{_safe(affidabilita.html, 'Affidabilità')}"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
               f"{('<div class=card><b>Semafori di oggi:</b> ' + sem_line + '</div>') if sem_line else ''}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
@@ -1018,7 +1018,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
              + det('Confronto degli indicatori con il passato', comparison_html(date, sp, p) + "<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = verso più rischio, verde = verso meno rischio.</p>")
              + det('Affidabilità del modello (test dal 2000)', avh) + det('Variabili provate e non adottate', chal_html) + det('Dati, fonti e archivio', dc) + gloss)
     p_al = ("<h2>Allarmi personali</h2>" + parts.alerts_section(al_opts, al_now))
-    p_sto = p_sto + "<h2>Rapporto mensile</h2>" + _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile") + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Salute dei dati</h2>" + _safe(lambda: salute.html(salute.compute()), "Salute dei dati") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
+    p_sto = p_sto + "<h2>Rapporto mensile</h2>" + _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile") + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Salute dei dati</h2>" + _safe(diagnostica.badge, "Stato del diario") + _safe(lambda: salute.html(salute.compute()), "Salute dei dati") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
     vix_s = store.load("vix")
     cal_html = _safe(lambda: extra13.calendar_html(_date.today(), sp, vix_s, mappa.cal_block(None if lazy else cal_json) if cal_json else ""), "Calendario")
     headline = (f"Indice Armor {aix['value']:.0f}/100 · " if aix else "") + verdict

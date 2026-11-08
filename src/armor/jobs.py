@@ -13,6 +13,17 @@ from .features import closed_sp500, vwce_series
 from .model import Engine
 
 
+def controllo_diario() -> None:
+    """Rilegge la catena di hash del diario v3. Se è rotta il processo termina con errore (il workflow diventa rosso)."""
+    from . import journal3
+    ok, n, err = journal3.verifica_estrema()
+    if ok:
+        print(f"[diario] integrità ok: {n} righe, catena valida", flush=True)
+        return
+    print(f"[diario] ERRORE: catena rotta alla riga {n} — {err}", flush=True)
+    raise SystemExit(1)
+
+
 def forecast(write: bool = True) -> dict:
     """Calcola le stime di oggi (ultima seduta chiusa) e le registra nel diario."""
     p = closed_sp500()
@@ -54,6 +65,8 @@ def forecast(write: bool = True) -> dict:
                 journal3.append_previsione(d0, "Percorsi", var, res["_diag"], ing, {hz: x for hz, x in res.items() if not hz.startswith("_")})
     except Exception as e:  # noqa: BLE001
         print("[percorsi] non calcolati:", str(e)[:120])
+    if write:
+        controllo_diario()
     try:   # scenari stimati sui rendimenti di VWCE in euro (serie a segmenti dichiarati)
         from . import serie_eur
         serie_eur.oggi()
@@ -250,7 +263,7 @@ def tutto(skip_download: bool = False) -> None:
         except TimeoutError as ex:
             print("ATTENZIONE:", ex)
             st = store.read_status()
-        bad = [k for k, v in st.items() if not v["ok"]]
+        bad = [k for k, v in st.items() if isinstance(v, dict) and "ok" in v and not v["ok"]]
         print(f"Dati aggiornati. Fonti con problemi: {', '.join(bad) if bad else 'nessuna'}")
         try:
             from .archive import archive_spy_options
@@ -297,12 +310,19 @@ def tutto(skip_download: bool = False) -> None:
         print("[apprendimento] non aggiornato:", str(e)[:100])
     ok, msg = journal.verify()
     print("Integrita' diario:", msg if ok else "ERRORE - " + msg)
-    try:
+    controllo_diario()
+    try:   # copia settimanale del diario (tiene le ultime 12)
         from . import journal3
-        ok3, msg3 = journal3.verify()
-        print("Integrita' diario v3:", msg3 if ok3 else "ERRORE - " + msg3)
+        creato = journal3.backup_settimanale()
+        if creato:
+            print(f"[backup] creato {creato}", flush=True)
     except Exception as e:  # noqa: BLE001
-        print("[diario v3] controllo non riuscito:", str(e)[:80])
+        print("[backup] non riuscito:", str(e)[:100])
+    try:   # heartbeat: il diario cresce? le fonti sono aggiornate? avvisi se si ferma
+        from . import diagnostica
+        diagnostica.esegui()
+    except Exception as e:  # noqa: BLE001
+        print("[diagnostica] non riuscita:", str(e)[:100])
     from .report import build
     build(ctx)
 
@@ -337,7 +357,7 @@ def costruisci_sito(live_first: bool = False) -> None:
 
 def stampa_stato(st: dict) -> None:
     """Stampa l'esito di ogni fonte (da incollare a Claude se qualcosa non va)."""
-    for k, v in sorted(st.items(), key=lambda kv: (kv[1]["ok"], kv[0])):
+    for k, v in sorted(((k, v) for k, v in st.items() if isinstance(v, dict) and "ok" in v), key=lambda kv: (kv[1]["ok"], kv[0])):
         flag = "OK " if v["ok"] else "ERR"
         print(f"{flag} {k:12s} ultima data: {v['last_date']}  righe: {v['rows']:>6}  {v['msg']}")
 
@@ -399,6 +419,9 @@ def main() -> None:
     elif cmd == "serie-euro":   # segmenti, confronto tra serie e tra motori su VWCE in euro (~1 minuto)
         from . import serie_eur
         print(serie_eur.run())
+    elif cmd == "diagnostica":   # solo controllo del diario e avvisi (usato dal controllo del mattino, che non scrive nel repository)
+        from . import diagnostica
+        diagnostica.esegui(scrivi_stato=False)
     elif cmd == "esperimento-vrp":   # Fase 6: premio di volatilità e HAR in ombra (~10 minuti)
         from . import vrp
         r = vrp.run()

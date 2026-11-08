@@ -57,6 +57,7 @@ def set_status(st: dict, sid: str, ok: bool, msg: str = "", new: int = 0) -> Non
     s = load(sid)
     st[sid] = {
         "ok": ok,
+        "stato": "ok" if ok else ("mai scaricata" if s.empty else "ritardo"),   # se il download fallisce il file esistente resta com'è
         "msg": msg[:200],
         "new_rows": new,
         "last_date": None if s.empty else s.index[-1].strftime("%Y-%m-%d"),
