@@ -259,12 +259,14 @@ def balance_html(pred, mat, feat_it, n_neg=0, n_tot=0):
                  f"<div class='mu'>Rispetto al normale: probabilità di calo {_rel(pdn, bdn)} (normale {P(bdn)}), di rialzo {_rel(pup, bup)} (normale {P(bup)}).</div></div>")
     if not rows:
         return ""
+    nv = sum(votes.values())
+    ref = f" (a 1, 3 e 6 mesi: {votes['rialzo']} orizzonti su {nv} favorevoli al rialzo, {votes['calo']} al calo)"
     if votes["rialzo"] > votes["calo"]:
-        head, hc = "Oggi è più probabile un <b>rialzo</b> che un calo.", "ok"
+        head, hc = f"Nei prossimi 1-6 mesi un <b>rialzo</b> del 10% è più probabile di un calo del 10%{ref}.", "ok"
     elif votes["calo"] > votes["rialzo"]:
-        head, hc = "Oggi è più probabile un <b>calo</b> che un rialzo.", "bad"
+        head, hc = f"Nei prossimi 1-6 mesi un <b>calo</b> del 10% è più probabile di un rialzo del 10%{ref}.", "bad"
     else:
-        head, hc = "Calo e rialzo oggi sono <b>in equilibrio</b>.", "warn"
+        head, hc = f"Nei prossimi 1-6 mesi calo e rialzo del 10% sono <b>in equilibrio</b>{ref}.", "warn"
     why = []
     try:
         m3 = mat["3m"]

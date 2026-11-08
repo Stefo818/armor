@@ -64,6 +64,50 @@ def calib_svg(pts: list[tuple[float, float]], w: int = 210) -> str:
             f"<text x='8' y='{pad + S / 2}' class='ax' transform='rotate(-90 8 {pad + S / 2})' text-anchor='middle'>avvenuto</text></svg>")
 
 
+def qmrfs_html() -> str:
+    """Confronto onesto con la vecchia app QMRFS (stesse date, stessi eventi, stessi esiti)."""
+    import json
+    from .config import DATA
+    try:
+        d = json.loads((DATA / "confronto_qmrfs.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return ""
+    f = lambda x: "—" if x is None else f"{x:+.3f}".replace(".", ",")
+    g = lambda x: "—" if x is None else f"{x:.2f}".replace(".", ",")
+    ic = lambda x: "—" if not x else f"{x[0]:+.2f} … {x[1]:+.2f}".replace(".", ",")
+    rows = ""
+    for r in d["eventi"]:
+        a1 = r.get("a1")
+        rows += (f"<tr><td style='min-width:96px'>{e(r['evento'])}<div class='mu'>{r['n']} date</div></td><td>{f(r['qmrfs']['bss'])}<div class='mu'>AUC {g(r['qmrfs']['auc'])}</div></td>"
+                 f"<td>{f(a1['bss']) if a1 else '—'}<div class='mu'>{('AUC ' + g(a1['auc'])) if a1 else ''}</div></td>"
+                 f"<td>{f(r['fhs']['bss'])}<div class='mu'>AUC {g(r['fhs']['auc'])}</div></td><td>{ic(r.get('ic90_fhs_qmrfs'))}</td></tr>")
+    return ("<div class='card scroll'><h3 style='margin-top:0'>Armor contro la vecchia app QMRFS</h3>"
+            f"<p class='mu'>{e(d['nota'])} Periodo {e(d['periodo'])}, date di fine mese (quelle in cui QMRFS ha previsioni storiche).</p>"
+            "<table class='fq' style='font-size:13px'><tr><th style='min-width:96px'>Evento</th><th>QMRFS</th><th>Armor in uso (A1)</th><th>Armor FHS (in prova)</th><th>FHS − QMRFS: intervallo 90%</th></tr>" + rows + "</table>"
+            "<p><b>Lettura onesta.</b> Il modello oggi in uso in Armor (A1) <b>non è migliore di QMRFS</b>: a 1 mese ha un punteggio più basso (0,06 contro 0,10) e a 3 mesi è alla pari con la media storica "
+            "mentre QMRFS è appena sopra. Il nuovo motore FHS, ancora in modalità ombra, è un po' meglio di QMRFS (da +0,02 a +0,04 di punteggio), ma l'intervallo al 90% include quasi sempre lo zero: "
+            "<b>la differenza non è statisticamente certa</b>. Neppure la media dei due motori è sicuramente migliore del solo FHS.</p>"
+            "<p class='mu'>Cautele: solo 284 date mensili con finestre sovrapposte; i dati QMRFS provengono dal suo backtest (non verificabile con firma); l'AUC di QMRFS a 1 mese (0,83) è più alta di quella di FHS (0,80): ordina meglio i giorni rischiosi, ma le sue probabilità sono meno tarate. "
+            "Come migliorare: usare FHS come motore dopo ~6 mesi di prova dal vivo, aggiungere a FHS le variabili che QMRFS usa e Armor no (premio delle opzioni put, paura sulle opzioni), "
+            "e tarare le probabilità con la regressione isotonica solo a campione ampio. " + e(d["direzione"]) + "</p></div>")
+
+
+def bande_html() -> str:
+    from . import bande
+    d = bande.load_eval()
+    if not d:
+        return ""
+    nm = {"g": "1 giorno", "s": "1 settimana", "m": "1 mese", "t": "3 mesi"}
+    rows = "".join(f"<tr><td>{nm[k]}</td><td>{d[k]['copertura_nuova'] * 100:.0f}%</td><td>{d[k]['copertura_vecchia'] * 100:.0f}%</td>"
+                   f"<td>{d[k]['larghezza_nuova']:.1f}%</td><td>{d[k]['larghezza_vecchia']:.1f}%</td></tr>".replace(".", ",") for k in nm if k in d)
+    return ("<div class='card scroll'><h3 style='margin-top:0'>Fasce di rendimento: da «±4%» a una fascia calibrata</h3>"
+            "<p class='mu'>La vecchia fascia «± VIX/√periodo» era simmetrica e troppo larga: pensata per contenere l'80% dei casi ne conteneva il 90-93%. "
+            "La nuova usa i percentili reali (10°-50°-90°) dei rendimenti passati scalati sul VIX: è asimmetrica (i cali sono più ampi dei rialzi) e più stretta.</p>"
+            "<table><tr><th>Orizzonte</th><th>Copertura nuova</th><th>Copertura vecchia</th><th>Larghezza nuova</th><th>Larghezza vecchia</th></tr>" + rows + "</table>"
+            "<p class='mu'>Obiettivo 80%. Test 2000-2026 senza guardare il futuro. Direzione: nessun indicatore provato ha previsto su/giù meglio della frequenza storica, quindi Armor non la «indovina»: "
+            "mostra la fascia e la frequenza storica di rialzo.</p></div>")
+
+
 def fiducia_html(sp: pd.Series | None = None, ev: dict | None = None, live: pd.DataFrame | None = None) -> str:
     if ev is None:
         try:
@@ -120,7 +164,7 @@ def fiducia_html(sp: pd.Series | None = None, ev: dict | None = None, live: pd.D
     rec = (f" Attenzione: {j([names[h] for h in recent])}, dal 2013 in poi, ha fatto <b>peggio</b> del normale." if recent else "")
     lead = ("<div class='explain fid'><p><b>La risposta onesta:</b> " + "; ".join(parts) + "." + rec +
             " Armor misura il rischio, non prevede il futuro. I test sono fatti sul passato, senza usare dati futuri.</p></div>")
-    return (lead + cards + "<div class='card'><p class='mu'>Il «normale» è la frequenza storica dell'evento (quanto spesso succede in generale). "
+    return (lead + qmrfs_html() + bande_html() + cards + "<div class='card'><p class='mu'>Il «normale» è la frequenza storica dell'evento (quanto spesso succede in generale). "
             "Il BSS dice di quanto Armor fa meglio di questa semplice media: sotto 0 fa peggio, 0,05 è un piccolo miglioramento, 0,20 sarebbe molto buono. "
             "Il test usa le previsioni di ogni data come le avrebbe fatte Armor allora (walk-forward). Le finestre a 3-6 mesi si sovrappongono: "
             "i casi davvero indipendenti sono molti meno dei giorni testati.</p></div>")

@@ -21,12 +21,22 @@ SECT_IT = {"technology": "Tecnologia", "financial_services": "Finanza", "industr
            "communication_services": "Comunicazioni", "realestate": "Immobiliare"}
 
 
+def _cap(sym: str):
+    """Capitalizzazione di mercato in miliardi di dollari (None se non disponibile)."""
+    try:
+        import yfinance as yf
+        v = yf.Ticker(sym).fast_info["market_cap"]
+        return round(float(v) / 1e9, 1) if v and float(v) > 0 else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def fetch() -> dict:
     import yfinance as yf
     fd = yf.Ticker("VT").funds_data
     top = fd.top_holdings
     sec = fd.sector_weightings
-    t = [(str(r.get("Name", i)), float(r["Holding Percent"]) * 100) for i, r in top.iterrows()] if hasattr(top, "iterrows") else []
+    t = [[str(r.get("Name", i)), float(r["Holding Percent"]) * 100, str(i), _cap(str(i))] for i, r in top.iterrows()] if hasattr(top, "iterrows") else []
     s = sorted(((SECT_IT.get(k, k), float(v) * 100) for k, v in dict(sec).items()), key=lambda x: -x[1])
     if not t or not s:
         raise ValueError("composizione vuota")
@@ -61,11 +71,14 @@ def html(d: dict) -> str:
     bar = lambda v, m: f"<div class='bar'><i style='width:{min(v / m * 100, 100):.0f}%'></i></div>"
     mt = max(x[1] for x in d["top"])
     ms = max(x[1] for x in d["sectors"])
-    t = "".join(f"<tr><td>{n}</td><td>{f(v)}</td><td>{bar(v, mt)}</td></tr>" for n, v in d["top"][:10])
+    def cap(x):
+        c = x[3] if len(x) > 3 else None
+        return f"{c:,.0f}".replace(",", ".") if c else "n.d."
+    t = "".join(f"<tr><td>{x[0]}</td><td>{f(x[1])}</td><td class='n'>{cap(x)}</td><td>{bar(x[1], mt)}</td></tr>" for x in d["top"][:10])
     s = "".join(f"<tr><td>{n}</td><td>{f(v)}</td><td>{bar(v, ms)}</td></tr>" for n, v in d["sectors"])
     tech = f" La tecnologia da sola pesa il {f(c['tech'])}." if c["tech"] else ""
     return (f"<p>Anche se VWCE contiene circa 3.700 aziende, i primi dieci titoli pesano il <b>{f(c['top10'] * 100)}</b>.{tech} "
             "È un fondo diversificato per numero di aziende, ma pesa molto sui grandi titoli tecnologici USA.</p>"
-            f"<div class='grid2'><div><table><tr><th>Titolo</th><th>Peso</th><th></th></tr>{t}</table></div>"
+            f"<div class='grid2'><div><table><tr><th>Titolo</th><th>Peso</th><th>Cap. $ mld</th><th></th></tr>{t}</table></div>"
             f"<div><table><tr><th>Settore</th><th>Peso</th><th></th></tr>{s}</table></div></div>"
-            f"<p class='mu'>Fonte: {d['source']}, dati al {d['date']}. I pesi cambiano lentamente.</p>")
+            f"<p class='mu'>Fonte: {d['source']}, dati al {d['date']}. Capitalizzazione in miliardi di dollari, aggiornata a ogni ciclo giornaliero. I pesi cambiano lentamente.</p>")

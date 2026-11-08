@@ -280,6 +280,12 @@ def main() -> None:
             print(f"[pesi indice] adottati: {w['adopted']} (eventi migliorati {w['better_events']}/3, verifica del {w['date']})")
         except Exception as e:  # noqa: BLE001
             print("[pesi indice] errore:", str(e)[:100])
+        try:   # nuovi indicatori di credito (ANFCI, SLOOS, Credit-to-GDP gap): adozione solo se il test li promuove
+            from . import armor_index as _ai
+            x = _ai.test_new_indicators(closed_sp500())
+            print("[indicatori credito] adottati:", x.get("adopted"), {k: (v.get("migliorati"), v.get("peggiorati"), v.get("stato")) for k, v in x.get("dettaglio", {}).items()})
+        except Exception as e:  # noqa: BLE001
+            print("[indicatori credito] errore:", str(e)[:100])
         r = modeleval.evaluate(step=step)
         print(modeleval.table(r))
     elif cmd == "rapporto-mensile":

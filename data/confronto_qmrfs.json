@@ -1,0 +1,111 @@
+{
+ "fonte": "QMRFS backtest_forecasts (SP500, v1, fine mese) contro Armor walk-forward sulle stesse date",
+ "periodo": "2003-2026",
+ "nota": "Probabilità di calo dell'S&P 500: stessa data, stesso evento, stesso esito reale; base = frequenza storica nota fino a quel giorno. BSS>0 = meglio della frequenza storica.",
+ "eventi": [
+  {
+   "evento": "calo ≥10% entro 1 mese",
+   "n": 284,
+   "qmrfs": {
+    "bss": 0.096,
+    "auc": 0.825
+   },
+   "fhs": {
+    "bss": 0.122,
+    "auc": 0.799
+   },
+   "a1": {
+    "bss": 0.059,
+    "auc": 0.749
+   },
+   "ic90_fhs_qmrfs": [
+    -0.01,
+    0.084
+   ],
+   "ic90_a1_qmrfs": [
+    -0.098,
+    0.053
+   ],
+   "blend": {
+    "bss": 0.115,
+    "ic90_vs_qmrfs": [
+     -0.001,
+     0.051
+    ]
+   }
+  },
+  {
+   "evento": "calo ≥10% entro 3 mesi",
+   "n": 282,
+   "qmrfs": {
+    "bss": 0.049,
+    "auc": 0.7
+   },
+   "fhs": {
+    "bss": 0.072,
+    "auc": 0.688
+   },
+   "a1": {
+    "bss": -0.008,
+    "auc": 0.603
+   },
+   "ic90_fhs_qmrfs": [
+    -0.035,
+    0.113
+   ],
+   "ic90_a1_qmrfs": [
+    -0.15,
+    0.031
+   ],
+   "blend": {
+    "bss": 0.07,
+    "ic90_vs_qmrfs": [
+     -0.009,
+     0.073
+    ]
+   }
+  },
+  {
+   "evento": "calo ≥5% entro 1 mese",
+   "n": 284,
+   "qmrfs": {
+    "bss": 0.065,
+    "auc": 0.693
+   },
+   "fhs": {
+    "bss": 0.101,
+    "auc": 0.7
+   },
+   "a1": null,
+   "ic90_fhs_qmrfs": [
+    0.004,
+    0.08
+   ],
+   "ic90_a1_qmrfs": null,
+   "blend": {
+    "bss": 0.089,
+    "ic90_vs_qmrfs": [
+     0.008,
+     0.048
+    ]
+   }
+  },
+  {
+   "evento": "calo ≥5% entro 3 mesi",
+   "n": 282,
+   "qmrfs": {
+    "bss": -0.02,
+    "auc": 0.561
+   },
+   "fhs": {
+    "bss": 0.022,
+    "auc": 0.557
+   },
+   "a1": null,
+   "ic90_fhs_qmrfs": null,
+   "ic90_a1_qmrfs": null,
+   "blend": null
+  }
+ ],
+ "direzione": "Per la direzione (su/giù) nessun modello, né Armor né Qmrfs, batte la frequenza storica: Armor lo ha verificato con 10 variabili e 3 modelli walk-forward dal 2000 (BSS ≤ 0, AUC ≤ 0,5)."
+}

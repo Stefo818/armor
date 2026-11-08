@@ -55,7 +55,7 @@ YF = {
 FRED = {
     "baa10y": "BAA10Y", "t10y2y": "T10Y2Y", "t10y3m": "T10Y3M",
     "hy_oas": "BAMLH0A0HYM2", "ig_oas": "BAMLC0A0CM",
-    "nfci": "NFCI", "stlfsi": "STLFSI4",
+    "nfci": "NFCI", "stlfsi": "STLFSI4", "anfci": "ANFCI", "sloos": "DRTSCILM", "credit_ratio": "CRDQUSAPABIS",
     "real10y": "DFII10", "be10y": "T10YIE", "dgs10": "DGS10", "dgs2": "DGS2", "fedfunds": "DFF",
     "usd_broad": "DTWEXBGS", "epu": "USEPUINDXD",
     "icsa": "ICSA", "unrate": "UNRATE", "cpi": "CPIAUCSL",

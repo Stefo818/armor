@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import armor_index, chiaro, extra13, learning, rapporto, salute, spiega, ui
+from . import armor_index, chiaro, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -903,6 +903,53 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     today_d = _date.today()
     soon = [x for x in extra13.all_events(today_d, today_d + timedelta(days=2)) if x["peso"] >= 3]
     div = extra13.divergence(sp, aix)
+    # mappa settimanale e calendario: dati in JSON a parte (sito) o incorporati (file locale)
+    map_json = cal_json = None
+    try:
+        vw_h = vwce_series()
+        mp = mappa.build_mappa(sp, aix, vw_h)
+        evs_all = extra13.all_events(today_d - timedelta(days=1200), today_d + timedelta(days=75))
+        cl = mappa.build_cal(sp, vw_h, store.load("vix"), aix, pd.Timestamp(today_d), evs_all)
+        map_json, cal_json = (mappa.dumps(mp) if mp else None), mappa.dumps(cl)
+        if lazy:
+            sd = out.parent / "series"
+            sd.mkdir(exist_ok=True)
+            if map_json:
+                (sd / "mappa.json").write_text(map_json, encoding="utf-8")
+            (sd / "cal.json").write_text(cal_json, encoding="utf-8")
+    except Exception as ex:  # noqa: BLE001
+        print("Mappa/calendario non creati:", str(ex)[:160], flush=True)
+    cf_json = None
+    try:
+        cfd = confronto.build(sp, vwce_series(), aix)
+        cf_json = confronto.dumps(cfd) if cfd else None
+        if cf_json and lazy:
+            sd = out.parent / "series"
+            sd.mkdir(exist_ok=True)
+            (sd / "confronto.json").write_text(cf_json, encoding="utf-8")
+    except Exception as ex:  # noqa: BLE001
+        print("Grafico di confronto non creato:", str(ex)[:160], flush=True)
+    cf_intro = ("<div class='explain'><p>In alto <b>S&amp;P 500</b> (giallo tratteggiato) e <b>VWCE</b> (blu tratteggiato), sotto l'<b>Indice Armor</b> e le probabilità di calo (rosso) e di rialzo (verde), giorno per giorno dal 2000. "
+                "Serve a vedere se ai picchi dell'indice sono seguiti davvero cali del mercato. Puoi accendere altre linee (VIX, spread, famiglie) e cambiare periodo.</p></div>")
+    if not cf_json:
+        cf_small = cf_full = "<p class='mu'>Grafico non disponibile oggi.</p>"
+    elif lazy:
+        cf_full = confronto.block()
+        cf_small = "<div data-lazybox='pages/confronto.html'><p class='mu'>Caricamento del grafico…</p></div>"
+    else:
+        cf_full = confronto.block()
+        cf_small = confronto.block(cf_json)
+    map_intro = ("<div class='explain'><p>Ogni riga è un indicatore, ogni colonna una <b>settimana</b> (fino a 10 anni). In alto, <b>cosa hanno fatto davvero VWCE e S&amp;P 500</b> in quella settimana "
+                 "(verde = salito, rosso = sceso): così vedi a che rendimenti corrispondono i colori di rischio sotto (<b>verde = calma, rosso = stress</b>). "
+                 "Tocca o passa il mouse su un quadratino: compare il perché di quel valore. Tocca il nome di una riga: vedi a quali valori reali corrispondono i colori.</p></div>")
+    if map_json is None:
+        map_full = map_small = "<p class='mu'>Mappa non disponibile oggi.</p>"
+    elif lazy:
+        map_full = mappa.mappa_block(open_=True, per=156)
+        map_small = "<div data-lazybox='pages/mappa.html'><p class='mu'>Caricamento della mappa…</p></div>"
+    else:
+        map_full = mappa.mappa_block(open_=True, per=156)
+        map_small = mappa.mappa_block(open_=False, per=52, data_json=map_json)
     n_pru = sum(1 for x in sigs if x["verdict"] == "negativo")
     topbtns = "<div class='topbtns'><button class='btn pri' data-cal='1'>Calendario eventi</button><button class='btn' data-dock='oggi'>Assistente e analisi</button><button class='btn' data-dock='gloss'>Glossario</button></div>"
     hero_old = (f"<section class='hero {LEVEL_CLASS[worst]}'><div class='hlk'>Il giudizio di oggi</div><div class='hl1'>{verdict}</div>"
@@ -912,19 +959,30 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     # «Oggi» in 5 blocchi: 1 cosa faccio, 2 Indice Armor + probabilita', 3 calo o rialzo (+ Perche?), 4 P/E e P/S, 5 prossimo evento
     more = ("<div class='more'>Per i dettagli: <a href='#indici' data-go='indici'>Indici</a> · <a href='#previsioni' data-go='previsioni'>Previsioni</a> · "
             "<a href='#fiducia' data-go='fiducia'>Quanto fidarsi</a> · <a href='#storico' data-go='storico'>Storico</a> · oppure apri l'Assistente in basso.</div>")
+    try:
+        hz3 = armor_index.horizons(aix, sp)
+    except Exception as ex:  # noqa: BLE001
+        print("Indici a 3 orizzonti non calcolati:", str(ex)[:120], flush=True)
+        hz3 = None
+    kpi = _safe(lambda: cruscotto.kpi_html(sem, sp, vwce_series(), store.load("vix")), "Indici principali")
     p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>"
-              f"<section class='b5'>{armor_index.hero_html(aix)}</section>"
+              f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
+              f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
               f"<section class='b5'>{chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}</section>"
-              f"<section class='b5'>{parts.valuations_mini(vcards)}</section>{ui.next_event_html(today_d)}{more}")
+              f"<section class='b5'>{parts.valuations_mini(vcards)}</section>{ui.next_event_html(today_d)}"
+              f"<h2 style='margin-top:22px'>Indice Armor contro S&amp;P 500 e VWCE, giorno per giorno</h2>{cf_intro}{cf_small}"
+              f"<h2 style='margin-top:22px'>Mappa dei segnali, settimana per settimana</h2>{map_intro}{map_small}"
+              "<div class='topbtns' style='margin-top:10px'><button class='btn pri' data-cal='1'>Apri il calendario: previsto e reale</button><button class='btn' data-go='indici'>Mappa completa</button></div>"
+              f"{more}")
     p_indici = (hero_old + "<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
                 "<div class='explain'><p>Ogni scheda mostra il valore di oggi, un <b>semaforo</b> (verde = tranquillo, giallo = attenzione, rosso = allarme), come si legge l'indice e quando preoccuparsi. "
                 "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>" +
                 armor_index.detail_html(aix) + f"<div class='card'><h3 style='margin-top:0'>Coerenza dei segnali</h3>{insight.coherence_html(coh)}</div>" + semafori.html(sem)
-                + "<h2 style='margin-top:26px'>Mappa mensile dei segnali</h2>" + _safe(lambda: extra13.heatmap_html(aix), "Mappa")
+                + "<h2 style='margin-top:26px'>Mappa settimanale dei segnali</h2>" + map_intro + map_full
                 + "<h2 style='margin-top:26px'>Confronto con le grandi crisi</h2>" + _safe(lambda: extra13.crisi_html(aix, sp), "Confronto crisi"))
     p_macro = ("<h2>Dati economici anticipati</h2>" + _safe(extra13.early_html, "Dati economici") + "<h2 style='margin-top:26px'>Liquidità e tassi della Fed</h2>" + _safe(extra13.fed_html, "Liquidità Fed"))
     p_val = (f"<h2>Quanto è «caro» il mercato: P/E e P/S in tempo reale</h2>{parts.valuation_block(vcards, ctxs, cape)}")
-    p_graf = f"<h2>Grafici interattivi</h2>{parts.charts_section(chip_opts)}"
+    p_graf = f"<h2>Confronto: Indice Armor, S&amp;P 500 e VWCE</h2>{cf_intro}{cf_full}<h2 style='margin-top:26px'>Grafici interattivi</h2>{parts.charts_section(chip_opts)}"
     p_prev = (f"<h2>Previsioni per periodo: calo o rialzo?</h2>{chiaro.PREV_INTRO}"
               f"<div class='grid4'>{cards}</div>"
               f"<h3 style='margin-top:22px'>Quanto ti puoi fidare: l'errore reale delle previsioni</h3><div class='card scroll'>{insight.honest_html(insight.honest(pred))}</div>"
@@ -951,7 +1009,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     p_al = ("<h2>Allarmi personali</h2>" + parts.alerts_section(al_opts, al_now))
     p_sto = p_sto + "<h2>Rapporto mensile</h2>" + _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile") + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Salute dei dati</h2>" + _safe(lambda: salute.html(salute.compute()), "Salute dei dati") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
     vix_s = store.load("vix")
-    cal_html = _safe(lambda: extra13.calendar_html(_date.today(), sp, vix_s), "Calendario")
+    cal_html = _safe(lambda: extra13.calendar_html(_date.today(), sp, vix_s, mappa.cal_block(None if lazy else cal_json) if cal_json else ""), "Calendario")
     headline = (f"Indice Armor {aix['value']:.0f}/100 · " if aix else "") + verdict
     dock_tabs = [
         ("oggi", "Oggi cosa faccio", extra13.oggi_html(aix, div, soon, n_pru) + extra13.divergence_html(div) + "" + bilancio.day_html(bil)),
@@ -964,6 +1022,10 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
         ("gloss", "Glossario", extra13.glossario_html()),
     ]
     if lazy:   # l'Assistente si carica alla prima apertura (pages/dock.html)
+        if map_json:
+            lazy_pages["mappa"] = mappa.mappa_block(open_=False, per=52)
+        if cf_json:
+            lazy_pages["confronto"] = confronto.block()
         dock_frag = "".join(f"<div data-dpane='{k}'>{h}</div>" for k, _l, h in dock_tabs) + f"<div data-dpane='_cal'>{cal_html}</div>"
         lazy_pages["dock"] = dock_frag
         dock = extra13.dock_html(headline, [(k, l, "<p class='mu'>Caricamento…</p>") for k, l, _h in dock_tabs]).replace("{{CAL}}", "")
@@ -980,6 +1042,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 {page('oggi', p_oggi)}{page('indici', p_indici)}{page('valutazioni', p_val)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
 {page('portafoglio', p_pf)}{page('storico', p_sto)}{page('allarmi', p_al)}
 {dock}
+<script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>
 <script>window.HELP={json.dumps(help_all, ensure_ascii=False)};window.LABELS={json.dumps(labels_all, ensure_ascii=False)};</script>
 {parts.MODAL}
@@ -1035,7 +1098,7 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+ui.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+ui.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();

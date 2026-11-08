@@ -41,6 +41,15 @@ SPEC = [
     ("stlfsi", "Stress finanziario (St. Louis)", "Credito e liquidità", "hi", 0, 1, "", 2,
      "Indice composito di stress dei mercati finanziari. Zero = stress medio.",
      "Sopra 0 stress sopra la media, sopra 1 stress alto."),
+    ("anfci", "Condizioni finanziarie corrette per il ciclo (ANFCI)", "Credito e liquidità", "hi", 0, 0.5, "", 2,
+     "Indice settimanale della Fed di Chicago: condizioni finanziarie (rischio, credito, leva) al netto dell'effetto del ciclo economico.",
+     "Sopra 0 le condizioni sono più tese di quanto il ciclo giustifichi; sopra 0,5 la tensione è marcata."),
+    ("sloos", "Banche che irrigidiscono i prestiti alle imprese (SLOOS)", "Credito e liquidità", "hi", 10, 30, " %", 0,
+     "Indagine trimestrale della Fed: percentuale netta di banche che stringe i criteri per prestare alle imprese.",
+     "Sopra 10% il credito si sta chiudendo, sopra 30% è tipico di recessioni e di forti cali."),
+    ("credit_gap", "Credit-to-GDP gap (BIS)", "Credito e liquidità", "hi", 2, 10, " punti", 1,
+     "Quanto il credito al settore privato supera il suo trend di lungo periodo (in punti di PIL, filtro HP unilaterale come BIS).",
+     "Sopra 2 punti inizia l'eccesso di credito, sopra 10 la BIS lo considera segnale di allerta per crisi bancarie."),
     ("t10y3m", "Curva dei tassi 10 anni - 3 mesi", "Tassi e obbligazioni", "lo", 0.5, 0, " %", 2,
      "Differenza tra i tassi a lungo e a breve termine. Normalmente positiva.",
      "Sotto zero (curva invertita) in passato ha preceduto molte recessioni, con mesi o anni di anticipo."),
@@ -100,6 +109,23 @@ def _arch_series(col: str) -> pd.Series:
     return pd.Series(d[col].values, index=pd.to_datetime(d["date"])).dropna()
 
 
+def credit_gap(ratio: pd.Series, lam: float = 400000.0, min_n: int = 40) -> pd.Series:
+    """Credit-to-GDP gap: rapporto credito/PIL meno il suo trend, con filtro HP UNILATERALE (a ogni data usa solo dati fino a quella data), lambda 400.000 come la BIS."""
+    r = ratio.dropna()
+    if len(r) < min_n + 4:
+        return pd.Series(dtype=float)
+    y = r.values.astype(float)
+    out = []
+    for t in range(min_n, len(y)):
+        n = t + 1
+        D = np.zeros((n - 2, n))
+        for i in range(n - 2):
+            D[i, i:i + 3] = (1, -2, 1)
+        trend = np.linalg.solve(np.eye(n) + lam * D.T @ D, y[:n])
+        out.append(y[t] - trend[-1])
+    return pd.Series(out, index=r.index[min_n:])
+
+
 def series_of(key: str, sp: pd.Series | None = None) -> pd.Series:
     if key in ("dd252", "rv21", "ma200"):
         from .features import price_features
@@ -110,6 +136,8 @@ def series_of(key: str, sp: pd.Series | None = None) -> pd.Series:
         return (a / b.reindex(a.index)).dropna() if len(a) and len(b) else pd.Series(dtype=float)
     if key == "pc_oi":
         return _arch_series("pc_open_interest")
+    if key == "credit_gap":
+        return credit_gap(store.load("credit_ratio"))
     if key == "sahm":
         u = store.load("unrate")
         if len(u) < 18:

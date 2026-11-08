@@ -1,0 +1,43 @@
+{
+ "g": {
+  "h": 1,
+  "n": 6752,
+  "copertura_nuova": 0.775,
+  "copertura_vecchia": 0.894,
+  "larghezza_nuova": 2.35,
+  "larghezza_vecchia": 3.19
+ },
+ "s": {
+  "h": 5,
+  "n": 6748,
+  "copertura_nuova": 0.794,
+  "copertura_vecchia": 0.918,
+  "larghezza_nuova": 5.17,
+  "larghezza_vecchia": 7.14
+ },
+ "m": {
+  "h": 21,
+  "n": 6732,
+  "copertura_nuova": 0.782,
+  "copertura_vecchia": 0.928,
+  "larghezza_nuova": 10.03,
+  "larghezza_vecchia": 14.64
+ },
+ "t": {
+  "h": 63,
+  "n": 6690,
+  "copertura_nuova": 0.794,
+  "copertura_vecchia": 0.931,
+  "larghezza_nuova": 17.61,
+  "larghezza_vecchia": 25.4
+ },
+ "direzione": {
+  "nota": "Nessun indicatore ha previsto su/giù meglio della frequenza storica (regressione logistica walk-forward 2000-2026: BSS ≤ 0, AUC ≤ 0,5).",
+  "pup_storico": {
+   "g": 0.535,
+   "s": 0.576,
+   "m": 0.636,
+   "t": 0.707
+  }
+ }
+}

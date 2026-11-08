@@ -585,3 +585,47 @@ def test_dati_per_serie_e_js_a_caricamento_tardivo(tmp_path):
     assert not (tmp_path / "series" / "vecchia.json").exists() and (tmp_path / "data.json").stat().st_size < 500
     assert "series/" in parts.JS and "var emb=" not in parts.JS and "var emb=" in parts.LATE_JS["embedchart"] and "var emb=" in parts.JS_FULL
     assert "armorEnsure(id)" in parts.TABS_JS_LAZY
+
+
+def test_mappa_e_calendario():
+    import json as _j
+    import pandas as _pd
+    from armor import armor_index as _ai, extra13 as _e13, mappa as _mp, store as _st
+    from armor.features import closed_sp500, vwce_series
+    sp = closed_sp500()
+    aix = _ai.compute(sp)
+    if aix is None:
+        return
+    m = _mp.build_mappa(sp, aix, vwce_series())
+    assert m["rows"][0]["k"] == "vwce" and m["rows"][1]["k"] == "sp500" and m["rows"][2]["k"] == "armor"
+    n = len(m["w"])
+    assert n > 400 and all(len(r["sc"]) == n and len(r["v"]) == n for r in m["rows"])
+    assert any(r["k"] == "vix" and r.get("sv") for r in m["rows"])
+    _j.loads(_mp.dumps(m))   # niente NaN: JSON valido
+    assert "NaN" not in _mp.dumps(m)
+    today = _pd.Timestamp(sp.index[-1]) + _pd.Timedelta(days=1)
+    evs = _e13.all_events((today - _pd.Timedelta(days=1200)).date(), (today + _pd.Timedelta(days=75)).date())
+    c = _mp.build_cal(sp, vwce_series(), _st.load("vix"), aix, today, evs)
+    assert len(c["d"]) > 500 and len(c["w"]) > 100 and len(c["m"]) > 30 and "NaN" not in _mp.dumps(c)
+    # il rendimento reale di un giorno coincide con la variazione dell'S&P 500
+    d = [x for x in c["d"] if x[1] is not None][-1]
+    r = sp.pct_change() * 100
+    assert abs(r.loc[_pd.Timestamp(d[0])] - d[1]) < 0.01
+    # blocchi HTML
+    assert "data-mappa" in _mp.mappa_block() and "data-cal2" in _mp.cal_block()
+
+
+def test_bande_ordinate():
+    import pandas as pd
+    from armor import bande
+    b = bande.band(18.0, 21, pd.Timestamp("2024-06-03"))
+    assert b["lo"] < b["med"] < b["hi"] and 0 < b["pup"] < 1
+    assert 0 <= bande.pct_of(1.0, 18.0, 21, pd.Timestamp("2024-06-03")) <= 100
+
+
+def test_holdings_html_con_cap():
+    from armor import holdings
+    d = {"date": "2026-11-07", "source": "x", "top": [["Apple", 4.5, "AAPL", 4100.0], ["Old", 1.0]],
+         "sectors": [["Tecnologia", 38.0]]}
+    h = holdings.html(d)
+    assert "4.100" in h and "n.d." in h

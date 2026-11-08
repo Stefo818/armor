@@ -453,7 +453,9 @@ JS, LATE_JS = _split_js()
 
 
 # ---- caricamento a richiesta delle pagine (sito): nucleo comune
-LAZY_CORE = r"""window.armorInject=function(el,html){var t=document.createElement('template');t.innerHTML=html;var sc=[].slice.call(t.content.querySelectorAll('script')).map(function(s){var n=document.createElement('script');n.text=s.textContent;s.parentNode.removeChild(s);return n});el.innerHTML='';el.appendChild(t.content);sc.forEach(function(n){el.appendChild(n)})};
+LAZY_CORE = r"""window.armorInject=function(el,html){var t=document.createElement('template');t.innerHTML=html;var sc=[].slice.call(t.content.querySelectorAll('script')).map(function(s){var n=document.createElement('script');n.type=s.type||'';n.id=s.id||'';n.text=s.textContent;s.parentNode.removeChild(s);return n});el.innerHTML='';el.appendChild(t.content);sc.forEach(function(n){el.appendChild(n)});if(window.armorScan)window.armorScan(el)};
+window.armorScan=function(root){(root||document).querySelectorAll('[data-lazybox]:not([data-st])').forEach(function(el){el.dataset.st='1';var go=function(){fetch(el.dataset.lazybox+'?'+Date.now()).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){window.armorInject(el,t)}).catch(function(){el.innerHTML='<p class="muted">Non disponibile offline.</p>'})};
+if('IntersectionObserver' in window){var o=new IntersectionObserver(function(es){if(es[0].isIntersecting){o.disconnect();go()}},{rootMargin:'300px'});o.observe(el)}else go()})};setTimeout(function(){window.armorScan()},0);
 window.armorEnsure=function(id){var p=document.getElementById('p-'+id);if(!p||!p.dataset.src||p.dataset.state)return;p.dataset.state='load';
 fetch(p.dataset.src+'?'+Date.now()).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){window.armorInject(p,t);p.dataset.state='ok';if(window.armorPaint)window.armorPaint();document.dispatchEvent(new Event('tabshown'));window.dispatchEvent(new Event('resize'))})
 .catch(function(){p.dataset.state='';p.innerHTML='<p class="muted">Pagina non caricata (sei offline?). Riprova tra poco.</p>'})};

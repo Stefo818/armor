@@ -135,7 +135,29 @@ Con il passo 21 (più veloce) i numeri sono molto simili.
 - 4.3 FinBERT nei modelli (`news_signal.py`): pronto e SPENTO (`ATTIVO = False`, servono ≥548 giorni di `news_sent_macro` nel registro e la regola di adozione). Per accenderlo: `ATTIVO = True` e collegare `model_mv.news_extra` in `MVEngine`. Prima data utile = prima riga del registro con tono + 18 mesi.
 - Test: 39 passano. Verifica UI con Playwright a 430 px: tutte le pagine si caricano a richiesta, nessun errore in console, PAC (calcolo e persistenza dopo ricarica), grafico a finestra, Assistente e calendario funzionanti.
 
+## PATCH 19 — Mappa settimanale e calendario interattivo (`mappa.py`)
+- **Mappa settimanale dei segnali** (sostituisce la mappa mensile): una colonna per settimana, fino a 10 anni (pulsanti 1/3/5/10 anni). Righe: VWCE e S&P 500 (rendimento % della settimana, in cima), Indice Armor, 8 famiglie (con ▸ per aprire i singoli indicatori) e tutti gli indicatori (VIX, VVIX, SKEW, MOVE, curva VIX, spread, curve dei tassi, valutazioni, tendenza, AAII, ampiezza, dollaro, Sahm, sussidi, probabilità del modello, EPU). Put/Call: solo 1 giorno di storia nell'archivio, la riga compare da sola quando ci sono ≥60 giorni (`semafori._arch_series`, per ora non incluso).
+- Click o mouse su un quadratino: finestra con valore reale, punteggio e colore, cosa misura, quando preoccupa, perché quel colore (zone), variazione sulla settimana prima, famiglia e peso; per l'Indice: cosa lo spinge in alto/basso; per le famiglie: indicatori che la compongono; per i rendimenti: VIX d'inizio settimana e oscillazione attesa. Tocco sul nome di una riga: scala «a che valori corrispondono i colori» (mediana dei valori reali per i punteggi 10/30/50/70/90 negli ultimi ~10 anni). Statistica descrittiva (non previsione): S&P 500 nelle 4 settimane dopo per fascia verde/rossa.
+- Dati in `site/series/mappa.json` (~200 KB, 68 KB compressi) caricati solo quando la mappa è visibile. Nel file locale `Armor_dashboard.html` sono incorporati. In «Oggi» (in fondo) c'è la versione compatta (1 anno), caricata da `pages/mappa.html` con `data-lazybox` (IntersectionObserver in `parts.LAZY_CORE`); in «Indici» la versione completa.
+- **Calendario**: tre viste (Giorni, Settimane, Mesi) in `site/series/cal.json` (~57 KB). Per ogni giorno/settimana/mese: previsto (tendenza storica media ± oscillazione da VIX della sera prima: giorno VIX/15,87, settimana VIX/7,1, mese VIX/3,46; per il VWCE la stessa oscillazione × rapporto di volatilità storico VWCE/S&P), reale, scostamento in punti e in σ, Indice Armor a inizio e fine periodo, probabilità di calo di Armor a inizio periodo (p_10g per settimana, p_1m per mese da `risk_history.csv`) e peggior calo realmente avvenuto. Giorni futuri: solo oscillazione attesa. Tocco su giorno/riga = dettaglio.
+- Limiti dichiarati nell'app: Armor non prevede la direzione di un singolo giorno; «previsto» è la tendenza storica + oscillazione, non un modello direzionale. VWCE prima di lug 2019 = proxy VT/EURUSD.
+- Servizio: service worker v8. Test: 40 passano.
+
 ## Prossimo passo
 1. Controllare dopo 2-3 giorni che `data/journal_shadow.csv` cresca e che il giornaliero resti sotto i 15 minuti.
 2. FASE 4.2 (taratura dal vivo) quando ci sono ≥250 previsioni scadute; confronto in ombra dopo ~6 mesi (decidere su FHS).
 3. Nuova Convalida mensile: rifà `model_eval.json`, pesi (solo se è passato un anno) e prova del combinato.
+
+## PATCH 20
+- `bande.py`: fascia attesa calibrata (10°/50°/90° percentile di rendimento/(VIX/√h), solo dati noti prima di ogni anno) al posto di «±VIX/√h». Copertura 77-79% (vecchia 89-93%), fasce più strette 28-35%. Valutazione in `data/bande_eval.json`.
+- Direzione su/giù: nessun indicatore testato batte la frequenza storica (BSS ≤ 0, AUC ≤ 0,5). L'app mostra fascia + frequenza storica di rialzo, non una freccia di direzione.
+- `cruscotto.py`: frecce ieri / settimana fa per Indice Armor, VIX, Put/Call (archivio put/call ancora corto: «in raccolta»), termometro VIX, finestra con 3 indici (settimana/mese/3 mesi), ticker Assistente con VWCE live.
+- `confronto.py`: grafico combinato giornaliero dal 2000 (S&P e VWCE tratteggiati base 100 + serie attivabili: Indice Armor, probabilità calo/rialzo, VIX, spread HY, famiglie).
+- Indicatori credito (ANFCI, SLOOS, Credit-to-GDP gap, HY, BAA10Y): monitorati; entrano nell'Indice solo se il test mensile (`valuta-modelli`) li promuove (AUC +0,01 in ≥2 eventi su 3). Revisioni utili: nessuna fonte gratuita affidabile, non implementato.
+- `holdings.py`: capitalizzazione in $ mld per titolo, aggiornata nel ciclo giornaliero.
+- Confronto con QMRFS in Fiducia (`data/confronto_qmrfs.json`): A1 NON migliore di QMRFS; FHS (ombra) leggermente meglio ma non certo.
+- sw.js cache v9.
+- Da fare: lanciare `valuta-modelli` dopo che il giornaliero ha scaricato le serie FRED nuove; confrontare i motori in ombra tra ~6 mesi; aggiungere feature da opzioni (put premium) come QMRFS.
+
+## PIANO MODELLO (dopo la patch 20)
+Il piano completo per migliorare le previsioni è in `PIANO_MODELLO.md`: dati sulla salute delle aziende, storia lunga, modello a due stadi, analoghi, regole anti-illusione e regole di adozione, fasi delle patch 21-23. Script dell'analisi di partenza: `scratch/ricerca_opus/`. Copia del progetto nel cloud: `scripts/copia_cloud.py`.

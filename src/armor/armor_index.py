@@ -29,6 +29,24 @@ GROUPS = {
     "Modello statistico Armor": (14, [("risk_1m", "pct", None, None), ("risk_3m", "pct", None, None)]),
 }
 LAGS = {"daily": 5, "weekly": 10, "monthly": 45}
+# nuovi indicatori di credito (suggeriti da DeepSeek): monitorati da subito, entrano nell'Indice solo se il test automatico li adotta (data/armor_extra.json)
+NEW_IND = {"anfci": ("hi", 0, 0.5), "sloos": ("hi", 10, 30), "credit_gap": ("hi", 2, 10)}
+EXTRA_FILE = DATA / "armor_extra.json"
+
+
+def _apply_extra() -> None:
+    try:
+        ad = json.loads(EXTRA_FILE.read_text(encoding="utf-8")).get("adopted", [])
+    except Exception:  # noqa: BLE001
+        ad = []
+    w, items = GROUPS["Credito e liquidità"]
+    have = {k for k, *_ in items}
+    for k in ad:
+        if k in NEW_IND and k not in have:
+            items.append((k, *NEW_IND[k]))
+
+
+_apply_extra()
 WEIGHTS_FILE = DATA / "armor_weights.json"
 WINDOW = 2520   # circa 10 anni di sedute
 START_EVAL = "2000-01-01"
@@ -71,6 +89,10 @@ def _raw_series(key: str, sp: pd.Series) -> pd.Series:
 
 
 def _limit(key: str) -> int:
+    if key in ("sloos", "credit_gap"):
+        return 120   # dati trimestrali: restano validi per ~un trimestre
+    if key == "anfci":
+        return LAGS["weekly"]
     if key in ("cape_m", "pe_m", "ps_m", "sahm"):
         return LAGS["monthly"]
     if key in ("risk_1m", "risk_3m"):
@@ -117,7 +139,7 @@ def weights_in_use() -> dict:
     return w
 
 
-def combine(S: pd.DataFrame) -> tuple[pd.Series, pd.DataFrame]:
+def combine(S: pd.DataFrame, weights: dict | None = None) -> tuple[pd.Series, pd.DataFrame]:
     """Indice 1-100 e punteggi di famiglia (NaN se mancano più di metà degli indicatori della famiglia)."""
     G = {}
     for g, (_w, items) in GROUPS.items():
@@ -128,7 +150,7 @@ def combine(S: pd.DataFrame) -> tuple[pd.Series, pd.DataFrame]:
         n = S[keys].notna().sum(axis=1)
         G[g] = S[keys].mean(axis=1).where(n >= max(1, np.ceil(len(items) / 2)))
     G = pd.DataFrame(G)
-    w = pd.Series(weights_in_use())
+    w = pd.Series(weights or weights_in_use())
     ok = G.notna()
     wsum = (ok * w).sum(axis=1)
     val = (G.fillna(0) * w).sum(axis=1) / wsum.replace(0, np.nan)
@@ -289,17 +311,17 @@ def prob_line(d: dict | None) -> str:
         return ""
 
 
-def hero_html(d: dict | None) -> str:
+def hero_html(d: dict | None, extra: str = "") -> str:
     if not d:
         return ""
     v = d["value"]
     name, txt = band(v)
     ch = d["change5"]
     arrow = "▲" if ch > 1 else ("▼" if ch < -1 else "▬")
-    return (f"<div class='aix' data-chart='armor_index'><div class='aixt'>{thermometer(v)}</div>"
+    return (f"<div class='aix' data-amod='1'><div class='aixt'>{thermometer(v)}</div>"
             f"<div class='aixb'><div class='aixk'>Indice Armor</div><div class='aixv' style='color:{color(v)}'>{v:.0f}<span>/100</span></div>"
             f"<div class='aixl' style='color:{color(v)}'>Rischio {name}</div><div class='aixd'>{_h.escape(txt)}</div>"
-            f"<div class='aixp'>{prob_line(d)}</div><div class='aixc'>{arrow} {ch:+.0f} punti in 5 sedute · <a href='#indici' data-go='indici'>Come è calcolato ›</a></div></div></div>")
+            f"<div class='aixp'>{prob_line(d)}</div><div class='aixc'>{arrow} {ch:+.0f} punti in 5 sedute · <a href='#indici' data-go='indici'>Come è calcolato ›</a></div>{extra}<div class='aixc'><b>Tocca per vedere i tre indici: 1 settimana, 1 mese, 3 mesi ›</b></div></div></div>")
 
 
 def _pc(x) -> str:
@@ -441,6 +463,123 @@ def check_weights(sp: pd.Series, today=None, force: bool = False, train_end: str
     res["rule"] = "adottati solo se l'AUC dal 2013 migliora di almeno 0,02 su 2 eventi su 3; verifica al massimo una volta l'anno"
     try:
         WEIGHTS_FILE.write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    return res
+
+
+# ---------- tre orizzonti: settimana, mese, 3 mesi (pesi fissati in anticipo, non stimati) ----------
+HZ_WEIGHTS = {
+    "settimana": {"Paura e stress dei mercati": 34, "Credito e liquidità": 14, "Tassi e obbligazioni": 4, "Valutazioni": 2, "Tendenza dei prezzi": 22,
+                  "Sentimento e ampiezza": 10, "Economia reale": 2, "Modello statistico Armor": 12},
+    "mese": {g: float(v[0]) for g, v in GROUPS.items()},
+    "3 mesi": {"Paura e stress dei mercati": 14, "Credito e liquidità": 22, "Tassi e obbligazioni": 10, "Valutazioni": 20, "Tendenza dei prezzi": 8,
+               "Sentimento e ampiezza": 6, "Economia reale": 10, "Modello statistico Armor": 10},
+}
+HZ_FILE = DATA / "armor_horizons.json"
+HZ_EVENT = {"settimana": ("calo ≥5% in 10 sedute", 10, 0.05), "mese": ("calo ≥5% in 21 sedute", 21, 0.05), "3 mesi": ("calo ≥10% in 63 sedute", 63, 0.10)}
+
+
+def horizons(d: dict | None, sp: pd.Series, recompute: bool = False) -> dict | None:
+    """Tre indici (1-100) con pesi diversi per orizzonte + AUC storica di ciascuno contro il suo evento (cache mensile in data/armor_horizons.json)."""
+    if not d:
+        return None
+    S = d["S"]
+    out = {"orizzonti": {}, "media": None}
+    cache = {}
+    try:
+        cache = json.loads(HZ_FILE.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        pass
+    series = {k: combine(S, w)[0].dropna() for k, w in HZ_WEIGHTS.items()}
+    vals = {}
+    for k, ser in series.items():
+        vals[k] = {"v": float(ser.iloc[-1]), "ieri": float(ser.iloc[-2]), "sett": float(ser.iloc[-6])}
+    ok = cache.get("date") == str(d["date"].date()) and not recompute
+    if not ok:
+        p = sp[sp.index >= "1995-01-01"]
+        v = p.values
+        ev = {}
+        for k, (_n, h, thr) in HZ_EVENT.items():
+            fm = np.full(len(p), np.nan)
+            for i in range(len(p) - h):
+                fm[i] = v[i + 1:i + h + 1].min() / v[i] - 1
+            ev[k] = pd.Series(np.where(np.isnan(fm), np.nan, (fm <= -thr).astype(float)), index=p.index)
+        std = d["hist"]
+        cache = {"date": str(d["date"].date()), "auc": {}}
+        for k, ser in series.items():
+            lag = ser.shift(1)[START_EVAL:]
+            lag_s = std.shift(1)[START_EVAL:]
+            y = ev[k].reindex(lag.index)
+            y13 = y[y.index >= "2013-01-01"]
+            cache["auc"][k] = {"nuovo": _auc(lag, y), "standard": _auc(lag_s, y), "nuovo_2013": _auc(lag[lag.index >= "2013-01-01"], y13),
+                               "standard_2013": _auc(lag_s[lag_s.index >= "2013-01-01"], y13), "evento": HZ_EVENT[k][0]}
+        try:
+            HZ_FILE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+        except Exception:  # noqa: BLE001
+            pass
+    for k in vals:
+        vals[k]["auc"] = cache.get("auc", {}).get(k)
+    out["orizzonti"] = vals
+    out["media"] = float(np.mean([x["v"] for x in vals.values()]))
+    out["pesi"] = HZ_WEIGHTS
+    return out
+
+
+def test_new_indicators(sp: pd.Series, force: bool = False) -> dict:
+    """Prova onesta dei nuovi indicatori di credito (ANFCI, SLOOS, Credit-to-GDP gap): per ognuno si aggiunge alla famiglia «Credito e liquidità» e si confronta
+    l'AUC dell'Indice (indice di ieri contro i 3 eventi, dal 2013) con e senza. Si adotta solo se migliora di ≥0,01 in almeno 2 eventi su 3 e nessuno peggiora di più di 0,01
+    (stessa regola usata per gli altri modelli). Rifatta al massimo una volta al mese; scrive data/armor_extra.json."""
+    import datetime as _dt
+    old = {}
+    try:
+        old = json.loads(EXTRA_FILE.read_text(encoding="utf-8"))
+        if not force and old.get("date", "")[:7] == _dt.date.today().isoformat()[:7]:
+            return old
+    except Exception:  # noqa: BLE001
+        pass
+    ev, _fm = events(sp)
+    idx_s = sp.index[sp.index >= "1995-01-01"]
+    S, _ = build_scores(sp)
+    base_idx = combine(S)[0]
+    res = {"date": _dt.date.today().isoformat(), "adopted": [], "dettaglio": {}}
+    for key, (kind, y, r) in NEW_IND.items():
+        try:
+            s_raw = semafori.series_of(key, sp).dropna()
+            if len(s_raw) < 60:
+                res["dettaglio"][key] = {"stato": "dati non ancora disponibili"}
+                continue
+            lag = {"sloos": 60, "credit_gap": 90}.get(key, 5)
+            a = s_raw.copy()
+            a.index = a.index + pd.Timedelta(days=0)
+            a = a.reindex(a.index.union(idx_s)).ffill(limit=_limit(key) + lag).reindex(idx_s).shift(lag if lag > 5 else 1)
+            pr = a.rolling(WINDOW, min_periods=250).rank(pct=True)
+            sc = (0.6 * _thresh_score(a, kind, y, r) + 0.4 * pr).fillna(_thresh_score(a, kind, y, r))
+            S2 = S.copy()
+            S2[key] = sc
+            GROUPS["Credito e liquidità"][1].append((key, kind, y, r))
+            try:
+                new_idx = combine(S2)[0]
+            finally:
+                GROUPS["Credito e liquidità"][1].pop()
+            det, better, worse = {}, 0, 0
+            for ek, yy in ev.items():
+                lo = START_EVAL if False else "2013-01-01"
+                a_old = _auc(base_idx.shift(1)[lo:], yy.reindex(base_idx.shift(1)[lo:].index))
+                a_new = _auc(new_idx.shift(1)[lo:], yy.reindex(new_idx.shift(1)[lo:].index))
+                det[ek] = {"senza": a_old, "con": a_new}
+                if a_new - a_old >= 0.01:
+                    better += 1
+                if a_new - a_old < -0.01:
+                    worse += 1
+            ok = better >= 2 and worse == 0
+            res["dettaglio"][key] = {"auc": det, "migliorati": better, "peggiorati": worse, "adottato": ok, "dal": str(s_raw.index[0].date())}
+            if ok:
+                res["adopted"].append(key)
+        except Exception as e:  # noqa: BLE001
+            res["dettaglio"][key] = {"stato": "errore: " + str(e)[:80]}
+    try:
+        EXTRA_FILE.write_text(json.dumps(res, ensure_ascii=False, default=lambda x: None if x != x else float(x)), encoding="utf-8")
     except Exception:  # noqa: BLE001
         pass
     return res

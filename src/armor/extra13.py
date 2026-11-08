@@ -8,7 +8,7 @@ from datetime import date, datetime, timedelta
 import numpy as np
 import pandas as pd
 
-from . import armor_index, calendario, store
+from . import armor_index, bande, calendario, store
 from .config import DATA, OUTCOMES, JOURNAL
 
 e = _h.escape
@@ -73,38 +73,18 @@ def _last_data(tipo: str) -> str:
     return "—"
 
 
-def calendar_html(today: date, sp: pd.Series, vix: pd.Series) -> str:
+def calendar_html(today: date, sp: pd.Series, vix: pd.Series, block: str = "") -> str:
+    """Calendario interattivo (giorni/settimane/mesi: `block` = mappa.cal_block) + tabelle degli eventi vicini e passati."""
     sp = sp.dropna()
     ret = sp.pct_change() * 100
     vlast = float(vix.iloc[-1]) if len(vix) else None
     evs = all_events(today - timedelta(days=75), today + timedelta(days=75))
-    by = {}
-    for x in evs:
-        by.setdefault(x["date"], []).append(x)
-    months = []
-    for k in (-1, 0, 1):
-        mm = today.month - 1 + k
-        y, m = today.year + mm // 12, mm % 12 + 1
-        cells = ""
-        for wk in _cal.Calendar(0).monthdates(y, m) if False else _cal.Calendar(0).monthdatescalendar(y, m):
-            for d in wk:
-                if d.month != m:
-                    cells += "<div class='cd o'></div>"
-                    continue
-                iso = d.isoformat()
-                r = ret.get(pd.Timestamp(d)) if pd.Timestamp(d) in ret.index else None
-                bg = ""
-                rtxt = ""
-                if r is not None and not np.isnan(r):
-                    a = min(abs(r) / 2.5, 1) * 0.55 + 0.08
-                    bg = f"style='background:rgba({'31,143,85' if r >= 0 else '192,57,43'},{a:.2f})'"
-                    rtxt = f"<small>{r:+.1f}%</small>".replace(".", ",")
-                ev = "".join(f"<em class='ev w{x['peso']}'>{SIGLA.get(x['tipo'], x['tipo'][:3])}</em>" for x in by.get(iso, []) if x["peso"] >= 2 or x["tipo"] == "Opzioni")
-                cells += f"<div class='cd{' today' if d == today else ''}' {bg}><b>{d.day}</b>{rtxt}{ev}</div>"
-        months.append(f"<div class='cmon' style='{'' if k == 0 else 'display:none'}'><div class='cmh'><button class='btn cprev'>‹</button><b>{MESI[m - 1].capitalize()} {y}</b><button class='btn cnext'>›</button></div>"
-                      "<div class='cdg'>" + "".join(f"<div class='cw'>{d}</div>" for d in ["L", "M", "M", "G", "V", "S", "D"]) + cells + "</div></div>")
     up = [x for x in evs if x["date"] >= today.isoformat() and x["peso"] >= 2][:12]
-    exp = f"±{vlast / 15.87:.1f}%".replace(".", ",") if vlast else "n.d."
+    try:
+        _b = bande.band(vlast, 1, pd.Timestamp(today)) if vlast else None
+    except Exception:  # noqa: BLE001
+        _b = None
+    exp = (f"{_b['lo']:+.1f}% … {_b['hi']:+.1f}%".replace(".", ",") if _b else "n.d.")
     rows = ""
     for x in up:
         d = datetime.fromisoformat(x["date"]).date()
@@ -119,24 +99,25 @@ def calendar_html(today: date, sp: pd.Series, vix: pd.Series) -> str:
         if t not in ret.index:
             continue
         prev_v = vix[vix.index < t]
-        exp_p = float(prev_v.iloc[-1]) / 15.87 if len(prev_v) else None
         r = float(ret.loc[t])
-        if exp_p:
-            q = abs(r) / exp_p
-            jd = "più forte del previsto" if q > 1.3 else ("più calmo del previsto" if q < 0.6 else "in linea")
-            cls = "dn" if q > 1.3 else ""
+        if len(prev_v):
+            b = bande.band(float(prev_v.iloc[-1]), 1, t)
+            exp_t = f"{b['lo']:+.1f}% … {b['hi']:+.1f}%".replace(".", ",")
+            jd = "peggiore del 90% dei casi" if r < b["lo"] else ("migliore del 90% dei casi" if r > b["hi"] else "nella fascia prevista")
+            cls = "dn" if r < b["lo"] else ""
         else:
-            jd, cls = "—", ""
-        prow += (f"<tr><td>{t.strftime('%d/%m')}</td><td>{e(x['nome'])}</td><td>{('±' + _p(exp_p)) if exp_p else 'n.d.'}</td>"
+            exp_t, jd, cls = "n.d.", "—", ""
+        prow += (f"<tr><td>{t.strftime('%d/%m')}</td><td>{e(x['nome'])}</td><td>{exp_t}</td>"
                  f"<td class='{'up' if r >= 0 else 'dn'}'><b>{_p(r, 1, True)}</b></td><td class='{cls}'>{jd}</td></tr>")
     return ("<h3 style='margin-top:0'>Calendario degli eventi</h3>"
-            "<div class='explain'><p>Ogni giorno passato è colorato in base a quanto ha mosso l'S&amp;P 500 (verde = salito, rosso = sceso). Le sigle sono gli eventi: Fed = tassi, CPI = inflazione, Lav = lavoro USA, Opz = scadenza opzioni, Tri = trimestrale.</p></div>"
-            f"<div class='calm'>{''.join(months)}</div>"
+            "<div class='explain'><p>Scegli <b>Giorni</b>, <b>Settimane</b> o <b>Mesi</b> e tocca un periodo: vedi cosa Armor si aspettava (oscillazione attesa), cosa è successo davvero per S&amp;P 500 e VWCE, "
+            "di quanto il reale si è discostato e qual era l'Indice Armor. Sigle: Fed = tassi, CPI = inflazione, Lav = lavoro USA, Opz = scadenza opzioni, Tri = trimestrale.</p></div>"
+            f"{block}"
             "<h4>Prossimi eventi: ultimo dato reale e oscillazione attesa</h4>"
-            f"<div class='scroll'><table class='cal'><tr><th>Data</th><th>Evento</th><th>Ultimo dato reale</th><th>Oscillazione attesa dell'S&amp;P (dal VIX)</th></tr>{rows}</table></div>"
+            f"<div class='scroll'><table class='cal'><tr><th>Data</th><th>Evento</th><th>Ultimo dato reale</th><th>Fascia attesa dell'S&amp;P (8 casi su 10)</th></tr>{rows}</table></div>"
             "<h4>Eventi passati: movimento previsto e reale</h4>"
-            f"<div class='scroll'><table class='cal'><tr><th>Data</th><th>Evento</th><th>Previsto (dal VIX)</th><th>Reale S&amp;P 500</th><th>Esito</th></tr>{prow or '<tr><td colspan=5 class=mu>Nessun dato.</td></tr>'}</table></div>"
-            "<p class='mu'>«Previsto» = oscillazione giornaliera che il mercato si aspettava la sera prima, ricavata dal VIX (VIX ÷ 15,9). Le previsioni degli economisti sui singoli dati (consenso) non sono disponibili gratuitamente, per questo non sono mostrate. "
+            f"<div class='scroll'><table class='cal'><tr><th>Data</th><th>Evento</th><th>Fascia attesa (8 casi su 10)</th><th>Reale S&amp;P 500</th><th>Esito</th></tr>{prow or '<tr><td colspan=5 class=mu>Nessun dato.</td></tr>'}</table></div>"
+            "<p class='mu'>«Fascia attesa» = dal 10° al 90° percentile del movimento giornaliero, scalato sul VIX della sera prima (asimmetrica: i cali sono più ampi dei rialzi; contiene il reale in circa 8 casi su 10). Le previsioni degli economisti sui singoli dati (consenso) non sono disponibili gratuitamente, per questo non sono mostrate. "
             "Le date di lavoro USA e opzioni seguono la regola del calendario e possono spostarsi di un giorno.</p>")
 
 
@@ -200,7 +181,7 @@ def oggi_html(aix, div, evs_soon, sig_n) -> str:
 
 
 # ---------------------------------------------------------------- mappa mensile
-def heatmap_html(aix: dict | None, months: int = 24) -> str:
+def heatmap_html_old(aix: dict | None, months: int = 24) -> str:
     if not aix:
         return "<p class='mu'>Mappa non disponibile.</p>"
     G = aix["G"].copy()
@@ -459,7 +440,7 @@ def glossario_html() -> str:
 def dock_html(headline: str, tabs: list[tuple[str, str, str]]) -> str:
     btns = "".join(f"<button data-d='{k}'{' class=on' if i == 0 else ''}>{e(l)}</button>" for i, (k, l, _h2) in enumerate(tabs))
     panes = "".join(f"<div class='dpane{' on' if i == 0 else ''}' id='d-{k}'>{h}</div>" for i, (k, _l, h) in enumerate(tabs))
-    return (f"<div id='dock'><button id='dockbar' aria-expanded='false'><span class='dk1'>Assistente Armor</span><span class='dk2'>{e(headline)}</span><span class='dka'>▲</span></button>"
+    return (f"<div id='dock'><button id='dockbar' aria-expanded='false'><span class='dk1'>Assistente Armor</span><span class='dk2' id='dkt'>{e(headline)}</span><span class='dka'>▲</span></button>"
             f"<div id='dockbody'><nav class='dnav'>{btns}</nav><div class='dpanes'>{panes}</div></div></div>"
             "<div id='calm' class='cmodal'><div class='cbox'><button class='cx' aria-label='Chiudi'>×</button><div class='cbody' id='calbody'></div></div></div>"
             "<template id='caltpl'>{{CAL}}</template>")
@@ -473,7 +454,8 @@ bar.onclick=function(){set(!d.classList.contains('open'))};
 d.querySelectorAll('.dnav button').forEach(function(b){b.onclick=function(){d.querySelectorAll('.dnav button').forEach(function(x){x.classList.toggle('on',x===b)});
 d.querySelectorAll('.dpane').forEach(function(p){p.classList.toggle('on',p.id==='d-'+b.dataset.d)});if(b.dataset.d==='cal'){openCal();return}document.getElementById('dockbody').scrollTop=0}});
 var cm=document.getElementById('calm');
-function openCal(){var t=document.getElementById('caltpl');if(!t)return;var body=document.getElementById('calbody');if(!body.innerHTML)body.innerHTML=t.innerHTML;cm.classList.add('show');wire()}
+function inj(el,h){var t=document.createElement('template');t.innerHTML=h;var sc=[].slice.call(t.content.querySelectorAll('script')).map(function(s){var n=document.createElement('script');n.type=s.type||'';n.id=s.id||'';n.text=s.textContent;s.parentNode.removeChild(s);return n});el.innerHTML='';el.appendChild(t.content);sc.forEach(function(n){el.appendChild(n)})}
+function openCal(){var t=document.getElementById('caltpl');if(!t)return;var body=document.getElementById('calbody');if(!body.firstChild)inj(body,t.innerHTML);cm.classList.add('show');wire()}
 function wire(){var mons=cm.querySelectorAll('.cmon'),i=0;mons.forEach(function(m,k){if(m.style.display!=='none')i=k});
 function go(n){i=Math.max(0,Math.min(mons.length-1,n));mons.forEach(function(m,k){m.style.display=k===i?'':'none'})}
 cm.querySelectorAll('.cprev').forEach(function(b){b.onclick=function(){go(i-1)}});cm.querySelectorAll('.cnext').forEach(function(b){b.onclick=function(){go(i+1)}})}
