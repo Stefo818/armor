@@ -1,0 +1,30 @@
+name: Ricerca modello Armor
+on:
+  schedule:
+    - cron: '17 5 3 * *'   # il 3 di ogni mese (ora UTC), dopo la convalida mensile
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
+jobs:
+  ricerca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Ricerca del modello (mai sugli anni 2019+, riservati alla prova finale)
+        env:
+          PYTHONPATH: src
+        timeout-minutes: 50
+        run: python -m armor ricerca
+      - name: Salva i risultati nel repository
+        if: always()
+        run: bash scripts/salva.sh "Ricerca modello" data/ricerca

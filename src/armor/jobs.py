@@ -180,6 +180,22 @@ def run_alerts(ctx: dict) -> None:
     alerts.run(ctx, r["nome"], vix, ev, move * 100 if move is not None else None, aix_band, div)
 
 
+def fonti_nuove(force: bool = False) -> None:
+    """Salute delle aziende, inflazione, liquidità, Europa, storia lunga (PIANO_MODELLO §3) e revisioni degli utili.
+    Ogni passo ha un tempo massimo: se una fonte non risponde, il ciclo giornaliero continua."""
+    from . import fondamentali
+    from .guard import with_timeout
+    try:
+        st = with_timeout(lambda: fondamentali.aggiorna_fonti(store.read_status(), force), 300 if force else 240, "fonti lente")
+        store.write_status(st)
+    except Exception as e:  # noqa: BLE001
+        print("[fondamentali] fonti lente non aggiornate:", str(e)[:120])
+    try:
+        with_timeout(fondamentali.raccogli_revisioni, 90, "revisioni utili")
+    except Exception as e:  # noqa: BLE001
+        print("[fondamentali] revisioni utili non raccolte:", str(e)[:120])
+
+
 def tutto(skip_download: bool = False) -> None:
     if not skip_download:
         from .guard import with_timeout
@@ -195,6 +211,12 @@ def tutto(skip_download: bool = False) -> None:
             print("Archivio opzioni SPY:", with_timeout(archive_spy_options, 240, "opzioni SPY"))
         except Exception as e:  # noqa: BLE001
             print("Archivio opzioni SPY non riuscito:", str(e)[:120])
+        fonti_nuove()
+    try:   # serie derivate (crescita utili, inflazione annua, liquidità Fed, forza relativa...): veloce, anche senza download
+        from . import fondamentali
+        fondamentali.aggiorna_derivate()
+    except Exception as e:  # noqa: BLE001
+        print("[fondamentali] derivate non calcolate:", str(e)[:120])
     try:
         from . import live
         live.run()
@@ -280,12 +302,12 @@ def main() -> None:
             print(f"[pesi indice] adottati: {w['adopted']} (eventi migliorati {w['better_events']}/3, verifica del {w['date']})")
         except Exception as e:  # noqa: BLE001
             print("[pesi indice] errore:", str(e)[:100])
-        try:   # nuovi indicatori di credito (ANFCI, SLOOS, Credit-to-GDP gap): adozione solo se il test li promuove
+        try:   # indicatori nuovi (credito e PIANO_MODELLO): adozione solo se il test li promuove
             from . import armor_index as _ai
             x = _ai.test_new_indicators(closed_sp500())
-            print("[indicatori credito] adottati:", x.get("adopted"), {k: (v.get("migliorati"), v.get("peggiorati"), v.get("stato")) for k, v in x.get("dettaglio", {}).items()})
+            print("[indicatori nuovi] adottati:", x.get("adopted"), {k: (v.get("migliorati"), v.get("peggiorati"), v.get("stato")) for k, v in x.get("dettaglio", {}).items()})
         except Exception as e:  # noqa: BLE001
-            print("[indicatori credito] errore:", str(e)[:100])
+            print("[indicatori nuovi] errore:", str(e)[:100])
         r = modeleval.evaluate(step=step)
         print(modeleval.table(r))
     elif cmd == "rapporto-mensile":
@@ -317,13 +339,18 @@ def main() -> None:
         live.run()
     elif cmd == "dati-completi":
         stampa_stato(sources.update_all(full=True))
+        fonti_nuove(force=True)
+    elif cmd == "ricerca":   # PIANO_MODELLO: ricerca del modello (mai sugli anni 2019+ riservati alla prova finale)
+        from . import fondamentali, ricerca
+        fondamentali.aggiorna_derivate()
+        ricerca.run()
     elif cmd == "report":
         from .report import build
         build(forecast())
     elif cmd == "verifica-diario":
         print(journal.verify())
     else:
-        print("Comandi: tutto | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | report | verifica-diario")
+        print("Comandi: tutto | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
 
 
 if __name__ == "__main__":

@@ -14,7 +14,7 @@ Un miglioramento che c'è solo nei dati di addestramento è un'illusione, e va s
 - Test: `python3.11 -m compileall -q src tests` e `python3 -m pytest -q tests`. Sito: `PYTHONPATH=src python3 -m armor sito`. Prima di consegnare UI: screenshot Playwright a 430px (servire `site/` con `python3 -m http.server 8766`), zero errori in console.
 - Consegna: `patchN.zip` solo con i file cambiati. Mai includere: `data/live.json`, `data/intraday.json`, `data/news/*`, `data/reports/*`, `data/registry/*`, `data/series/*`, `sentiment.xls`, `site/`, `data/models.json`. Copia in `/mnt/user-data/outputs`, `SendUserFile`, `device_commit_files` in `D:\Armor\patchN.zip`, estrai con `device_bash` (python zipfile) in `$HOME/mnt/Armor`.
 - Risposta all'utente: in italiano, breve, a blocchi con il luogo di ogni passo e i comandi per intero:
-  [PowerShell] `cd D:\Armor; Remove-Item patchN.zip; git pull; git add .; git commit -m "..."; git push`
+  [PowerShell] `cd D:\Armor; Remove-Item patchN.zip; git add .; git commit -m "..."; git push` (se il push viene rifiutato: `git pull --no-rebase; git push`)
   [Chrome] GitHub → Actions → lanciare i workflow indicati e aspettare il verde
   [Telefono] ricaricare l'app due volte.
   Chiedere le righe `[dati]`/`[ombra]`/`ERR` se qualcosa non va.
@@ -90,7 +90,7 @@ Già presenti in `data/series` sul PC (verificare): `cpi, indpro, payems, unrate
 
 | id | Fonte / codice | Frequenza | Ritardo | Uso |
 |---|---|---|---|---|
-| eps_sp | derivata: sp500 mensile / pe_m | mensile | 60 gg | `eps_g3`, `eps_g12` (crescita utili) |
+| eps_sp | derivata: sp500 mensile / pe_m | mensile | 150 gg (patch 21: con 60 gg parte dell'abilità era sguardo al futuro) | `eps_g3`, `eps_g12` (crescita utili) |
 | sales_sp | derivata: sp500 / ps_m (dal 2000) | trimestrale | 90 gg | `sales_g12`, margine = eps/sales |
 | earn_shiller, div_shiller | estendere `fetch_shiller()` (colonne E, D, CPI, GS10 del file ie_data.xls) | mensile dal 1871 | 120 gg | utili lunghi per la storia lunga |
 | cp | FRED `CP` (profitti dopo le tasse) | trimestrale | 90 gg | `cp_g4`, `cp/gdp` |
@@ -222,7 +222,7 @@ Codice: nuovo modulo `src/armor/ricerca.py`, comando `python -m armor ricerca` i
    - test in `tests/test_armor.py` per derivate, ritardi e parsing (con dati finti, nessuna rete);
    - aggiornare `CONTINUA_DA_QUI.md`.
 
-   All'utente: push, poi lanciare "Aggiornamento giornaliero Armor" (scarica tutto lo storico delle serie nuove), poi `git pull`.
+   All'utente: push, poi lanciare "Aggiornamento giornaliero Armor" (scarica tutto lo storico delle serie nuove), poi [PowerShell] `cd D:\Armor; git pull --no-rebase`.
 2. Fase B — ricerca nel cloud (nessuna patch finché non ci sono risultati):
    - comprimere e caricare `data/series` (`scripts/copia_cloud.py serie`);
    - eseguire `ricerca.py` su 1960–2018 e 2000–2018;

@@ -49,6 +49,12 @@ YF = {
     "sec_xlb": ("XLB", "America/New_York", "16:30"),
     "sec_xlre": ("XLRE", "America/New_York", "16:30"),
     "sec_xlc": ("XLC", "America/New_York", "16:30"),
+    # mercato interno (PIANO_MODELLO §3): piccole aziende, semiconduttori, trasporti, banche regionali, rame
+    "iwm": ("IWM", "America/New_York", "16:30"),
+    "smh": ("SMH", "America/New_York", "16:30"),
+    "iyt": ("IYT", "America/New_York", "16:30"),
+    "kre": ("KRE", "America/New_York", "16:30"),
+    "copper": ("HG=F", "America/New_York", "18:30"),
 }
 
 # id -> codice FRED (CSV pubblico, nessuna chiave necessaria)
@@ -221,7 +227,7 @@ def fetch_multpl(url: str) -> pd.Series:
 
 
 def fetch_shiller() -> dict[str, pd.Series]:
-    """CAPE e P/E (Shiller). Dati mensili, pubblicati con ritardo: usati solo come contesto."""
+    """CAPE, P/E, prezzo, dividendi, utili, inflazione e tasso a 10 anni (Shiller, dal 1871). Dati mensili pubblicati con ritardo."""
     last = None
     for url in SHILLER_URLS:
         try:
@@ -239,7 +245,10 @@ def fetch_shiller() -> dict[str, pd.Series]:
             earn = pd.to_numeric(body[3], errors="coerce").set_axis(idx)
             cape = pd.to_numeric(body[col_cape], errors="coerce").set_axis(idx)
             pe = (price / earn).replace([float("inf")], float("nan"))
-            return {"cape": cape.dropna(), "pe_trailing": pe.dropna()}
+            col = lambda j: pd.to_numeric(body[j], errors="coerce").set_axis(idx).dropna()
+            # storia lunga (PIANO_MODELLO §3): prezzo, dividendi, utili, inflazione e tasso a 10 anni dal 1871
+            return {"cape": cape.dropna(), "pe_trailing": pe.dropna(), "price_shiller": price.dropna(), "div_shiller": col(2),
+                    "earn_shiller": earn.dropna(), "cpi_shiller": col(4), "gs10_shiller": col(6)}
         except Exception as e:  # noqa: BLE001
             last = str(e)
     raise RuntimeError(last or "errore")

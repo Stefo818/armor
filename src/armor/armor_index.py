@@ -31,7 +31,29 @@ GROUPS = {
 LAGS = {"daily": 5, "weekly": 10, "monthly": 45}
 # nuovi indicatori di credito (suggeriti da DeepSeek): monitorati da subito, entrano nell'Indice solo se il test automatico li adotta (data/armor_extra.json)
 NEW_IND = {"anfci": ("hi", 0, 0.5), "sloos": ("hi", 10, 30), "credit_gap": ("hi", 2, 10)}
-EXTRA_FILE = DATA / "armor_extra.json"
+# indicatori nuovi del PIANO_MODELLO (salute delle aziende, inflazione, liquidità, mercato interno): stessa regola di adozione,
+# ognuno provato dentro la famiglia dell'Indice più vicina. Finché non sono adottati restano solo nei semafori («monitorato»).
+NEW_IND_FOND = {
+    "eps_g12": ("Economia reale", "lo", 0, -10), "delinq_biz": ("Economia reale", "hi", 1.5, 2.5),
+    "chargeoff_biz": ("Economia reale", "hi", 0.6, 1.0), "busloans_g6": ("Economia reale", "lo", 0, -3),
+    "cfnai": ("Economia reale", "lo", -0.35, -0.7), "claims_up": ("Economia reale", "hi", 15, 25),
+    "ccsa_yoy": ("Economia reale", "hi", 10, 20), "permit_yoy": ("Economia reale", "lo", -10, -20),
+    "cpi_yoy": ("Tassi e obbligazioni", "hi", 3, 4.5), "core_yoy": ("Tassi e obbligazioni", "hi", 3, 4),
+    "real_ff": ("Tassi e obbligazioni", "hi", 1.5, 2.5),
+    "net_liq_13w": ("Credito e liquidità", "lo", 0, -4), "m2_yoy": ("Credito e liquidità", "lo", 2, 0),
+    "nfci_leverage": ("Credito e liquidità", "hi", 0, 0.5), "kcfsi": ("Credito e liquidità", "hi", 0, 1),
+    "ciss": ("Credito e liquidità", "hi", 0.2, 0.4), "margin_yoy": ("Credito e liquidità", "hi", 30, 50),
+    "rel_small": ("Sentimento e ampiezza", "lo", -3, -8), "rel_eqw": ("Sentimento e ampiezza", "lo", -3, -6),
+    "rel_cicl": ("Sentimento e ampiezza", "lo", -3, -8), "rel_credito": ("Sentimento e ampiezza", "lo", -1.5, -4),
+}
+FREQ_FOND = {"eps_g12": "m", "delinq_biz": "q", "chargeoff_biz": "q", "busloans_g6": "m", "cfnai": "m", "claims_up": "w", "ccsa_yoy": "w",
+             "permit_yoy": "m", "cpi_yoy": "m", "core_yoy": "m", "real_ff": "m", "net_liq_13w": "w", "m2_yoy": "m", "nfci_leverage": "w",
+             "kcfsi": "m", "ciss": "d", "margin_yoy": "m"}
+
+
+def _new_items() -> list:
+    """(chiave, famiglia, tipo, soglia gialla, soglia rossa) di tutti gli indicatori candidati all'Indice."""
+    return [(k, "Credito e liquidità", *v) for k, v in NEW_IND.items()] + [(k, *v) for k, v in NEW_IND_FOND.items()]
 
 
 def _apply_extra() -> None:
@@ -39,11 +61,10 @@ def _apply_extra() -> None:
         ad = json.loads(EXTRA_FILE.read_text(encoding="utf-8")).get("adopted", [])
     except Exception:  # noqa: BLE001
         ad = []
-    w, items = GROUPS["Credito e liquidità"]
-    have = {k for k, *_ in items}
-    for k in ad:
-        if k in NEW_IND and k not in have:
-            items.append((k, *NEW_IND[k]))
+    for k, fam, kind, y, r in _new_items():
+        items = GROUPS[fam][1]
+        if k in ad and k not in {x for x, *_ in items}:
+            items.append((k, kind, y, r))
 
 
 _apply_extra()
@@ -89,6 +110,8 @@ def _raw_series(key: str, sp: pd.Series) -> pd.Series:
 
 
 def _limit(key: str) -> int:
+    if key in FREQ_FOND:
+        return {"q": 120, "m": LAGS["monthly"], "w": LAGS["weekly"], "d": LAGS["daily"]}[FREQ_FOND[key]]
     if key in ("sloos", "credit_gap"):
         return 120   # dati trimestrali: restano validi per ~un trimestre
     if key == "anfci":
@@ -527,7 +550,7 @@ def horizons(d: dict | None, sp: pd.Series, recompute: bool = False) -> dict | N
 
 
 def test_new_indicators(sp: pd.Series, force: bool = False) -> dict:
-    """Prova onesta dei nuovi indicatori di credito (ANFCI, SLOOS, Credit-to-GDP gap): per ognuno si aggiunge alla famiglia «Credito e liquidità» e si confronta
+    """Prova onesta dei nuovi indicatori (credito: ANFCI, SLOOS, Credit-to-GDP gap; PIANO_MODELLO: salute delle aziende, inflazione, liquidità, mercato interno): ognuno si aggiunge alla sua famiglia (credito: «Credito e liquidità») e si confronta
     l'AUC dell'Indice (indice di ieri contro i 3 eventi, dal 2013) con e senza. Si adotta solo se migliora di ≥0,01 in almeno 2 eventi su 3 e nessuno peggiora di più di 0,01
     (stessa regola usata per gli altri modelli). Rifatta al massimo una volta al mese; scrive data/armor_extra.json."""
     import datetime as _dt
@@ -543,13 +566,14 @@ def test_new_indicators(sp: pd.Series, force: bool = False) -> dict:
     S, _ = build_scores(sp)
     base_idx = combine(S)[0]
     res = {"date": _dt.date.today().isoformat(), "adopted": [], "dettaglio": {}}
-    for key, (kind, y, r) in NEW_IND.items():
+    from . import fondamentali
+    for key, fam, kind, y, r in _new_items():
         try:
             s_raw = semafori.series_of(key, sp).dropna()
             if len(s_raw) < 60:
                 res["dettaglio"][key] = {"stato": "dati non ancora disponibili"}
                 continue
-            lag = {"sloos": 60, "credit_gap": 90}.get(key, 5)
+            lag = {"sloos": 60, "credit_gap": 90}.get(key, 5) if key in NEW_IND else max(1, int(round(fondamentali.LAG.get(key, 1) * 5 / 7)))
             a = s_raw.copy()
             a.index = a.index + pd.Timedelta(days=0)
             a = a.reindex(a.index.union(idx_s)).ffill(limit=_limit(key) + lag).reindex(idx_s).shift(lag if lag > 5 else 1)
@@ -557,11 +581,11 @@ def test_new_indicators(sp: pd.Series, force: bool = False) -> dict:
             sc = (0.6 * _thresh_score(a, kind, y, r) + 0.4 * pr).fillna(_thresh_score(a, kind, y, r))
             S2 = S.copy()
             S2[key] = sc
-            GROUPS["Credito e liquidità"][1].append((key, kind, y, r))
+            GROUPS[fam][1].append((key, kind, y, r))
             try:
                 new_idx = combine(S2)[0]
             finally:
-                GROUPS["Credito e liquidità"][1].pop()
+                GROUPS[fam][1].pop()
             det, better, worse = {}, 0, 0
             for ek, yy in ev.items():
                 lo = START_EVAL if False else "2013-01-01"
@@ -573,7 +597,7 @@ def test_new_indicators(sp: pd.Series, force: bool = False) -> dict:
                 if a_new - a_old < -0.01:
                     worse += 1
             ok = better >= 2 and worse == 0
-            res["dettaglio"][key] = {"auc": det, "migliorati": better, "peggiorati": worse, "adottato": ok, "dal": str(s_raw.index[0].date())}
+            res["dettaglio"][key] = {"auc": det, "migliorati": better, "peggiorati": worse, "adottato": ok, "dal": str(s_raw.index[0].date()), "famiglia": fam}
             if ok:
                 res["adopted"].append(key)
         except Exception as e:  # noqa: BLE001

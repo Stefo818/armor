@@ -92,7 +92,83 @@ SPEC = [
     ("icsa", "Richieste di sussidio di disoccupazione (settimanali)", "Economia", "hi", 250000, 300000, "", 0,
      "Quante persone chiedono il sussidio per la prima volta ogni settimana: segnala presto il mercato del lavoro.",
      "Sopra 250.000 il lavoro si raffredda, sopra 300.000 è un segnale di recessione."),
+    # ---- PIANO_MODELLO §3: indicatori nuovi, solo MONITORATI (entrano nell'Indice Armor solo se lo decide la verifica automatica)
+    ("eps_g12", "Utili S&P 500 (crescita in 12 mesi)", "Salute delle aziende", "lo", 0, -10, " %", 1,
+     "Di quanto sono cresciuti gli utili per azione dell'S&P 500 nell'ultimo anno (ricavati da prezzo e rapporto prezzo/utili).",
+     "Sotto zero gli utili calano. Dal 1990 al 2018 (contando il ritardo con cui gli utili si conoscono), con utili in calo un ribasso del 10% entro 6 mesi è arrivato nel 29% dei casi (15% altrimenti); con cali oltre il 10% nel 38%."),
+    ("eps_g3", "Utili S&P 500 (variazione in 3 mesi)", "Salute delle aziende", "lo", 0, -3, " %", 1,
+     "Andamento recente degli utili: anticipa la crescita annua.", "Due o tre trimestri negativi di fila sono il primo segnale di indebolimento delle aziende."),
+    ("sales_g12", "Fatturato S&P 500 (crescita in 12 mesi)", "Salute delle aziende", "lo", 2, -2, " %", 1,
+     "Di quanto crescono le vendite delle aziende (da prezzo e rapporto prezzo/fatturato).", "Fatturato fermo o in calo con valutazioni alte rende il mercato fragile."),
+    ("margin_sp", "Margine di profitto S&P 500", "Salute delle aziende", "info", None, None, " %", 1,
+     "Quanta parte di ogni dollaro venduto diventa utile.", "Margini record possono solo scendere: se calano mentre il fatturato rallenta, gli utili scendono più in fretta."),
+    ("cp_g4", "Profitti aziende USA (crescita annua)", "Salute delle aziende", "lo", 0, -10, " %", 1,
+     "Profitti di tutte le aziende USA, non solo quotate (dato trimestrale, con circa 5 mesi di ritardo).", "Calo dei profitti nazionali oltre il 10% annuo in passato ha accompagnato recessioni e mercati orso."),
+    ("delinq_biz", "Prestiti alle imprese in ritardo", "Salute delle aziende", "hi", 1.5, 2.5, " %", 2,
+     "Quota dei prestiti bancari alle imprese con rate non pagate: misura la sofferenza delle aziende.", "Sopra 1,5% le aziende faticano a pagare, sopra 2,5% è tipico delle recessioni (2001: 3%, 2009: 4,4%)."),
+    ("chargeoff_biz", "Prestiti alle imprese dati per persi", "Salute delle aziende", "hi", 0.6, 1.0, " %", 2,
+     "Quota dei prestiti alle imprese che le banche cancellano perché non verranno più rimborsati: misura le insolvenze.", "Sopra 0,6% le insolvenze crescono, sopra 1% sono da crisi."),
+    ("busloans_g6", "Credito alle imprese (6 mesi)", "Salute delle aziende", "lo", 0, -3, " %", 1,
+     "Quanto crescono i prestiti delle banche alle aziende.", "Un calo del credito alle imprese ha preceduto o accompagnato tutte le ultime recessioni."),
+    ("rev_breadth", "Revisioni stime di utile (30 titoli)", "Salute delle aziende", "lo", 0, -20, "", 0,
+     "Analisti che alzano le stime meno quelli che le abbassano negli ultimi 30 giorni, in percentuale (da -100 a +100), pesato per capitalizzazione. Storico raccolto da novembre 2026.",
+     "Sotto zero prevalgono i tagli delle stime, sotto -20 i tagli sono diffusi: in passato è successo all'inizio delle fasi di debolezza."),
+    ("fwd_growth", "Crescita utili attesa (anno prossimo)", "Salute delle aziende", "lo", 5, 0, " %", 1,
+     "Media pesata delle stime degli analisti sui 30 titoli principali. Storico raccolto da novembre 2026.", "Sotto il 5% le attese si spengono, sotto zero gli analisti prevedono utili in calo."),
+    ("cpi_yoy", "Inflazione USA (annua)", "Inflazione", "hi", 3, 4.5, " %", 1,
+     "Aumento dei prezzi negli ultimi 12 mesi.", "Sopra 3% la Fed non può tagliare i tassi con facilità, sopra 4,5% tende ad alzarli: pesa sulle valutazioni."),
+    ("core_yoy", "Inflazione di fondo USA", "Inflazione", "hi", 3, 4, " %", 1,
+     "Inflazione che guarda la Fed, più stabile di quella totale.", "Sopra 3% resta lontana dall'obiettivo del 2%: tassi alti più a lungo."),
+    ("infl_acc", "Accelerazione dell'inflazione (6 mesi)", "Inflazione", "hi", 0.5, 1.0, " punti", 2,
+     "Se l'inflazione annua sta salendo (positivo) o scendendo (negativo).", "Un'inflazione che riaccelera di oltre mezzo punto ha spesso preceduto strette della Fed e cali delle borse (2022)."),
+    ("infl5y5y", "Inflazione attesa tra 5 e 10 anni (mercato)", "Inflazione", "hi", 2.6, 3.0, " %", 2,
+     "Quanta inflazione si aspettano gli investitori nel lungo periodo.", "Sopra 2,6% il mercato dubita che la Fed riporti l'inflazione al 2%."),
+    ("real_ff", "Tasso Fed reale", "Inflazione", "hi", 1.5, 2.5, " punti", 2,
+     "Quanto è restrittiva davvero la politica della Fed.", "Sopra 1,5 punti la Fed frena l'economia, sopra 2,5 la frena con forza."),
+    ("cfnai", "Attività economica USA (indice CFNAI)", "Economia", "lo", -0.35, -0.7, "", 2,
+     "Sintesi di 85 indicatori dell'economia USA; zero = crescita nella media.", "Sotto -0,7 (media di più mesi) in passato ha segnalato l'inizio delle recessioni."),
+    ("claims_up", "Sussidi sopra il minimo dell'anno", "Economia", "hi", 15, 25, " %", 0,
+     "Di quanto la media a 4 settimane delle richieste di sussidio supera il minimo delle ultime 52.",
+     "Sopra +15% il lavoro si indebolisce, sopra +25% è un classico segnale di recessione. Dal 1990 al 2018, oltre +20% un ribasso del 10% entro 6 mesi è arrivato nel 49% dei casi (16% altrimenti)."),
+    ("ccsa_yoy", "Sussidi continuativi (variazione annua)", "Economia", "hi", 10, 20, " %", 0,
+     "Persone che restano senza lavoro e continuano a ricevere il sussidio.", "Sopra +10% chi perde il lavoro fatica a trovarne un altro, sopra +20% il mercato del lavoro è in difficoltà."),
+    ("permit_yoy", "Permessi di costruzione (variazione annua)", "Economia", "lo", -10, -20, " %", 0,
+     "Case che si inizieranno a costruire: uno degli indicatori che anticipano l'economia.", "Cali oltre il 20% annuo hanno preceduto molte recessioni."),
+    ("net_liq_13w", "Liquidità Fed (13 settimane)", "Liquidità e leva", "lo", 0, -4, " %", 1,
+     "Bilancio della Fed meno conto del Tesoro e pronti contro termine: la liquidità che resta nel sistema.", "Cali rapidi della liquidità hanno accompagnato alcune fasi deboli dei mercati (2022)."),
+    ("m2_yoy", "Massa monetaria M2 (crescita annua)", "Liquidità e leva", "lo", 2, 0, " %", 1,
+     "Quanto denaro circola nell'economia.", "Sotto zero (raro: 2023) la moneta si contrae."),
+    ("margin_yoy", "Margin debt (crescita annua)", "Liquidità e leva", "hi", 30, 50, " %", 0,
+     "Prestiti presi dagli investitori per comprare azioni (dati FINRA).", "Crescite oltre il 50% annuo hanno accompagnato le euforie del 2000, 2007 e 2021."),
+    ("nfci_leverage", "Leva finanziaria (sottoindice NFCI)", "Liquidità e leva", "hi", 0, 0.5, "", 2,
+     "Quanto è indebitato il sistema finanziario rispetto alla media (zero = media).", "Sopra zero la leva è sopra la media: il sistema è più fragile agli shock."),
+    ("kcfsi", "Stress finanziario (Fed di Kansas City)", "Liquidità e leva", "hi", 0, 1, "", 2,
+     "Indice mensile di stress dei mercati finanziari; zero = media.", "Sopra 0 stress sopra la media, sopra 1 stress alto."),
+    ("ciss", "Stress area euro (CISS)", "Liquidità e leva", "hi", 0.2, 0.4, "", 2,
+     "Indice della BCE da 0 a 1 sullo stress dei mercati europei (VWCE è per circa il 15% Europa).", "Sopra 0,2 tensione, sopra 0,4 crisi (2008: 0,8; 2020: 0,4; 2022: 0,35)."),
+    ("rel_small", "Piccole aziende contro grandi (3 mesi)", "Mercato interno", "lo", -3, -8, " %", 1,
+     "Rendimento delle piccole aziende USA (IWM) meno quello del mercato (SPY) negli ultimi 3 mesi.", "Piccole aziende molto più deboli segnalano credito difficile e crescita in rallentamento."),
+    ("rel_eqw", "Azienda media contro i giganti (3 mesi)", "Mercato interno", "lo", -3, -6, " %", 1,
+     "S&P 500 a pesi uguali (RSP) contro quello pesato per capitalizzazione (SPY): se è negativo salgono solo i giganti.", "Rialzi sostenuti da pochi titoli sono più fragili."),
+    ("rel_cicl", "Settori ciclici contro difensivi (3 mesi)", "Mercato interno", "lo", -3, -8, " %", 1,
+     "Consumi non essenziali (XLY) contro beni di prima necessità (XLP).", "Quando i difensivi battono nettamente i ciclici, gli investitori si preparano a un rallentamento."),
+    ("rel_semi", "Semiconduttori contro mercato (3 mesi)", "Mercato interno", "lo", -5, -12, " %", 1,
+     "I chip sono il cuore del ciclo tecnologico e pesano molto in VWCE.", "Una forte debolezza dei semiconduttori ha spesso anticipato correzioni della tecnologia."),
+    ("rel_trasp", "Trasporti contro mercato (3 mesi)", "Mercato interno", "lo", -4, -10, " %", 1,
+     "Aziende di trasporto (IYT): risentono subito di un calo degli scambi di merci.", "Trasporti molto deboli segnalano un'economia che rallenta."),
+    ("rel_banche", "Banche regionali contro mercato (3 mesi)", "Mercato interno", "lo", -5, -12, " %", 1,
+     "Banche medio-piccole (KRE): sensibili a credito, immobili e depositi.", "Crolli delle banche regionali (2023) segnalano stress nel credito."),
+    ("rel_rame_oro", "Rame contro oro (3 mesi)", "Mercato interno", "lo", -5, -12, " %", 1,
+     "Il rame segue l'industria, l'oro la paura: il rapporto misura l'ottimismo sulla crescita.", "Se il rame perde molto contro l'oro, il mercato teme un rallentamento."),
+    ("rel_credito", "Bond rischiosi contro sicuri (3 mesi)", "Mercato interno", "lo", -1.5, -4, " %", 1,
+     "Bond ad alto rendimento contro titoli di Stato: l'appetito per il rischio di credito (storico dal 2007).", "Se i bond rischiosi perdono terreno, il credito si sta irrigidendo: spesso prima delle azioni."),
 ]
+# indicatori solo monitorati (PIANO_MODELLO): mostrati con l'etichetta «monitorato», non fanno parte dell'Indice Armor
+MONITORATI = {"eps_g12", "eps_g3", "sales_g12", "margin_sp", "cp_g4", "delinq_biz", "chargeoff_biz", "busloans_g6", "rev_breadth", "fwd_growth",
+              "cpi_yoy", "core_yoy", "infl_acc", "infl5y5y", "real_ff", "cfnai", "claims_up", "ccsa_yoy", "permit_yoy", "net_liq_13w", "m2_yoy",
+              "margin_yoy", "nfci_leverage", "kcfsi", "ciss", "rel_small", "rel_eqw", "rel_cicl", "rel_semi", "rel_trasp", "rel_banche",
+              "rel_rame_oro", "rel_credito"}
+GRUPPI_NUOVI = {"Salute delle aziende", "Inflazione", "Liquidità e leva", "Mercato interno"}
 SPEC_BY = {s[0]: s for s in SPEC}
 LIGHT_TXT = {"ok": "Tranquillo", "wa": "Attenzione", "ba": "Allarme", "na": "Informativo"}
 KEY_ORDER = ["vix", "pc_oi", "pe_m", "ps_m", "cape_m", "rv21", "hy_oas", "nfci", "t10y3m", "move", "skew", "dd252"]
@@ -228,6 +304,7 @@ def card(i: dict, big: bool = False) -> str:
     pc = f" · {i['pct']:.0f}° percentile storico" if i.get("pct") is not None else ""
     return (f"<div class='sem {i['light']}{' big' if big else ''}' data-chart='{i['key']}'>"
             f"<div class='sh'><span class='dot'></span><span class='sn'>{e(i['name'])}</span><span class='st'>{LIGHT_TXT[i['light']]}</span></div>"
+            + ("<span class='smon'>monitorato · non nell'Indice</span>" if i["key"] in MONITORATI else "") +
             f"<div class='sv'>{fmt(i['value'], i['dec'], i['unit'])}</div>"
             f"<div class='sr'>{e(i['read'])}</div>"
             f"<details onclick='event.stopPropagation()'><summary>Quando preoccuparsi</summary><div class='sw'>{e(i['worry'])}<br><span class='mu'>Soglie: {e(i['zones'])}{pc} · dato del {i['date']}</span></div></details></div>")
@@ -244,7 +321,9 @@ def html(items: list[dict], keys_only: bool = False) -> str:
         groups.setdefault(i["group"], []).append(i)
     out = []
     for g, its in groups.items():
-        out.append(f"<h3>{_h.escape(g)}</h3><div class='semgrid'>" + "".join(card(i) for i in its) + "</div>")
+        nota = ("<p class='mu' style='font-size:13px'>Indicatori nuovi, per ora solo monitorati: entrano nell'Indice Armor solo se la verifica automatica dimostra che migliorano le previsioni.</p>"
+                if g in GRUPPI_NUOVI else "")
+        out.append(f"<h3>{_h.escape(g)}</h3>{nota}<div class='semgrid'>" + "".join(card(i) for i in its) + "</div>")
     return "".join(out)
 
 
@@ -256,5 +335,6 @@ CSS = """
 .sem.ok .dot{background:var(--ok)}.sem.wa .dot{background:var(--warn)}.sem.ba .dot{background:var(--bad)}
 .sem .st{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--mu)}.sem.ok .st{color:var(--ok)}.sem.wa .st{color:var(--warn)}.sem.ba .st{color:var(--bad)}
 .sem .sv{font-size:26px;font-weight:800;line-height:1.2;margin:2px 0}.sem.big .sv{font-size:32px}.sem .sr{font-size:13px;color:var(--mu)}
+.sem .smon{display:inline-block;font-size:10.5px;font-weight:700;color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:0 5px;margin-top:3px}
 .sem details{margin-top:6px}.sem summary{font-size:12px;font-weight:700;color:var(--ac);cursor:pointer}.sem .sw{font-size:12.5px;margin-top:4px}
 """

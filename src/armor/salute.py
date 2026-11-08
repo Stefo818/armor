@@ -13,6 +13,10 @@ KEY_SERIES = [
     ("t10y3m", "Curva 10Y-3M", 6), ("baa10y", "Spread BAA-10Y", 6), ("icsa", "Richieste sussidio", 12),
     ("cape_m", "CAPE", 50), ("pe_m", "P/E S&P 500", 50), ("ps_m", "P/S S&P 500", 120),
     ("val_pe_vwce", "P/E VWCE (fondo)", 4), ("aaii_spread", "Sentiment AAII", 12), ("unrate", "Disoccupazione", 50),
+    # PIANO_MODELLO §3 (dati nuovi; le date dei trimestrali e mensili FRED sono l'inizio del periodo, quindi il ritardo normale è lungo)
+    ("cp", "Profitti aziendali USA", 240), ("delinq_biz", "Prestiti alle imprese in ritardo", 240), ("core_cpi", "Inflazione di fondo", 75),
+    ("cfnai", "Attività economica (CFNAI)", 90), ("m2", "Massa monetaria M2", 90), ("ciss", "Stress area euro (CISS)", 7),
+    ("iwm", "Piccole aziende (IWM)", 4), ("rev_breadth", "Revisioni degli utili", 5), ("gs10_m", "Tasso 10 anni (storia lunga)", 75),
 ]
 LIGHT = {"ok": "Aggiornato", "wa": "In ritardo", "ba": "Fermo", "na": "Nessun dato"}
 

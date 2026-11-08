@@ -629,3 +629,84 @@ def test_holdings_html_con_cap():
          "sectors": [["Tecnologia", 38.0]]}
     h = holdings.html(d)
     assert "4.100" in h and "n.d." in h
+
+
+# ---------------------------------------------------------------- patch 21: dati nuovi, ritardi, ricerca (nessuna rete)
+def _ms_series(vals, start="2000-01-01"):
+    return pd.Series(vals, index=pd.date_range(start, periods=len(vals), freq="MS"), dtype=float)
+
+
+def test_mensile_rispetta_ritardo():
+    from armor import fondamentali
+    s = _ms_series(np.arange(1, 25))          # dato di gennaio 2000 = 1, febbraio = 2, ...
+    fondamentali.LAG["_prova"] = 45
+    X = fondamentali.mensile(["_prova"], load=lambda k: s, start="2000-01-31", end="2001-12-31")
+    assert np.isnan(X.loc["2000-01-31", "_prova"])            # gennaio è noto solo a metà febbraio
+    assert X.loc["2000-02-29", "_prova"] == 1
+    assert X.loc["2000-03-31", "_prova"] == 2
+    X2 = fondamentali.mensile(["_prova"], load=lambda k: s, start="2000-01-31", end="2001-12-15", con_oggi=True)
+    assert X2.index[-1] == pd.Timestamp("2001-12-15")
+
+
+def test_calcola_derivate_senza_date_future():
+    from armor import fondamentali
+    d = pd.bdate_range("2000-01-03", "2006-12-29")
+    sp = pd.Series(np.linspace(1000, 1500, len(d)), index=d)
+    pe = _ms_series([20.0] * 84)                                 # P/E costante: utili crescono come il prezzo
+    walcl = pd.Series(4_000_000.0, index=pd.date_range("2003-01-01", "2006-12-27", freq="W-WED"))
+    data = {"sp500": sp, "pe_m": pe, "walcl": walcl, "tga": walcl * 0 + 500_000.0, "rrp": pd.Series(100.0, index=d),
+            "cpi": _ms_series(100 * 1.03 ** (np.arange(84) / 12)), "iwm": sp * 0.1, "spy": sp * 0.5}
+    out = fondamentali.calcola(load=lambda k: data.get(k, pd.Series(dtype=float)))
+    eps = out["eps_sp"]
+    assert abs(out["eps_g12"].iloc[-1] - (eps.iloc[-1] / eps.iloc[-13] - 1) * 100) < 1e-9
+    assert abs(out["net_liq"].iloc[-1] - (4000 - 500 - 100)) < 1e-6      # miliardi
+    assert abs(out["cpi_yoy"].iloc[-1] - 3.0) < 0.01
+    assert abs(out["rel_small"].iloc[-1]) < 1e-9                          # stesso andamento: forza relativa nulla
+    for k, s in out.items():
+        assert s.index.max() <= d[-1], k
+
+
+def test_parse_finra_e_ciss():
+    from armor import fondamentali
+    raw = pd.DataFrame([["FINRA margin statistics", None, None], ["Year-Month", "Debit Balances in Customers' Securities Margin Accounts", "Free Credit"],
+                        ["2026-08", 1_200_000, 200_000], ["2026-09", 1_250_000, 210_000]])
+    s = fondamentali.parse_finra(raw)
+    assert s.loc["2026-09-01"] == 1_250_000 and len(s) == 2
+    c = fondamentali.parse_ciss("KEY,FREQ,TIME_PERIOD,OBS_VALUE\nx,D,2026-11-05,0.081\nx,D,2026-11-06,0.09\n")
+    assert c.iloc[-1] == 0.09 and c.index[-1] == pd.Timestamp("2026-11-06")
+
+
+def test_calcola_revisioni_pesate():
+    from armor import fondamentali
+    rows = [{"up": 3, "dn": 1, "g": 10.0, "cap": 3e12}] * 5 + [{"up": 0, "dn": 4, "g": 0.0, "cap": 1e12}] * 5
+    r = fondamentali.calcola_revisioni(rows)
+    assert abs(r["rev_breadth"] - (50 * 3 + (-100) * 1) / 4) < 1e-9
+    assert abs(r["fwd_growth"] - 7.5) < 1e-9
+    assert fondamentali.calcola_revisioni(rows[:9])["rev_breadth"] is None    # meno di 10 titoli: nessun valore
+
+
+def test_ricerca_obiettivi_e_holdout():
+    from armor import ricerca
+    p = _prices(6000, seed=3)
+    p.index = pd.bdate_range("1995-01-02", periods=6000)
+    idx = pd.date_range("1996-01-31", "2017-12-31", freq="ME")
+    Y = ricerca.obiettivi(p, idx)
+    t = idx[10]
+    w = p[(p.index > t) & (p.index <= t + pd.DateOffset(months=6))]
+    p0 = p[p.index <= t].iloc[-1]
+    assert abs(Y.loc[t, "dd_6"] - (w.min() / p0 - 1) * 100) < 1e-9
+    assert Y.loc[t, "rialzo_6"] == float(w.iloc[-1] > p0)
+    X = pd.DataFrame({"a": np.random.default_rng(0).normal(size=len(idx))}, index=idx)
+    pr, cl = ricerca.walk_forward(X, Y["calo10_6"], 6, ["a"], anni=(2005, 2030), min_train=60)
+    chiuse = pr.dropna().index + pd.DateOffset(months=6)
+    assert len(pr.dropna()) > 0 and chiuse.max() <= ricerca.FINE_RICERCA          # mai esiti dopo il 2018 senza holdout
+
+
+def test_semafori_e_candidati_coerenti():
+    from armor import armor_index, fondamentali, semafori, sources
+    keys = [s[0] for s in semafori.SPEC]
+    assert all(len(s) == 10 for s in semafori.SPEC) and len(keys) == len(set(keys))
+    assert semafori.MONITORATI <= set(keys)
+    assert not set(fondamentali.FRED_NUOVE) & set(sources.FRED) and not set(fondamentali.FRED_NUOVE.values()) & set(sources.FRED.values())
+    for k, fam, kind, y, r in armor_index._new_items():
+        assert fam in armor_index.GROUPS and kind in ("hi", "lo")

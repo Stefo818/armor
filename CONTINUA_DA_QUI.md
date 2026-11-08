@@ -161,3 +161,36 @@ Con il passo 21 (più veloce) i numeri sono molto simili.
 
 ## PIANO MODELLO (dopo la patch 20)
 Il piano completo per migliorare le previsioni è in `PIANO_MODELLO.md`: dati sulla salute delle aziende, storia lunga, modello a due stadi, analoghi, regole anti-illusione e regole di adozione, fasi delle patch 21-23. Script dell'analisi di partenza: `scratch/ricerca_opus/`. Copia del progetto nel cloud: `scripts/copia_cloud.py`.
+
+## PATCH 21 (Fase A del PIANO_MODELLO: dati nuovi)
+- `sources.py`: Yahoo `iwm, smh, iyt, kre, copper` (HG=F); `fetch_shiller()` restituisce anche prezzo, dividendi, utili, CPI e GS10 dal 1871.
+- `fondamentali.py` (nuovo):
+  - `FRED_NUOVE`: CP, DRBLACBS, CORBLACBS, DRCCLACBS, BUSLOANS, CPILFESL, PCEPILFE, T5YIFR, CFNAI, SAHMREALTIME, CCSA, PERMIT, ISRATIO, USREC, RECPROUSM156N, M2SL, NFCICREDIT/LEVERAGE/RISK, KCFSI, BAA, AAA, GS10, TB3MS, CPIAUCNS.
+  - BCE CISS (giornaliero), FINRA margin debt (pagina + Excel, un tentativo), Shiller.
+  - Le lente si riscaricano ogni 6 giorni (`data/fonti_lente.json`), con un tempo massimo di 200 s; se FRED fallisce 2 volte di fila si salta il resto.
+  - `raccogli_revisioni()`: 30 titoli, Yahoo `eps_revisions` + `earnings_estimate`, pesati per capitalizzazione, in `rev_breadth` e `fwd_growth` (storico da oggi), dettaglio in `data/revisioni_oggi.json`.
+  - `calcola()`/`aggiorna_derivate()`: eps_sp, eps_g12/g3, sales_g12, margin_sp, erp, cp_g4, cp_gdp, busloans_g6, cpi/core/core_pce yoy, infl_acc, real_ff, net_liq (miliardi) e net_liq_13w, m2_yoy, claims_up, ccsa_yoy, permit_yoy, margin_yoy, indpro_g12, sahm, curve_lunga, baa_lungo, forza relativa a 3 mesi (rel_small/eqw/cicl/semi/trasp/banche/rame_oro/credito/emergenti).
+  - `LAG` (giorni dopo la data del dato) + `nota_al()` + `mensile()` (valore noto a fine mese).
+- Ritardo degli utili: 150 giorni. Prova di sensibilità (calo ≥10% entro 6 mesi, 2000-2018, solo utili): con 60 giorni AUC 0,75, con 120 giorni 0,66, con 180 giorni 0,63. Gli utili mensili storici sono interpolati tra trimestri e pubblicati dopo, quindi con ritardi brevi c'era sguardo al futuro. Da ricordare in Fase B.
+- `jobs.py`:
+  - `fonti_nuove()` dentro `tutto` (fonti lente 240 s, revisioni 90 s); derivate sempre;
+  - `dati-completi` forza le lente;
+  - nuovo comando `ricerca`;
+  - `valuta-modelli` prova anche i nuovi candidati.
+- `semafori.py`:
+  - 33 voci nuove nei gruppi «Salute delle aziende», «Inflazione», «Liquidità e leva», «Mercato interno», più CFNAI, sussidi e permessi in «Economia»;
+  - insieme `MONITORATI` con etichetta «monitorato · non nell'Indice» e nota nei gruppi nuovi.
+- `armor_index.py`: `NEW_IND_FOND` (21 candidati, ognuno nella sua famiglia) + `_new_items()`; `test_new_indicators` e `_apply_extra` generalizzati, stessa regola (AUC +0,01 in ≥2 eventi su 3, nessuno sotto -0,01). Prova locale: nessun candidato adottato (variazioni sotto 0,01).
+- `salute.py`: 9 serie nuove nella salute dei dati.
+- `ricerca.py` (nuovo) + workflow `ricerca.yml` (manuale e il 3 di ogni mese, salva `data/ricerca`):
+  - dataset mensile con ritardi, obiettivi (calo10 3/6/12, calo20 12, rialzo 1/3/6/12);
+  - `walk_forward` con purge, che non accetta esiti dopo il 31/12/2018 senza `holdout=True`;
+  - `segnali_singoli` (soglie pre-registrate), `conteggio_segnali`, logistica per famiglia, storia lunga, `episodi`, `analoghi` (non validati);
+  - registro in `data/ricerca/registro_prove.csv`.
+- Prova locale con i soli dati già presenti (mancano ancora le serie nuove), 1960-2018:
+  - «Solo prezzi», calo ≥10% entro 6 mesi: AUC 0,64, BSS +0,07;
+  - «Storia lunga»: AUC 0,63, BSS +0,06;
+  - famiglia Salute delle aziende (utili, ritardo 150 gg), 2000-2018: AUC 0,65, BSS -0,02;
+  - direzione: nessun miglioramento.
+- Test: 48 verdi (6 nuovi, senza rete).
+- Prossimo: l'utente salva, lancia «Aggiornamento giornaliero Armor» (scarica le serie nuove) e poi `git pull`. Poi Fase B (prompt 2 del piano).
