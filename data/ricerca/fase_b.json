@@ -372,8 +372,8 @@
      "n": 165,
      "eventi": 24,
      "base": 0.145,
-     "auc": 0.772,
-     "bss": 0.182
+     "auc": 0.784,
+     "bss": 0.189
     },
     "A1": {
      "n": 225,
@@ -752,8 +752,8 @@
      "n": 162,
      "eventi": 33,
      "base": 0.204,
-     "auc": 0.755,
-     "bss": 0.209
+     "auc": 0.771,
+     "bss": 0.216
     },
     "A1": {
      "n": 222,
@@ -1132,8 +1132,8 @@
      "n": 156,
      "eventi": 43,
      "base": 0.276,
-     "auc": 0.693,
-     "bss": 0.191
+     "auc": 0.708,
+     "bss": 0.194
     }
    }
   },
@@ -1484,8 +1484,8 @@
      "n": 156,
      "eventi": 16,
      "base": 0.103,
-     "auc": 0.917,
-     "bss": 0.461
+     "auc": 0.922,
+     "bss": 0.474
     }
    }
   },
@@ -1857,8 +1857,8 @@
      "n": 167,
      "eventi": 107,
      "base": 0.641,
-     "auc": 0.441,
-     "bss": 0.006
+     "auc": 0.433,
+     "bss": 0.008
     }
    }
   },
@@ -2230,8 +2230,8 @@
      "n": 165,
      "eventi": 117,
      "base": 0.709,
-     "auc": 0.446,
-     "bss": 0.037
+     "auc": 0.436,
+     "bss": 0.039
     }
    }
   },
@@ -2603,8 +2603,8 @@
      "n": 162,
      "eventi": 124,
      "base": 0.765,
-     "auc": 0.322,
-     "bss": 0.121
+     "auc": 0.307,
+     "bss": 0.128
     }
    }
   },
@@ -2976,8 +2976,8 @@
      "n": 156,
      "eventi": 123,
      "base": 0.788,
-     "auc": 0.373,
-     "bss": 0.088
+     "auc": 0.381,
+     "bss": 0.086
     }
    }
   },
@@ -3031,17 +3031,17 @@
    "auc": 0.266,
    "bss": -0.491,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.772,
+   "rif_auc": 0.784,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.3,
-      "riferimento": 0.686
+      "riferimento": 0.7
      },
      "2013-2018": {
       "modello": 0.135,
-      "riferimento": 0.688
+      "riferimento": 0.696
      }
     },
     "meglio": 0,
@@ -3099,17 +3099,17 @@
    "auc": 0.41,
    "bss": -0.543,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.772,
+   "rif_auc": 0.784,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.3,
-      "riferimento": 0.686
+      "riferimento": 0.7
      },
      "2013-2018": {
       "modello": 0.398,
-      "riferimento": 0.688
+      "riferimento": 0.696
      }
     },
     "meglio": 0,
@@ -3167,17 +3167,17 @@
    "auc": 0.672,
    "bss": 0.045,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.772,
+   "rif_auc": 0.784,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.649,
-      "riferimento": 0.686
+      "riferimento": 0.7
      },
      "2013-2018": {
       "modello": 0.163,
-      "riferimento": 0.688
+      "riferimento": 0.696
      }
     },
     "meglio": 0,
@@ -3235,17 +3235,17 @@
    "auc": 0.668,
    "bss": -0.258,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.772,
+   "rif_auc": 0.784,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.571,
-      "riferimento": 0.686
+      "riferimento": 0.7
      },
      "2013-2018": {
       "modello": 0.386,
-      "riferimento": 0.688
+      "riferimento": 0.696
      }
     },
     "meglio": 0,
@@ -3303,7 +3303,7 @@
    "auc": 0.663,
    "bss": -0.009,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.772,
+   "rif_auc": 0.784,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -3312,11 +3312,11 @@
      },
      "2007-2012": {
       "modello": 0.599,
-      "riferimento": 0.686
+      "riferimento": 0.7
      },
      "2013-2018": {
       "modello": 0.542,
-      "riferimento": 0.688
+      "riferimento": 0.696
      }
     },
     "meglio": 0,
@@ -3374,7 +3374,7 @@
    "auc": 0.493,
    "bss": 0.034,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.772,
+   "rif_auc": 0.784,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -3383,11 +3383,11 @@
      },
      "2007-2012": {
       "modello": 0.497,
-      "riferimento": 0.686
+      "riferimento": 0.7
      },
      "2013-2018": {
       "modello": 0.508,
-      "riferimento": 0.688
+      "riferimento": 0.696
      }
     },
     "meglio": 0,
@@ -3445,7 +3445,7 @@
    "auc": 0.716,
    "bss": 0.066,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.772,
+   "rif_auc": 0.784,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -3454,11 +3454,11 @@
      },
      "2007-2012": {
       "modello": 0.64,
-      "riferimento": 0.686
+      "riferimento": 0.7
      },
      "2013-2018": {
       "modello": 0.562,
-      "riferimento": 0.688
+      "riferimento": 0.696
      }
     },
     "meglio": 0,
@@ -3484,8 +3484,8 @@
      "n": 165,
      "eventi": 24,
      "base": 0.145,
-     "auc": 0.772,
-     "bss": 0.182
+     "auc": 0.784,
+     "bss": 0.189
     },
     "A1": {
      "n": 225,
@@ -3546,17 +3546,17 @@
    "auc": 0.254,
    "bss": -0.504,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.755,
+   "rif_auc": 0.771,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.281,
-      "riferimento": 0.631
+      "riferimento": 0.651
      },
      "2013-2018": {
       "modello": 0.142,
-      "riferimento": 0.718
+      "riferimento": 0.726
      }
     },
     "meglio": 0,
@@ -3614,17 +3614,17 @@
    "auc": 0.376,
    "bss": -0.46,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.755,
+   "rif_auc": 0.771,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.369,
-      "riferimento": 0.631
+      "riferimento": 0.651
      },
      "2013-2018": {
       "modello": 0.476,
-      "riferimento": 0.718
+      "riferimento": 0.726
      }
     },
     "meglio": 0,
@@ -3682,17 +3682,17 @@
    "auc": 0.649,
    "bss": 0.072,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.755,
+   "rif_auc": 0.771,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.594,
-      "riferimento": 0.631
+      "riferimento": 0.651
      },
      "2013-2018": {
       "modello": 0.111,
-      "riferimento": 0.718
+      "riferimento": 0.726
      }
     },
     "meglio": 0,
@@ -3750,17 +3750,17 @@
    "auc": 0.631,
    "bss": -0.209,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.755,
+   "rif_auc": 0.771,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.542,
-      "riferimento": 0.631
+      "riferimento": 0.651
      },
      "2013-2018": {
       "modello": 0.319,
-      "riferimento": 0.718
+      "riferimento": 0.726
      }
     },
     "meglio": 0,
@@ -3818,7 +3818,7 @@
    "auc": 0.646,
    "bss": -0.012,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.755,
+   "rif_auc": 0.771,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -3827,11 +3827,11 @@
      },
      "2007-2012": {
       "modello": 0.558,
-      "riferimento": 0.631
+      "riferimento": 0.651
      },
      "2013-2018": {
       "modello": 0.522,
-      "riferimento": 0.718
+      "riferimento": 0.726
      }
     },
     "meglio": 1,
@@ -3889,7 +3889,7 @@
    "auc": 0.414,
    "bss": 0.014,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.755,
+   "rif_auc": 0.771,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -3898,11 +3898,11 @@
      },
      "2007-2012": {
       "modello": 0.483,
-      "riferimento": 0.631
+      "riferimento": 0.651
      },
      "2013-2018": {
       "modello": 0.469,
-      "riferimento": 0.718
+      "riferimento": 0.726
      }
     },
     "meglio": 0,
@@ -3960,7 +3960,7 @@
    "auc": 0.644,
    "bss": 0.044,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.755,
+   "rif_auc": 0.771,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -3969,11 +3969,11 @@
      },
      "2007-2012": {
       "modello": 0.585,
-      "riferimento": 0.631
+      "riferimento": 0.651
      },
      "2013-2018": {
       "modello": 0.425,
-      "riferimento": 0.718
+      "riferimento": 0.726
      }
     },
     "meglio": 0,
@@ -3999,8 +3999,8 @@
      "n": 162,
      "eventi": 33,
      "base": 0.204,
-     "auc": 0.755,
-     "bss": 0.209
+     "auc": 0.771,
+     "bss": 0.216
     },
     "A1": {
      "n": 222,
@@ -4061,17 +4061,17 @@
    "auc": 0.514,
    "bss": -0.339,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.693,
+   "rif_auc": 0.708,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.562,
-      "riferimento": 0.5
+      "riferimento": 0.515
      },
      "2013-2018": {
       "modello": 0.216,
-      "riferimento": 0.714
+      "riferimento": 0.698
      }
     },
     "meglio": 1,
@@ -4129,17 +4129,17 @@
    "auc": 0.441,
    "bss": -0.688,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.693,
+   "rif_auc": 0.708,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.467,
-      "riferimento": 0.5
+      "riferimento": 0.515
      },
      "2013-2018": {
       "modello": 0.612,
-      "riferimento": 0.714
+      "riferimento": 0.698
      }
     },
     "meglio": 0,
@@ -4197,17 +4197,17 @@
    "auc": 0.597,
    "bss": 0.04,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.693,
+   "rif_auc": 0.708,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.586,
-      "riferimento": 0.5
+      "riferimento": 0.515
      },
      "2013-2018": {
       "modello": 0.256,
-      "riferimento": 0.714
+      "riferimento": 0.698
      }
     },
     "meglio": 1,
@@ -4265,21 +4265,21 @@
    "auc": 0.571,
    "bss": -0.076,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.693,
+   "rif_auc": 0.708,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.49,
-      "riferimento": 0.5
+      "riferimento": 0.515
      },
      "2013-2018": {
       "modello": 0.186,
-      "riferimento": 0.714
+      "riferimento": 0.698
      }
     },
     "meglio": 0,
-    "peggio": 1
+    "peggio": 2
    },
    "promosso": false
   },
@@ -4333,7 +4333,7 @@
    "auc": 0.68,
    "bss": -0.018,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.693,
+   "rif_auc": 0.708,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -4342,11 +4342,11 @@
      },
      "2007-2012": {
       "modello": 0.657,
-      "riferimento": 0.5
+      "riferimento": 0.515
      },
      "2013-2018": {
       "modello": 0.564,
-      "riferimento": 0.714
+      "riferimento": 0.698
      }
     },
     "meglio": 1,
@@ -4404,7 +4404,7 @@
    "auc": 0.428,
    "bss": -0.003,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.693,
+   "rif_auc": 0.708,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -4413,11 +4413,11 @@
      },
      "2007-2012": {
       "modello": 0.503,
-      "riferimento": 0.5
+      "riferimento": 0.515
      },
      "2013-2018": {
       "modello": 0.534,
-      "riferimento": 0.714
+      "riferimento": 0.698
      }
     },
     "meglio": 0,
@@ -4475,7 +4475,7 @@
    "auc": 0.401,
    "bss": -0.008,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.693,
+   "rif_auc": 0.708,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -4484,14 +4484,14 @@
      },
      "2007-2012": {
       "modello": 0.526,
-      "riferimento": 0.5
+      "riferimento": 0.515
      },
      "2013-2018": {
       "modello": 0.403,
-      "riferimento": 0.714
+      "riferimento": 0.698
      }
     },
-    "meglio": 1,
+    "meglio": 0,
     "peggio": 2
    },
    "promosso": false
@@ -4514,8 +4514,8 @@
      "n": 156,
      "eventi": 43,
      "base": 0.276,
-     "auc": 0.693,
-     "bss": 0.191
+     "auc": 0.708,
+     "bss": 0.194
     }
    }
   },
@@ -4569,13 +4569,13 @@
    "auc": 0.936,
    "bss": 0.231,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.917,
+   "rif_auc": 0.922,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.827,
-      "riferimento": 0.828
+      "riferimento": 0.83
      },
      "2013-2018": null
     },
@@ -4634,13 +4634,13 @@
    "auc": 0.296,
    "bss": -0.372,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.917,
+   "rif_auc": 0.922,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.151,
-      "riferimento": 0.828
+      "riferimento": 0.83
      },
      "2013-2018": null
     },
@@ -4699,13 +4699,13 @@
    "auc": 0.951,
    "bss": 0.5,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.917,
+   "rif_auc": 0.922,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.867,
-      "riferimento": 0.828
+      "riferimento": 0.83
      },
      "2013-2018": null
     },
@@ -4764,13 +4764,13 @@
    "auc": 0.931,
    "bss": 0.135,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.917,
+   "rif_auc": 0.922,
    "confronto": {
     "sotto": {
      "2000-2006": null,
      "2007-2012": {
       "modello": 0.812,
-      "riferimento": 0.828
+      "riferimento": 0.83
      },
      "2013-2018": null
     },
@@ -4829,7 +4829,7 @@
    "auc": 0.476,
    "bss": 0.017,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.917,
+   "rif_auc": 0.922,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -4838,7 +4838,7 @@
      },
      "2007-2012": {
       "modello": 0.775,
-      "riferimento": 0.828
+      "riferimento": 0.83
      },
      "2013-2018": null
     },
@@ -4897,7 +4897,7 @@
    "auc": 0.62,
    "bss": 0.038,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.917,
+   "rif_auc": 0.922,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -4906,7 +4906,7 @@
      },
      "2007-2012": {
       "modello": 0.588,
-      "riferimento": 0.828
+      "riferimento": 0.83
      },
      "2013-2018": null
     },
@@ -4965,7 +4965,7 @@
    "auc": 0.404,
    "bss": -0.021,
    "riferimento": "Indice Armor",
-   "rif_auc": 0.917,
+   "rif_auc": 0.922,
    "confronto": {
     "sotto": {
      "2000-2006": {
@@ -4974,7 +4974,7 @@
      },
      "2007-2012": {
       "modello": 0.765,
-      "riferimento": 0.828
+      "riferimento": 0.83
      },
      "2013-2018": null
     },
@@ -5001,8 +5001,8 @@
      "n": 156,
      "eventi": 16,
      "base": 0.103,
-     "auc": 0.917,
-     "bss": 0.461
+     "auc": 0.922,
+     "bss": 0.474
     }
    }
   },
@@ -5521,8 +5521,8 @@
      "n": 167,
      "eventi": 107,
      "base": 0.641,
-     "auc": 0.441,
-     "bss": 0.006
+     "auc": 0.433,
+     "bss": 0.008
     }
    }
   },
@@ -6041,8 +6041,8 @@
      "n": 165,
      "eventi": 117,
      "base": 0.709,
-     "auc": 0.446,
-     "bss": 0.037
+     "auc": 0.436,
+     "bss": 0.039
     }
    }
   },
@@ -6561,8 +6561,8 @@
      "n": 162,
      "eventi": 124,
      "base": 0.765,
-     "auc": 0.322,
-     "bss": 0.121
+     "auc": 0.307,
+     "bss": 0.128
     }
    }
   },
@@ -7069,8 +7069,8 @@
      "n": 156,
      "eventi": 123,
      "base": 0.788,
-     "auc": 0.373,
-     "bss": 0.088
+     "auc": 0.381,
+     "bss": 0.086
     }
    }
   }
@@ -7425,10 +7425,8 @@
    "p_rialzo12_acceso": 81.6
   }
  ],
- "mancanti": [
-  "margin_yoy"
- ],
- "secondi": 82.2,
+ "mancanti": [],
+ "secondi": 161.8,
  "analoghi_oggi": {
   "data": "2026-11-08",
   "colonne": [
@@ -7712,5 +7710,5 @@
   "mesi_in_allarme": 159,
   "falsi_allarmi": 79
  },
- "prove_totali_registro": 256
+ "prove_totali_registro": 369
 }

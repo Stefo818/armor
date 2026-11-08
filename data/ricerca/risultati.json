@@ -3,10 +3,8 @@
  "versione": "Fase A (forma iniziale)",
  "fine_ricerca": "2018-12-31",
  "nota": "Gli anni 2019-oggi non sono stati usati: sono riservati alla prova finale (patch 23).",
- "prove_totali_registro": 96,
- "mancanti": [
-  "margin_yoy"
- ],
+ "prove_totali_registro": 369,
+ "mancanti": [],
  "risultati": [
   {
    "modello": "Solo prezzi",
@@ -3111,5 +3109,5 @@
   "rialzo_6_su_k": 18,
   "nota": "Non ancora validato: si mostra nell'app solo se supera la verifica della Fase B."
  },
- "secondi": 10.2
+ "secondi": 16.5
 }
