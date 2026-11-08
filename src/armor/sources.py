@@ -19,6 +19,8 @@ YF = {
     "vix": ("^VIX", "America/New_York", "16:30"),
     "vix3m": ("^VIX3M", "America/New_York", "16:30"),
     "vix9d": ("^VIX9D", "America/New_York", "16:30"),
+    "vix6m": ("^VIX6M", "America/New_York", "16:30"),   # PIANO_ARMOR3 Fase 2: curva a termine della volatilità implicita
+    "vix1y": ("^VIX1Y", "America/New_York", "16:30"),
     "vvix": ("^VVIX", "America/New_York", "16:30"),
     "skew": ("^SKEW", "America/New_York", "16:30"),
     "move": ("^MOVE", "America/New_York", "16:30"),
@@ -68,6 +70,7 @@ FRED = {
     "equity_value": "NCBEILQ027S", "gdp": "GDP",
     "umcsent": "UMCSENT", "philly": "GACDFSA066MSFRBPHI", "empire": "GACDISA066MSFRBNY", "dgorder": "DGORDER", "neworder": "NEWORDER",
     "indpro": "INDPRO", "payems": "PAYEMS", "retail": "RSAFS",
+    "dexuseu": "DEXUSEU",   # dollari per euro (PIANO_ARMOR3 Fase 3: VWCE in euro)
     "walcl": "WALCL", "wresbal": "WRESBAL", "rrp": "RRPONTSYD", "tga": "WTREGEN",
 }
 
@@ -124,6 +127,31 @@ def fetch_yf(sid: str, start: str | None) -> pd.Series:
                 s.index = pd.to_datetime(s.index).tz_localize(None).normalize()
                 s = s[s > 0]
                 return drop_open_session(s, tz, close)
+            last = "nessun dato"
+        except Exception as e:  # noqa: BLE001
+            last = str(e)
+        time.sleep(3 * (i + 1))
+    raise RuntimeError(last or "errore")
+
+
+OHLC_IDS = {"sp_open": "Open", "sp_high": "High", "sp_low": "Low"}   # ^GSPC dal 1990 (PIANO_ARMOR3 Fase 6a: stimatore Yang-Zhang)
+
+
+def fetch_sp_ohlc(start: str = "1990-01-01") -> dict[str, pd.Series]:
+    """Apertura, massimo e minimo di ^GSPC (la chiusura è già nella serie sp500)."""
+    import yfinance as yf
+
+    last = None
+    for i in range(3):
+        try:
+            h = yf.Ticker("^GSPC").history(start=start, auto_adjust=False, actions=False)
+            if h is not None and not h.empty:
+                out = {}
+                for sid, col in OHLC_IDS.items():
+                    s = h[col].copy()
+                    s.index = pd.to_datetime(s.index).tz_localize(None).normalize()
+                    out[sid] = drop_open_session(s[s > 0], "America/New_York", "16:30")
+                return out
             last = "nessun dato"
         except Exception as e:  # noqa: BLE001
             last = str(e)
@@ -309,6 +337,13 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
             fred_fails += 1
             store.set_status(st, sid, False, str(e))
     print(f"[dati] FRED in {_t.time() - t1:.0f}s", flush=True)
+    if not only or any(k in only for k in OHLC_IDS):
+        try:   # una sola richiesta per tre serie: se Yahoo non risponde, il ciclo continua
+            for sid, ser in fetch_sp_ohlc().items():
+                store.set_status(st, sid, True, "", store.upsert(sid, ser))
+        except Exception as e:  # noqa: BLE001
+            for sid in OHLC_IDS:
+                store.set_status(st, sid, False, str(e)[:120])
     for sid, url in CBOE.items():
         if only and sid not in only:
             continue

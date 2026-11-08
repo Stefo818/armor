@@ -70,12 +70,17 @@ def horizon_simple(hz, r, mat_hz, spot, rel, old_card_html):
     if rel:
         relw = {"Utile": "<span class='badge ok'>Stima affidabile nei test</span>", "Debole": "<span class='badge warn'>Stima debole: usala solo come indizio</span>",
                 "Non affidabile": "<span class='badge bad'>Stima poco affidabile</span>"}[rel[0]]
-    mot = r.get("motore")
-    if mot:
-        relw += (f"<div class='mu' style='margin-top:4px'>Motore per questo orizzonte: <b>{mot}</b> (nella verifica storica più affidabile di A1, "
-                 f"che stimava {P(r['p_a1'][prim]) if r.get('p_a1') else 'n.d.'}). Dettagli in «Quanto fidarsi».</div>")
-    if r.get("coerenza"):
-        relw += "<div class='mu' style='margin-top:4px'>Alzata per coerenza: non può essere più bassa della stessa soglia a un orizzonte più breve.</div>"
+    sf = r.get("sfidante")
+    if sf and prim in sf.get("p", {}):
+        ps = sf["p"][prim]
+        relw += (f"<div class='mu sfr' style='margin-top:6px'><span class='badge warn'>Sperimentale</span> Modello in prova ({sf['motore']}): "
+                 f"scendere di almeno {prim}% = <b>{P(ps)}</b> (A1: {P(pdn)}). Non è il numero principale: è in verifica dal vivo.</div>")
+        if sf.get("div"):
+            relw += ("<div class='vd bad' style='margin-top:6px'><b>Divergenza.</b> La simulazione guidata dalla volatilità di oggi vede più stress "
+                     "del modello sulla tendenza dei prezzi. Quando i due si separano così, la stima è meno sicura: guarda entrambe.</div>" if ps >= pdn else
+                     "<div class='vd warn' style='margin-top:6px'><b>Divergenza.</b> La simulazione guidata dalla volatilità di oggi vede meno stress del modello sulla tendenza dei prezzi.</div>")
+    if r.get("avviso_coerenza"):
+        relw += "<div class='mu' style='margin-top:4px'>Controllo di coerenza: A1 dà qui una probabilità più bassa di un orizzonte più breve (" + "; ".join(r["avviso_coerenza"][:2]) + "). I numeri non sono stati modificati.</div>"
     return (f"<div class='card hz2'><div class='hzh'><h3>{HZ_LABEL[hz]}</h3><span class='badge {lev[0]}'>{lev[1]}</span></div>"
             f"<div class='vd {cls}'>{words}</div>{rows}{typ}<div style='margin-top:8px'>{relw}</div>"
             f"<details><summary>Più dettagli (altre soglie, perché, affidabilità)</summary><div class='old'>{old_card_html}</div></details></div>")

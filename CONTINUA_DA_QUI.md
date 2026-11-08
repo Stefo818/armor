@@ -359,3 +359,13 @@ In tutto 159 mesi di allarme, di cui 79 falsi.
 Il piano successivo è in `PIANO_ARMOR3.md`: sintesi delle revisioni di Claude, GPT, Gemini e DeepSeek più due misure sul codice reale.
 - Misure: persistenza del GARCH 0,989 (emivita circa 63 sedute); a 252 sedute centro della distribuzione e probabilità di calo corretti, ma code che esplodono (curtosi 50-75 contro 1-3 storica).
 - Fasi: 0 (A1 di nuovo riferimento, FHS+VIX sperimentale affiancato), 1 (verifica rigorosa e protocollo), 2+7 (motore unico di percorsi e diario v3), 3 (VWCE in euro), 4 (affidabilità), 5 (simulatore PAC), 6 (esperimenti VRP/HAR).
+
+## PATCH 26 (Fase 0 del PIANO ARMOR 3: A1 di nuovo numero principale)
+- `jobs.forecast()` non sostituisce più le probabilità: A1 è il riferimento ufficiale a tutti gli orizzonti e il diario registra `model=A1`.
+- `campioni.sfidante()` calcola FHS+VIX (peso 0,5, VIX dell'ultima seduta entro 7 giorni) e lo salva in `pred[hz]['sfidante']` = `{motore, p, div, vix}`. `campioni.applica()` resta solo per i test.
+- Badge «Divergenza» (`campioni.divergenza`): |sfidante − A1| ≥ 5 punti e rapporto ≥ 2 sulla soglia principale. Le schede (`chiaro.horizon_simple`) mostrano «Sperimentale: modello in prova (FHS+VIX) X% (A1: Y%)» e la spiegazione. Nessuna media.
+- `campioni.avvisi_coerenza()`: solo avviso se A1 non è monotono tra orizzonti, senza toccare i numeri.
+- Diario ombra: FHS+VIX aggiunto accanto a FHS (`shadow.predictions`, nome `FHS+VIX`).
+- «Quanto fidarsi»: la sezione si chiama «Sfidanti in prova»; testo: la scelta fu fatta guardando la stessa valutazione, non è una prova; revisione descrittiva il **10 maggio 2027**, nessuna promozione automatica.
+- Nuovi download (solo in GitHub Actions): `vix6m` (^VIX6M), `vix1y` (^VIX1Y) con Yahoo; `dexuseu` (FRED DEXUSEU); `sp_open`, `sp_high`, `sp_low` (^GSPC dal 1990, una sola richiesta, `sources.fetch_sp_ohlc`). Se non arrivano il ciclo continua: serviranno a Fase 2 (curva VIX), Fase 3 (euro) e Fase 6a (Yang-Zhang). **Non verificati da qui (rete bloccata): controllare i log di «Aggiornamento giornaliero Armor».**
+- `sw.js` v13. Test 60 verdi.

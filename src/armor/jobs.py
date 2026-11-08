@@ -23,11 +23,16 @@ def forecast(write: bool = True) -> dict:
     pred = eng.predict(fitted, t)
     import copy
     pred_a1 = copy.deepcopy(pred)
-    try:   # un motore per ogni orizzonte (campioni.py): dove lo sfidante è verificato migliore, le probabilità vengono da lui
+    try:   # sfidante in prova (FHS+VIX): affiancato in pred[hz]['sfidante'], NON sostituisce A1 (PIANO_ARMOR3 Fase 0)
         from . import campioni
-        pred, mid = campioni.applica(pred, p, t, mid)
+        pred = campioni.sfidante(pred, p, t)
+        av = campioni.avvisi_coerenza(pred)
+        if av:
+            print("[coerenza] A1 non monotono tra orizzonti:", "; ".join(av), flush=True)
+            for r in pred.values():
+                r["avviso_coerenza"] = av
     except Exception as e:  # noqa: BLE001
-        print("[campioni] non applicati, resta A1:", str(e)[:100])
+        print("[sfidante] non calcolato:", str(e)[:100])
     v = vwce_series()
     spot = float(v.reindex([t], method="ffill").iloc[0]) if not v.empty else float("nan")
     n = journal.append(t.strftime("%Y-%m-%d"), spot, pred, model=mid) if write else 0

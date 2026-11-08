@@ -1,4 +1,9 @@
-"""Un motore per ogni orizzonte (1 settimana, 1 mese, 3 mesi, 6 mesi): per ciascuno si usa quello che nella verifica funziona meglio.
+"""SFIDANTI IN PROVA (dalla patch 26, PIANO_ARMOR3 Fase 0). Il numero principale è SEMPRE A1; FHS+VIX è affiancato, etichettato «sperimentale».
+`sfidante()` calcola FHS+VIX e lo mette in pred[hz]['sfidante']; `applica()` (patch 24) non è più chiamata dal ciclo giornaliero, resta solo per i test.
+La tabella sotto resta come informazione: la scelta fu fatta guardando la stessa valutazione, quindi NON è una prova. Decide il diario dal vivo.
+Revisione descrittiva: 10 maggio 2027 (nessuna promozione automatica).
+
+Un motore per ogni orizzonte (1 settimana, 1 mese, 3 mesi, 6 mesi): per ciascuno si usa quello che nella verifica funziona meglio.
 
 Fonte: data/model_eval.json (valutazione walk-forward 1994-oggi di `valuta-modelli`, previsioni fatte solo con i dati noti a ogni data,
 rifatta ogni mese). Regola fissa (decisa a novembre 2026 guardando quella stessa valutazione: c'è quindi un po' di scelta a posteriori,
@@ -119,6 +124,60 @@ def applica(pred: dict, p: pd.Series, t, mid: str, camp: dict | None = None, fhs
     return pred, f"{mid}+{tag}({','.join(h for h in HORIZONS if h in ok)})"
 
 
+REVISIONE = "10 maggio 2027"
+DIVERGENZA_PUNTI, DIVERGENZA_RAPPORTO = 0.05, 2.0
+
+
+def divergenza(p_a1: float, p_sf: float) -> bool:
+    """Badge «Divergenza»: differenza di almeno 5 punti e rapporto almeno 2 (in entrambe le direzioni)."""
+    if abs(p_sf - p_a1) < DIVERGENZA_PUNTI - 1e-12:
+        return False
+    lo, hi = sorted((p_a1, p_sf))
+    return hi >= DIVERGENZA_RAPPORTO * max(lo, 1e-9)
+
+
+def _vix_a(t) -> float | None:
+    v = store.load("vix").dropna()
+    v = v[v.index <= pd.Timestamp(t)]
+    return float(v.iloc[-1]) if len(v) and (pd.Timestamp(t) - v.index[-1]).days < 7 else None
+
+
+def sfidante(pred: dict, p: pd.Series, t, fhs_fn=None, vix: float | None = None) -> dict:
+    """Aggiunge a ogni orizzonte pred[hz]['sfidante'] = {'motore': 'FHS+VIX', 'p': {...}, 'div': bool}. Le probabilità principali NON cambiano."""
+    if fhs_fn is None:
+        from . import fhs
+        fhs_fn = fhs.forecast
+    try:
+        vix = vix if vix is not None else _vix_a(t)
+        seed = int(pd.Timestamp(t).strftime("%Y%m%d")) % (2 ** 31)
+        f = fhs_fn(p, date=t, sims=5000, seed=seed, vix=vix, w=0.5)
+    except Exception as e:  # noqa: BLE001
+        print("[sfidante] FHS+VIX non calcolato:", str(e)[:80], flush=True)
+        return pred
+    for hz, r in pred.items():
+        if hz not in HORIZONS or hz not in f:
+            continue
+        try:
+            sp = {thr: float(f[hz]["down"][thr]["p"]) for thr in r["p"]}
+            prim = PRIMARY[hz]
+            r["sfidante"] = {"motore": "FHS+VIX", "p": sp, "div": divergenza(r["p"][prim], sp[prim]), "vix": vix}
+        except Exception as e:  # noqa: BLE001
+            print(f"[sfidante] {hz}:", str(e)[:60], flush=True)
+    return pred
+
+
+def avvisi_coerenza(pred: dict) -> list[str]:
+    """Controllo (senza modificare i numeri): un calo entro un orizzonte più lungo non può essere meno probabile dello stesso calo entro uno più breve."""
+    out, visti = [], {}
+    for hz in sorted((h for h in pred if h in HORIZONS), key=lambda h: HORIZONS[h]):
+        for thr, v in pred[hz]["p"].items():
+            if thr in visti and v < visti[thr][1] - 1e-9:
+                out.append(f"calo ≥{thr}%: {HZ_IT.get(hz, hz)} {v:.0%} è sotto {HZ_IT.get(visti[thr][0], visti[thr][0])} {visti[thr][1]:.0%}")
+            if thr not in visti or v > visti[thr][1]:
+                visti[thr] = (hz, v)
+    return out
+
+
 def coerenza(pred: dict) -> dict:
     """Con motori diversi per orizzonte, un calo entro 6 mesi non può essere meno probabile dello stesso calo entro 3 mesi:
     per ogni soglia si prende il massimo con gli orizzonti più brevi (e si annota quando succede)."""
@@ -155,9 +214,10 @@ def html() -> str:
         sf = v.get("sfidanti", {})
         best = sf.get(v["motore"], {}) if v["motore"] != "A1" else {}
         alt = "; ".join(f"{c}: {f(x['bss_2000_12'])} / {f(x['bss_2013_26'])}{' ✓' if x['passa'] else ''}" for c, x in sf.items())
-        rows += (f"<div class='rmr'><div class='rmh'><b>{HZ_IT.get(hz, hz)}</b><span class='badge {'ok' if v['motore'] != 'A1' else 'warn'}'>{NOMI.get(v['motore'], v['motore'])}</span></div>"
+        rows += (f"<div class='rmr'><div class='rmh'><b>{HZ_IT.get(hz, hz)}</b><span class='badge {'ok' if v['motore'] != 'A1' else 'warn'}'>{'sfidante che passa la vecchia regola: ' + NOMI.get(v['motore'], v['motore']) if v['motore'] != 'A1' else 'nessuno sfidante passa la regola'}</span></div>"
                  f"<div class='rmg'><div><span>A1: BSS 2000-12 / 2013-oggi</span>{f(a1.get('bss_2000_12'))} / {f(a1.get('bss_2013_26'))}</div>"
                  f"<div><span>Sfidanti</span>{alt or 'nessuno'}</div></div></div>")
-    return ("<p>Ogni orizzonte usa il motore che nella verifica storica (1994-oggi, sempre e solo con i dati noti a ogni data) ha dato probabilità più affidabili. "
-            "Uno sfidante sostituisce A1 solo se è migliore sia nel 2000-2012 sia nel 2013-oggi. La scelta si rifà ogni mese con la convalida.</p>" + rows +
+    return ("<p><b>Il numero principale è A1.</b> FHS+VIX è affiancato come «sperimentale»: la tabella sotto mostra come sarebbe andato nella valutazione storica "
+            "(1994-oggi, con i dati noti a ogni data), ma la regola era stata fissata guardando quella stessa valutazione, quindi <b>non è una prova</b>. "
+            f"Decide il diario dal vivo: prima revisione descrittiva il {REVISIONE}, nessuna promozione automatica.</p>" + rows +
             "<p class='mu'>BSS: quanto la probabilità è migliore della semplice frequenza storica (0 = uguale; più alto = meglio).</p>")

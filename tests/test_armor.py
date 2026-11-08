@@ -856,3 +856,23 @@ def test_lista_semafori_e_link():
              {"key": "t10y3m", "name": "Curva", "group": "Tassi", "value": 0.6, "dec": 2, "unit": "", "light": "ok", "date": "06/11/2026", "pct": None, "zones": "z"}]
     h = semafori.lista_html(items)
     assert "id='semmod'" in h and "data-sml='ba'" in h and "data-sml='ok'" in h and "data-sml='wa'" not in h and "data-chart='vix'" in h
+
+
+def test_patch26_a1_resta_principale_sfidante_affiancato():
+    from armor import campioni, chiaro
+    fake = lambda p, date=None, sims=0, seed=0, vix=None, w=0: {"1m": {"down": {5: {"p": 0.30}, 10: {"p": 0.11}}}, "3m": {"down": {10: {"p": 0.24}}}}
+    pr = {"1m": {"p": {5: 0.17, 10: 0.03}, "base": {5: 0.19, 10: 0.05}, "ratio": 0.6, "level": "Normale"},
+          "3m": {"p": {10: 0.08}, "base": {10: 0.15}, "ratio": 0.5, "level": "Basso"}}
+    out = campioni.sfidante(pr, None, "2026-11-06", fhs_fn=fake, vix=25.0)
+    assert out["1m"]["p"][10] == 0.03 and out["3m"]["p"][10] == 0.08            # A1 non cambia
+    assert out["1m"]["sfidante"]["p"][10] == 0.11 and out["1m"]["sfidante"]["div"] is True
+    assert out["3m"]["sfidante"]["div"] is True
+    assert campioni.divergenza(0.20, 0.24) is False and campioni.divergenza(0.02, 0.06) is False and campioni.divergenza(0.10, 0.17) is False
+    assert campioni.divergenza(0.30, 0.10) is True
+    # controllo di coerenza: avvisa, non modifica
+    pc = {"3m": {"p": {10: 0.24}}, "6m": {"p": {10: 0.15}}}
+    av = campioni.avvisi_coerenza(pc)
+    assert av and pc["6m"]["p"][10] == 0.15
+    assert campioni.avvisi_coerenza({"3m": {"p": {10: 0.1}}, "6m": {"p": {10: 0.2}}}) == []
+    h = chiaro.horizon_simple("1m", {**out["1m"], "ratio": 0.6}, {"up": {10: {"p": 0.1, "base": 0.1}}}, 100.0, None, "")
+    assert "Sperimentale" in h and "Divergenza" in h

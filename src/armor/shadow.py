@@ -12,7 +12,7 @@ from .model import level_of
 
 SHADOW = DATA / "journal_shadow.csv"
 EVAL = DATA / "model_eval.json"
-NOMI = {"FHS": "FHS (simulazione)", "MV-logit": "Multi-variabile (logistica)", "MV-GBM": "Multi-variabile (alberi)",
+NOMI = {"FHS": "FHS (simulazione)", "FHS+VIX": "FHS + VIX (simulazione corretta con il VIX)", "MV-logit": "Multi-variabile (logistica)", "MV-GBM": "Multi-variabile (alberi)",
         "MVF-GBM": "Multi-variabile + famiglie Indice (alberi)", "Combinato-pesi": "Combinato (pesi, senza taratura)"}
 MIN_MONTHS = 6   # prima di questo il confronto e' solo indicativo
 
@@ -68,6 +68,14 @@ def predictions(p: pd.Series, t, a1: dict) -> dict[str, dict]:
         ret["FHS"] = {hz: {k: f[hz]["ret_analog"][k] for k in ("q10", "q50", "q90")} for hz in HORIZONS}
     except Exception as e:  # noqa: BLE001
         print("[ombra] FHS non calcolato:", str(e)[:80])
+    try:   # sfidante in prova: stessa simulazione corretta con il VIX (peso 0,5), dalla patch 26 nel diario ombra
+        from . import campioni
+        v = campioni._vix_a(t)
+        f2 = fhs.forecast(p, date=t, sims=3000, seed=int(pd.Timestamp(t).strftime("%Y%m%d")) % (2 ** 31), vix=v, w=0.5)
+        raw["FHS+VIX"] = {hz: {th: f2[hz]["down"][th]["p"] for th in TARGETS[hz]} for hz in HORIZONS if th_ok(f2, hz)}
+        ret["FHS+VIX"] = {hz: {k: f2[hz]["ret_analog"][k] for k in ("q10", "q50", "q90")} for hz in HORIZONS}
+    except Exception as e:  # noqa: BLE001
+        print("[ombra] FHS+VIX non calcolato:", str(e)[:80])
     for name, algo, fam in (("MV-logit", "logit", False), ("MV-GBM", "gbm", False), ("MVF-GBM", "gbm", True)):
         try:
             r = _mv(p, t, algo, fam)
@@ -75,7 +83,7 @@ def predictions(p: pd.Series, t, a1: dict) -> dict[str, dict]:
                 raw[name] = r
         except Exception as e:  # noqa: BLE001
             print(f"[ombra] {name} non calcolato:", str(e)[:80])
-    for name in ("FHS", "MV-logit", "MV-GBM", "MVF-GBM"):
+    for name in ("FHS", "FHS+VIX", "MV-logit", "MV-GBM", "MVF-GBM"):
         if name in raw:
             out[name] = _pred(raw[name], a1, ret.get(name))
     c = combined(raw)
