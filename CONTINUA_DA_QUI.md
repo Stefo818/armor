@@ -194,3 +194,108 @@ Il piano completo per migliorare le previsioni è in `PIANO_MODELLO.md`: dati su
   - direzione: nessun miglioramento.
 - Test: 48 verdi (6 nuovi, senza rete).
 - Prossimo: l'utente salva, lancia «Aggiornamento giornaliero Armor» (scarica le serie nuove) e poi `git pull`. Poi Fase B (prompt 2 del piano).
+
+## PATCH 22 + 23 (Fase B, Fase C, prova finale) + sezione «Aziende VWCE»
+**Dati arrivati**: 33 serie nuove su 34 (giornaliero dell'8/11 dopo la patch 21). Non è arrivato solo il margin debt FINRA (pagina 404): ora si provano due indirizzi (`FINRA_PAGES`). Revisioni degli utili: 30 titoli, ampiezza +23, crescita attesa +21,7%.
+
+**Errori corretti**
+- `fondamentali.calcola` si fermava con KeyError 'fedfunds' appena c'era l'inflazione di fondo. Nel giornaliero dell'8/11 nessuna serie derivata era stata aggiornata. Ora usa un defaultdict e `fedfunds` è tra gli input.
+- Il registro delle prove mescolava colonne diverse: ora ha colonne fisse (`COLONNE_REG`).
+
+**Fase B** (`ricerca.fase_b`, regole pre-registrate in testa alla sezione Fase B di `ricerca.py`)
+- Modelli provati, su 8 obiettivi × 2 periodi:
+  - logistica;
+  - alberi monotoni con taratura di Platt (mai con pendenza negativa);
+  - mesi simili (k=25);
+  - famiglie combinate con pesi non negativi;
+  - due stadi (recessione entro 12 mesi da USREC/NBER, purge 24 mesi, poi calo);
+  - «caro + deterioramento»;
+  - conteggio dei segnali.
+- Riferimenti sugli stessi mesi: Solo prezzi, Indice Armor (valore grezzo), A1 (`risk_history.csv`).
+- Registro: 256 combinazioni uniche (96 Fase A, 148 Fase B, 12 prova finale).
+
+**Risultati, AUC su 100 e BSS**
+
+1960-2018, riferimento «Solo prezzi»:
+
+| Obiettivo | Esito |
+|---|---|
+| Calo ≥10% entro 3 mesi | Due stadi 71 (BSS +0,09), Famiglie 70 (+0,04), riferimento 65. **Entrambi promossi in ombra.** |
+| Calo ≥10% entro 6 mesi | Migliore 64 (Famiglie), riferimento 64. Nessuno promosso. |
+| Calo ≥10% entro 12 mesi | Migliore 62, riferimento 61. Nessuno promosso. |
+| Calo ≥20% entro 12 mesi | Migliore 62, riferimento 66. Nessuno promosso. |
+
+Sottoperiodi dei promossi (1960-89 / 1990-2009 / 2010-18), contro il riferimento:
+- Due stadi: 67 / 82 / 49 contro 62 / 75 / 40.
+- Famiglie: 66 / 78 / 62 contro 63 / 75 / 40.
+
+2000-2018, riferimento Indice Armor (A1 a 3 mesi 74):
+
+| Obiettivo | Migliore | Indice Armor |
+|---|---|---|
+| Calo ≥10% entro 3 mesi | 72 (Conteggio) | 78 |
+| Calo ≥10% entro 6 mesi | 65 (Mesi simili) | 77 |
+| Calo ≥10% entro 12 mesi | 68 (Due stadi) | 71 |
+| Calo ≥20% entro 12 mesi | 95 (Mesi simili) | 92 |
+
+Il 95 dei mesi simili è migliore in un solo sottoperiodo, quindi non promosso. Nessuno promosso nel 2000-2018.
+
+Direzione: nessun modello con BSS > 0,01 su nessun orizzonte. **Resta imprevedibile.**
+
+I mesi simili non hanno superato la regola, quindi `analoghi_validati` = falso: nell'app sono etichettati «descrittivo, non è una previsione».
+
+Episodi 1960-2018 (Famiglie, calo ≥10% entro 12 mesi), mesi in allarme nei 12 mesi prima del massimo:
+
+| 1966 | 1968 | 1973 | 1980 | 1987 | 2000 | 2007 |
+|---|---|---|---|---|---|---|
+| 12 | 10 | 3 | 7 | 0 | 0 | 5 |
+
+In tutto 159 mesi di allarme, di cui 79 falsi.
+
+**Prova finale 2019-2026** (`ricerca.prova_finale`, UNA volta, salvata in `data/ricerca/prova_finale.json`; se il file esiste non si rifà)
+
+| Obiettivo | Mesi / eventi | Indice Armor | A1 | Solo prezzi | Modelli promossi |
+|---|---|---|---|---|---|
+| Calo ≥10% entro 3 mesi | 91 / 13 | 60 | 40 | 60 | Famiglie 46 (BSS -0,09); Due stadi 52 (BSS -0,07) |
+| Calo ≥10% entro 6 mesi | 88 / 22 | 46 | 34 | 53 | — |
+| Calo ≥10% entro 12 mesi | 82 / 34 | 31 | — | 43 | — |
+| Calo ≥20% entro 12 mesi | 82 / 16 | 21 | — | 25 | — |
+
+- **Adottati: nessuno.** I numeri principali dell'app non cambiano.
+- Nel 2019-2026 i grandi cali (2020, 2022, 2025) sono partiti da situazioni calme, e dopo i cali il rischio misurato era alto mentre il mercato risaliva. Per questo anche l'Indice Armor e A1 a 6-12 mesi sono sotto 50.
+
+**Fase C** (`ciclico.py`)
+- `aggiorna()` gira ogni giorno in `tutto` e scrive `data/ciclico_oggi.json`:
+  - stato dei 13 segnali con i valori noti oggi;
+  - percentile del numero di segnali accesi dal 1990;
+  - mesi simili;
+  - previsioni dei modelli in ombra, anche in `data/ombra_ciclica.csv`.
+- Oggi:
+  - riquadro «Rischio ciclico 6-12 mesi»: segnali accesi/spenti con le frequenze 1990-2018 da `fase_b.json`; senza percentuale, perché nessun modello è adottato;
+  - riquadro «Mesi del passato più simili a oggi», descrittivo.
+- Quanto fidarsi: sezione «Ricerca modello» (migliore contro riferimento per obiettivo, prova finale, direzione, episodi).
+- Mappa: 8 righe nuove monitorate (utili, sussidi, prestiti in ritardo, inflazione di fondo, CISS, piccole aziende, ciclici, liquidità Fed), con il percentile invertito per quelle in cui «basso = rischio».
+- Lettura dell'8/11/2026:
+  - 3 segnali accesi su 13 (CAPE > 30, premio utili-bond < 1%, inflazione > 4%), 55° percentile;
+  - ombra a 3 mesi: Famiglie 21%, Due stadi 28%, contro una frequenza normale del 15%;
+  - mesi simili: 17 su 25 in rialzo a 12 mesi, mediana +8,9%, 10 su 25 con un calo ≥10% lungo la strada.
+
+**Aziende VWCE** (`aziende.py`, nuova pagina «Aziende VWCE»)
+- Lista: 47 candidate. Peso stimato dalla capitalizzazione (riferimento `holdings.json`, altrimenti NVIDIA 5%); si tengono le prime 30.
+- Bilanci Yahoo:
+  - conto economico trimestrale e annuale: fatturato, utile netto, utile operativo → margine operativo;
+  - stato patrimoniale: debito totale, liquidità.
+- Confronto: ultimo trimestre contro lo stesso trimestre dell'anno prima (se ci sono almeno 5 trimestri), altrimenti anno fiscale contro il precedente.
+- Etichetta con regola fissa: fatturato ±3%, utile ±5%, margine ±1 punto, debito netto su fatturato ±0,05. Con +2 punti «In miglioramento», con -2 o meno «In peggioramento».
+- Download in `fonti_nuove()` una volta ogni 6 giorni, tempo massimo 240 s, 6 in parallelo. Se un'azienda fallisce si tiene il dato precedente (segnalato); se falliscono tutte si tiene il file precedente.
+- Non ancora scaricato: il primo giro avviene nel prossimo giornaliero.
+
+**Altro**
+- Comando `ricerca-finale` (mostra il risultato salvato).
+- `ricerca.run()` = Fase A + Fase B: il workflow mensile rifà la ricerca ma non la prova finale.
+- `sw.js` v10. Test 54 verdi.
+
+**Prossimo**
+- Controllare la prima esecuzione di Aziende VWCE (riga `[aziende]` nel log) e del margin debt.
+- Tra circa 6 mesi confrontare `ombra_ciclica.csv` con gli esiti reali.
+- I modelli promossi in futuro dalla ricerca mensile restano in ombra: per adottarli servirebbe una nuova prova su anni non usati (dopo il 2026).

@@ -1,0 +1,64 @@
+[
+ {
+  "episodi": [
+   {
+    "massimo": "1961-12",
+    "minimo": "1962-06",
+    "calo": -28.0,
+    "mesi_valutati": 0,
+    "mesi_in_allarme_prima": 0
+   },
+   {
+    "massimo": "1966-02",
+    "minimo": "1966-10",
+    "calo": -22.2,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 12
+   },
+   {
+    "massimo": "1968-11",
+    "minimo": "1970-05",
+    "calo": -36.1,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 10
+   },
+   {
+    "massimo": "1973-01",
+    "minimo": "1974-10",
+    "calo": -48.2,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 3
+   },
+   {
+    "massimo": "1980-11",
+    "minimo": "1982-08",
+    "calo": -27.1,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 7
+   },
+   {
+    "massimo": "1987-08",
+    "minimo": "1987-12",
+    "calo": -33.5,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 0
+   },
+   {
+    "massimo": "2000-03",
+    "minimo": "2002-10",
+    "calo": -49.1,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 2
+   },
+   {
+    "massimo": "2007-10",
+    "minimo": "2009-03",
+    "calo": -56.8,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 2
+   }
+  ],
+  "mesi_in_allarme": 187,
+  "falsi_allarmi": 108
+ }
+]

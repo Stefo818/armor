@@ -1,0 +1,61 @@
+{
+ "data": "2026-11-08",
+ "promossi": [
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "auc": 0.698,
+   "bss": 0.039,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "auc": 0.712,
+   "bss": 0.093,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647
+  }
+ ]
+}

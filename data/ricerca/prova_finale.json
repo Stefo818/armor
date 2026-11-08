@@ -1,0 +1,130 @@
+{
+ "data": "2026-11-08",
+ "anni": "2019-2026",
+ "nota": "Prova unica: gli anni 2019-oggi non erano mai stati usati nella ricerca.",
+ "promossi_provati": 2,
+ "esiti": [
+  {
+   "ob": "calo10",
+   "h": 3,
+   "riferimenti": {
+    "Solo prezzi": {
+     "n": 91,
+     "eventi": 13,
+     "base": 0.143,
+     "auc": 0.598,
+     "bss": -0.004
+    },
+    "Indice Armor": {
+     "n": 91,
+     "eventi": 13,
+     "base": 0.143,
+     "auc": 0.605,
+     "bss": -0.043
+    },
+    "A1": {
+     "n": 91,
+     "eventi": 13,
+     "base": 0.143,
+     "auc": 0.405,
+     "bss": -0.08
+    }
+   },
+   "modelli": [
+    {
+     "modello": "Famiglie combinate (storia lunga)",
+     "periodo_tipo": "lungo",
+     "n": 91,
+     "eventi": 13,
+     "base": 0.143,
+     "auc": 0.462,
+     "bss": -0.085,
+     "auc_indice_stessi_mesi": 0.605,
+     "adottato": false
+    },
+    {
+     "modello": "Due stadi: recessione poi calo (storia lunga)",
+     "periodo_tipo": "lungo",
+     "n": 91,
+     "eventi": 13,
+     "base": 0.143,
+     "auc": 0.521,
+     "bss": -0.073,
+     "auc_indice_stessi_mesi": 0.605,
+     "adottato": false
+    }
+   ]
+  },
+  {
+   "ob": "calo10",
+   "h": 6,
+   "riferimenti": {
+    "Solo prezzi": {
+     "n": 88,
+     "eventi": 22,
+     "base": 0.25,
+     "auc": 0.533,
+     "bss": -0.035
+    },
+    "Indice Armor": {
+     "n": 88,
+     "eventi": 22,
+     "base": 0.25,
+     "auc": 0.458,
+     "bss": -0.14
+    },
+    "A1": {
+     "n": 88,
+     "eventi": 22,
+     "base": 0.25,
+     "auc": 0.335,
+     "bss": -0.178
+    }
+   },
+   "modelli": []
+  },
+  {
+   "ob": "calo10",
+   "h": 12,
+   "riferimenti": {
+    "Solo prezzi": {
+     "n": 82,
+     "eventi": 34,
+     "base": 0.415,
+     "auc": 0.43,
+     "bss": -0.074
+    },
+    "Indice Armor": {
+     "n": 82,
+     "eventi": 34,
+     "base": 0.415,
+     "auc": 0.312,
+     "bss": -0.224
+    }
+   },
+   "modelli": []
+  },
+  {
+   "ob": "calo20",
+   "h": 12,
+   "riferimenti": {
+    "Solo prezzi": {
+     "n": 82,
+     "eventi": 16,
+     "base": 0.195,
+     "auc": 0.246,
+     "bss": -0.096
+    },
+    "Indice Armor": {
+     "n": 82,
+     "eventi": 16,
+     "base": 0.195,
+     "auc": 0.205,
+     "bss": -0.409
+    }
+   },
+   "modelli": []
+  }
+ ],
+ "adottati": []
+}

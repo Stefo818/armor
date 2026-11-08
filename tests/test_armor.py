@@ -710,3 +710,72 @@ def test_semafori_e_candidati_coerenti():
     assert not set(fondamentali.FRED_NUOVE) & set(sources.FRED) and not set(fondamentali.FRED_NUOVE.values()) & set(sources.FRED.values())
     for k, fam, kind, y, r in armor_index._new_items():
         assert fam in armor_index.GROUPS and kind in ("hi", "lo")
+
+
+# ---------------------------------------------------------------- patch 22-23: aziende VWCE, ricerca Fase B, prova finale
+def _yf_frame(rows: dict, dates):
+    return pd.DataFrame(rows, index=pd.to_datetime(dates)).T
+
+
+def test_aziende_analizza_trimestre_e_etichetta():
+    from armor import aziende
+    dq = ["2026-09-30", "2026-06-30", "2026-03-31", "2025-12-31", "2025-09-30"]
+    inc = _yf_frame({"Total Revenue": [120, 110, 105, 100, 100], "Net Income": [30, 25, 22, 20, 20], "Operating Income": [40, 35, 30, 28, 25]}, dq)
+    bal = _yf_frame({"Total Debt": [50, 55, 60, 60, 60], "Cash And Cash Equivalents": [40, 35, 30, 30, 30]}, dq)
+    r = aziende.analizza(inc_q=inc, bal_q=bal)
+    assert r["base"] == "trimestre" and r["periodo"] == "2026-09" and r["periodo_prec"] == "2025-09"
+    assert abs(r["rev_g"] - 20) < 1e-9 and abs(r["ni_g"] - 50) < 1e-9 and abs(r["opm_d"] - (40 / 120 - 25 / 100) * 100) < 1e-9
+    assert r["etichetta"] == "In miglioramento" and r["punteggio"] >= 2
+    peg = aziende.analizza(inc_q=_yf_frame({"Total Revenue": [90, 100, 100, 100, 100], "Net Income": [5, 20, 20, 20, 20],
+                                            "Operating Income": [9, 20, 20, 20, 20]}, dq))
+    assert peg["etichetta"] == "In peggioramento"
+    assert "errore" in aziende.analizza()                     # nessun bilancio: errore, nessuna eccezione
+
+
+def test_aziende_pesi_e_riepilogo():
+    from armor import aziende
+    w = aziende.pesi_stimati({"NVDA": 5e12, "AAPL": 4e12, "X": None}, ("NVDA", 5.0))
+    assert abs(w["AAPL"] - 4.0) < 1e-9 and "X" not in w
+    rows = [{"stato": 1, "peso": 5.0}, {"stato": 0, "peso": 3.0}, {"stato": -1, "peso": 2.0}, {"sym": "Y", "errore": "x"}]
+    r = aziende.riepilogo(rows)
+    assert (r["migliora"], r["stabile"], r["peggiora"], r["n"]) == (1, 1, 1, 3) and r["peso_migliora"] == 5.0
+    assert "Non ci sono ancora dati" in aziende.html({})
+
+
+def test_platt_non_inverte_e_recessioni_nber():
+    from armor import ricerca
+    cal = ricerca._platt(np.array([0.9, 0.8, 0.2, 0.1] * 10), np.array([0, 0, 1, 1] * 10))   # relazione invertita: niente taratura
+    assert np.allclose(cal(np.array([0.3, 0.7])), [0.3, 0.7])
+    idx = pd.date_range("2007-01-31", "2007-12-31", freq="ME")
+    r = ricerca.recessione_entro(idx, 12, load=lambda k: pd.Series(dtype=float))
+    assert r.iloc[0] == 1.0   # recessione NBER da dicembre 2007
+
+
+def test_prova_finale_una_sola_volta(tmp_path, monkeypatch):
+    from armor import ricerca
+    monkeypatch.setattr(ricerca, "OUT", tmp_path)
+    (tmp_path / "prova_finale.json").write_text('{"adottati": [], "anni": "2019-2026"}', encoding="utf-8")
+    assert ricerca.prova_finale(save=False)["anni"] == "2019-2026"      # già fatta: si rilegge, non si rifà
+
+
+def test_esegui_oggi_usa_solo_esiti_chiusi():
+    from armor import ricerca
+    idx = pd.date_range("1990-01-31", "2020-12-31", freq="ME")
+    X = pd.DataFrame({"a": np.arange(len(idx), dtype=float)}, index=idx)
+    y = pd.Series((np.arange(len(idx)) % 3 == 0).astype(float), index=idx)
+    visti = {}
+
+    def fp(tr, te, s):
+        visti["max_tr"] = X.index[tr].max()
+        return np.array([0.5])
+    assert ricerca._esegui(fp, X, y, 12, (2020, 2020), True, None, oggi=True) == 0.5
+    assert visti["max_tr"] + pd.DateOffset(months=12) < idx[-1]
+
+
+def test_box_ciclico_rende_html():
+    from armor import ciclico
+    d = {"date": "2026-11-08", "accesi": 1, "totale": 2, "percentile_accesi": 40,
+         "segnali": [{"segnale": "CAPE sopra 30", "valore": 40.0, "acceso": True}, {"segnale": "VIX sopra 30", "valore": 20.0, "acceso": False}],
+         "analoghi": {"k": 2, "mesi": [{"mese": "2000-01", "ret_12": -5.0}, {"mese": "2018-01", "ret_12": 3.0}], "rialzo_12_su_k": 1,
+                      "mediana_12": -1.0, "p10_12": -5.0, "p90_12": 3.0, "calo10_12_su_k": 1}}
+    assert "1 segnali accesi su 2" in ciclico.box_rischio(d) and "2000-01" in ciclico.box_simili(d)

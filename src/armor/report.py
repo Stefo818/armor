@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import armor_index, chiaro, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import armor_index, aziende, chiaro, ciclico, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -880,7 +880,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                 f"<a href='#indici' data-go='indici'>Vedi tutti i semafori ›</a></div>") if sem else ""
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
-    pages = [("oggi", "Oggi"), ("indici", "Indici"), ("valutazioni", "Valutazioni"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
+    pages = [("oggi", "Oggi"), ("indici", "Indici"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
              ("fiducia", "Quanto fidarsi"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("allarmi", "Allarmi")]
     nav = "<nav class='pgnav'>" + "".join(f"<button data-p='{k}'>{l}</button>" for k, l in pages) + "</nav>"
     lazy_pages: dict[str, str] = {}
@@ -969,6 +969,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
               f"<section class='b5'>{chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}</section>"
+              f"{_safe(ciclico.box_rischio, 'Rischio ciclico')}{_safe(ciclico.box_simili, 'Mesi simili')}"
               f"<section class='b5'>{parts.valuations_mini(vcards)}</section>{ui.next_event_html(today_d)}"
               f"<h2 style='margin-top:22px'>Indice Armor contro S&amp;P 500 e VWCE, giorno per giorno</h2>{cf_intro}{cf_small}"
               f"<h2 style='margin-top:22px'>Mappa dei segnali, settimana per settimana</h2>{map_intro}{map_small}"
@@ -980,6 +981,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                 armor_index.detail_html(aix) + f"<div class='card'><h3 style='margin-top:0'>Coerenza dei segnali</h3>{insight.coherence_html(coh)}</div>" + semafori.html(sem)
                 + "<h2 style='margin-top:26px'>Mappa settimanale dei segnali</h2>" + map_intro + map_full
                 + "<h2 style='margin-top:26px'>Confronto con le grandi crisi</h2>" + _safe(lambda: extra13.crisi_html(aix, sp), "Confronto crisi"))
+    p_az = ("<h2>Salute delle aziende in VWCE</h2>" + _safe(lambda: aziende.html(aziende.load()), "Aziende VWCE"))
     p_macro = ("<h2>Dati economici anticipati</h2>" + _safe(extra13.early_html, "Dati economici") + "<h2 style='margin-top:26px'>Liquidità e tassi della Fed</h2>" + _safe(extra13.fed_html, "Liquidità Fed"))
     p_val = (f"<h2>Quanto è «caro» il mercato: P/E e P/S in tempo reale</h2>{parts.valuation_block(vcards, ctxs, cape)}")
     p_graf = f"<h2>Confronto: Indice Armor, S&amp;P 500 e VWCE</h2>{cf_intro}{cf_full}<h2 style='margin-top:26px'>Grafici interattivi</h2>{parts.charts_section(chip_opts)}"
@@ -997,7 +999,8 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             f"<h2 style='margin-top:26px'>Gli ultimi 10 anni a confronto con oggi</h2><div class='card'>{_safe(lambda: decennio.html(ind10, tr10), 'Analisi dei 10 anni')}</div>"
             f"<h2 style='margin-top:26px'>Rapporto settimanale</h2>{bilancio.weekly_html(wk)}")
     p_pf = ui.PAC_HTML + live_html + parts.portfolio_section()
-    p_fid = ("<h2>Quanto mi posso fidare di Armor?</h2>" + _safe(lambda: ui.fiducia_html(sp, live=learning.live_table(sp)), "Pagina di fiducia"))
+    p_fid = ("<h2>Quanto mi posso fidare di Armor?</h2>" + _safe(lambda: ui.fiducia_html(sp, live=learning.live_table(sp)), "Pagina di fiducia")
+             + "<h2 style='margin-top:26px'>Ricerca modello: salute delle aziende, macro e storia lunga</h2><div class='card'>" + _safe(ciclico.html_ricerca, "Ricerca modello") + "</div>")
     p_sto = (f"<h2>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero.</p>"
              f"<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (tra parentesi l'intervallo dell'80% dei casi). <i>Variazione</i>: rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>"
              f"<h2>Previsto contro reale</h2><div class='card'>{pv}</div>"
@@ -1039,7 +1042,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 {nav}
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
-{page('oggi', p_oggi)}{page('indici', p_indici)}{page('valutazioni', p_val)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
+{page('oggi', p_oggi)}{page('indici', p_indici)}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
 {page('portafoglio', p_pf)}{page('storico', p_sto)}{page('allarmi', p_al)}
 {dock}
 <script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}
@@ -1098,7 +1101,7 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+ui.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+ui.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();

@@ -165,6 +165,25 @@ def build_mappa(sp: pd.Series, aix: dict, vw: pd.Series) -> dict | None:
             rows[-1]["ni"] = 1
         except Exception:  # noqa: BLE001
             continue
+    # indicatori nuovi del PIANO_MODELLO (monitorati, non nell'Indice): colore = rischio (per quelli «bassi = rischio» il percentile si inverte)
+    for key in ("eps_g12", "claims_up", "delinq_biz", "core_yoy", "ciss", "rel_small", "rel_cicl", "net_liq_13w"):
+        if key in seen or key not in armor_index.NEW_IND_FOND:
+            continue
+        try:
+            fam_k, kind, _y, _r = armor_index.NEW_IND_FOND[key]
+            s = semafori.series_of(key, sp).dropna()
+            if len(s) < 60:
+                continue
+            a = s.reindex(s.index.union(sp.index)).ffill(limit=armor_index._limit(key) + 30).reindex(sp.index)
+            pr = a.rolling(armor_index.WINDOW, min_periods=250).rank(pct=True) * 100
+            if kind == "lo":
+                pr = 100 - pr
+            grp = semafori.SPEC_BY[key][2] if key in semafori.SPEC_BY else fam_k
+            add(key, _row_meta(key)["n"], "ind", grp, pr.reindex(W, method="ffill").values, a.reindex(W, method="ffill").values, _row_meta(key),
+                pd.DataFrame({"s": pr.iloc[-2600:], "v": a.iloc[-2600:]}))
+            rows[-1]["ni"] = 1
+        except Exception:  # noqa: BLE001
+            continue
     return {"w": [t.strftime("%Y-%m-%d") for t in W], "rows": rows, "fam": fam, "f4": f4, "f4v": f4v, "asof": str(W[-1].date()),
             "bz": [_num(x, 4) for x in (lambda g: (g[9], g[49], g[89]))(bande.zgrid(5, pd.Timestamp(W[-1])))],
             "pc": "Put/Call sulle opzioni SPY: l'archivio ha iniziato a raccogliere il dato da poco; la riga comparirà quando ci saranno abbastanza giorni."}

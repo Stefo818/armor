@@ -36,7 +36,8 @@ FRED_NUOVE = {
     "baa_m": "BAA", "aaa_m": "AAA", "gs10_m": "GS10", "tb3ms": "TB3MS", "cpi_nsa": "CPIAUCNS",
 }
 CISS_URL = "https://data-api.ecb.europa.eu/service/data/CISS/D.U2.Z0Z.4F.EC.SS_CIN.IDX?format=csvdata"
-FINRA_PAGE = "https://www.finra.org/finra-data/browse-catalog/industry-snapshot/margin-statistics"
+FINRA_PAGES = ["https://www.finra.org/rules-guidance/key-topics/margin-accounts/margin-statistics",
+               "https://www.finra.org/finra-data/browse-catalog/industry-snapshot/margin-statistics"]   # la prima è quella attuale (la seconda dava 404)
 
 # Ritardo di pubblicazione: giorni tra la DATA del dato (FRED: inizio del periodo) e il giorno in cui è noto. Prudente.
 LAG = {
@@ -62,7 +63,7 @@ DERIV_IN = {
     "eps_sp": ["pe_m", "sp500"], "eps_g12": ["pe_m"], "eps_g3": ["pe_m"], "sales_g12": ["ps_m"], "margin_sp": ["ps_m", "pe_m"],
     "erp": ["pe_m", "gs10_m"], "cp_g4": ["cp"], "cp_gdp": ["cp", "gdp"], "busloans_g6": ["busloans"],
     "cpi_yoy": ["cpi"], "cpi_yoy_lungo": ["cpi_nsa"], "core_yoy": ["core_cpi"], "core_pce_yoy": ["core_pce"], "infl_acc": ["cpi"],
-    "real_ff": ["core_cpi"], "net_liq": ["walcl", "tga", "rrp"], "net_liq_13w": ["walcl", "tga", "rrp"], "m2_yoy": ["m2"],
+    "real_ff": ["core_cpi", "fedfunds"], "net_liq": ["walcl", "tga", "rrp"], "net_liq_13w": ["walcl", "tga", "rrp"], "m2_yoy": ["m2"],
     "claims_up": ["icsa"], "ccsa_yoy": ["ccsa"], "permit_yoy": ["permit"], "margin_yoy": ["margin_debt"], "indpro_g12": ["indpro"],
     "sahm": ["unrate"], "curve_lunga": ["gs10_m", "tb3ms"], "baa_lungo": ["baa_m", "gs10_m"],
     "rel_small": ["iwm"], "rel_eqw": ["rsp"], "rel_cicl": ["sec_xly"], "rel_semi": ["smh"], "rel_trasp": ["iyt"], "rel_banche": ["kre"],
@@ -139,11 +140,19 @@ def parse_finra(df: pd.DataFrame) -> pd.Series:
 def fetch_finra_margin() -> pd.Series:
     from urllib.parse import urljoin
     from .sources import _get
-    page = _get(FINRA_PAGE, tries=1, timeout=30).text
-    m = re.search(r'href="([^"]+?\.xlsx[^"]*)"', page, re.I)
-    if not m:
-        raise ValueError("FINRA: link al file Excel non trovato")
-    raw = _get(urljoin(FINRA_PAGE, m.group(1)), tries=1, timeout=60).content
+    last = None
+    for pg in FINRA_PAGES:
+        try:
+            page = _get(pg, tries=1, timeout=30).text
+            m = re.search(r'href="([^"]+?\.xlsx[^"]*)"', page, re.I)
+            if not m:
+                raise ValueError("link al file Excel non trovato")
+            raw = _get(urljoin(pg, m.group(1)), tries=1, timeout=60).content
+            break
+        except Exception as e:  # noqa: BLE001
+            last = e
+    else:
+        raise ValueError(f"FINRA: {str(last)[:100]}")
     return parse_finra(pd.read_excel(io.BytesIO(raw), header=None))
 
 
@@ -267,7 +276,9 @@ def _ms(s: pd.Series, how: str = "last") -> pd.Series:
 
 def calcola(load=store.load) -> dict:
     """Serie derivate, datate come il dato d'origine (il ritardo di pubblicazione si applica dopo, con `nota_al`)."""
-    g = {k: load(k).dropna() for k in set(sum(DERIV_IN.values(), [])) | {"spy", "gold", "ief", "sec_xlp", "vt", "dgs10"}}
+    from collections import defaultdict
+    g = defaultdict(lambda: pd.Series(dtype=float))   # una serie mancante non deve mai fermare il calcolo delle altre
+    g.update({k: load(k).dropna() for k in set(sum(DERIV_IN.values(), [])) | {"spy", "gold", "ief", "sec_xlp", "vt", "dgs10", "fedfunds"}})
     out: dict = {}
     pct = lambda s, n: (s / s.shift(n) - 1) * 100
 

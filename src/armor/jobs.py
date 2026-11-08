@@ -1,4 +1,5 @@
 """Comandi di Armor: python -m armor <comando>.  'tutto' fa l'aggiornamento giornaliero completo."""
+import json
 import sys
 from datetime import datetime
 
@@ -194,6 +195,11 @@ def fonti_nuove(force: bool = False) -> None:
         with_timeout(fondamentali.raccogli_revisioni, 90, "revisioni utili")
     except Exception as e:  # noqa: BLE001
         print("[fondamentali] revisioni utili non raccolte:", str(e)[:120])
+    try:   # salute delle prime 30 aziende di VWCE (bilanci Yahoo, una volta a settimana)
+        from . import aziende
+        with_timeout(lambda: aziende.aggiorna(force=force), 240, "bilanci aziende")
+    except Exception as e:  # noqa: BLE001
+        print("[aziende] bilanci non aggiornati:", str(e)[:120])
 
 
 def tutto(skip_download: bool = False) -> None:
@@ -217,6 +223,11 @@ def tutto(skip_download: bool = False) -> None:
         fondamentali.aggiorna_derivate()
     except Exception as e:  # noqa: BLE001
         print("[fondamentali] derivate non calcolate:", str(e)[:120])
+    try:   # segnali classici, mesi simili e modelli in ombra a 6-12 mesi (PIANO_MODELLO, Fase C)
+        from . import ciclico
+        ciclico.aggiorna()
+    except Exception as e:  # noqa: BLE001
+        print("[ciclico] non aggiornato:", str(e)[:120])
     try:
         from . import live
         live.run()
@@ -344,6 +355,9 @@ def main() -> None:
         from . import fondamentali, ricerca
         fondamentali.aggiorna_derivate()
         ricerca.run()
+    elif cmd == "ricerca-finale":   # prova UNICA sugli anni 2019-oggi (se esiste già, mostra il risultato salvato)
+        from . import ricerca
+        print(json.dumps(ricerca.prova_finale(), ensure_ascii=False, indent=1, default=str)[:3000])
     elif cmd == "report":
         from .report import build
         build(forecast())

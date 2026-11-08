@@ -1,0 +1,7716 @@
+{
+ "data": "2026-11-08",
+ "versione": "Fase B",
+ "fine_ricerca": "2018-12-31",
+ "regole": "PIANO_MODELLO §6 (pre-registrate in ricerca.py)",
+ "risultati": [
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Logistica (storia lunga)",
+   "tipo": "logit",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 645,
+   "eventi": 77,
+   "base": 0.119,
+   "auc": 0.68,
+   "bss": -0.007,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.648,
+      "riferimento": 0.633
+     },
+     "1990-2009": {
+      "modello": 0.782,
+      "riferimento": 0.749
+     },
+     "2010-2018": {
+      "modello": 0.381,
+      "riferimento": 0.395
+     }
+    },
+    "meglio": 1,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Alberi monotoni (storia lunga)",
+   "tipo": "gbm",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 645,
+   "eventi": 77,
+   "base": 0.119,
+   "auc": 0.551,
+   "bss": -0.145,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.415,
+      "riferimento": 0.633
+     },
+     "1990-2009": {
+      "modello": 0.742,
+      "riferimento": 0.749
+     },
+     "2010-2018": {
+      "modello": 0.47,
+      "riferimento": 0.395
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Mesi simili (storia lunga)",
+   "tipo": "knn",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 645,
+   "eventi": 77,
+   "base": 0.119,
+   "auc": 0.667,
+   "bss": 0.043,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.65,
+      "riferimento": 0.633
+     },
+     "1990-2009": {
+      "modello": 0.762,
+      "riferimento": 0.749
+     },
+     "2010-2018": {
+      "modello": 0.252,
+      "riferimento": 0.395
+     }
+    },
+    "meglio": 0,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 645,
+   "eventi": 77,
+   "base": 0.119,
+   "auc": 0.698,
+   "bss": 0.039,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.662,
+      "riferimento": 0.633
+     },
+     "1990-2009": {
+      "modello": 0.775,
+      "riferimento": 0.749
+     },
+     "2010-2018": {
+      "modello": 0.62,
+      "riferimento": 0.395
+     }
+    },
+    "meglio": 3,
+    "peggio": 0
+   },
+   "promosso": true
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 633,
+   "eventi": 77,
+   "base": 0.122,
+   "auc": 0.712,
+   "bss": 0.093,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.667,
+      "riferimento": 0.619
+     },
+     "1990-2009": {
+      "modello": 0.815,
+      "riferimento": 0.749
+     },
+     "2010-2018": {
+      "modello": 0.485,
+      "riferimento": 0.395
+     }
+    },
+    "meglio": 3,
+    "peggio": 0
+   },
+   "promosso": true
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 705,
+   "eventi": 81,
+   "base": 0.115,
+   "auc": 0.424,
+   "bss": 0.007,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.289,
+      "riferimento": 0.62
+     },
+     "1990-2009": {
+      "modello": 0.48,
+      "riferimento": 0.749
+     },
+     "2010-2018": {
+      "modello": 0.498,
+      "riferimento": 0.395
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 705,
+   "eventi": 81,
+   "base": 0.115,
+   "auc": 0.623,
+   "bss": -0.015,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.63,
+      "riferimento": 0.62
+     },
+     "1990-2009": {
+      "modello": 0.734,
+      "riferimento": 0.749
+     },
+     "2010-2018": {
+      "modello": 0.499,
+      "riferimento": 0.395
+     }
+    },
+    "meglio": 1,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "_riferimenti",
+   "ob": "calo10",
+   "h": 3,
+   "rif": {
+    "Solo prezzi": {
+     "n": 705,
+     "eventi": 81,
+     "base": 0.115,
+     "auc": 0.647,
+     "bss": 0.066
+    },
+    "Indice Armor": {
+     "n": 165,
+     "eventi": 24,
+     "base": 0.145,
+     "auc": 0.772,
+     "bss": 0.182
+    },
+    "A1": {
+     "n": 225,
+     "eventi": 41,
+     "base": 0.182,
+     "auc": 0.736,
+     "bss": 0.059
+    }
+   }
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Logistica (storia lunga)",
+   "tipo": "logit",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 642,
+   "eventi": 130,
+   "base": 0.202,
+   "auc": 0.628,
+   "bss": -0.057,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.644,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.595,
+      "riferimento": 0.594
+     },
+     "1990-2009": {
+      "modello": 0.744,
+      "riferimento": 0.78
+     },
+     "2010-2018": {
+      "modello": 0.259,
+      "riferimento": 0.387
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Alberi monotoni (storia lunga)",
+   "tipo": "gbm",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 642,
+   "eventi": 130,
+   "base": 0.202,
+   "auc": 0.522,
+   "bss": -0.164,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.644,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.45,
+      "riferimento": 0.594
+     },
+     "1990-2009": {
+      "modello": 0.716,
+      "riferimento": 0.78
+     },
+     "2010-2018": {
+      "modello": 0.321,
+      "riferimento": 0.387
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Mesi simili (storia lunga)",
+   "tipo": "knn",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 642,
+   "eventi": 130,
+   "base": 0.202,
+   "auc": 0.614,
+   "bss": 0.058,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.644,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.666,
+      "riferimento": 0.594
+     },
+     "1990-2009": {
+      "modello": 0.676,
+      "riferimento": 0.78
+     },
+     "2010-2018": {
+      "modello": 0.19,
+      "riferimento": 0.387
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 642,
+   "eventi": 130,
+   "base": 0.202,
+   "auc": 0.644,
+   "bss": -0.006,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.644,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.645,
+      "riferimento": 0.594
+     },
+     "1990-2009": {
+      "modello": 0.7,
+      "riferimento": 0.78
+     },
+     "2010-2018": {
+      "modello": 0.39,
+      "riferimento": 0.387
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 630,
+   "eventi": 130,
+   "base": 0.206,
+   "auc": 0.643,
+   "bss": 0.073,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.644,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.545,
+      "riferimento": 0.576
+     },
+     "1990-2009": {
+      "modello": 0.813,
+      "riferimento": 0.78
+     },
+     "2010-2018": {
+      "modello": 0.438,
+      "riferimento": 0.387
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 702,
+   "eventi": 137,
+   "base": 0.195,
+   "auc": 0.435,
+   "bss": -0.013,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.644,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.307,
+      "riferimento": 0.579
+     },
+     "1990-2009": {
+      "modello": 0.452,
+      "riferimento": 0.78
+     },
+     "2010-2018": {
+      "modello": 0.384,
+      "riferimento": 0.387
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 702,
+   "eventi": 137,
+   "base": 0.195,
+   "auc": 0.565,
+   "bss": -0.009,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.644,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.594,
+      "riferimento": 0.579
+     },
+     "1990-2009": {
+      "modello": 0.543,
+      "riferimento": 0.78
+     },
+     "2010-2018": {
+      "modello": 0.459,
+      "riferimento": 0.387
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "_riferimenti",
+   "ob": "calo10",
+   "h": 6,
+   "rif": {
+    "Solo prezzi": {
+     "n": 702,
+     "eventi": 137,
+     "base": 0.195,
+     "auc": 0.644,
+     "bss": 0.072
+    },
+    "Indice Armor": {
+     "n": 162,
+     "eventi": 33,
+     "base": 0.204,
+     "auc": 0.755,
+     "bss": 0.209
+    },
+    "A1": {
+     "n": 222,
+     "eventi": 58,
+     "base": 0.261,
+     "auc": 0.726,
+     "bss": 0.08
+    }
+   }
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Logistica (storia lunga)",
+   "tipo": "logit",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 636,
+   "eventi": 198,
+   "base": 0.311,
+   "auc": 0.591,
+   "bss": -0.107,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.607,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.571,
+      "riferimento": 0.518
+     },
+     "1990-2009": {
+      "modello": 0.638,
+      "riferimento": 0.71
+     },
+     "2010-2018": {
+      "modello": 0.205,
+      "riferimento": 0.397
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Alberi monotoni (storia lunga)",
+   "tipo": "gbm",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 636,
+   "eventi": 198,
+   "base": 0.311,
+   "auc": 0.491,
+   "bss": -0.195,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.607,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.486,
+      "riferimento": 0.518
+     },
+     "1990-2009": {
+      "modello": 0.471,
+      "riferimento": 0.71
+     },
+     "2010-2018": {
+      "modello": 0.348,
+      "riferimento": 0.397
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Mesi simili (storia lunga)",
+   "tipo": "knn",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 636,
+   "eventi": 198,
+   "base": 0.311,
+   "auc": 0.573,
+   "bss": -0.006,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.607,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.553,
+      "riferimento": 0.518
+     },
+     "1990-2009": {
+      "modello": 0.569,
+      "riferimento": 0.71
+     },
+     "2010-2018": {
+      "modello": 0.322,
+      "riferimento": 0.397
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 636,
+   "eventi": 198,
+   "base": 0.311,
+   "auc": 0.615,
+   "bss": -0.045,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.607,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.638,
+      "riferimento": 0.518
+     },
+     "1990-2009": {
+      "modello": 0.589,
+      "riferimento": 0.71
+     },
+     "2010-2018": {
+      "modello": 0.358,
+      "riferimento": 0.397
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 624,
+   "eventi": 193,
+   "base": 0.309,
+   "auc": 0.592,
+   "bss": 0.007,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.607,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.534,
+      "riferimento": 0.526
+     },
+     "1990-2009": {
+      "modello": 0.705,
+      "riferimento": 0.71
+     },
+     "2010-2018": {
+      "modello": 0.447,
+      "riferimento": 0.397
+     }
+    },
+    "meglio": 1,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 696,
+   "eventi": 211,
+   "base": 0.303,
+   "auc": 0.394,
+   "bss": -0.026,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.607,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.315,
+      "riferimento": 0.521
+     },
+     "1990-2009": {
+      "modello": 0.341,
+      "riferimento": 0.71
+     },
+     "2010-2018": {
+      "modello": 0.514,
+      "riferimento": 0.397
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 696,
+   "eventi": 211,
+   "base": 0.303,
+   "auc": 0.493,
+   "bss": -0.018,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.607,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.41,
+      "riferimento": 0.521
+     },
+     "1990-2009": {
+      "modello": 0.33,
+      "riferimento": 0.71
+     },
+     "2010-2018": {
+      "modello": 0.462,
+      "riferimento": 0.397
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "_riferimenti",
+   "ob": "calo10",
+   "h": 12,
+   "rif": {
+    "Solo prezzi": {
+     "n": 696,
+     "eventi": 211,
+     "base": 0.303,
+     "auc": 0.607,
+     "bss": 0.051
+    },
+    "Indice Armor": {
+     "n": 156,
+     "eventi": 43,
+     "base": 0.276,
+     "auc": 0.693,
+     "bss": 0.191
+    }
+   }
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Logistica (storia lunga)",
+   "tipo": "logit",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 636,
+   "eventi": 82,
+   "base": 0.129,
+   "auc": 0.437,
+   "bss": -0.522,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.66,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.304,
+      "riferimento": 0.564
+     },
+     "1990-2009": {
+      "modello": 0.405,
+      "riferimento": 0.742
+     },
+     "2010-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Alberi monotoni (storia lunga)",
+   "tipo": "gbm",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 636,
+   "eventi": 82,
+   "base": 0.129,
+   "auc": 0.521,
+   "bss": -0.465,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.66,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.408,
+      "riferimento": 0.564
+     },
+     "1990-2009": {
+      "modello": 0.52,
+      "riferimento": 0.742
+     },
+     "2010-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Mesi simili (storia lunga)",
+   "tipo": "knn",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 636,
+   "eventi": 82,
+   "base": 0.129,
+   "auc": 0.526,
+   "bss": -0.042,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.66,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.505,
+      "riferimento": 0.564
+     },
+     "1990-2009": {
+      "modello": 0.51,
+      "riferimento": 0.742
+     },
+     "2010-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 636,
+   "eventi": 82,
+   "base": 0.129,
+   "auc": 0.533,
+   "bss": -0.307,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.66,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.432,
+      "riferimento": 0.564
+     },
+     "1990-2009": {
+      "modello": 0.565,
+      "riferimento": 0.742
+     },
+     "2010-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 624,
+   "eventi": 79,
+   "base": 0.127,
+   "auc": 0.616,
+   "bss": -0.255,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.66,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.481,
+      "riferimento": 0.595
+     },
+     "1990-2009": {
+      "modello": 0.678,
+      "riferimento": 0.742
+     },
+     "2010-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 696,
+   "eventi": 91,
+   "base": 0.131,
+   "auc": 0.452,
+   "bss": -0.017,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.66,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.248,
+      "riferimento": 0.535
+     },
+     "1990-2009": {
+      "modello": 0.638,
+      "riferimento": 0.742
+     },
+     "2010-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 696,
+   "eventi": 91,
+   "base": 0.131,
+   "auc": 0.522,
+   "bss": -0.02,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.66,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.561,
+      "riferimento": 0.535
+     },
+     "1990-2009": {
+      "modello": 0.379,
+      "riferimento": 0.742
+     },
+     "2010-2018": null
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "_riferimenti",
+   "ob": "calo20",
+   "h": 12,
+   "rif": {
+    "Solo prezzi": {
+     "n": 696,
+     "eventi": 91,
+     "base": 0.131,
+     "auc": 0.66,
+     "bss": 0.061
+    },
+    "Indice Armor": {
+     "n": 156,
+     "eventi": 16,
+     "base": 0.103,
+     "auc": 0.917,
+     "bss": 0.461
+    }
+   }
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Logistica (storia lunga)",
+   "tipo": "logit",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 659,
+   "eventi": 392,
+   "base": 0.595,
+   "auc": 0.492,
+   "bss": -0.085,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.518,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.473,
+      "riferimento": 0.523
+     },
+     "1990-2009": {
+      "modello": 0.425,
+      "riferimento": 0.5
+     },
+     "2010-2018": {
+      "modello": 0.457,
+      "riferimento": 0.451
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Alberi monotoni (storia lunga)",
+   "tipo": "gbm",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 659,
+   "eventi": 392,
+   "base": 0.595,
+   "auc": 0.505,
+   "bss": -0.05,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.518,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.492,
+      "riferimento": 0.523
+     },
+     "1990-2009": {
+      "modello": 0.434,
+      "riferimento": 0.5
+     },
+     "2010-2018": {
+      "modello": 0.393,
+      "riferimento": 0.451
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Mesi simili (storia lunga)",
+   "tipo": "knn",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 659,
+   "eventi": 392,
+   "base": 0.595,
+   "auc": 0.489,
+   "bss": -0.035,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.518,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.487,
+      "riferimento": 0.523
+     },
+     "1990-2009": {
+      "modello": 0.447,
+      "riferimento": 0.5
+     },
+     "2010-2018": {
+      "modello": 0.435,
+      "riferimento": 0.451
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 659,
+   "eventi": 392,
+   "base": 0.595,
+   "auc": 0.488,
+   "bss": -0.052,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.518,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.51,
+      "riferimento": 0.523
+     },
+     "1990-2009": {
+      "modello": 0.381,
+      "riferimento": 0.5
+     },
+     "2010-2018": {
+      "modello": 0.408,
+      "riferimento": 0.451
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 635,
+   "eventi": 376,
+   "base": 0.592,
+   "auc": 0.471,
+   "bss": -0.039,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.518,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.45,
+      "riferimento": 0.511
+     },
+     "1990-2009": {
+      "modello": 0.477,
+      "riferimento": 0.5
+     },
+     "2010-2018": {
+      "modello": 0.43,
+      "riferimento": 0.451
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 707,
+   "eventi": 423,
+   "base": 0.598,
+   "auc": 0.469,
+   "bss": -0.004,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.518,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.452,
+      "riferimento": 0.528
+     },
+     "1990-2009": {
+      "modello": 0.41,
+      "riferimento": 0.5
+     },
+     "2010-2018": {
+      "modello": 0.571,
+      "riferimento": 0.451
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 707,
+   "eventi": 423,
+   "base": 0.598,
+   "auc": 0.526,
+   "bss": -0.001,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.518,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.481,
+      "riferimento": 0.528
+     },
+     "1990-2009": {
+      "modello": 0.541,
+      "riferimento": 0.5
+     },
+     "2010-2018": {
+      "modello": 0.519,
+      "riferimento": 0.451
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "_riferimenti",
+   "ob": "rialzo",
+   "h": 1,
+   "rif": {
+    "Solo prezzi": {
+     "n": 707,
+     "eventi": 423,
+     "base": 0.598,
+     "auc": 0.518,
+     "bss": 0.002
+    },
+    "Indice Armor": {
+     "n": 167,
+     "eventi": 107,
+     "base": 0.641,
+     "auc": 0.441,
+     "bss": 0.006
+    }
+   }
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Logistica (storia lunga)",
+   "tipo": "logit",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 645,
+   "eventi": 414,
+   "base": 0.642,
+   "auc": 0.515,
+   "bss": -0.107,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.527,
+      "riferimento": 0.483
+     },
+     "1990-2009": {
+      "modello": 0.428,
+      "riferimento": 0.534
+     },
+     "2010-2018": {
+      "modello": 0.388,
+      "riferimento": 0.38
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Alberi monotoni (storia lunga)",
+   "tipo": "gbm",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 645,
+   "eventi": 414,
+   "base": 0.642,
+   "auc": 0.477,
+   "bss": -0.093,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.504,
+      "riferimento": 0.483
+     },
+     "1990-2009": {
+      "modello": 0.416,
+      "riferimento": 0.534
+     },
+     "2010-2018": {
+      "modello": 0.347,
+      "riferimento": 0.38
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Mesi simili (storia lunga)",
+   "tipo": "knn",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 645,
+   "eventi": 414,
+   "base": 0.642,
+   "auc": 0.503,
+   "bss": -0.048,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.486,
+      "riferimento": 0.483
+     },
+     "1990-2009": {
+      "modello": 0.481,
+      "riferimento": 0.534
+     },
+     "2010-2018": {
+      "modello": 0.435,
+      "riferimento": 0.38
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 645,
+   "eventi": 414,
+   "base": 0.642,
+   "auc": 0.505,
+   "bss": -0.061,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.538,
+      "riferimento": 0.483
+     },
+     "1990-2009": {
+      "modello": 0.388,
+      "riferimento": 0.534
+     },
+     "2010-2018": {
+      "modello": 0.506,
+      "riferimento": 0.38
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 633,
+   "eventi": 407,
+   "base": 0.643,
+   "auc": 0.51,
+   "bss": -0.038,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.494,
+      "riferimento": 0.485
+     },
+     "1990-2009": {
+      "modello": 0.505,
+      "riferimento": 0.534
+     },
+     "2010-2018": {
+      "modello": 0.435,
+      "riferimento": 0.38
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 705,
+   "eventi": 459,
+   "base": 0.651,
+   "auc": 0.481,
+   "bss": -0.006,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.439,
+      "riferimento": 0.497
+     },
+     "1990-2009": {
+      "modello": 0.477,
+      "riferimento": 0.534
+     },
+     "2010-2018": {
+      "modello": 0.443,
+      "riferimento": 0.38
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 705,
+   "eventi": 459,
+   "base": 0.651,
+   "auc": 0.519,
+   "bss": -0.007,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.481,
+      "riferimento": 0.497
+     },
+     "1990-2009": {
+      "modello": 0.422,
+      "riferimento": 0.534
+     },
+     "2010-2018": {
+      "modello": 0.45,
+      "riferimento": 0.38
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "_riferimenti",
+   "ob": "rialzo",
+   "h": 3,
+   "rif": {
+    "Solo prezzi": {
+     "n": 705,
+     "eventi": 459,
+     "base": 0.651,
+     "auc": 0.521,
+     "bss": 0.003
+    },
+    "Indice Armor": {
+     "n": 165,
+     "eventi": 117,
+     "base": 0.709,
+     "auc": 0.446,
+     "bss": 0.037
+    }
+   }
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Logistica (storia lunga)",
+   "tipo": "logit",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 642,
+   "eventi": 437,
+   "base": 0.681,
+   "auc": 0.531,
+   "bss": -0.212,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.561,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.555,
+      "riferimento": 0.485
+     },
+     "1990-2009": {
+      "modello": 0.454,
+      "riferimento": 0.583
+     },
+     "2010-2018": {
+      "modello": 0.165,
+      "riferimento": 0.498
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Alberi monotoni (storia lunga)",
+   "tipo": "gbm",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 642,
+   "eventi": 437,
+   "base": 0.681,
+   "auc": 0.454,
+   "bss": -0.148,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.561,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.43,
+      "riferimento": 0.485
+     },
+     "1990-2009": {
+      "modello": 0.397,
+      "riferimento": 0.583
+     },
+     "2010-2018": {
+      "modello": 0.348,
+      "riferimento": 0.498
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Mesi simili (storia lunga)",
+   "tipo": "knn",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 642,
+   "eventi": 437,
+   "base": 0.681,
+   "auc": 0.539,
+   "bss": -0.04,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.561,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.522,
+      "riferimento": 0.485
+     },
+     "1990-2009": {
+      "modello": 0.49,
+      "riferimento": 0.583
+     },
+     "2010-2018": {
+      "modello": 0.301,
+      "riferimento": 0.498
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 642,
+   "eventi": 437,
+   "base": 0.681,
+   "auc": 0.498,
+   "bss": -0.148,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.561,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.562,
+      "riferimento": 0.485
+     },
+     "1990-2009": {
+      "modello": 0.371,
+      "riferimento": 0.583
+     },
+     "2010-2018": {
+      "modello": 0.308,
+      "riferimento": 0.498
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 630,
+   "eventi": 431,
+   "base": 0.684,
+   "auc": 0.455,
+   "bss": -0.145,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.561,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.401,
+      "riferimento": 0.498
+     },
+     "1990-2009": {
+      "modello": 0.46,
+      "riferimento": 0.583
+     },
+     "2010-2018": {
+      "modello": 0.448,
+      "riferimento": 0.498
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 702,
+   "eventi": 485,
+   "base": 0.691,
+   "auc": 0.458,
+   "bss": -0.015,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.561,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.424,
+      "riferimento": 0.512
+     },
+     "1990-2009": {
+      "modello": 0.402,
+      "riferimento": 0.583
+     },
+     "2010-2018": {
+      "modello": 0.427,
+      "riferimento": 0.498
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 702,
+   "eventi": 485,
+   "base": 0.691,
+   "auc": 0.467,
+   "bss": -0.012,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.561,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.358,
+      "riferimento": 0.512
+     },
+     "1990-2009": {
+      "modello": 0.37,
+      "riferimento": 0.583
+     },
+     "2010-2018": {
+      "modello": 0.479,
+      "riferimento": 0.498
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "_riferimenti",
+   "ob": "rialzo",
+   "h": 6,
+   "rif": {
+    "Solo prezzi": {
+     "n": 702,
+     "eventi": 485,
+     "base": 0.691,
+     "auc": 0.561,
+     "bss": 0.009
+    },
+    "Indice Armor": {
+     "n": 162,
+     "eventi": 124,
+     "base": 0.765,
+     "auc": 0.322,
+     "bss": 0.121
+    }
+   }
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Logistica (storia lunga)",
+   "tipo": "logit",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 636,
+   "eventi": 466,
+   "base": 0.733,
+   "auc": 0.508,
+   "bss": -0.391,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.494,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.583,
+      "riferimento": 0.475
+     },
+     "1990-2009": {
+      "modello": 0.324,
+      "riferimento": 0.397
+     },
+     "2010-2018": {
+      "modello": 0.354,
+      "riferimento": 0.468
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Alberi monotoni (storia lunga)",
+   "tipo": "gbm",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 636,
+   "eventi": 466,
+   "base": 0.733,
+   "auc": 0.52,
+   "bss": -0.156,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.494,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.464,
+      "riferimento": 0.475
+     },
+     "1990-2009": {
+      "modello": 0.517,
+      "riferimento": 0.397
+     },
+     "2010-2018": {
+      "modello": 0.313,
+      "riferimento": 0.468
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Mesi simili (storia lunga)",
+   "tipo": "knn",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 636,
+   "eventi": 466,
+   "base": 0.733,
+   "auc": 0.506,
+   "bss": -0.156,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.494,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.498,
+      "riferimento": 0.475
+     },
+     "1990-2009": {
+      "modello": 0.35,
+      "riferimento": 0.397
+     },
+     "2010-2018": {
+      "modello": 0.277,
+      "riferimento": 0.468
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 636,
+   "eventi": 466,
+   "base": 0.733,
+   "auc": 0.519,
+   "bss": -0.248,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.494,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.579,
+      "riferimento": 0.475
+     },
+     "1990-2009": {
+      "modello": 0.329,
+      "riferimento": 0.397
+     },
+     "2010-2018": {
+      "modello": 0.596,
+      "riferimento": 0.468
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 624,
+   "eventi": 461,
+   "base": 0.739,
+   "auc": 0.444,
+   "bss": -0.19,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.494,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.513,
+      "riferimento": 0.494
+     },
+     "1990-2009": {
+      "modello": 0.27,
+      "riferimento": 0.397
+     },
+     "2010-2018": {
+      "modello": 0.54,
+      "riferimento": 0.468
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 696,
+   "eventi": 514,
+   "base": 0.739,
+   "auc": 0.521,
+   "bss": -0.033,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.494,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.399,
+      "riferimento": 0.501
+     },
+     "1990-2009": {
+      "modello": 0.526,
+      "riferimento": 0.397
+     },
+     "2010-2018": {
+      "modello": 0.178,
+      "riferimento": 0.468
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 696,
+   "eventi": 514,
+   "base": 0.739,
+   "auc": 0.442,
+   "bss": -0.033,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.494,
+   "confronto": {
+    "sotto": {
+     "1960-1989": {
+      "modello": 0.396,
+      "riferimento": 0.501
+     },
+     "1990-2009": {
+      "modello": 0.298,
+      "riferimento": 0.397
+     },
+     "2010-2018": {
+      "modello": 0.486,
+      "riferimento": 0.468
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "_riferimenti",
+   "ob": "rialzo",
+   "h": 12,
+   "rif": {
+    "Solo prezzi": {
+     "n": 696,
+     "eventi": 514,
+     "base": 0.739,
+     "auc": 0.494,
+     "bss": 0.009
+    },
+    "Indice Armor": {
+     "n": 156,
+     "eventi": 123,
+     "base": 0.788,
+     "auc": 0.373,
+     "bss": 0.088
+    }
+   }
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Logistica (tutti i dati dal 1992)",
+   "tipo": "logit",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 189,
+   "eventi": 24,
+   "base": 0.127,
+   "auc": 0.266,
+   "bss": -0.491,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.772,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.3,
+      "riferimento": 0.686
+     },
+     "2013-2018": {
+      "modello": 0.135,
+      "riferimento": 0.688
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Alberi monotoni (tutti i dati)",
+   "tipo": "gbm",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 189,
+   "eventi": 24,
+   "base": 0.127,
+   "auc": 0.41,
+   "bss": -0.543,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.772,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.3,
+      "riferimento": 0.686
+     },
+     "2013-2018": {
+      "modello": 0.398,
+      "riferimento": 0.688
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Mesi simili (tutti i dati)",
+   "tipo": "knn",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 189,
+   "eventi": 24,
+   "base": 0.127,
+   "auc": 0.672,
+   "bss": 0.045,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.772,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.649,
+      "riferimento": 0.686
+     },
+     "2013-2018": {
+      "modello": 0.163,
+      "riferimento": 0.688
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Famiglie combinate (tutti i dati)",
+   "tipo": "famiglie",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 189,
+   "eventi": 24,
+   "base": 0.127,
+   "auc": 0.668,
+   "bss": -0.258,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.772,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.571,
+      "riferimento": 0.686
+     },
+     "2013-2018": {
+      "modello": 0.386,
+      "riferimento": 0.688
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Due stadi: recessione poi calo (tutti i dati)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 225,
+   "eventi": 41,
+   "base": 0.182,
+   "auc": 0.663,
+   "bss": -0.009,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.772,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.805,
+      "riferimento": 0.802
+     },
+     "2007-2012": {
+      "modello": 0.599,
+      "riferimento": 0.686
+     },
+     "2013-2018": {
+      "modello": 0.542,
+      "riferimento": 0.688
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 225,
+   "eventi": 41,
+   "base": 0.182,
+   "auc": 0.493,
+   "bss": 0.034,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.772,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.496,
+      "riferimento": 0.802
+     },
+     "2007-2012": {
+      "modello": 0.497,
+      "riferimento": 0.686
+     },
+     "2013-2018": {
+      "modello": 0.508,
+      "riferimento": 0.688
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "n": 225,
+   "eventi": 41,
+   "base": 0.182,
+   "auc": 0.716,
+   "bss": 0.066,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.772,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.767,
+      "riferimento": 0.802
+     },
+     "2007-2012": {
+      "modello": 0.64,
+      "riferimento": 0.686
+     },
+     "2013-2018": {
+      "modello": 0.562,
+      "riferimento": 0.688
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "_riferimenti",
+   "ob": "calo10",
+   "h": 3,
+   "rif": {
+    "Solo prezzi": {
+     "n": 225,
+     "eventi": 41,
+     "base": 0.182,
+     "auc": 0.687,
+     "bss": 0.03
+    },
+    "Indice Armor": {
+     "n": 165,
+     "eventi": 24,
+     "base": 0.145,
+     "auc": 0.772,
+     "bss": 0.182
+    },
+    "A1": {
+     "n": 225,
+     "eventi": 41,
+     "base": 0.182,
+     "auc": 0.736,
+     "bss": 0.059
+    }
+   }
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Logistica (tutti i dati dal 1992)",
+   "tipo": "logit",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 186,
+   "eventi": 33,
+   "base": 0.177,
+   "auc": 0.254,
+   "bss": -0.504,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.755,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.281,
+      "riferimento": 0.631
+     },
+     "2013-2018": {
+      "modello": 0.142,
+      "riferimento": 0.718
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Alberi monotoni (tutti i dati)",
+   "tipo": "gbm",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 186,
+   "eventi": 33,
+   "base": 0.177,
+   "auc": 0.376,
+   "bss": -0.46,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.755,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.369,
+      "riferimento": 0.631
+     },
+     "2013-2018": {
+      "modello": 0.476,
+      "riferimento": 0.718
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Mesi simili (tutti i dati)",
+   "tipo": "knn",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 186,
+   "eventi": 33,
+   "base": 0.177,
+   "auc": 0.649,
+   "bss": 0.072,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.755,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.594,
+      "riferimento": 0.631
+     },
+     "2013-2018": {
+      "modello": 0.111,
+      "riferimento": 0.718
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Famiglie combinate (tutti i dati)",
+   "tipo": "famiglie",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 186,
+   "eventi": 33,
+   "base": 0.177,
+   "auc": 0.631,
+   "bss": -0.209,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.755,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.542,
+      "riferimento": 0.631
+     },
+     "2013-2018": {
+      "modello": 0.319,
+      "riferimento": 0.718
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Due stadi: recessione poi calo (tutti i dati)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 222,
+   "eventi": 58,
+   "base": 0.261,
+   "auc": 0.646,
+   "bss": -0.012,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.755,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.888,
+      "riferimento": 0.852
+     },
+     "2007-2012": {
+      "modello": 0.558,
+      "riferimento": 0.631
+     },
+     "2013-2018": {
+      "modello": 0.522,
+      "riferimento": 0.718
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 222,
+   "eventi": 58,
+   "base": 0.261,
+   "auc": 0.414,
+   "bss": 0.014,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.755,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.373,
+      "riferimento": 0.852
+     },
+     "2007-2012": {
+      "modello": 0.483,
+      "riferimento": 0.631
+     },
+     "2013-2018": {
+      "modello": 0.469,
+      "riferimento": 0.718
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 6,
+   "n": 222,
+   "eventi": 58,
+   "base": 0.261,
+   "auc": 0.644,
+   "bss": 0.044,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.755,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.583,
+      "riferimento": 0.852
+     },
+     "2007-2012": {
+      "modello": 0.585,
+      "riferimento": 0.631
+     },
+     "2013-2018": {
+      "modello": 0.425,
+      "riferimento": 0.718
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "_riferimenti",
+   "ob": "calo10",
+   "h": 6,
+   "rif": {
+    "Solo prezzi": {
+     "n": 222,
+     "eventi": 58,
+     "base": 0.261,
+     "auc": 0.694,
+     "bss": 0.056
+    },
+    "Indice Armor": {
+     "n": 162,
+     "eventi": 33,
+     "base": 0.204,
+     "auc": 0.755,
+     "bss": 0.209
+    },
+    "A1": {
+     "n": 222,
+     "eventi": 58,
+     "base": 0.261,
+     "auc": 0.726,
+     "bss": 0.08
+    }
+   }
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Logistica (tutti i dati dal 1992)",
+   "tipo": "logit",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 168,
+   "eventi": 43,
+   "base": 0.256,
+   "auc": 0.514,
+   "bss": -0.339,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.693,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.562,
+      "riferimento": 0.5
+     },
+     "2013-2018": {
+      "modello": 0.216,
+      "riferimento": 0.714
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Alberi monotoni (tutti i dati)",
+   "tipo": "gbm",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 168,
+   "eventi": 43,
+   "base": 0.256,
+   "auc": 0.441,
+   "bss": -0.688,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.693,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.467,
+      "riferimento": 0.5
+     },
+     "2013-2018": {
+      "modello": 0.612,
+      "riferimento": 0.714
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Mesi simili (tutti i dati)",
+   "tipo": "knn",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 168,
+   "eventi": 43,
+   "base": 0.256,
+   "auc": 0.597,
+   "bss": 0.04,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.693,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.586,
+      "riferimento": 0.5
+     },
+     "2013-2018": {
+      "modello": 0.256,
+      "riferimento": 0.714
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Famiglie combinate (tutti i dati)",
+   "tipo": "famiglie",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 168,
+   "eventi": 43,
+   "base": 0.256,
+   "auc": 0.571,
+   "bss": -0.076,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.693,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.49,
+      "riferimento": 0.5
+     },
+     "2013-2018": {
+      "modello": 0.186,
+      "riferimento": 0.714
+     }
+    },
+    "meglio": 0,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Due stadi: recessione poi calo (tutti i dati)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 216,
+   "eventi": 74,
+   "base": 0.343,
+   "auc": 0.68,
+   "bss": -0.018,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.693,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.926,
+      "riferimento": 0.909
+     },
+     "2007-2012": {
+      "modello": 0.657,
+      "riferimento": 0.5
+     },
+     "2013-2018": {
+      "modello": 0.564,
+      "riferimento": 0.714
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 216,
+   "eventi": 74,
+   "base": 0.343,
+   "auc": 0.428,
+   "bss": -0.003,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.693,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.456,
+      "riferimento": 0.909
+     },
+     "2007-2012": {
+      "modello": 0.503,
+      "riferimento": 0.5
+     },
+     "2013-2018": {
+      "modello": 0.534,
+      "riferimento": 0.714
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo10",
+   "h": 12,
+   "n": 216,
+   "eventi": 74,
+   "base": 0.343,
+   "auc": 0.401,
+   "bss": -0.008,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.693,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.096,
+      "riferimento": 0.909
+     },
+     "2007-2012": {
+      "modello": 0.526,
+      "riferimento": 0.5
+     },
+     "2013-2018": {
+      "modello": 0.403,
+      "riferimento": 0.714
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "_riferimenti",
+   "ob": "calo10",
+   "h": 12,
+   "rif": {
+    "Solo prezzi": {
+     "n": 216,
+     "eventi": 74,
+     "base": 0.343,
+     "auc": 0.661,
+     "bss": 0.058
+    },
+    "Indice Armor": {
+     "n": 156,
+     "eventi": 43,
+     "base": 0.276,
+     "auc": 0.693,
+     "bss": 0.191
+    }
+   }
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Logistica (tutti i dati dal 1992)",
+   "tipo": "logit",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 168,
+   "eventi": 16,
+   "base": 0.095,
+   "auc": 0.936,
+   "bss": 0.231,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.917,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.827,
+      "riferimento": 0.828
+     },
+     "2013-2018": null
+    },
+    "meglio": 0,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Alberi monotoni (tutti i dati)",
+   "tipo": "gbm",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 168,
+   "eventi": 16,
+   "base": 0.095,
+   "auc": 0.296,
+   "bss": -0.372,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.917,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.151,
+      "riferimento": 0.828
+     },
+     "2013-2018": null
+    },
+    "meglio": 0,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Mesi simili (tutti i dati)",
+   "tipo": "knn",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 168,
+   "eventi": 16,
+   "base": 0.095,
+   "auc": 0.951,
+   "bss": 0.5,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.917,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.867,
+      "riferimento": 0.828
+     },
+     "2013-2018": null
+    },
+    "meglio": 1,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Famiglie combinate (tutti i dati)",
+   "tipo": "famiglie",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 168,
+   "eventi": 16,
+   "base": 0.095,
+   "auc": 0.931,
+   "bss": 0.135,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.917,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.812,
+      "riferimento": 0.828
+     },
+     "2013-2018": null
+    },
+    "meglio": 0,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Due stadi: recessione poi calo (tutti i dati)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 216,
+   "eventi": 43,
+   "base": 0.199,
+   "auc": 0.476,
+   "bss": 0.017,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.917,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.431,
+      "riferimento": 0.855
+     },
+     "2007-2012": {
+      "modello": 0.775,
+      "riferimento": 0.828
+     },
+     "2013-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 216,
+   "eventi": 43,
+   "base": 0.199,
+   "auc": 0.62,
+   "bss": 0.038,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.917,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.658,
+      "riferimento": 0.855
+     },
+     "2007-2012": {
+      "modello": 0.588,
+      "riferimento": 0.828
+     },
+     "2013-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "calo20",
+   "h": 12,
+   "n": 216,
+   "eventi": 43,
+   "base": 0.199,
+   "auc": 0.404,
+   "bss": -0.021,
+   "riferimento": "Indice Armor",
+   "rif_auc": 0.917,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.079,
+      "riferimento": 0.855
+     },
+     "2007-2012": {
+      "modello": 0.765,
+      "riferimento": 0.828
+     },
+     "2013-2018": null
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "_riferimenti",
+   "ob": "calo20",
+   "h": 12,
+   "rif": {
+    "Solo prezzi": {
+     "n": 216,
+     "eventi": 43,
+     "base": 0.199,
+     "auc": 0.755,
+     "bss": 0.051
+    },
+    "Indice Armor": {
+     "n": 156,
+     "eventi": 16,
+     "base": 0.103,
+     "auc": 0.917,
+     "bss": 0.461
+    }
+   }
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Logistica (tutti i dati dal 1992)",
+   "tipo": "logit",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 191,
+   "eventi": 125,
+   "base": 0.654,
+   "auc": 0.418,
+   "bss": -0.467,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.402,
+      "riferimento": 0.358
+     },
+     "2007-2012": {
+      "modello": 0.46,
+      "riferimento": 0.485
+     },
+     "2013-2018": {
+      "modello": 0.38,
+      "riferimento": 0.413
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Alberi monotoni (tutti i dati)",
+   "tipo": "gbm",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 191,
+   "eventi": 125,
+   "base": 0.654,
+   "auc": 0.462,
+   "bss": -0.074,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.393,
+      "riferimento": 0.358
+     },
+     "2007-2012": {
+      "modello": 0.519,
+      "riferimento": 0.485
+     },
+     "2013-2018": {
+      "modello": 0.461,
+      "riferimento": 0.413
+     }
+    },
+    "meglio": 3,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Mesi simili (tutti i dati)",
+   "tipo": "knn",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 191,
+   "eventi": 125,
+   "base": 0.654,
+   "auc": 0.463,
+   "bss": -0.056,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.345,
+      "riferimento": 0.358
+     },
+     "2007-2012": {
+      "modello": 0.432,
+      "riferimento": 0.485
+     },
+     "2013-2018": {
+      "modello": 0.411,
+      "riferimento": 0.413
+     }
+    },
+    "meglio": 0,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Famiglie combinate (tutti i dati)",
+   "tipo": "famiglie",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 191,
+   "eventi": 125,
+   "base": 0.654,
+   "auc": 0.464,
+   "bss": -0.206,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.325,
+      "riferimento": 0.358
+     },
+     "2007-2012": {
+      "modello": 0.469,
+      "riferimento": 0.485
+     },
+     "2013-2018": {
+      "modello": 0.385,
+      "riferimento": 0.413
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Due stadi: recessione poi calo (tutti i dati)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 227,
+   "eventi": 138,
+   "base": 0.608,
+   "auc": 0.489,
+   "bss": -0.067,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.606,
+      "riferimento": 0.538
+     },
+     "2007-2012": {
+      "modello": 0.445,
+      "riferimento": 0.485
+     },
+     "2013-2018": {
+      "modello": 0.44,
+      "riferimento": 0.413
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 227,
+   "eventi": 138,
+   "base": 0.608,
+   "auc": 0.427,
+   "bss": -0.008,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.273,
+      "riferimento": 0.538
+     },
+     "2007-2012": {
+      "modello": 0.387,
+      "riferimento": 0.485
+     },
+     "2013-2018": {
+      "modello": 0.563,
+      "riferimento": 0.413
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 1,
+   "n": 227,
+   "eventi": 138,
+   "base": 0.608,
+   "auc": 0.571,
+   "bss": 0.007,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.521,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.571,
+      "riferimento": 0.538
+     },
+     "2007-2012": {
+      "modello": 0.468,
+      "riferimento": 0.485
+     },
+     "2013-2018": {
+      "modello": 0.527,
+      "riferimento": 0.413
+     }
+    },
+    "meglio": 2,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "_riferimenti",
+   "ob": "rialzo",
+   "h": 1,
+   "rif": {
+    "Solo prezzi": {
+     "n": 227,
+     "eventi": 138,
+     "base": 0.608,
+     "auc": 0.521,
+     "bss": 0.006
+    },
+    "Indice Armor": {
+     "n": 167,
+     "eventi": 107,
+     "base": 0.641,
+     "auc": 0.441,
+     "bss": 0.006
+    }
+   }
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Logistica (tutti i dati dal 1992)",
+   "tipo": "logit",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 189,
+   "eventi": 135,
+   "base": 0.714,
+   "auc": 0.375,
+   "bss": -0.457,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.545,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.558,
+      "riferimento": 0.294
+     },
+     "2007-2012": {
+      "modello": 0.35,
+      "riferimento": 0.469
+     },
+     "2013-2018": {
+      "modello": 0.251,
+      "riferimento": 0.408
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Alberi monotoni (tutti i dati)",
+   "tipo": "gbm",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 189,
+   "eventi": 135,
+   "base": 0.714,
+   "auc": 0.573,
+   "bss": -0.024,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.545,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.638,
+      "riferimento": 0.294
+     },
+     "2007-2012": {
+      "modello": 0.545,
+      "riferimento": 0.469
+     },
+     "2013-2018": {
+      "modello": 0.181,
+      "riferimento": 0.408
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Mesi simili (tutti i dati)",
+   "tipo": "knn",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 189,
+   "eventi": 135,
+   "base": 0.714,
+   "auc": 0.519,
+   "bss": -0.072,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.545,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.538,
+      "riferimento": 0.294
+     },
+     "2007-2012": {
+      "modello": 0.498,
+      "riferimento": 0.469
+     },
+     "2013-2018": {
+      "modello": 0.201,
+      "riferimento": 0.408
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Famiglie combinate (tutti i dati)",
+   "tipo": "famiglie",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 189,
+   "eventi": 135,
+   "base": 0.714,
+   "auc": 0.459,
+   "bss": -0.326,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.545,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.319,
+      "riferimento": 0.294
+     },
+     "2007-2012": {
+      "modello": 0.415,
+      "riferimento": 0.469
+     },
+     "2013-2018": {
+      "modello": 0.232,
+      "riferimento": 0.408
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Due stadi: recessione poi calo (tutti i dati)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 225,
+   "eventi": 145,
+   "base": 0.644,
+   "auc": 0.488,
+   "bss": -0.052,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.545,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.591,
+      "riferimento": 0.534
+     },
+     "2007-2012": {
+      "modello": 0.473,
+      "riferimento": 0.469
+     },
+     "2013-2018": {
+      "modello": 0.518,
+      "riferimento": 0.408
+     }
+    },
+    "meglio": 2,
+    "peggio": 0
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 225,
+   "eventi": 145,
+   "base": 0.644,
+   "auc": 0.507,
+   "bss": 0.002,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.545,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.498,
+      "riferimento": 0.534
+     },
+     "2007-2012": {
+      "modello": 0.407,
+      "riferimento": 0.469
+     },
+     "2013-2018": {
+      "modello": 0.363,
+      "riferimento": 0.408
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 3,
+   "n": 225,
+   "eventi": 145,
+   "base": 0.644,
+   "auc": 0.535,
+   "bss": 0.003,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.545,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.403,
+      "riferimento": 0.534
+     },
+     "2007-2012": {
+      "modello": 0.465,
+      "riferimento": 0.469
+     },
+     "2013-2018": {
+      "modello": 0.326,
+      "riferimento": 0.408
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "_riferimenti",
+   "ob": "rialzo",
+   "h": 3,
+   "rif": {
+    "Solo prezzi": {
+     "n": 225,
+     "eventi": 145,
+     "base": 0.644,
+     "auc": 0.545,
+     "bss": 0.008
+    },
+    "Indice Armor": {
+     "n": 165,
+     "eventi": 117,
+     "base": 0.709,
+     "auc": 0.446,
+     "bss": 0.037
+    }
+   }
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Logistica (tutti i dati dal 1992)",
+   "tipo": "logit",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 186,
+   "eventi": 144,
+   "base": 0.774,
+   "auc": 0.191,
+   "bss": -1.067,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.63,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.377,
+      "riferimento": 0.488
+     },
+     "2007-2012": {
+      "modello": 0.19,
+      "riferimento": 0.515
+     },
+     "2013-2018": {
+      "modello": 0.135,
+      "riferimento": 0.567
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Alberi monotoni (tutti i dati)",
+   "tipo": "gbm",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 186,
+   "eventi": 144,
+   "base": 0.774,
+   "auc": 0.547,
+   "bss": -0.346,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.63,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.54,
+      "riferimento": 0.488
+     },
+     "2007-2012": {
+      "modello": 0.6,
+      "riferimento": 0.515
+     },
+     "2013-2018": {
+      "modello": 0.127,
+      "riferimento": 0.567
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Mesi simili (tutti i dati)",
+   "tipo": "knn",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 186,
+   "eventi": 144,
+   "base": 0.774,
+   "auc": 0.555,
+   "bss": -0.011,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.63,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.521,
+      "riferimento": 0.488
+     },
+     "2007-2012": {
+      "modello": 0.544,
+      "riferimento": 0.515
+     },
+     "2013-2018": {
+      "modello": 0.096,
+      "riferimento": 0.567
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Famiglie combinate (tutti i dati)",
+   "tipo": "famiglie",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 186,
+   "eventi": 144,
+   "base": 0.774,
+   "auc": 0.432,
+   "bss": -0.628,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.63,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.363,
+      "riferimento": 0.488
+     },
+     "2007-2012": {
+      "modello": 0.265,
+      "riferimento": 0.515
+     },
+     "2013-2018": {
+      "modello": 0.117,
+      "riferimento": 0.567
+     }
+    },
+    "meglio": 0,
+    "peggio": 3
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Due stadi: recessione poi calo (tutti i dati)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 222,
+   "eventi": 152,
+   "base": 0.685,
+   "auc": 0.541,
+   "bss": -0.07,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.63,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.668,
+      "riferimento": 0.657
+     },
+     "2007-2012": {
+      "modello": 0.549,
+      "riferimento": 0.515
+     },
+     "2013-2018": {
+      "modello": 0.464,
+      "riferimento": 0.567
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 222,
+   "eventi": 152,
+   "base": 0.685,
+   "auc": 0.413,
+   "bss": -0.009,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.63,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.321,
+      "riferimento": 0.657
+     },
+     "2007-2012": {
+      "modello": 0.508,
+      "riferimento": 0.515
+     },
+     "2013-2018": {
+      "modello": 0.341,
+      "riferimento": 0.567
+     }
+    },
+    "meglio": 0,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 6,
+   "n": 222,
+   "eventi": 152,
+   "base": 0.685,
+   "auc": 0.49,
+   "bss": -0.002,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.63,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.199,
+      "riferimento": 0.657
+     },
+     "2007-2012": {
+      "modello": 0.562,
+      "riferimento": 0.515
+     },
+     "2013-2018": {
+      "modello": 0.279,
+      "riferimento": 0.567
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "_riferimenti",
+   "ob": "rialzo",
+   "h": 6,
+   "rif": {
+    "Solo prezzi": {
+     "n": 222,
+     "eventi": 152,
+     "base": 0.685,
+     "auc": 0.63,
+     "bss": 0.02
+    },
+    "Indice Armor": {
+     "n": 162,
+     "eventi": 124,
+     "base": 0.765,
+     "auc": 0.322,
+     "bss": 0.121
+    }
+   }
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Logistica (tutti i dati dal 1992)",
+   "tipo": "logit",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 168,
+   "eventi": 135,
+   "base": 0.804,
+   "auc": 0.587,
+   "bss": -0.455,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.563,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.598,
+      "riferimento": 0.333
+     },
+     "2013-2018": {
+      "modello": 0.279,
+      "riferimento": 0.54
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Alberi monotoni (tutti i dati)",
+   "tipo": "gbm",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 168,
+   "eventi": 135,
+   "base": 0.804,
+   "auc": 0.369,
+   "bss": -0.698,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.563,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.319,
+      "riferimento": 0.333
+     },
+     "2013-2018": {
+      "modello": 0.251,
+      "riferimento": 0.54
+     }
+    },
+    "meglio": 0,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Mesi simili (tutti i dati)",
+   "tipo": "knn",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 168,
+   "eventi": 135,
+   "base": 0.804,
+   "auc": 0.508,
+   "bss": 0.075,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.563,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.555,
+      "riferimento": 0.333
+     },
+     "2013-2018": {
+      "modello": 0.205,
+      "riferimento": 0.54
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Famiglie combinate (tutti i dati)",
+   "tipo": "famiglie",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 168,
+   "eventi": 135,
+   "base": 0.804,
+   "auc": 0.621,
+   "bss": -0.317,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.563,
+   "confronto": {
+    "sotto": {
+     "2000-2006": null,
+     "2007-2012": {
+      "modello": 0.658,
+      "riferimento": 0.333
+     },
+     "2013-2018": {
+      "modello": 0.207,
+      "riferimento": 0.54
+     }
+    },
+    "meglio": 1,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Due stadi: recessione poi calo (tutti i dati)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 216,
+   "eventi": 153,
+   "base": 0.708,
+   "auc": 0.427,
+   "bss": -0.136,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.563,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.262,
+      "riferimento": 0.653
+     },
+     "2007-2012": {
+      "modello": 0.678,
+      "riferimento": 0.333
+     },
+     "2013-2018": {
+      "modello": 0.388,
+      "riferimento": 0.54
+     }
+    },
+    "meglio": 1,
+    "peggio": 2
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Caro + deterioramento",
+   "tipo": "interazione",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 216,
+   "eventi": 153,
+   "base": 0.708,
+   "auc": 0.507,
+   "bss": 0.01,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.563,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.681,
+      "riferimento": 0.653
+     },
+     "2007-2012": {
+      "modello": 0.486,
+      "riferimento": 0.333
+     },
+     "2013-2018": {
+      "modello": 0.06,
+      "riferimento": 0.54
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "Conteggio dei segnali",
+   "tipo": "conteggio",
+   "variabili": [
+    "anfci",
+    "baa_d6",
+    "busloans_g6",
+    "cape_m",
+    "ccsa_yoy",
+    "cfnai",
+    "chargeoff_biz",
+    "ciss",
+    "claims_up",
+    "cp_g4",
+    "credito",
+    "curva",
+    "curva_min12",
+    "dd252",
+    "delinq_biz",
+    "dgs10",
+    "eps_g12",
+    "eps_g3",
+    "erp",
+    "indpro_g12",
+    "infl",
+    "infl_acc",
+    "isratio",
+    "kcfsi",
+    "m2_yoy",
+    "mom12",
+    "nfci",
+    "nfci_credit",
+    "nfci_leverage",
+    "permit_yoy",
+    "real_ff",
+    "sahm",
+    "sloos",
+    "sma10",
+    "vix"
+   ],
+   "ob": "rialzo",
+   "h": 12,
+   "n": 216,
+   "eventi": 153,
+   "base": 0.708,
+   "auc": 0.246,
+   "bss": -0.11,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.563,
+   "confronto": {
+    "sotto": {
+     "2000-2006": {
+      "modello": 0.099,
+      "riferimento": 0.653
+     },
+     "2007-2012": {
+      "modello": 0.374,
+      "riferimento": 0.333
+     },
+     "2013-2018": {
+      "modello": 0.582,
+      "riferimento": 0.54
+     }
+    },
+    "meglio": 2,
+    "peggio": 1
+   },
+   "promosso": false
+  },
+  {
+   "periodo_tipo": "recente",
+   "periodo": "2000-2018",
+   "modello": "_riferimenti",
+   "ob": "rialzo",
+   "h": 12,
+   "rif": {
+    "Solo prezzi": {
+     "n": 216,
+     "eventi": 153,
+     "base": 0.708,
+     "auc": 0.563,
+     "bss": -0.004
+    },
+    "Indice Armor": {
+     "n": 156,
+     "eventi": 123,
+     "base": 0.788,
+     "auc": 0.373,
+     "bss": 0.088
+    }
+   }
+  }
+ ],
+ "promossi": [
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Famiglie combinate (storia lunga)",
+   "tipo": "famiglie",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "auc": 0.698,
+   "bss": 0.039,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647
+  },
+  {
+   "periodo_tipo": "lungo",
+   "periodo": "1960-2018",
+   "modello": "Due stadi: recessione poi calo (storia lunga)",
+   "tipo": "due_stadi",
+   "variabili": [
+    "eps_g12",
+    "eps_g3",
+    "cape_m",
+    "erp",
+    "credito",
+    "baa_d6",
+    "curva",
+    "curva_min12",
+    "infl",
+    "indpro_g12",
+    "sahm",
+    "mom12",
+    "sma10",
+    "dd252"
+   ],
+   "ob": "calo10",
+   "h": 3,
+   "auc": 0.712,
+   "bss": 0.093,
+   "riferimento": "Solo prezzi",
+   "rif_auc": 0.647
+  }
+ ],
+ "direzione_prevedibile": [],
+ "analoghi_validati": false,
+ "segnali_dal_1960": [
+  {
+   "segnale": "Utili in calo (12 mesi)",
+   "mesi_acceso": 228,
+   "mesi_spento": 468,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 21.9,
+   "p_calo10_6m_spento": 18.4,
+   "ret12_acceso": 7.9,
+   "ret12_spento": 8.3,
+   "p_rialzo12_acceso": 75.0
+  },
+  {
+   "segnale": "Utili in calo forte (oltre -10%)",
+   "mesi_acceso": 92,
+   "mesi_spento": 604,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 29.3,
+   "p_calo10_6m_spento": 18.0,
+   "ret12_acceso": 5.8,
+   "ret12_spento": 8.5,
+   "p_rialzo12_acceso": 72.8
+  },
+  {
+   "segnale": "CAPE sopra 30",
+   "mesi_acceso": 59,
+   "mesi_spento": 637,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 42.4,
+   "p_calo10_6m_spento": 17.4,
+   "ret12_acceso": 0.1,
+   "ret12_spento": 8.9,
+   "p_rialzo12_acceso": 50.8
+  },
+  {
+   "segnale": "Premio utili-bond sotto 1%",
+   "mesi_acceso": 431,
+   "mesi_spento": 265,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 22.3,
+   "p_calo10_6m_spento": 15.1,
+   "ret12_acceso": 7.2,
+   "ret12_spento": 9.8,
+   "p_rialzo12_acceso": 68.9
+  },
+  {
+   "segnale": "Spread del credito +0,5 punti in 6 mesi",
+   "mesi_acceso": 88,
+   "mesi_spento": 608,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 23.9,
+   "p_calo10_6m_spento": 18.9,
+   "ret12_acceso": 11.3,
+   "ret12_spento": 7.7,
+   "p_rialzo12_acceso": 80.7
+  },
+  {
+   "segnale": "Sussidi +20% dal minimo dell'anno",
+   "mesi_acceso": 128,
+   "mesi_spento": 472,
+   "dal": 1968,
+   "p_calo10_6m_acceso": 39.1,
+   "p_calo10_6m_spento": 15.5,
+   "ret12_acceso": 8.7,
+   "ret12_spento": 8.0,
+   "p_rialzo12_acceso": 70.3
+  },
+  {
+   "segnale": "Curva dei tassi invertita (ultimi 12 mesi)",
+   "mesi_acceso": 175,
+   "mesi_spento": 521,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 38.9,
+   "p_calo10_6m_spento": 13.1,
+   "ret12_acceso": 2.2,
+   "ret12_spento": 10.2,
+   "p_rialzo12_acceso": 58.3
+  },
+  {
+   "segnale": "Prezzo sotto la media a 10 mesi",
+   "mesi_acceso": 210,
+   "mesi_spento": 486,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 34.8,
+   "p_calo10_6m_spento": 13.0,
+   "ret12_acceso": 8.0,
+   "ret12_spento": 8.2,
+   "p_rialzo12_acceso": 70.0
+  },
+  {
+   "segnale": "VIX sopra 30",
+   "mesi_acceso": 26,
+   "mesi_spento": 310,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 26.9,
+   "p_calo10_6m_spento": 19.4,
+   "ret12_acceso": 20.4,
+   "ret12_spento": 8.2,
+   "p_rialzo12_acceso": 88.5
+  },
+  {
+   "segnale": "Inflazione sopra 4%",
+   "mesi_acceso": 227,
+   "mesi_spento": 469,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 26.9,
+   "p_calo10_6m_spento": 16.0,
+   "ret12_acceso": 6.0,
+   "ret12_spento": 9.2,
+   "p_rialzo12_acceso": 67.8
+  },
+  {
+   "segnale": "Disoccupazione in salita (regola di Sahm)",
+   "mesi_acceso": 156,
+   "mesi_spento": 540,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 22.4,
+   "p_calo10_6m_spento": 18.7,
+   "ret12_acceso": 9.1,
+   "ret12_spento": 7.9,
+   "p_rialzo12_acceso": 75.0
+  },
+  {
+   "segnale": "Prestiti alle imprese in ritardo sopra 2,5%",
+   "mesi_acceso": 156,
+   "mesi_spento": 212,
+   "dal": 1987,
+   "p_calo10_6m_acceso": 21.2,
+   "p_calo10_6m_spento": 18.9,
+   "ret12_acceso": 8.0,
+   "ret12_spento": 9.8,
+   "p_rialzo12_acceso": 78.2
+  },
+  {
+   "segnale": "Credito alle imprese in calo (6 mesi)",
+   "mesi_acceso": 121,
+   "mesi_spento": 575,
+   "dal": 1960,
+   "p_calo10_6m_acceso": 12.4,
+   "p_calo10_6m_spento": 21.0,
+   "ret12_acceso": 7.0,
+   "ret12_spento": 8.4,
+   "p_rialzo12_acceso": 77.7
+  }
+ ],
+ "segnali_dal_1990": [
+  {
+   "segnale": "Utili in calo (12 mesi)",
+   "mesi_acceso": 119,
+   "mesi_spento": 217,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 29.4,
+   "p_calo10_6m_spento": 14.7,
+   "ret12_acceso": 8.1,
+   "ret12_spento": 9.7,
+   "p_rialzo12_acceso": 81.5
+  },
+  {
+   "segnale": "Utili in calo forte (oltre -10%)",
+   "mesi_acceso": 69,
+   "mesi_spento": 267,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 37.7,
+   "p_calo10_6m_spento": 15.4,
+   "ret12_acceso": 5.6,
+   "ret12_spento": 10.0,
+   "p_rialzo12_acceso": 72.5
+  },
+  {
+   "segnale": "CAPE sopra 30",
+   "mesi_acceso": 59,
+   "mesi_spento": 277,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 42.4,
+   "p_calo10_6m_spento": 15.2,
+   "ret12_acceso": 0.1,
+   "ret12_spento": 11.1,
+   "p_rialzo12_acceso": 50.8
+  },
+  {
+   "segnale": "Premio utili-bond sotto 1%",
+   "mesi_acceso": 218,
+   "mesi_spento": 118,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 23.4,
+   "p_calo10_6m_spento": 13.6,
+   "ret12_acceso": 8.4,
+   "ret12_spento": 10.5,
+   "p_rialzo12_acceso": 76.1
+  },
+  {
+   "segnale": "Spread del credito +0,5 punti in 6 mesi",
+   "mesi_acceso": 44,
+   "mesi_spento": 292,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 34.1,
+   "p_calo10_6m_spento": 17.8,
+   "ret12_acceso": 4.8,
+   "ret12_spento": 9.8,
+   "p_rialzo12_acceso": 68.2
+  },
+  {
+   "segnale": "Sussidi +20% dal minimo dell'anno",
+   "mesi_acceso": 45,
+   "mesi_spento": 291,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 48.9,
+   "p_calo10_6m_spento": 15.5,
+   "ret12_acceso": 0.5,
+   "ret12_spento": 10.5,
+   "p_rialzo12_acceso": 53.3
+  },
+  {
+   "segnale": "Curva dei tassi invertita (ultimi 12 mesi)",
+   "mesi_acceso": 56,
+   "mesi_spento": 280,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 51.8,
+   "p_calo10_6m_spento": 13.6,
+   "ret12_acceso": -8.2,
+   "ret12_spento": 12.6,
+   "p_rialzo12_acceso": 37.5
+  },
+  {
+   "segnale": "Prezzo sotto la media a 10 mesi",
+   "mesi_acceso": 86,
+   "mesi_spento": 250,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 40.7,
+   "p_calo10_6m_spento": 12.8,
+   "ret12_acceso": 5.1,
+   "ret12_spento": 10.5,
+   "p_rialzo12_acceso": 62.8
+  },
+  {
+   "segnale": "VIX sopra 30",
+   "mesi_acceso": 26,
+   "mesi_spento": 310,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 26.9,
+   "p_calo10_6m_spento": 19.4,
+   "ret12_acceso": 20.4,
+   "ret12_spento": 8.2,
+   "p_rialzo12_acceso": 88.5
+  },
+  {
+   "segnale": "Inflazione sopra 4%",
+   "mesi_acceso": 34,
+   "mesi_spento": 302,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 38.2,
+   "p_calo10_6m_spento": 17.9,
+   "ret12_acceso": 2.6,
+   "ret12_spento": 9.9,
+   "p_rialzo12_acceso": 76.5
+  },
+  {
+   "segnale": "Disoccupazione in salita (regola di Sahm)",
+   "mesi_acceso": 71,
+   "mesi_spento": 265,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 33.8,
+   "p_calo10_6m_spento": 16.2,
+   "ret12_acceso": 4.8,
+   "ret12_spento": 10.3,
+   "p_rialzo12_acceso": 73.2
+  },
+  {
+   "segnale": "Prestiti alle imprese in ritardo sopra 2,5%",
+   "mesi_acceso": 124,
+   "mesi_spento": 212,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 21.8,
+   "p_calo10_6m_spento": 18.9,
+   "ret12_acceso": 7.9,
+   "ret12_spento": 9.8,
+   "p_rialzo12_acceso": 80.6
+  },
+  {
+   "segnale": "Credito alle imprese in calo (6 mesi)",
+   "mesi_acceso": 103,
+   "mesi_spento": 233,
+   "dal": 1990,
+   "p_calo10_6m_acceso": 13.6,
+   "p_calo10_6m_spento": 22.7,
+   "ret12_acceso": 7.3,
+   "ret12_spento": 9.9,
+   "p_rialzo12_acceso": 81.6
+  }
+ ],
+ "mancanti": [
+  "margin_yoy"
+ ],
+ "secondi": 82.2,
+ "analoghi_oggi": {
+  "data": "2026-11-08",
+  "colonne": [
+   "eps_g12",
+   "eps_g3",
+   "cape_m",
+   "erp",
+   "credito",
+   "baa_d6",
+   "curva",
+   "curva_min12",
+   "infl",
+   "indpro_g12",
+   "sahm",
+   "mom12",
+   "sma10",
+   "dd252"
+  ],
+  "k": 25,
+  "oggi": {
+   "eps_g12": 32.76,
+   "eps_g3": 12.89,
+   "cape_m": 40.42,
+   "erp": -1.14,
+   "credito": 1.57,
+   "baa_d6": 0.0,
+   "curva": 0.67,
+   "curva_min12": 0.3,
+   "infl": 4.02,
+   "indpro_g12": 2.25,
+   "sahm": 0.0,
+   "mom12": 7.71,
+   "sma10": 0.84,
+   "dd252": -5.65
+  },
+  "mesi": [
+   {
+    "mese": "2000-02",
+    "distanza": 0.38,
+    "ret_6": 10.5,
+    "ret_12": -9.3,
+    "calo_max_12": -9.3
+   },
+   {
+    "mese": "1999-11",
+    "distanza": 0.45,
+    "ret_6": 2.4,
+    "ret_12": -5.3,
+    "calo_max_12": -5.3
+   },
+   {
+    "mese": "2000-05",
+    "distanza": 0.48,
+    "ret_6": -7.4,
+    "ret_12": -11.6,
+    "calo_max_12": -22.3
+   },
+   {
+    "mese": "2025-02",
+    "distanza": 0.49,
+    "ret_6": 9.2,
+    "ret_12": 15.5,
+    "calo_max_12": -16.3
+   },
+   {
+    "mese": "2018-03",
+    "distanza": 0.51,
+    "ret_6": 10.3,
+    "ret_12": 7.3,
+    "calo_max_12": -11.0
+   },
+   {
+    "mese": "2025-09",
+    "distanza": 0.51,
+    "ret_6": -5.2,
+    "ret_12": 14.4,
+    "calo_max_12": -5.2
+   },
+   {
+    "mese": "2000-09",
+    "distanza": 0.52,
+    "ret_6": -19.2,
+    "ret_12": -27.5,
+    "calo_max_12": -32.8
+   },
+   {
+    "mese": "2018-06",
+    "distanza": 0.53,
+    "ret_6": -8.6,
+    "ret_12": 8.2,
+    "calo_max_12": -13.5
+   },
+   {
+    "mese": "1999-07",
+    "distanza": 0.53,
+    "ret_6": 4.9,
+    "ret_12": 7.7,
+    "calo_max_12": -6.1
+   },
+   {
+    "mese": "2018-10",
+    "distanza": 0.53,
+    "ret_6": 8.6,
+    "ret_12": 12.0,
+    "calo_max_12": -13.3
+   },
+   {
+    "mese": "1999-02",
+    "distanza": 0.54,
+    "ret_6": 8.9,
+    "ret_12": 8.9,
+    "calo_max_12": -1.0
+   },
+   {
+    "mese": "2006-05",
+    "distanza": 0.55,
+    "ret_6": 10.3,
+    "ret_12": 20.5,
+    "calo_max_12": -3.7
+   },
+   {
+    "mese": "1998-08",
+    "distanza": 0.57,
+    "ret_6": 29.4,
+    "ret_12": 37.9,
+    "calo_max_12": 0.2
+   },
+   {
+    "mese": "2005-08",
+    "distanza": 0.57,
+    "ret_6": 4.9,
+    "ret_12": 6.8,
+    "calo_max_12": -3.6
+   },
+   {
+    "mese": "2001-01",
+    "distanza": 0.58,
+    "ret_6": -11.3,
+    "ret_12": -17.3,
+    "calo_max_12": -29.3
+   },
+   {
+    "mese": "2025-05",
+    "distanza": 0.59,
+    "ret_6": 15.9,
+    "ret_12": 28.2,
+    "calo_max_12": 0.4
+   },
+   {
+    "mese": "2005-12",
+    "distanza": 0.59,
+    "ret_6": 1.8,
+    "ret_12": 13.6,
+    "calo_max_12": -2.0
+   },
+   {
+    "mese": "1996-07",
+    "distanza": 0.62,
+    "ret_6": 22.8,
+    "ret_12": 49.1,
+    "calo_max_12": 1.5
+   },
+   {
+    "mese": "1997-10",
+    "distanza": 0.62,
+    "ret_6": 21.6,
+    "ret_12": 20.1,
+    "calo_max_12": -0.9
+   },
+   {
+    "mese": "2007-06",
+    "distanza": 0.63,
+    "ret_6": -1.7,
+    "ret_12": -14.9,
+    "calo_max_12": -15.3
+   },
+   {
+    "mese": "1997-03",
+    "distanza": 0.63,
+    "ret_6": 25.1,
+    "ret_12": 45.5,
+    "calo_max_12": -2.6
+   },
+   {
+    "mese": "2005-04",
+    "distanza": 0.64,
+    "ret_6": 3.6,
+    "ret_12": 13.3,
+    "calo_max_12": -0.2
+   },
+   {
+    "mese": "2007-10",
+    "distanza": 0.64,
+    "ret_6": -10.6,
+    "ret_12": -37.5,
+    "calo_max_12": -45.2
+   },
+   {
+    "mese": "2007-03",
+    "distanza": 0.65,
+    "ret_6": 7.5,
+    "ret_12": -6.9,
+    "calo_max_12": -10.4
+   },
+   {
+    "mese": "1996-10",
+    "distanza": 0.65,
+    "ret_6": 13.6,
+    "ret_12": 29.7,
+    "calo_max_12": -0.2
+   }
+  ],
+  "rialzo_12_su_k": 17,
+  "mediana_12": 8.9,
+  "p10_12": -16.3,
+  "p90_12": 34.6,
+  "calo10_12_su_k": 10,
+  "rialzo_6_su_k": 18,
+  "nota": "Non ancora validato: si mostra nell'app solo se supera la verifica della Fase B."
+ },
+ "episodi": {
+  "modello": "Famiglie combinate (storia lunga)",
+  "episodi": [
+   {
+    "massimo": "1961-12",
+    "minimo": "1962-06",
+    "calo": -28.0,
+    "mesi_valutati": 0,
+    "mesi_in_allarme_prima": 0
+   },
+   {
+    "massimo": "1966-02",
+    "minimo": "1966-10",
+    "calo": -22.2,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 12
+   },
+   {
+    "massimo": "1968-11",
+    "minimo": "1970-05",
+    "calo": -36.1,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 10
+   },
+   {
+    "massimo": "1973-01",
+    "minimo": "1974-10",
+    "calo": -48.2,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 3
+   },
+   {
+    "massimo": "1980-11",
+    "minimo": "1982-08",
+    "calo": -27.1,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 7
+   },
+   {
+    "massimo": "1987-08",
+    "minimo": "1987-12",
+    "calo": -33.5,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 0
+   },
+   {
+    "massimo": "2000-03",
+    "minimo": "2002-10",
+    "calo": -49.1,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 0
+   },
+   {
+    "massimo": "2007-10",
+    "minimo": "2009-03",
+    "calo": -56.8,
+    "mesi_valutati": 12,
+    "mesi_in_allarme_prima": 5
+   }
+  ],
+  "mesi_in_allarme": 159,
+  "falsi_allarmi": 79
+ },
+ "prove_totali_registro": 256
+}
