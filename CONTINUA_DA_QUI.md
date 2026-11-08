@@ -449,3 +449,14 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - App: «Quanto fidarsi» → nuova sezione «VWCE in euro» (segmenti, sovrapposizione, scenari in euro, confronto tra motori). Comando `python -m armor serie-euro`; rifatto ogni mese da `valuta-modelli`.
 - Non fatto (bassa priorità, non verificabile da qui): scarico delle partecipazioni e dei pesi per paese dal sito Vanguard. Restano le stime «dalla capitalizzazione».
 - Test 70 verdi.
+
+## PATCH 31 (Fase 4: indice di affidabilità a segnali)
+- `affidabilita.py`: cinque segnali con soglie fissate prima, nessun peso inventato; mostrati uno per uno in Oggi («Quanto è affidabile la stima di oggi»), salvati in `data/affidabilita.json` ogni giorno:
+  1. Disaccordo: |FHS+VIX − A1| ≥ 5 punti e rapporto ≥ 2 su una soglia principale (`campioni.divergenza`).
+  2. Dati vecchi: almeno una serie di `salute.KEY_SERIES` rossa.
+  3. Situazione mai vista: distanza di Mahalanobis dello stato di oggi (8 variabili di A1 + VIX + spread BAA-10Y + curva 10Y-3M, dal 1990) oltre il 99° percentile delle distanze storiche.
+  4. Errori recenti: Brier delle previsioni scadute del diario (1 mese, una per finestra non sovrapposta) peggiore della frequenza storica; attivo solo con almeno 12 finestre (oggi 1: «non ancora valutabile»).
+  5. Instabilità: la probabilità principale a 1 o 3 mesi cambia di oltre 3 punti stimando il GARCH dal 1950, dal 1990 o sugli ultimi 15 anni.
+- Livello: 0 segnali accesi = alta, 1 = media, 2 o più = bassa con l'avviso «Stima poco affidabile: …». Un segnale non valutabile non conta.
+- Oggi (dati del 6/11/2026): **affidabilità bassa**: disaccordo (A1 5% contro 14% a 10 giorni, 3% contro 11% a 1 mese, 8% contro 24% a 3 mesi, 15% contro 32% a 6 mesi) e instabilità (a 1 mese la stima va da 12% a 20% secondo la storia usata); situazione mai vista spenta (distanza 4,1 contro soglia 8,9); dati: nessuna serie chiave rossa.
+- Test: ogni segnale e il livello, instabilità con GARCH simulato, Mahalanobis su dati normali. 72 verdi.

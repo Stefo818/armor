@@ -33,6 +33,12 @@ def forecast(write: bool = True) -> dict:
                 r["avviso_coerenza"] = av
     except Exception as e:  # noqa: BLE001
         print("[sfidante] non calcolato:", str(e)[:100])
+    try:   # indice di affidabilità a segnali (PIANO_ARMOR3 Fase 4)
+        from . import affidabilita
+        aff = affidabilita.calcola(pred, p, t)
+        print(f"[affidabilità] {aff['livello']} ({aff['n_accesi']} segnali accesi)", flush=True)
+    except Exception as e:  # noqa: BLE001
+        print("[affidabilità] non calcolata:", str(e)[:100])
     po = None
     try:   # motore unico di percorsi (PIANO_ARMOR3 Fase 2): scenari + adozione orizzonte per orizzonte solo se la verifica storica del protocollo l'ha promosso
         from . import journal3, percorsi

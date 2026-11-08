@@ -1138,3 +1138,53 @@ def test_serie_euro_conversione_collegamento_e_segmenti(monkeypatch):
     ids = [x["id"] for x in s["segmenti"]]
     assert ids == ["b", "a", "c"] and "solo robustezza" in s["segmenti"][2]["nome"] and s["fonte_cambio"] == "Yahoo EURUSD=X"
     assert s["vwce_eur"].index[0] == s["vt_eur"].index[0] and s["vwce_eur"].loc[ser["vwce_de"].index[0]] == 60.0
+
+
+def test_affidabilita_segnali_e_livello(monkeypatch):
+    import numpy as np
+    import pandas as pd
+    from armor import affidabilita as A
+    # disaccordo: si accende solo con la divergenza (≥5 punti e rapporto ≥2), non valutabile senza sfidante
+    pred = {"1m": {"p": {10: 0.03}, "sfidante": {"p": {10: 0.11}, "div": True}}, "3m": {"p": {10: 0.2}, "sfidante": {"p": {10: 0.22}, "div": False}}}
+    assert A.segnale_disaccordo(pred)["acceso"] is True
+    assert A.segnale_disaccordo({"1m": {"p": {10: 0.03}, "sfidante": {"p": {10: 0.04}, "div": False}}})["acceso"] is False
+    assert A.segnale_disaccordo({"1m": {"p": {10: 0.03}}})["acceso"] is None
+    # dati vecchi: una serie rossa accende il segnale
+    assert A.segnale_dati([{"light": "ok", "name": "a"}, {"light": "ba", "name": "VIX"}])["acceso"] is True
+    assert A.segnale_dati([{"light": "ok", "name": "a"}, {"light": "wa", "name": "b"}])["acceso"] is False
+    # situazione mai vista: un punto lontano dalla storia supera il 99° percentile, uno tipico no
+    rng = np.random.default_rng(4)
+    X = pd.DataFrame(rng.normal(0, 1, (3000, 4)))
+    d_tip, soglia, n = A.mahalanobis(X, np.zeros(4))
+    d_str, _, _ = A.mahalanobis(X, np.full(4, 6.0))
+    assert d_tip < soglia < d_str and n == 3000 and 2.5 < soglia < 4.5
+    # errori recenti: con meno di 12 finestre non è valutabile; con 12 finestre cattive si accende, con 12 buone no
+    idx = pd.bdate_range("2020-01-01", periods=1500)
+    p = pd.Series(100 * np.exp(np.cumsum(np.full(1500, 0.0005))), index=idx)          # sempre in salita: nessun calo
+    def diario(prob, k):
+        return pd.DataFrame({"horizon": "1m", "model": "A1", "asof": [str(idx[i * 21].date()) for i in range(k)], "thr1": 10, "p1": prob, "base1": 0.10})
+    assert A.segnale_errori(diario(0.5, 5), p)["acceso"] is None
+    assert A.segnale_errori(diario(0.5, 14), p)["acceso"] is True        # probabilità alta, nessun calo: peggio della frequenza
+    assert A.segnale_errori(diario(0.01, 14), p)["acceso"] is False
+    # livello: 0 = alta, 1 = media, ≥2 = bassa con avviso; un segnale non valutabile non conta
+    s = lambda a: {"id": "dati", "acceso": a, "dettaglio": "x"}
+    assert A.livello([s(False), s(None)])["livello"] == "alta"
+    assert A.livello([s(True), s(False)])["livello"] == "media"
+    l = A.livello([s(True), s(True), s(False)])
+    assert l["livello"] == "bassa" and l["avviso"].startswith("Stima poco affidabile")
+
+
+def test_affidabilita_instabilita_su_finestre_diverse(monkeypatch):
+    import numpy as np
+    import pandas as pd
+    from armor import affidabilita as A, fhs
+    idx = pd.bdate_range("1995-01-02", periods=5000)
+    p = pd.Series(100 * np.exp(np.cumsum(np.random.default_rng(8).normal(0.0003, 0.01, 5000))), index=idx)
+    def fake(pp, sims=0, seed=0, fit_start="1950-01-01", **k):
+        v = {"1950-01-01": 0.10, "1990-01-01": 0.10}.get(fit_start, 0.20)
+        return {hz: {"down": {10: {"p": v}, 5: {"p": v}}} for hz in ("1m", "3m")}
+    monkeypatch.setattr(fhs, "forecast", fake)
+    r = A.segnale_instabilita(p, p.index[-1])
+    assert r["acceso"] is True and "10%" in r["dettaglio"] and "20%" in r["dettaglio"]
+    monkeypatch.setattr(fhs, "forecast", lambda pp, sims=0, seed=0, fit_start="", **k: {hz: {"down": {10: {"p": 0.1}, 5: {"p": 0.1}}} for hz in ("1m", "3m")})
+    assert A.segnale_instabilita(p, p.index[-1])["acceso"] is False

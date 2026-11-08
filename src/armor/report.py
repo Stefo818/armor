@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -966,7 +966,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
         print("Indici a 3 orizzonti non calcolati:", str(ex)[:120], flush=True)
         hz3 = None
     kpi = _safe(lambda: cruscotto.kpi_html(sem, sp, vwce_series(), store.load("vix")), "Indici principali")
-    p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>"
+    p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>{_safe(affidabilita.html, 'Affidabilità')}"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
               f"{('<div class=card><b>Semafori di oggi:</b> ' + sem_line + '</div>') if sem_line else ''}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
