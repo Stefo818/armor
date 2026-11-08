@@ -354,3 +354,8 @@ In tutto 159 mesi di allarme, di cui 79 falsi.
   - Indici: i conteggi in cima sono cliccabili.
 - Nota: il bilancio del giorno conta i semafori all'ora del giornaliero, la lista mostra i valori al momento della pagina, quindi i numeri possono differire di poco.
 - `sw.js` v12. Test 59 verdi.
+
+## PIANO ARMOR 3 (dopo la patch 25)
+Il piano successivo è in `PIANO_ARMOR3.md`: sintesi delle revisioni di Claude, GPT, Gemini e DeepSeek più due misure sul codice reale.
+- Misure: persistenza del GARCH 0,989 (emivita circa 63 sedute); a 252 sedute centro della distribuzione e probabilità di calo corretti, ma code che esplodono (curtosi 50-75 contro 1-3 storica).
+- Fasi: 0 (A1 di nuovo riferimento, FHS+VIX sperimentale affiancato), 1 (verifica rigorosa e protocollo), 2+7 (motore unico di percorsi e diario v3), 3 (VWCE in euro), 4 (affidabilità), 5 (simulatore PAC), 6 (esperimenti VRP/HAR).
