@@ -1,0 +1,50 @@
+{
+ "asof": "2026-11-06",
+ "segnali": [
+  {
+   "id": "disaccordo",
+   "acceso": true,
+   "dettaglio": "10g: A1 5% contro 14%; 1m: A1 3% contro 11%; 3m: A1 8% contro 24%; 6m: A1 15% contro 32%"
+  },
+  {
+   "id": "dati",
+   "acceso": false,
+   "dettaglio": "tutte le serie chiave sono regolari"
+  },
+  {
+   "id": "mai_visto",
+   "acceso": false,
+   "dettaglio": "distanza 4.1 contro soglia 8.9 (99° percentile di 9280 giorni)",
+   "valore": 4.078110861083226,
+   "soglia": 8.945207806211197
+  },
+  {
+   "id": "errori",
+   "acceso": null,
+   "dettaglio": "non ancora valutabile: 0 finestre scadute su 12 richieste",
+   "finestre": 0
+  },
+  {
+   "id": "instabilita",
+   "acceso": true,
+   "dettaglio": "a 1 mese la stima va da 12% a 20% secondo la storia usata",
+   "per_finestra": {
+    "dal 1950": {
+     "1m": 0.12466666666666666,
+     "3m": 0.271
+    },
+    "dal 1990": {
+     "1m": 0.16833333333333333,
+     "3m": 0.30833333333333335
+    },
+    "ultimi 15 anni": {
+     "1m": 0.19766666666666666,
+     "3m": 0.307
+    }
+   }
+  }
+ ],
+ "livello": "bassa",
+ "n_accesi": 2,
+ "avviso": "Stima poco affidabile: disaccordo tra i modelli (10g: A1 5% contro 14%; 1m: A1 3% contro 11%; 3m: A1 8% contro 24%; 6m: A1 15% contro 32%); stima instabile (a 1 mese la stima va da 12% a 20% secondo la storia usata)."
+}
