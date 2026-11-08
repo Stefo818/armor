@@ -21,8 +21,8 @@
   {
    "id": "errori",
    "acceso": null,
-   "dettaglio": "non ancora valutabile: servono 12 previsioni a 1 mese già verificate e indipendenti, ce ne sono 1 (ne maturano circa una al mese)",
-   "finestre": 1
+   "dettaglio": "non ancora valutabile: servono 12 previsioni a 1 mese già verificate e indipendenti, ce ne sono 0 (ne maturano circa una al mese)",
+   "finestre": 0
   },
   {
    "id": "instabilita",
