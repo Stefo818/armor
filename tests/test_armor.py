@@ -1456,3 +1456,35 @@ def test_affidabilita_html_chiaro(tmp_path, monkeypatch):
     assert "da 3% a 11%" in h and "0,6× a 2,2× il normale" in h and "in attesa" in h
     f.write_text(json.dumps({"asof": "x", "segnali": seg[1:3], "livello": "alta", "n_accesi": 0, "avviso": ""}))
     assert "Stima affidabile" in A.html()
+
+
+def test_traduzione_cache_e_fallback(tmp_path):
+    import json
+    from armor import traduzione as T
+    chiamate = []
+
+    def cattivo(t):
+        chiamate.append(("cattivo", t))
+        raise RuntimeError("giù")
+
+    def buono(t):
+        chiamate.append(("buono", t))
+        return "IT: " + t
+    c = tmp_path / "tr.json"
+    r = T.traduci(["Stocks fall", "Stocks fall", "Fed warns"], c, servizi=(cattivo, buono), workers=1)
+    assert r == {"Stocks fall": "IT: Stocks fall", "Fed warns": "IT: Fed warns"}      # il primo servizio fallisce, ripiega sul secondo
+    assert len(json.loads(c.read_text(encoding="utf-8"))) == 2
+    n = len(chiamate)
+    T.traduci(["Stocks fall"], c, servizi=(cattivo, buono))
+    assert len(chiamate) == n                                                          # già in cache: nessuna chiamata
+    # nessun servizio risponde: il titolo resta com'è e non si solleva nulla
+    news = {"items": [{"title": "Oil jumps"}, {"title": "Stocks fall"}]}
+    assert T.applica(news, c, servizi=(cattivo,), tempo_max=5) == 1
+    assert news["items"][0]["title"] == "Oil jumps" and news["items"][1]["title"] == "IT: Stocks fall" and news["items"][1]["title_en"] == "Stocks fall"
+    assert news["traduzione"] == {"titoli_in_italiano": 1, "totale": 2}
+    assert T.applica(news, c, servizi=(cattivo,)) == 1                                  # idempotente: l'originale è in title_en
+
+
+def test_dock_colore_distinto():
+    from armor import extra13
+    assert "#dockbar{" in extra13.CSS and "background:#3b4fc4" in extra13.CSS.split("#dockbar{")[1].split("}")[0]

@@ -186,6 +186,11 @@ def summary(news: dict) -> dict:
 
 def run() -> dict:
     news = collect()
+    try:   # titoli in italiano (cache + servizi gratuiti; se non rispondono restano in inglese)
+        from . import traduzione
+        traduzione.applica(news)
+    except Exception as e:  # noqa: BLE001
+        print("[traduzione] non riuscita:", str(e)[:80])
     NEWS_DIR.mkdir(parents=True, exist_ok=True)
     day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     (NEWS_DIR / f"{day}.json").write_text(json.dumps(news, ensure_ascii=False), encoding="utf-8")

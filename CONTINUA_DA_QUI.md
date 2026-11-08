@@ -494,3 +494,10 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - **Controllo del mattino** (08:00 circa, lun-ven): `armor diagnostica`; avvisa anche se il giro serale non è partito.
 - **NON automatico**: login AAII (serve un account), pesi e partecipazioni Vanguard (nessun download pubblico affidabile da qui), ^VIX1Y (non esiste su Yahoo), TER (da controllare a mano sulla scheda Vanguard). Le revisioni previste dal protocollo (10 maggio 2027; decisioni dall'8 novembre 2028) sono promemoria per te: nessuna decisione viene presa da sola.
 - **Verifica in 2 minuti**: GitHub → Actions → il run più recente di «Aggiornamento giornaliero Armor» è verde? Poi nell'app → Storico → «Salute dei dati»: il badge dice «Diario aggiornato oggi» (verde). Se è giallo o rosso, controlla il log del run: cerca `[diario]` e `ERR`.
+
+## PATCH 35 (riquadro affidabilità compatto)
+- Il riquadro «Quanto fidarsi della stima di oggi» è chiuso di default: titolo, badge e una frase di sintesi con freccia «Dettagli ▾»; al tocco si apre il testo completo (come muoverti, orizzonti, cinque controlli). Solo `affidabilita.html()`, nessun cambio di regole. Test 87 verdi.
+
+## PATCH 36 (barra Assistente colorata, notizie in italiano)
+- Barra «Assistente Armor» in basso: sfondo indaco (#3b4fc4) con testo bianco, uguale in chiaro e scuro (`extra13.CSS`).
+- `traduzione.py`: i titoli delle notizie (e quindi il ticker nella barra) sono tradotti in italiano in `news.run()` dopo l analisi: servizi web pubblici gratuiti senza chiavi (Google Translate pubblico, poi MyMemory), cache in `data/news/traduzioni.json` (un titolo si traduce una volta; max 4000), tempo massimo 150 s. L originale resta in `title_en`; se nessun servizio risponde il titolo resta in inglese e il ciclo non si ferma (log `[traduzione] N da cache, M nuovi, K non tradotti`). Non verificato dal cloud (nessun accesso a quei servizi): provare con il workflow «Notizie e analisi». Tema, sentimento e FinBERT usano ancora l inglese (traduzione dopo l analisi). Test 89 verdi.

@@ -192,7 +192,13 @@ def html() -> str:
         return ""
     titolo, cls, cosa, muovi = GUIDA[a["livello"]]
     e = _h.escape
-    out = [f"<div class='card'><div class='hzh'><h3 style='margin:0'>Quanto fidarsi della stima di oggi</h3><span class='badge {cls}'>{e(titolo)}</span></div>",
+    accesi = [NOMI[x["id"]].lower() for x in a["segnali"] if x["acceso"]]
+    breve = {"alta": "I modelli concordano e non c'è nulla di anomalo.",
+             "media": f"Un controllo è acceso ({accesi[0] if accesi else ''}): leggi il numero come ordine di grandezza.",
+             "bassa": f"{len(accesi)} controlli accesi ({', '.join(accesi)}): usa la fascia tra i due modelli, non un numero solo."}[a["livello"]]
+    out = ["<style>.aff>summary{list-style:none;cursor:pointer;color:inherit;font-weight:400}.aff>summary h3{color:inherit}.aff>summary::-webkit-details-marker{display:none}.aff .fr{display:inline-block;transition:transform .2s}.aff[open] .fr{transform:rotate(180deg)}</style>",
+           f"<details class='card aff'><summary><div class='hzh'><h3 style='margin:0'>Quanto fidarsi della stima di oggi</h3><span class='badge {cls}'>{e(titolo)}</span></div>",
+           f"<div class='mu' style='margin-top:6px'>{e(breve)} <b style='white-space:nowrap'>Dettagli <span class='fr'>▾</span></b></div></summary>",
            f"<p style='margin:10px 0 4px'><b>In breve.</b> {e(cosa)}</p>",
            f"<p style='margin:4px 0 10px'><b>Come muoverti.</b> {e(muovi)}</p>"]
     ori = a.get("orizzonti") or []
@@ -216,5 +222,5 @@ def html() -> str:
                "<p class='mu'>La probabilità è una frequenza, non una promessa: «11%» vuol dire che in situazioni come questa, in 100 casi, circa 11 hanno avuto quel calo. "
                "Il «normale» è la frequenza media storica: oltre 1× il rischio è sopra la media, sotto 1× è sotto. "
                "L'affidabilità non misura se il mercato salirà o scenderà: misura quanto ci si può fidare del calcolo di oggi. "
-               "Livello alto = 0 controlli accesi, medio = 1, basso = 2 o più; un controllo «in attesa» non conta. Non è consulenza finanziaria.</p></details></div>")
+               "Livello alto = 0 controlli accesi, medio = 1, basso = 2 o più; un controllo «in attesa» non conta. Non è consulenza finanziaria.</p></details></details>")
     return "".join(out)

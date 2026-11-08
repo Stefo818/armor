@@ -472,8 +472,8 @@ CSS = """
 .topbtns{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}.topbtns .btn{padding:9px 16px;font-weight:700}
 .btn{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:6px 14px;font:inherit;cursor:pointer}.btn.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
 #dock{position:fixed;left:0;right:0;bottom:0;z-index:15;max-width:1200px;margin:auto;background:var(--card);border:1px solid var(--bd);border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -6px 22px rgba(0,0,0,.25)}
-#dockbar{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:var(--tx);font:inherit;padding:12px 16px;cursor:pointer;text-align:left}
-.dk1{font-weight:800}.dk2{flex:1;font-size:13px;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dka{font-size:16px;color:var(--ac)}
+#dockbar{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:17px 17px 0 0;background:#3b4fc4;color:#fff;font:inherit;padding:12px 16px;cursor:pointer;text-align:left}
+.dk1{font-weight:800}.dk2{flex:1;font-size:13px;color:rgba(255,255,255,.88);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dka{font-size:16px;color:#fff}
 #dockbody{display:none;height:68vh;overflow:auto;border-top:1px solid var(--bd);padding:0 14px 14px}#dock.open #dockbody{display:block}
 .dnav{position:sticky;top:0;background:var(--card);display:flex;gap:6px;overflow-x:auto;padding:10px 0}.dnav button{white-space:nowrap;border:1px solid var(--bd);background:var(--bg);color:var(--tx);padding:7px 13px;border-radius:99px;font:inherit;font-size:14px;cursor:pointer}.dnav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 .dpane{display:none}.dpane.on{display:block}body{padding-bottom:64px}body.dockopen{padding-bottom:calc(68vh + 64px)}
