@@ -369,3 +369,39 @@ Il piano successivo è in `PIANO_ARMOR3.md`: sintesi delle revisioni di Claude, 
 - «Quanto fidarsi»: la sezione si chiama «Sfidanti in prova»; testo: la scelta fu fatta guardando la stessa valutazione, non è una prova; revisione descrittiva il **10 maggio 2027**, nessuna promozione automatica.
 - Nuovi download (solo in GitHub Actions): `vix6m` (^VIX6M), `vix1y` (^VIX1Y) con Yahoo; `dexuseu` (FRED DEXUSEU); `sp_open`, `sp_high`, `sp_low` (^GSPC dal 1990, una sola richiesta, `sources.fetch_sp_ohlc`). Se non arrivano il ciclo continua: serviranno a Fase 2 (curva VIX), Fase 3 (euro) e Fase 6a (Yang-Zhang). **Non verificati da qui (rete bloccata): controllare i log di «Aggiornamento giornaliero Armor».**
 - `sw.js` v13. Test 60 verdi.
+
+## PATCH 27 (Fase 1 del PIANO ARMOR 3: revisione del codice, verifica.py, protocollo)
+### 1a. Rapporto di revisione del codice (nessun errore grave trovato; test in `test_revisione_codice_definizioni_e_purge`)
+| Punto | Esito |
+|---|---|
+| `features.fwd_maxdd` | **Corretto, ma nome fuorviante**: è il calo massimo rispetto al prezzo di OGGI nelle h sedute successive (minimo/prezzo − 1), non il massimo drawdown. Dichiarato nel protocollo; il massimo drawdown vero è un obiettivo separato nel motore di percorsi (Fase 2). |
+| «10 giorni» | = 7 sedute (circa 10 giorni di calendario). Corretto e coerente ovunque (`config.HORIZONS`). |
+| Purge in `Engine.fit` e `modeleval.purged_base` | **Corretto**: addestramento con le sole righe la cui finestra futura finisce entro la data (data ≤ t − h); base «normale» = esiti maturati. Testato. |
+| `modeleval`, `fhs.backtest_preds` | Corretto: parametri rifatti ogni anno con embargo di 5 sedute, varianza aggiornata con i prezzi noti. |
+| `data/risk_history.csv` | Walk-forward senza sguardo al futuro (rifit ogni 63 sedute; base ferma tra un rifit e l'altro, ma causale). **Limite**: usa `champion_engine`, oggi A1; se in passato fosse stato scelto un campione con variabili extra, la scelta sarebbe a posteriori. |
+| `features.vwce_series` | **Corretto**: livello in euro = livello VT in dollari / EURUSD (dollari per euro); testato con un caso numerico. Limiti da dichiarare: VT segue il FTSE Global All Cap (non All-World), chiude alle 22:00 contro le 17:30 di VWCE.DE (la giunzione usa un solo giorno di scala), ritenute sui dividendi diverse; VT con `auto_adjust=True` rende il rendimento con dividendi lordi. Si rifà con segmenti dichiarati nella Fase 3. |
+| `fondamentali.LAG` | Utili/margini 150 giorni (realistico); mensili con ritardi dichiarati. Dati FRED **rivisti** (non in tempo reale): limite da dichiarare. |
+| Pesi dell'Indice Armor (22/18/8/12/12/8/6/14) | **Limite**: scelti nel 2026 guardando la storia (adattamento a posteriori). Sono presentati come descrittivi, non come previsione verificata. |
+### 1b. `verifica.py` (nuovo)
+Brier, BSS, log loss, AUC, curva a 10 classi, errore di calibrazione, pendenza di calibrazione; finestre non sovrapposte (tutti gli sfasamenti); bootstrap stazionario (2.000 repliche, blocco medio ⌈h/5⌉); episodi; Diebold-Mariano con errori HAC e Holm; PBO con CSCV; copertura delle fasce, CRPS dai quantili, QLIKE; `regola_adozione()` con le soglie del protocollo. Test su dati sintetici con risultato noto (PBO ≈ 0,5 su configurazioni casuali, Holm su esempio noto, ecc.).
+### 1c. Verifica rifatta 1994-oggi (una data ogni 5 sedute; 1.650 date; bootstrap 1.000 repliche) — `data/verifica_storica.json`, comando `python -m armor verifica` (rifatta ogni mese da `valuta-modelli`)
+Calo (BSS rispetto alla frequenza storica con intervallo al 90%; episodi = crisi distinte):
+
+| Bersaglio | Episodi | A1 | FHS | FHS+VIX | Differenza di Brier FHS+VIX − A1 [90%], p Holm |
+|---|---|---|---|---|---|
+| ≥5% in 7 sedute | 64 | +0,071 [+0,03; +0,12] | +0,100 | +0,100 [+0,06; +0,15] | −0,002 [−0,003; −0,000], p 0,077 |
+| ≥5% in 21 sedute | 62 | +0,049 [+0,01; +0,09] | +0,064 | +0,070 | −0,003 [−0,006; −0,000], p 0,33 |
+| ≥10% in 21 sedute | 20 | +0,048 [−0,01; +0,11] | +0,065 | +0,069 [+0,00; +0,13] | −0,001 [−0,002; +0,001], p 1,0 |
+| ≥10% in 63 sedute | 15 | +0,031 [−0,05; +0,12] | +0,054 | +0,053 [−0,00; +0,12] | −0,003 [−0,009; +0,003], p 1,0 |
+| ≥15% in 63 sedute | 13 | +0,030 | +0,072 | +0,067 | p 0,91 |
+| ≥10% in 126 sedute | 12 | +0,034 [−0,05; +0,12] | +0,043 | +0,047 | −0,002 [−0,014; +0,010], p 1,0 |
+| ≥20% in 126 sedute | 4 | +0,044 | +0,058 | +0,055 | p 1,0 |
+
+- **Conclusione onesta**: la differenza FHS+VIX contro A1 (patch 24) **non è statisticamente solida** a 1, 3 e 6 mesi; solo a 7 sedute c'è un vantaggio piccolo (p con Holm 0,077). A1 stesso, alle soglie ≥10%, ha intervalli del BSS che includono lo zero: a 3-6 mesi non si distingue dalla frequenza storica. Pendenze di calibrazione: A1 0,64-0,88 (probabilità troppo estreme); FHS+VIX 0,86-1,03 (meglio).
+- Indice Armor (logistica a una variabile, 2005-oggi, meno date): BSS +0,076 / +0,053 / +0,065 / +0,017 / −0,067 a 7/21/21/63/126 sedute; a 6 mesi peggiore della frequenza storica (pendenza 0,37).
+- «Solo prezzi» (dd252, ma200, mom63): simile ad A1 (BSS 0,02-0,04), peggiore a 7 sedute (p Holm 0,08).
+- PBO tra A1/Solo prezzi/FHS/FHS+VIX: 0,08 (7 sedute), 0,18 (5% 21 s), 0,74-0,96 (soglie alte): a lungo orizzonte il «migliore in campione» è spesso sotto la mediana fuori campione, cioè non c'è un vincitore stabile.
+### 1d. `PROTOCOLLO_VERIFICA.md` (nuovo, versione 1 dell'8/11/2026)
+Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), la **regola di adozione storica** (5 condizioni, Holm su 12, scelta tra varianti per CRPS → calibrazione → semplicità), conferma dal vivo (revisione descrittiva 10/5/2027, prima decisione 8/11/2028, finestre minime 24/8/4) e regola di ritorno ad A1. L'impronta SHA-256 viene scritta da `verifica.registra_protocollo()` in `data/protocollo_log.csv` al primo ciclo giornaliero dopo il rilascio.
+### In app
+«Quanto fidarsi» → nuova sezione «Verifica storica con margini d'errore» (tabella per bersaglio con BSS [90%], AUC, pendenza, differenza di Brier da A1 e p con Holm). Test 63 verdi.

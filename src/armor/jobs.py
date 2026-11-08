@@ -245,6 +245,11 @@ def tutto(skip_download: bool = False) -> None:
         live.run()
     except Exception as e:  # noqa: BLE001
         print('Prezzi live non scaricati:', str(e)[:100])
+    try:   # impronta del protocollo di verifica (una volta per versione del file)
+        from . import verifica
+        verifica.registra_protocollo()
+    except Exception as e:  # noqa: BLE001
+        print("[protocollo] non registrato:", str(e)[:100])
     ctx = forecast()
     daily_extras(ctx)
     n = journal.update_outcomes(vwce_series(), closed_sp500())
@@ -338,6 +343,14 @@ def main() -> None:
             campioni.aggiorna()
         except Exception as e:  # noqa: BLE001
             print("[campioni] errore:", str(e)[:100])
+        try:   # verifica rigorosa con margini d'errore (PIANO_ARMOR3 Fase 1): rifatta ogni mese
+            from . import verifica
+            print(verifica.tabella_testo(verifica.run_storica(step=step)))
+        except Exception as e:  # noqa: BLE001
+            print("[verifica] errore:", str(e)[:100])
+    elif cmd == "verifica":
+        from . import verifica
+        print(verifica.tabella_testo(verifica.run_storica()))
     elif cmd == "rapporto-mensile":
         from . import rapporto
         r = rapporto.run(closed_sp500(), force=True)

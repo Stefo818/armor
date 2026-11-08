@@ -876,3 +876,97 @@ def test_patch26_a1_resta_principale_sfidante_affiancato():
     assert campioni.avvisi_coerenza({"3m": {"p": {10: 0.1}}, "6m": {"p": {10: 0.2}}}) == []
     h = chiaro.horizon_simple("1m", {**out["1m"], "ratio": 0.6}, {"up": {10: {"p": 0.1, "base": 0.1}}}, 100.0, None, "")
     assert "Sperimentale" in h and "Divergenza" in h
+
+
+def test_verifica_strumenti_su_dati_sintetici():
+    import numpy as np
+    from armor import verifica as V
+    rng = np.random.default_rng(1)
+    n = 600
+    # bootstrap: un modello davvero migliore ha intervallo tutto negativo; due modelli uguali includono lo zero
+    base = rng.random(n)
+    a = (base - 0.5) ** 2 + 0.10 + rng.normal(0, 0.05, n)
+    r1 = V.boot_diff(a - 0.05, a, 4.0, reps=500)
+    assert r1["hi"] < 0 and abs(r1["diff"] + 0.05) < 1e-9
+    r2 = V.boot_diff(a, a + rng.normal(0, 0.05, n), 4.0, reps=500)
+    assert r2["lo"] < 0 < r2["hi"]
+    # finestre non sovrapposte: distanza minima h tra le date scelte, più sfasamenti
+    pos = np.arange(0, 1000, 5)
+    subs = V.sottocampioni(pos, 21)
+    assert len(subs) >= 4 and all((np.diff(pos[s]) >= 21).all() for s in subs)
+    # episodi: giorni con evento vicini = uno stesso episodio
+    y = np.zeros(400); ev = [10, 11, 12, 100, 101, 300]
+    y[ev] = 1
+    assert V.episodi(np.arange(400), y, 21) == {"giorni": 6, "episodi": 3}
+    # Diebold-Mariano: perdite identiche = nessun risultato; differenza netta = p piccolo
+    assert V.dm_test(a, a, 3)["p"] != V.dm_test(a, a, 3)["p"]
+    assert V.dm_test(a - 0.05 + rng.normal(0, 0.02, n), a, 3)["p"] < 0.01
+    # Holm: esempio noto
+    h = V.holm({"x": 0.01, "y": 0.04, "z": 0.03})
+    assert abs(h["x"] - 0.03) < 1e-12 and abs(h["z"] - 0.06) < 1e-12 and abs(h["y"] - 0.06) < 1e-12
+    # PBO: configurazioni casuali = circa 0,5; una configurazione sempre migliore = quasi 0
+    rnd = rng.normal(0, 1, (160, 20))
+    assert 0.3 < V.pbo_cscv(rnd)["pbo"] < 0.7
+    dom = rnd.copy(); dom[:, 3] += 3.0
+    assert V.pbo_cscv(dom)["pbo"] < 0.05
+    # pendenza di calibrazione: probabilità vere ≈ 1, probabilità troppo estreme < 1
+    p = rng.uniform(0.02, 0.6, 20000); yy = (rng.random(20000) < p).astype(float)
+    assert 0.85 < V.calib_slope(p, yy) < 1.15
+    pe = 1 / (1 + np.exp(-2.5 * np.log(p / (1 - p))))
+    assert V.calib_slope(pe, yy) < 0.6
+    # copertura, CRPS e QLIKE su casi calcolabili a mano
+    assert V.copertura([0, 0, 0, 0], [1, 1, 1, 1], [0.5, 0.5, 2, -1]) == 0.5
+    assert abs(V.crps_quantili([0.5], [[0.0]], [2.0]) - 2.0) < 1e-12      # pinball(0,5)=1·... 2·0,5·2 = 2
+    assert V.qlike([1.0, 4.0], [1.0, 4.0]) == 0.0 and V.qlike([1.0], [2.0]) > 0
+    # BSS: modello uguale alla frequenza = 0
+    yy2 = (rng.random(500) < 0.2).astype(float)
+    assert abs(V.bss(np.full(500, 0.2), yy2, np.full(500, 0.2))) < 1e-12
+
+
+def test_verifica_regola_adozione_e_confronto():
+    import numpy as np
+    import pandas as pd
+    from armor import verifica as V
+    rng = np.random.default_rng(3)
+    n = 1700   # 1994-2026 con una data ogni 5 sedute
+    idx = pd.bdate_range("1994-01-03", periods=n * 5)[::5]
+    pos = np.arange(n) * 5
+    pv = rng.uniform(0.03, 0.4, n)
+    y = (rng.random(n) < pv).astype(float)              # il modello «vero» conosce pv
+    d = V.prepara(idx, pos, y, np.full(n, y.mean()), {"A1": np.clip(pv + rng.normal(0, 0.12, n), 0.01, 0.99), "VAR": pv})
+    r = V.valuta_modello(d, "VAR", 21, 5, reps=300)
+    assert r["vs_ref"]["intero"]["hi"] < 0 and r["bss"] > 0 and r["non_sovrapposti"]["sfasamenti"] >= 4
+    ok = V.regola_adozione(r, 0.80, 0.2, 0.01)
+    assert ok["passa"] is True, ok
+    assert V.regola_adozione(r, 0.90, 0.2, 0.01)["passa"] is False         # copertura fuori 77-83%
+    assert V.regola_adozione(r, 0.80, 0.7, 0.01)["passa"] is False         # PBO troppo alto
+    assert V.regola_adozione(r, 0.80, 0.2, 0.30)["passa"] is False         # Holm non superato
+    assert V.regola_adozione(r, None, 0.2, 0.01)["passa"] is False         # non valutabile = non superata
+
+
+def test_revisione_codice_definizioni_e_purge(monkeypatch):
+    import numpy as np
+    import pandas as pd
+    from armor import features, store
+    from armor.model import Engine
+    # calo massimo = minimo delle h sedute SUCCESSIVE rispetto al prezzo di oggi (non il massimo drawdown): 100, 110, 99, 120, 100
+    p = pd.Series([100.0, 110.0, 99.0, 120.0, 100.0, 100.0], index=pd.bdate_range("2024-01-01", periods=6))
+    d = features.fwd_maxdd(p, 3)
+    assert abs(d.iloc[0] - (-0.01)) < 1e-12 and abs(d.iloc[1] - (99 / 110 - 1)) < 1e-12 and d.iloc[2] == (100 / 99 - 1 if False else min(100 / 99 - 1, 0.0))
+    assert d.iloc[-3:].isna().all()                       # senza esito noto non c'è etichetta
+    # purge: l'addestramento a data `cut` non usa nessuna riga la cui finestra futura finisce dopo `cut`
+    rng = np.random.default_rng(0)
+    px = pd.Series(100 * np.exp(np.cumsum(rng.normal(0.0003, 0.01, 1500))), index=pd.bdate_range("2015-01-01", periods=1500))
+    e = Engine(px)
+    cut = px.index[1000]
+    fit = e.fit(cut)
+    for hz, n in {"1m": 21, "3m": 63}.items():
+        ultima = px.index[1000 - n]
+        atteso = int(((e.F.index <= ultima) & e.dd[hz].reindex(e.F.index).notna() & e.ret[hz].reindex(e.F.index).notna()).sum())
+        assert fit["hz"][hz]["n"] == atteso
+    # VWCE in euro: livello in dollari / F (dollari per euro). VT 120 USD con F = 1,20 → 100 EUR; con F = 1,25 → 96 EUR
+    idx = pd.bdate_range("2019-01-01", periods=3)
+    serie = {"vwce_de": pd.Series(dtype=float), "vt": pd.Series([120.0, 120.0, 120.0], index=idx), "eurusd": pd.Series([1.20, 1.25, 1.20], index=idx)}
+    monkeypatch.setattr(store, "load", lambda sid: serie[sid])
+    v = features.vwce_series()
+    assert abs(v.iloc[0] - 100.0) < 1e-9 and abs(v.iloc[1] - 96.0) < 1e-9
