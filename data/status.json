@@ -5,7 +5,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 24831,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "vix": {
   "ok": true,
@@ -13,7 +13,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9283,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "vix3m": {
   "ok": true,
@@ -21,7 +21,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5111,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "vix9d": {
   "ok": true,
@@ -29,7 +29,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 3986,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "vvix": {
   "ok": true,
@@ -37,7 +37,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4985,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "skew": {
   "ok": true,
@@ -45,7 +45,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9207,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "move": {
   "ok": true,
@@ -53,7 +53,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5932,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "nasdaq100": {
   "ok": true,
@@ -61,7 +61,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 10356,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "vt": {
   "ok": true,
@@ -69,7 +69,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4621,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "hyg": {
   "ok": true,
@@ -77,7 +77,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4927,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "ief": {
   "ok": true,
@@ -85,7 +85,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6109,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "rsp": {
   "ok": true,
@@ -93,7 +93,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5919,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "spy": {
   "ok": true,
@@ -101,7 +101,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 8502,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "gold": {
   "ok": true,
@@ -109,7 +109,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6573,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "wti": {
   "ok": true,
@@ -117,7 +117,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6580,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "dxy": {
   "ok": true,
@@ -125,7 +125,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 14181,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "eurusd": {
   "ok": true,
@@ -133,7 +133,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5951,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "vwce_de": {
   "ok": true,
@@ -141,7 +141,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1851,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "baa10y": {
   "ok": true,
@@ -149,7 +149,7 @@
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 10212,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "t10y2y": {
   "ok": true,
@@ -157,7 +157,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 12606,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "t10y3m": {
   "ok": true,
@@ -165,7 +165,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 11215,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "hy_oas": {
   "ok": true,
@@ -173,7 +173,7 @@
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 786,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "ig_oas": {
   "ok": true,
@@ -181,7 +181,7 @@
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 785,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "nfci": {
   "ok": true,
@@ -189,7 +189,7 @@
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 2913,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "stlfsi": {
   "ok": true,
@@ -197,7 +197,7 @@
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 1714,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "real10y": {
   "ok": true,
@@ -205,7 +205,7 @@
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 5966,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "be10y": {
   "ok": true,
@@ -213,7 +213,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5967,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "dgs10": {
   "ok": true,
@@ -221,7 +221,7 @@
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 16197,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "dgs2": {
   "ok": true,
@@ -229,7 +229,7 @@
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 12605,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "fedfunds": {
   "ok": true,
@@ -237,7 +237,7 @@
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 26426,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "usd_broad": {
   "ok": true,
@@ -245,7 +245,7 @@
   "new_rows": 0,
   "last_date": "2026-10-30",
   "rows": 5222,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "epu": {
   "ok": true,
@@ -253,7 +253,7 @@
   "new_rows": 0,
   "last_date": "2026-11-05",
   "rows": 15284,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "icsa": {
   "ok": true,
@@ -261,7 +261,7 @@
   "new_rows": 0,
   "last_date": "2026-10-31",
   "rows": 3122,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "unrate": {
   "ok": true,
@@ -269,7 +269,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 945,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "cpi": {
   "ok": true,
@@ -277,7 +277,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 956,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "equity_value": {
   "ok": true,
@@ -285,7 +285,7 @@
   "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 305,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "gdp": {
   "ok": true,
@@ -293,7 +293,7 @@
   "new_rows": 0,
   "last_date": "2026-07-01",
   "rows": 319,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "pput": {
   "ok": true,
@@ -301,7 +301,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 10163,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "ps_m": {
   "ok": true,
@@ -309,7 +309,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 102,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "cape_m": {
   "ok": true,
@@ -317,7 +317,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1871,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "pe_m": {
   "ok": true,
@@ -325,7 +325,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1872,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "aaii_bull": {
   "ok": false,
@@ -333,7 +333,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "aaii_bear": {
   "ok": false,
@@ -341,7 +341,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "aaii_spread": {
   "ok": false,
@@ -349,7 +349,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "gpr": {
   "ok": true,
@@ -357,7 +357,7 @@
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "gpr_threat": {
   "ok": true,
@@ -365,7 +365,7 @@
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "gpr_act": {
   "ok": true,
@@ -373,7 +373,7 @@
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "fear_greed": {
   "ok": true,
@@ -381,7 +381,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 250,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "breadth50": {
   "ok": true,
@@ -389,7 +389,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 452,
-  "checked_at": "2026-11-08 00:12 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "breadth200": {
   "ok": true,
@@ -397,7 +397,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 302,
-  "checked_at": "2026-11-08 00:12 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "nh_nl": {
   "ok": true,
@@ -405,39 +405,39 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 302,
-  "checked_at": "2026-11-08 00:12 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "top_ps": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "top_pe": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "top_fcf_yield": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "ai_capex_ocf": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "stoxx50": {
   "ok": true,
@@ -445,7 +445,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 4916,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "dax": {
   "ok": true,
@@ -453,7 +453,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 9827,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "ftsemib": {
   "ok": true,
@@ -461,7 +461,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7370,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "nikkei": {
   "ok": true,
@@ -469,7 +469,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 15201,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "eem": {
   "ok": true,
@@ -477,7 +477,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5931,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xlk": {
   "ok": true,
@@ -485,7 +485,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xlf": {
   "ok": true,
@@ -493,7 +493,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xle": {
   "ok": true,
@@ -501,7 +501,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xlv": {
   "ok": true,
@@ -509,7 +509,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xly": {
   "ok": true,
@@ -517,7 +517,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xlp": {
   "ok": true,
@@ -525,7 +525,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xli": {
   "ok": true,
@@ -533,7 +533,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xlu": {
   "ok": true,
@@ -541,7 +541,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xlb": {
   "ok": true,
@@ -549,7 +549,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 7012,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xlre": {
   "ok": true,
@@ -557,7 +557,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 2787,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "sec_xlc": {
   "ok": true,
@@ -565,7 +565,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 2109,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "umcsent": {
   "ok": true,
@@ -573,7 +573,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 677,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "philly": {
   "ok": true,
@@ -581,7 +581,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 702,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "empire": {
   "ok": true,
@@ -589,7 +589,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 304,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "dgorder": {
   "ok": true,
@@ -597,7 +597,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 416,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "neworder": {
   "ok": true,
@@ -605,7 +605,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 416,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "indpro": {
   "ok": true,
@@ -613,7 +613,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 1293,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "payems": {
   "ok": true,
@@ -621,7 +621,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 1054,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "retail": {
   "ok": true,
@@ -629,7 +629,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 417,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:41 UTC"
  },
  "walcl": {
   "ok": true,
@@ -637,7 +637,7 @@
   "new_rows": 0,
   "last_date": "2026-11-04",
   "rows": 1247,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "wresbal": {
   "ok": true,
@@ -645,7 +645,7 @@
   "new_rows": 0,
   "last_date": "2026-11-04",
   "rows": 1247,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "rrp": {
   "ok": true,
@@ -653,7 +653,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 3363,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "tga": {
   "ok": true,
@@ -661,55 +661,55 @@
   "new_rows": 0,
   "last_date": "2026-11-04",
   "rows": 1247,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "val_pe_vwce": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "val_ps_vwce": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "val_pe_sp500": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "val_ps_sp500": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "val_pe_ndx": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "val_ps_ndx": {
   "ok": true,
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-08",
   "rows": 2,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "cot_lev_net": {
   "ok": true,
@@ -717,7 +717,7 @@
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 149,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "cot_am_net": {
   "ok": true,
@@ -725,7 +725,7 @@
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 149,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "cot_dealer_net": {
   "ok": true,
@@ -733,30 +733,342 @@
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 149,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
  "anfci": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 0,
+  "last_date": "2026-10-30",
+  "rows": 2913,
+  "checked_at": "2026-11-08 00:41 UTC"
+ },
+ "sloos": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 0,
+  "last_date": "2026-10-01",
+  "rows": 147,
+  "checked_at": "2026-11-08 00:41 UTC"
+ },
+ "credit_ratio": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 0,
+  "last_date": "2025-10-01",
+  "rows": 321,
+  "checked_at": "2026-11-08 00:41 UTC"
+ },
+ "iwm": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 6652,
+  "last_date": "2026-11-06",
+  "rows": 6652,
+  "checked_at": "2026-11-08 00:41 UTC"
+ },
+ "smh": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 6647,
+  "last_date": "2026-11-06",
+  "rows": 6647,
+  "checked_at": "2026-11-08 00:41 UTC"
+ },
+ "iyt": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 5749,
+  "last_date": "2026-11-06",
+  "rows": 5749,
+  "checked_at": "2026-11-08 00:41 UTC"
+ },
+ "kre": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 5127,
+  "last_date": "2026-11-06",
+  "rows": 5127,
+  "checked_at": "2026-11-08 00:41 UTC"
+ },
+ "copper": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 6577,
+  "last_date": "2026-11-06",
+  "rows": 6577,
+  "checked_at": "2026-11-08 00:41 UTC"
+ },
+ "cp": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 318,
+  "last_date": "2026-04-01",
+  "rows": 318,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "delinq_biz": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 158,
+  "last_date": "2026-04-01",
+  "rows": 158,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "chargeoff_biz": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 166,
+  "last_date": "2026-04-01",
+  "rows": 166,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "delinq_cc": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 142,
+  "last_date": "2026-04-01",
+  "rows": 142,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "busloans": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 957,
+  "last_date": "2026-09-01",
+  "rows": 957,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "core_cpi": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 836,
+  "last_date": "2026-09-01",
+  "rows": 836,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "core_pce": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 813,
+  "last_date": "2026-09-01",
+  "rows": 813,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "infl5y5y": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 5967,
+  "last_date": "2026-11-06",
+  "rows": 5967,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "cfnai": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 715,
+  "last_date": "2026-09-01",
+  "rows": 715,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "sahm_rt": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 802,
+  "last_date": "2026-10-01",
+  "rows": 802,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "ccsa": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 3121,
+  "last_date": "2026-10-24",
+  "rows": 3121,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "permit": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 801,
+  "last_date": "2026-09-01",
+  "rows": 801,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "isratio": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 416,
+  "last_date": "2026-08-01",
+  "rows": 416,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "usrec": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 2063,
+  "last_date": "2026-10-01",
+  "rows": 2063,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "recprob": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 712,
+  "last_date": "2026-09-01",
+  "rows": 712,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "m2": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 813,
+  "last_date": "2026-09-01",
+  "rows": 813,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "nfci_credit": {
   "ok": true,
   "msg": "",
   "new_rows": 2913,
   "last_date": "2026-10-30",
   "rows": 2913,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "checked_at": "2026-11-08 00:42 UTC"
  },
- "sloos": {
+ "nfci_leverage": {
   "ok": true,
   "msg": "",
-  "new_rows": 147,
+  "new_rows": 2913,
+  "last_date": "2026-10-30",
+  "rows": 2913,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "nfci_risk": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 2913,
+  "last_date": "2026-10-30",
+  "rows": 2913,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "kcfsi": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 441,
   "last_date": "2026-10-01",
-  "rows": 147,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "rows": 441,
+  "checked_at": "2026-11-08 00:42 UTC"
  },
- "credit_ratio": {
+ "baa_m": {
   "ok": true,
   "msg": "",
-  "new_rows": 321,
-  "last_date": "2025-10-01",
-  "rows": 321,
-  "checked_at": "2026-11-08 00:11 UTC"
+  "new_rows": 1294,
+  "last_date": "2026-10-01",
+  "rows": 1294,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "aaa_m": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1294,
+  "last_date": "2026-10-01",
+  "rows": 1294,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "gs10_m": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 883,
+  "last_date": "2026-10-01",
+  "rows": 883,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "tb3ms": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1114,
+  "last_date": "2026-10-01",
+  "rows": 1114,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "cpi_nsa": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1364,
+  "last_date": "2026-09-01",
+  "rows": 1364,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "ciss": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 12229,
+  "last_date": "2026-11-05",
+  "rows": 12229,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "margin_debt": {
+  "ok": false,
+  "msg": "404 Client Error: Not Found for url: https://www.finra.org/finra-data/browse-catalog/industry-snapshot/margin-statistics",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "cape": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1713,
+  "last_date": "2023-09-30",
+  "rows": 1713,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "pe_trailing": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1830,
+  "last_date": "2023-06-30",
+  "rows": 1830,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "price_shiller": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1833,
+  "last_date": "2023-09-30",
+  "rows": 1833,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "div_shiller": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1830,
+  "last_date": "2023-06-30",
+  "rows": 1830,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "earn_shiller": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1830,
+  "last_date": "2023-06-30",
+  "rows": 1830,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "cpi_shiller": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1833,
+  "last_date": "2023-09-30",
+  "rows": 1833,
+  "checked_at": "2026-11-08 00:42 UTC"
+ },
+ "gs10_shiller": {
+  "ok": true,
+  "msg": "",
+  "new_rows": 1833,
+  "last_date": "2023-09-30",
+  "rows": 1833,
+  "checked_at": "2026-11-08 00:42 UTC"
  }
 }
