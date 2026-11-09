@@ -89,42 +89,95 @@ def carte() -> str:
     return f"<div class='pvg'>{''.join(out)}</div><p class='mu'><b>Come leggere le schede:</b> il numero grande è la probabilità che il mercato, alla fine del periodo, valga più di oggi. «Di solito» è quante volte è successo in passato in generale. Il colore dice se oggi è meglio (verde), uguale (giallo) o peggio (rosso) del solito. La barra mostra dove può finire il mercato: la parte grigia copre 9 casi su 10, quella blu 5 casi su 10, il tratto nero pieno è il caso più probabile, il tratteggiato è lo zero (nessuna variazione). Simulazione del {E(asof)}. Sono probabilità, non promesse.</p>"
 
 
-def modelli(pred: dict | None) -> str:
-    righe = []
+LIV = {"Basso": ("ok", "Rischio basso"), "Normale": ("wa", "Rischio nella norma"), "Moderato": ("wa", "Rischio moderato"), "Elevato": ("or", "Rischio elevato"), "Alto": ("ba", "Rischio alto")}
+COLONNE = [("10g", "10 giorni"), ("1s", "1 settimana"), ("1m", "1 mese"), ("3m", "3 mesi"), ("6m", "6 mesi"), ("12m", "1 anno")]
+
+
+def _modelli_celle(pred: dict | None) -> dict:
+    """{nome: {stato, tipo, celle: {orizzonte: (classe, testo, sottotesto)}}}: ogni modello con la sua indicazione per ogni periodo, tradotta in un colore comune."""
+    out: dict = {}
     o = _leggi_json("percorsi_oggi.json") or {}
-    c = _leggi_json("campioni.json") or {}
     basi = o.get("basi", {})
     for nome_v, res in (o.get("varianti") or {}).items():
-        adottata = o.get("adottate") or {}
-        for hz, lab in HZ:
+        celle = {}
+        for hz, _l in COLONNE:
             x = res.get(hz) if isinstance(res, dict) else None
             if not x:
                 continue
             b = basi.get(hz, {})
-            cl, txt = direzione(1 - x["p_neg"], None if b.get("p_neg") is None else 1 - b["p_neg"])
-            stato = "in uso" if nome_v == o.get("mostrata") and hz in adottata else ("mostrata" if nome_v == o.get("mostrata") else "in ombra")
-            righe.append((lab, nome_sim(nome_v), stato, 1 - x["p_neg"], x["ret"]["q50"], cl, txt))
-    for hz, lab in (("10g", "10 giorni"), ("1m", "1 mese"), ("3m", "3 mesi"), ("6m", "6 mesi")):
-        if pred and hz in pred and pred[hz].get("ret"):
-            r = pred[hz]
-            q50 = r["ret"].get("q50")
-            lvl = r.get("level", "")
-            cl = {"Basso": "ok", "Moderato": "wa", "Alto": "ba", "Molto alto": "ba"}.get(lvl, "wa")
-            righe.append((lab, "Modello principale (A1)", "in uso", None, q50, cl, f"Rischio di calo: {lvl.lower()} rispetto al normale"))
+            pu = 1 - x["p_neg"]
+            cl, _t = direzione(pu, None if b.get("p_neg") is None else 1 - b["p_neg"])
+            celle[hz] = (cl, f"Rialzo {_pc(pu)}", f"tipico {_sg(x['ret']['q50'])}")
+        out[nome_sim(nome_v)] = {"stato": "mostrato" if nome_v == o.get("mostrata") else "in ombra", "tipo": "sim", "celle": celle}
+    if pred:
+        celle = {}
+        for hz in ("10g", "1m", "3m", "6m"):
+            if hz in pred:
+                cl, t = LIV.get(pred[hz].get("level", ""), ("wa", "Rischio nella norma"))
+                q50 = (pred[hz].get("ret") or {}).get("q50")
+                celle[hz] = (cl, t, f"tipico {_sg(q50)}" if q50 is not None else "")
+        out["Modello principale (A1)"] = {"stato": "in uso", "tipo": "risk", "celle": celle}
     try:
         sh = pd.read_csv(DATA / "journal_shadow.csv")
         ult = sh[sh["asof"] == sh["asof"].max()]
         for x in ult.itertuples():
+            m = out.setdefault(str(x.model), {"stato": "in ombra", "tipo": "risk", "celle": {}})
+            cl, t = LIV.get(str(x.level), ("wa", "Rischio nella norma"))
             q50 = None if pd.isna(x.q50) else float(x.q50)
-            lvl = str(x.level)
-            cl = {"Basso": "ok", "Moderato": "wa", "Alto": "ba", "Molto alto": "ba"}.get(lvl, "wa")
-            righe.append((HZ_NOME.get(x.horizon, x.horizon), f"{x.model}", "in ombra", None, q50, cl, f"Rischio di calo: {lvl.lower()}"))
+            m["celle"][x.horizon] = (cl, t, f"tipico {_sg(q50)}" if q50 is not None else "")
     except Exception:  # noqa: BLE001
         pass
-    ordine = {l: i for i, (_k, l) in enumerate([("10g", "10 giorni")] + HZ)}
-    righe.sort(key=lambda r: (ordine.get(r[0], 9), r[2] != "in uso", r[1]))
-    tr = "".join(f"<tr><td>{E(a)}</td><td><b>{E(b)}</b></td><td><span class='pvst {s.replace(' ', '')}'>{s}</span></td>"
-                 f"<td>{'—' if pu is None else _pc(pu)}</td><td>{_sg(q50) if q50 is not None else 'n/d'}</td><td><span class='pvch {cl}'>{E(t)}</span></td></tr>" for a, b, s, pu, q50, cl, t in righe)
+    return out
+
+
+def matrice(pred: dict | None) -> str:
+    M = _modelli_celle(pred)
+    if not M:
+        return "<p class='mu'>Nessun modello disponibile.</p>"
+    ordine = sorted(M, key=lambda n: ({"in uso": 0, "mostrato": 1}.get(M[n]["stato"], 2), n))
+    chips = "<button data-pm='' class='on'>Tutti i modelli</button>" + "".join(f"<button data-pm='{i}'>{E(n.split(' (')[0] if len(n) > 30 else n)}</button>" for i, n in enumerate(ordine))
+    testa = "<div class='pmh'>Modello</div>" + "".join(f"<div class='pmh c'>{l}</div>" for _k, l in COLONNE)
+    righe = ""
+    for i, n in enumerate(ordine):
+        m = M[n]
+        celle = ""
+        for hz, _l in COLONNE:
+            c = m["celle"].get(hz)
+            celle += (f"<div class='pmc {c[0]}'><b>{E(c[1])}</b><small>{E(c[2])}</small></div>" if c else "<div class='pmc nd'>—</div>")
+        stato = {"in uso": "<span class='pvst inuso'>in uso</span>", "mostrato": "<span class='pvst inuso'>mostrato</span>"}.get(m["stato"], "<span class='pvst'>in ombra</span>")
+        righe += f"<div class='pmn' data-m='{i}'>{E(n)}<br>{stato}</div>" + celle.replace("<div class='pmc", f"<div data-m='{i}' class='pmc", 99)
+    # riga di sintesi: quanti modelli per colore, per periodo
+    sint = "<div class='pmn pms'><b>Sintesi</b><br><span class='mu'>quanti modelli per colore</span></div>"
+    for hz, _l in COLONNE:
+        cs = [M[n]["celle"][hz][0] for n in ordine if hz in M[n]["celle"]]
+        if not cs:
+            sint += "<div class='pmc nd'>—</div>"
+            continue
+        tot = len(cs)
+        seg = "".join(f"<i class='{k}' style='flex:{cs.count(k)}'></i>" for k in ("ok", "wa", "or", "ba") if cs.count(k))
+        neg = cs.count("or") + cs.count("ba")
+        verdetto = "Quasi tutti favorevoli" if cs.count("ok") >= tot * .6 else ("Prevale la cautela" if neg > tot / 2 else "Segnali misti")
+        sint += f"<div class='pmc pmsum'><div class='pmbar'>{seg}</div><small>{verdetto} ({tot})</small></div>"
+    js = ("<script>(function(){var W=document.querySelector('[data-pmw]');if(!W||W.dataset.on)return;W.dataset.on=1;W.querySelectorAll('[data-pm]').forEach(function(b){b.onclick=function(){var v=b.dataset.pm;W.querySelectorAll('[data-pm]').forEach(function(x){x.classList.toggle('on',x===b)});"
+          "W.querySelectorAll('[data-m]').forEach(function(e){e.style.display=(v===''||e.dataset.m===v)?'':'none'});var dt=document.querySelector('[data-pmt]');if(dt)dt.querySelectorAll('tr[data-m]').forEach(function(r){r.style.display=(v===''||r.dataset.m===v)?'':'none'})}})})();</script>")
+    leg = ("<div class='pmleg'><span class='pmc ok'>favorevole / rischio basso</span><span class='pmc wa'>nella norma</span><span class='pmc or'>cautela / rischio elevato</span><span class='pmc ba'>sfavorevole / rischio alto</span></div>")
+    return (f"<div data-pmw='1'><div class='pvf'>{chips}</div>{leg}<div class='scroll'><div class='pmg'>{testa}{righe}{sint}</div></div>{js}</div>"
+            "<p class='mu'><b>Come leggere:</b> ogni riga è un modello, ogni colonna un periodo. Il colore è uguale per tutti: verde = clima favorevole, rosso = clima sfavorevole. Il testo è l'indicazione propria del modello: "
+            "alcuni dicono «probabilità di rialzo», altri «rischio di calo». «Tipico» è la variazione più probabile. «In uso» decide i numeri principali; «in ombra» = modello concorrente che non conta finché non dimostra di essere più bravo. Un'indicazione sola non basta: guarda se i modelli concordano (riga «Sintesi»).</p>")
+
+
+def modelli(pred: dict | None) -> str:
+    righe = []
+    o = _leggi_json("percorsi_oggi.json") or {}
+    c = _leggi_json("campioni.json") or {}
+    M = _modelli_celle(pred)
+    ordine = sorted(M, key=lambda n: ({"in uso": 0, "mostrato": 1}.get(M[n]["stato"], 2), n))
+    tr = ""
+    for i, n in enumerate(ordine):
+        for hz, lab in COLONNE:
+            cc = M[n]["celle"].get(hz)
+            if cc:
+                tr += f"<tr data-m='{i}'><td>{lab}</td><td><b>{E(n)}</b></td><td>{M[n]['stato']}</td><td><span class='pvch {cc[0]}'>{E(cc[1])}</span></td><td>{E(cc[2].replace('tipico ', ''))}</td></tr>"
     ciclici = ""
     try:
         oc = pd.read_csv(DATA / "ombra_ciclica.csv")
@@ -150,21 +203,59 @@ def modelli(pred: dict | None) -> str:
     mot = ""
     if c.get("orizzonti"):
         mot = "<p class='mu'>Modello scelto per ogni periodo con una regola fissa: " + " · ".join(f"{HZ_NOME.get(h, h)}: <b>{E(str(v.get('motore')))}</b>" for h, v in c["orizzonti"].items()) + ".</p>"
-    if not righe:
-        return "<p class='mu'>Nessun modello disponibile.</p>" + ciclici + reg
-    return ("<div class='scroll'><table class='t pvt'><tr><th>Periodo</th><th>Modello</th><th>Stato</th><th>Rialzo</th><th>Caso tipico</th><th>Lettura</th></tr>" + tr + "</table></div>"
-            "<p class='mu'><b>Come leggere:</b> «in uso» = il modello che decide i numeri principali dell'app. «In ombra» = un modello concorrente che scrive la sua previsione ogni giorno ma non conta finché non dimostra di essere più bravo. «Rialzo» = probabilità di chiudere sopra il prezzo di oggi. «Caso tipico» = variazione più probabile.</p>" + mot + ciclici + reg)
+    tab = ("<details class='pvdet2'><summary>Tabella dettagliata di tutti i modelli</summary><div class='scroll'><table class='t pvt' data-pmt='1'><tr><th>Periodo</th><th>Modello</th><th>Stato</th><th>Indicazione</th><th>Caso tipico</th></tr>" + tr + "</table></div></details>") if tr else ""
+    return matrice(pred) + tab + mot + ciclici + reg
 
 
 # ---------------------------------------------------------------- storico previsto contro reale
-def storico_dati() -> list[list]:
+STRUMENTI = [("sp", "S&P 500", None), ("vw", "VWCE (il tuo fondo)", None), ("rsp", "S&P 500 a pesi uguali", "rsp"), ("mweq", "Mondo a pesi uguali", "mweq"), ("nasdaq100", "Nasdaq 100", "nasdaq100"),
+             ("urth", "Mondo (MSCI World)", "urth"), ("stoxx600", "Europa (STOXX 600)", "stoxx600"), ("dax", "Germania (DAX)", "dax"), ("ftsemib", "Italia (FTSE MIB)", "ftsemib"),
+             ("nikkei", "Giappone (Nikkei)", "nikkei"), ("iwm", "Piccole aziende USA", "iwm"), ("eem", "Paesi emergenti", "eem")]
+
+
+def _serie_strumento(k: str):
+    if k == "vw":
+        from .features import vwce_series
+        return vwce_series().dropna()
+    from . import store
+    d = dict((a, c) for a, _l, c in STRUMENTI).get(k)
+    if not d:
+        return None
+    x = store.load(d)
+    return None if x is None or len(x) == 0 else x[x > 0].dropna()
+
+
+def storico_dati(asset: str = "sp") -> list[list]:
     """[data, orizzonte, q10, q50, q90, reale, origine] in percentuale; origine 'p' = test sul passato, 'v' = diario firmato dal vivo."""
     righe: list[list] = []
+    vw = None
+    if asset != "sp":
+        try:
+            from .features import closed_sp500
+            from .config import HORIZONS
+            vw, spx = _serie_strumento(asset), closed_sp500()
+            if vw is None or len(vw) < 300:
+                return []
+        except Exception:  # noqa: BLE001
+            return []
     try:
         b = pd.read_csv(BACKTEST_RET)
         for x in b.itertuples():
             if pd.notna(x.realized):
-                righe.append([x.asof, x.horizon, round(x.q10 * 100, 2), round(x.q50 * 100, 2), round(x.q90 * 100, 2), round(x.realized * 100, 2), "p"])
+                real = x.realized
+                if vw is not None:
+                    a = pd.Timestamp(x.asof)
+                    if a not in spx.index or a < vw.index[0]:
+                        continue
+                    i = spx.index.get_loc(a)
+                    n = HORIZONS.get(x.horizon)
+                    if n is None or i + n >= len(spx):
+                        continue
+                    v0 = vw.reindex([a, spx.index[i + n]], method="ffill")
+                    if v0.isna().any():
+                        continue
+                    real = float(v0.iloc[1] / v0.iloc[0] - 1)
+                righe.append([x.asof, x.horizon, round(x.q10 * 100, 2), round(x.q50 * 100, 2), round(x.q90 * 100, 2), round(real * 100, 2), "p"])
     except Exception:  # noqa: BLE001
         pass
     try:
@@ -174,7 +265,7 @@ def storico_dati() -> list[list]:
         m = o.merge(j, on=["asof", "horizon"], how="inner", suffixes=("", "_j"))
         for x in m.itertuples():
             if pd.notna(x.realized) and pd.notna(x.q10) and pd.notna(x.q90):
-                righe.append([x.asof, x.horizon, round(x.q10 * 100, 2), round(x.q50_j * 100 if hasattr(x, "q50_j") and pd.notna(x.q50_j) else x.q50 * 100, 2), round(x.q90 * 100, 2), round(x.realized * 100, 2), "v"])
+                righe.append([x.asof, x.horizon, round(x.q10 * 100, 2), round(x.q50_j * 100 if hasattr(x, "q50_j") and pd.notna(x.q50_j) else x.q50 * 100, 2), round(x.q90 * 100, 2), round((x.sp_realized if asset == "sp" and hasattr(x, "sp_realized") and pd.notna(x.sp_realized) else x.realized) * 100, 2), "v"])
     except Exception:  # noqa: BLE001
         pass
     righe.sort(key=lambda r: (r[0], r[1]), reverse=True)
@@ -217,41 +308,68 @@ CSS = """<style>
 .pvl{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}.pvl th{position:sticky;top:0;background:var(--card);text-align:left;padding:7px 6px;border-bottom:2px solid var(--bd);font-size:11.5px}.pvl td{padding:6px;border-bottom:1px solid var(--bd)}
 .pvdet>summary{cursor:pointer;font-weight:800;padding:10px 0;font-size:15px;border-top:1px solid var(--bd);margin-top:20px}.pvl td.s{font-weight:800;border-radius:8px;text-align:center;color:#111;white-space:nowrap}.pvlg{display:flex;gap:4px;align-items:center;font-size:11.5px;color:var(--mu);flex-wrap:wrap}.pvlg i{width:28px;height:10px;border-radius:3px;display:inline-block}
 
-.pvw2{border:1px solid var(--bd);border-radius:16px;overflow:hidden;background:var(--card)}.pvlh,.pvlr{display:grid;grid-template-columns:1.05fr 1.25fr 1fr;gap:8px;align-items:center;padding:8px 12px;font-variant-numeric:tabular-nums}
-.pvlh{font-size:11px;font-weight:800;color:var(--mu);background:var(--bg);text-transform:uppercase;letter-spacing:.4px}.pvlr{border-top:1px solid var(--bd);font-size:13.5px}.pvlr small{display:block;font-size:11px;color:var(--mu);font-weight:600}
-.pvlr .s{font-weight:800;border-radius:10px;text-align:center;color:#111;padding:6px 4px}.pvlr .s small{color:#222;font-weight:700}
+.pvw2{border:1px solid var(--bd);border-radius:18px;overflow:hidden;background:var(--card)}.pvlr{padding:11px 14px 10px;border-top:1px solid var(--bd);font-variant-numeric:tabular-nums}.pvlr:first-child{border-top:0}
+.pvt1{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px}.pvt1 .s{font-weight:800;border-radius:99px;color:#111;padding:4px 12px;font-size:12.5px;white-space:nowrap}.pvt1 .s small{font-weight:700;opacity:.8}
+.pvb{position:relative;height:26px;margin:8px 0 4px}.pvb .z{position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed var(--mu);opacity:.7}.pvb .band{position:absolute;top:8px;height:10px;border-radius:99px;background:var(--mu);opacity:.28}.pvb .tip{position:absolute;top:4px;height:18px;border-left:3px solid var(--tx);transform:translateX(-50%)}
+.pvb .dot{position:absolute;top:3px;width:20px;height:20px;border-radius:50%;transform:translateX(-50%);box-shadow:0 0 0 3px var(--card),0 2px 6px rgba(0,0,0,.45)}.pvt2{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12.5px}.pvt2 i{font-style:normal;color:var(--mu);font-size:11.5px}
+.pvpg{display:grid;gap:10px;margin:8px 0 14px}.pvpr{border:1px solid var(--bd);border-radius:14px;padding:10px 12px;background:var(--card)}.pvpn{display:flex;justify-content:space-between;font-size:13.5px}.pvsb{display:flex;height:16px;border-radius:99px;overflow:hidden;margin:6px 0}.pvsb i{display:block;min-width:0}.pvpl{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11.5px;color:var(--mu)}
+
+.pmg{display:grid;grid-template-columns:minmax(150px,1.5fr) repeat(6,minmax(84px,1fr));gap:5px;min-width:700px;align-items:stretch}.pmh{font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;padding:4px 2px}.pmh.c{text-align:center}
+.pmn{font-size:12.5px;font-weight:700;padding:8px 6px;border-radius:12px;background:var(--card);border:1px solid var(--bd);display:flex;flex-direction:column;justify-content:center;gap:3px}.pmn.pms{background:var(--bg)}
+.pmc{border-radius:12px;padding:8px 4px;text-align:center;font-size:12px;display:flex;flex-direction:column;justify-content:center;gap:2px;border:1px solid transparent}.pmc small{font-size:10.5px;opacity:.85;font-weight:600}
+.pmc.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}.pmc.wa{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}.pmc.or{background:rgba(249,115,22,.16);color:#f97316;border-color:#f97316}.pmc.ba{background:var(--badbg);color:var(--bad);border-color:var(--bad)}.pmc.nd{color:var(--mu);background:transparent}
+.pmleg{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}.pmleg .pmc{padding:4px 10px;border-radius:99px;font-size:11.5px;font-weight:700;display:inline-block}
+.pmsum{background:var(--card);border:1px solid var(--bd)}.pmbar{display:flex;height:14px;border-radius:99px;overflow:hidden;margin:2px 4px}.pmbar i{display:block}.pmbar i.ok{background:var(--ok)}.pmbar i.wa{background:var(--warn)}.pmbar i.or{background:#f97316}.pmbar i.ba{background:var(--bad)}
+.pvdet2>summary{cursor:pointer;font-weight:700;padding:10px 0}
 </style>"""
 
-JS = r"""<script>(function(){var W=document.querySelector('[data-pvh]');if(!W||W.dataset.on)return;W.dataset.on=1;var D=JSON.parse(document.getElementById('armor-pv-data').textContent),HZ='',OR='',SOLO=false,N=120;
+JS = r"""<script>(function(){var W=document.querySelector('[data-pvh]');if(!W||W.dataset.on)return;W.dataset.on=1;var D=JSON.parse(document.getElementById('armor-pv-data').textContent),HZ='',OR='',SOLO=false,N=120,AS='sp',DS=function(){return D.a[AS].r};
 function col(s){var h=Math.round(120*Math.max(0,Math.min(1,s)));return 'hsl('+h+',70%,'+(h>70?'52%':'58%')+')'}
 function sc(r){var w=Math.max((r[4]-r[2]),1e-6);return 1-Math.min(1,Math.abs(r[5]-r[3])/w)}
 function ex(s,r){var dentro=r[5]>=r[2]&&r[5]<=r[4],opp=Math.sign(r[5])!==Math.sign(r[3])&&!dentro;return opp?'Opposto':(s>=.75?'Indovinata':(dentro?'Nella fascia':'Fuori fascia'))}
 function nf(x,d){return (x>0?'+':'')+x.toFixed(d==null?1:d).replace('.',',').replace('-','−')+'%'}
 function dm(s){var a=s.split('-');return a[2]+'/'+a[1]+'/'+a[0]}
 var NOM={'10g':'10 giorni','1m':'1 mese','3m':'3 mesi','6m':'6 mesi'};
-function rows(){return D.r.filter(function(r){return (!HZ||r[1]===HZ)&&(!OR||r[6]===OR)&&(!SOLO||ex(sc(r),r)==='Opposto'||ex(sc(r),r)==='Fuori fascia')})}
-function render(){var R=rows(),h='';
+function bar(r,s){var M=Math.max(Math.abs(r[2]),Math.abs(r[4]),Math.abs(r[5]),.5)*1.12,X=function(v){return (50+v/M*50).toFixed(1)};
+return '<div class="pvb"><i class="z"></i><i class="band" style="left:'+X(r[2])+'%;width:'+(X(r[4])-X(r[2])).toFixed(1)+'%"></i><i class="tip" style="left:'+X(r[3])+'%"></i><b class="dot" style="left:'+X(r[5])+'%;background:'+col(s)+'"></b></div>'}
+function pagella(R){var h='<div class="pvpg">';['10g','1m','3m','6m'].forEach(function(k){var x=R.filter(function(r){return r[1]===k});if(x.length<5)return;var c={Indovinata:0,'Nella fascia':0,'Fuori fascia':0,Opposto:0};x.forEach(function(r){c[ex(sc(r),r)]++});var n=x.length,P=function(v){return Math.round(v/n*100)};
+h+='<div class="pvpr"><div class="pvpn"><b>'+NOM[k]+'</b><span class="mu">'+n+' previsioni</span></div><div class="pvsb"><i style="flex:'+c.Indovinata+';background:'+col(1)+'" title="Indovinata"></i><i style="flex:'+c['Nella fascia']+';background:'+col(.7)+'" title="Nella fascia"></i><i style="flex:'+c['Fuori fascia']+';background:'+col(.35)+'" title="Fuori fascia"></i><i style="flex:'+c.Opposto+';background:'+col(0)+'" title="Opposto"></i></div><div class="pvpl"><span>'+P(c.Indovinata)+'% indovinate</span><span>'+P(c['Nella fascia'])+'% nella fascia</span><span>'+P(c['Fuori fascia'])+'% fuori</span><span>'+P(c.Opposto)+'% opposte</span></div></div>'});
+return h+'</div>'}
+function rows(){return DS().filter(function(r){return (!HZ||r[1]===HZ)&&(!OR||r[6]===OR)&&(!SOLO||ex(sc(r),r)==='Opposto'||ex(sc(r),r)==='Fuori fascia')})}
+function render(){var R=rows(),h='<div class="pvlg" style="margin:4px 0"><b>Su quale mercato guardare le previsioni?</b></div><div class="pvf">'+Object.keys(D.a).map(function(k){return '<button data-a="'+k+'" class="'+(AS===k?'on':'')+'">'+D.a[k].l+'</button>'}).join('')+'</div><div class="pvk">'+D.a[AS].k+'</div><div class="pvlg" style="margin:4px 0">Quante previsioni sono andate bene (su tutte quelle del periodo scelto sotto):</div>'+pagella(DS().filter(function(r){return !OR||r[6]===OR}));
 h+='<div class="pvf">'+['','10g','1m','3m','6m'].map(function(k){return '<button data-h="'+k+'" class="'+(HZ===k?'on':'')+'">'+(k?NOM[k]:'Tutti i periodi')+'</button>'}).join('')+'</div>';
 h+='<div class="pvf">'+[['','Storico e dal vivo'],['v','Solo dal vivo (diario firmato)'],['p','Solo test sul passato']].map(function(k){return '<button data-o="'+k[0]+'" class="'+(OR===k[0]?'on':'')+'">'+k[1]+'</button>'}).join('')+'<button data-x="1" class="'+(SOLO?'on':'')+'">Solo errori grandi</button></div>';
 var ST=R.slice(0,160).reverse();h+='<div class="pvlg">Ultime '+ST.length+' previsioni, dalla più vecchia alla più recente: <i style="background:'+col(0)+'"></i> opposto <i style="background:'+col(.5)+'"></i> al bordo della fascia <i style="background:'+col(1)+'"></i> indovinata</div><div class="pvs">'+ST.map(function(r){return '<i title="'+dm(r[0])+' · '+NOM[r[1]]+': previsto '+nf(r[3])+', reale '+nf(r[5])+'" style="background:'+col(sc(r))+'"></i>'}).join('')+'</div>';
-h+='<div class="pvw2"><div class="pvlh"><span>Data e periodo</span><span>Previsto → reale</span><span>Esito</span></div>';
-R.slice(0,N).forEach(function(r){var s=sc(r),e=ex(s,r);h+='<div class="pvlr"><div><b>'+dm(r[0])+'</b>'+(r[6]==='v'?' <b title="diario firmato">●</b>':'')+'<small>'+NOM[r[1]]+'</small></div><div>'+nf(r[3])+' → <b>'+nf(r[5])+'</b><small>fascia '+nf(r[2],0)+' / '+nf(r[4],0)+'</small></div><div class="s" style="background:'+col(s)+'">'+e+'<small>'+nf(r[5]-r[3])+'</small></div></div>'});
+h+='<div class="pvw2">';
+R.slice(0,N).forEach(function(r){var s=sc(r),e=ex(s,r);h+='<div class="pvlr"><div class="pvt1"><div><b>'+dm(r[0])+'</b>'+(r[6]==='v'?' <b title="previsione registrata dal vivo">●</b>':'')+' <span class="mu">· '+NOM[r[1]]+'</span></div><div class="s" style="background:'+col(s)+'">'+e+' <small>'+(r[5]-r[3]>0?'+':'')+(r[5]-r[3]).toFixed(1).replace('.',',').replace('-','−')+' punti</small></div></div>'+bar(r,s)+'<div class="pvt2"><span>Previsto: <b>'+nf(r[3])+'</b> <i>(possibile da '+nf(r[2],0)+' a '+nf(r[4],0)+')</i></span><span>È successo: <b>'+nf(r[5])+'</b></span></div></div>'});
 h+='</div>';if(R.length>N)h+='<div class="pvf"><button data-more="1">Mostra altre '+Math.min(200,R.length-N)+' (su '+R.length+')</button></div>';if(!R.length)h+='<p class="mu">Nessuna previsione con questi filtri.</p>';
-W.innerHTML=h;W.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){HZ=b.dataset.h;N=120;render()}});W.querySelectorAll('[data-o]').forEach(function(b){b.onclick=function(){OR=b.dataset.o;N=120;render()}});
+W.innerHTML=h;W.querySelectorAll('[data-a]').forEach(function(b){b.onclick=function(){AS=b.dataset.a;N=120;render()}});W.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){HZ=b.dataset.h;N=120;render()}});W.querySelectorAll('[data-o]').forEach(function(b){b.onclick=function(){OR=b.dataset.o;N=120;render()}});
 var x=W.querySelector('[data-x]');if(x)x.onclick=function(){SOLO=!SOLO;N=120;render()};var m=W.querySelector('[data-more]');if(m)m.onclick=function(){N+=200;render()}}
 render()})();</script>"""
+
+
+def _kpi(righe: list[list]) -> str:
+    return "".join(f"<div><span>{HZ_NOME[x['hz']]} · {x['n']} previsioni</span><b>{_pc(x['dentro'])}</b><span>dentro la fascia prevista (dovrebbe essere circa 80%)</span><span style='display:block;margin-top:4px'>Mercato salito il {_pc(x['sale'])} delle volte · "
+                   f"la direzione prevista è stata giusta il {_pc(x['segno'])} · sbaglio medio {str(round(x['abs'], 1)).replace('.', ',')} punti percentuali</span></div>" for x in riepilogo(righe))
 
 
 def storico_html(righe: list[list]) -> str:
     if not righe:
         return "<p class='mu'>Storico previsioni non disponibile: servono i test sul passato (convalida mensile) e il diario.</p>"
-    rs = riepilogo(righe)
-    k = "".join(f"<div><span>{HZ_NOME[x['hz']]} · {x['n']} previsioni</span><b>{_pc(x['dentro'])}</b><span>dentro la fascia prevista (dovrebbe essere circa 80%)</span><span style='display:block;margin-top:4px'>Mercato salito il {_pc(x['sale'])} delle volte · "
-                f"la direzione prevista è stata giusta il {_pc(x['segno'])} · sbaglio medio {str(round(x['abs'] * 100, 1)).replace('.', ',')} punti percentuali</span></div>" for x in rs)
-    dati = json.dumps({"r": righe}, separators=(",", ":"))
-    return (f"<div class='pvk'>{k}</div><div class='explain'><p><b>Come leggere i colori.</b> Per ogni riga vedi cosa era stato previsto, cosa è successo davvero e di quanto ci si è sbagliati. Verde = il risultato è stato vicino alla previsione; giallo = al limite di quanto previsto come possibile; rosso = lontano, spesso nel verso opposto. "
+    A = {}
+    for k, lab, _c in STRUMENTI:
+        try:
+            rr = righe if k == "sp" else storico_dati(k)
+        except Exception:  # noqa: BLE001
+            rr = []
+        if len(rr) >= 40:
+            A[k] = {"l": lab, "r": rr, "k": _kpi(rr)}
+    dati = json.dumps({"a": A}, separators=(",", ":"))
+    return ("<div class='explain'><p><b>Come leggere ogni riga.</b> La barra grigia è l'intervallo in cui il mercato poteva finire secondo la previsione (il tratto nero è il caso più probabile, il tratteggiato è lo zero). Il pallino colorato è dove il mercato è finito davvero. Verde = il risultato è stato vicino alla previsione; giallo = al limite di quanto previsto come possibile; rosso = lontano, spesso nel verso opposto. "
             "Il caso tipico previsto è quasi sempre in rialzo (il mercato in media sale), quindi «aver indovinato la direzione» vale poco da solo. La domanda utile è: la fascia indicata era onesta? Cioè il risultato è finito dentro la fascia circa 8 volte su 10? "
-            "● = previsione registrata dal vivo con firma (non modificabile); le altre sono prove sul passato, fatte usando a ogni data solo ciò che si sapeva allora.</p></div>"
+            "● = previsione registrata dal vivo con firma (non modificabile); le altre sono prove sul passato, fatte usando a ogni data solo ciò che si sapeva allora.</p>"
+            "<p><b>Quale indice?</b> I modelli sono costruiti sull'S&amp;P 500. Con i pulsanti in alto puoi vedere come la <i>stessa previsione</i> si comporta su altri mercati: il VWCE (il fondo che compri, in euro), l'S&amp;P 500 a pesi uguali (ogni azienda conta uguale, non per grandezza), il Nasdaq, l'Europa, ecc. Il «reale» viene ricalcolato sul prezzo di ciascuno. "
+            "Dove la storia è più corta (per esempio il VWCE parte dal 2008, il pesi uguali dal 2003) trovi meno previsioni. Gli indici esteri sono nella loro valuta. Più un mercato è diverso dall'S&amp;P 500, meno la previsione è precisa: è normale.</p></div>"
             f"<script type='application/json' id='armor-pv-data'>{dati}</script><div data-pvh='1'></div>{JS}")
 
 

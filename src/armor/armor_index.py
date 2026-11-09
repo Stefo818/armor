@@ -503,6 +503,22 @@ HZ_FILE = DATA / "armor_horizons.json"
 HZ_EVENT = {"settimana": ("calo ≥5% in 10 sedute", 10, 0.05), "mese": ("calo ≥5% in 21 sedute", 21, 0.05), "3 mesi": ("calo ≥10% in 63 sedute", 63, 0.10)}
 
 
+def storia(ser: pd.Series, soglia: float = 40.0) -> dict:
+    """Valore di un mese fa, medie dell'ultima settimana e dell'ultimo mese, da quanti giorni è sopra (o sotto) la soglia, e gli ultimi ~3 mesi per il grafico."""
+    ser = ser.dropna()
+    ult = ser.index[-1]
+    fa = ser[ser.index <= ult - pd.Timedelta(days=30)]
+    sopra = bool(ser.iloc[-1] >= soglia)
+    stato = ser >= soglia
+    i = len(ser) - 1
+    while i > 0 and bool(stato.iloc[i - 1]) == sopra:
+        i -= 1
+    da = ser.index[i]
+    giorni = int((ult - da).days)
+    return {"mese_fa": None if fa.empty else float(fa.iloc[-1]), "media_sett": float(ser.iloc[-5:].mean()), "media_mese": float(ser[ser.index > ult - pd.Timedelta(days=30)].mean()),
+            "soglia": soglia, "sopra": sopra, "giorni_soglia": giorni, "da_soglia": str(da.date()), "da_inizio": bool(i == 0), "spark": [round(float(x), 1) for x in ser.iloc[-90:].values]}
+
+
 def horizons(d: dict | None, sp: pd.Series, recompute: bool = False) -> dict | None:
     """Tre indici (1-100) con pesi diversi per orizzonte + AUC storica di ciascuno contro il suo evento (cache mensile in data/armor_horizons.json)."""
     if not d:
@@ -518,6 +534,7 @@ def horizons(d: dict | None, sp: pd.Series, recompute: bool = False) -> dict | N
     vals = {}
     for k, ser in series.items():
         vals[k] = {"v": float(ser.iloc[-1]), "ieri": float(ser.iloc[-2]), "sett": float(ser.iloc[-6])}
+        vals[k].update(storia(ser))
     ok = cache.get("date") == str(d["date"].date()) and not recompute
     if not ok:
         p = sp[sp.index >= "1995-01-01"]

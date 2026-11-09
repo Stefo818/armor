@@ -2134,3 +2134,16 @@ def test_agenda_eventi_e_notizie_per_giorno():
     n = agenda.notizie([{"title": "A - Fonte", "source": "F", "group": "Mercati", "time": ora, "kind": "macro", "label": "negativo", "score": 2.0}, {"title": "B", "time": ora, "kind": "company"}])
     assert "Oggi" in n and "negativo" in n and ">B<" not in n
     assert "Prossimi eventi" in agenda.pagina([], "<p>cal</p>", "<p>prev</p>")
+
+
+def test_storia_indice_e_selettore_strumenti():
+    import pandas as pd
+    from armor import armor_index, previsioni_hub
+    ser = pd.Series([30.0] * 60 + [45.0] * 40, index=pd.bdate_range("2026-01-01", periods=100))
+    st = armor_index.storia(ser)
+    assert st["sopra"] is True and st["giorni_soglia"] >= 30
+    assert st["media_sett"] == 45.0 and 40 < st["media_mese"] <= 45
+    h = previsioni_hub.html(None)
+    assert "VWCE (il tuo fondo)" in h and "data-a" in h
+    m = previsioni_hub.matrice(None)
+    assert "data-pmw" in m or "Nessun modello" in m

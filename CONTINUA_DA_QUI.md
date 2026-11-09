@@ -633,3 +633,10 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - Swipe col pollice: schede principali e sottoschede in sequenza (evita tabelle/grafici scorrevoli e canvas); nell'Assistente fra le sue schede.
 - Assistente: grafica nuova (barra sfumata, schede a pillola, riquadri più curati). Finestra «Indice Armor» riscritta in modo semplice.
 - Test: 133. sw.js = armor-v57. Non verificato: tocco vero su telefono (provato solo con eventi simulati in Chromium).
+
+## Patch 58 (previsioni: matrice modelli, selettore mercato, tabella storica, finestra Indice Armor)
+- previsioni_hub: matrice colorata modelli x periodi (10g, 1s, 1m, 3m, 6m, 1a) con selettore modello e riga Sintesi; tabella dettagliata a scomparsa.
+- Storico: righe con barra fascia + pallino del reale + etichetta (Indovinata, Nella fascia, Fuori fascia, Opposto); pagella per periodo; corretto "sbaglio medio" (era x100).
+- Selettore mercato: i modelli sono sull'S&P 500; il "reale" viene ricalcolato per VWCE, S&P pesi uguali (rsp), Nasdaq, DAX, FTSE MIB, Nikkei, IWM, EEM (e mweq, urth, stoxx600 se le serie esistono). STRUMENTI in previsioni_hub.py. Valute locali.
+- armor_index.storia(): valore un mese fa, medie settimana e mese, giorni sopra/sotto 40; cruscotto.armor_window riscritta in italiano semplice.
+- Non verificato: mweq/urth/stoxx600 (assenti nei dati locali), tocco reale su telefono.

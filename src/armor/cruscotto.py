@@ -139,18 +139,51 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
     return f"<div class='kpis'>{cards}</div><div class='mu liveinfo' style='margin:-4px 0 10px'></div>"
 
 
-def _delta(v, prev):
+def _dv(v, prev, d=0):
+    """Valore passato con la differenza da oggi: rosso se oggi è più alto (più rischio), verde se più basso."""
     if prev is None or (isinstance(prev, float) and np.isnan(prev)):
         return "<span class='mu'>n/d</span>"
-    d = v - prev
-    if abs(d) < 0.5:
-        return f"<b>{prev:.0f}</b> <span class='mu'>(invariato)</span>"
-    cl, fr = ("amu", "▲ sale") if d > 0 else ("amd", "▼ scende")
-    return f"<b>{prev:.0f}</b> <span class='{cl}'>{fr} di {abs(d):.0f}</span>"
+    dd = v - prev
+    if abs(dd) < 0.5:
+        return f"<b>{prev:.{d}f}</b> <span class='mu'>invariato</span>"
+    cl, fr = ("amu", "▲ oggi è più alto di") if dd > 0 else ("amd", "▼ oggi è più basso di")
+    return f"<b>{prev:.{d}f}</b> <span class='{cl}'>{fr} {abs(dd):.0f}</span>"
+
+
+def _spark(vals: list, soglia: float = 40.0) -> str:
+    if not vals or len(vals) < 3:
+        return ""
+    n = len(vals)
+    X = lambda i: i * 100 / (n - 1)
+    Y = lambda v: 38 - min(max(v, 0), 100) / 100 * 34
+    pts = " ".join(f"{X(i):.1f},{Y(v):.1f}" for i, v in enumerate(vals))
+    return ("<svg viewBox='0 0 100 42' preserveAspectRatio='none' class='amsp' role='img' aria-label='Andamento degli ultimi 3 mesi'>"
+            f"<rect x='0' y='{Y(100):.1f}' width='100' height='{Y(60) - Y(100):.1f}' fill='hsl(0,70%,45%)' opacity='.10'/><rect x='0' y='{Y(60):.1f}' width='100' height='{Y(40) - Y(60):.1f}' fill='hsl(45,80%,50%)' opacity='.10'/>"
+            f"<line x1='0' x2='100' y1='{Y(soglia):.1f}' y2='{Y(soglia):.1f}' stroke='var(--mu)' stroke-width='.7' stroke-dasharray='2 2' vector-effect='non-scaling-stroke'/>"
+            f"<polyline fill='none' stroke='var(--ac)' stroke-width='2' vector-effect='non-scaling-stroke' points='{pts}'/><circle cx='100' cy='{Y(vals[-1]):.1f}' r='2.4' fill='var(--ac)'/></svg>"
+            "<div class='amsl'><span>3 mesi fa</span><span>linea tratteggiata = 40</span><span>oggi</span></div>")
+
+
+def _frase(v, x, name):
+    sett = v - (x.get("media_sett") if x.get("media_sett") is not None else v)
+    p7 = x.get("sett")
+    if p7 is None:
+        tr = ""
+    else:
+        d = v - p7
+        tr = "è salito" if d >= 3 else "è sceso" if d <= -3 else "è rimasto più o meno uguale"
+        tr = f"Rispetto a una settimana fa {tr}"
+    gg = x.get("giorni_soglia")
+    gu = "giorno" if gg == 1 else "giorni"
+    sopra = x.get("sopra")
+    stato = ""
+    if gg is not None:
+        stato = (f" ed è sopra 40 da {gg} {gu}" if sopra else f" ed è sotto 40 da {gg} {gu}") if not x.get("da_inizio") else (" ed è sempre stato sopra 40" if sopra else " ed è sempre stato sotto 40")
+    return f"Il rischio è <b>{name}</b>. {tr}{stato}." if tr else f"Il rischio è <b>{name}</b>{stato}."
 
 
 def armor_window(h: dict | None, d: dict | None) -> str:
-    """Finestra dei tre indici Armor (si apre toccando l'Indice Armor): tre schede chiare, con barra del livello, cosa pesa di più e quanto è affidabile."""
+    """Finestra dei tre indici Armor (si apre toccando l'Indice Armor): per ogni scadenza numero, parola, grafico di 3 mesi e confronto con ieri, settimana, mese, medie e da quanto è sopra 40."""
     if not h or not d:
         return ""
     col = armor_index.color
@@ -162,37 +195,45 @@ def armor_window(h: dict | None, d: dict | None) -> str:
         v = x["v"]
         name, _ = armor_index.band(v)
         a = x.get("auc") or {}
-        zone = "<div class='amb'><i style='background:hsl(125,60%,42%);flex:30'></i><i style='background:hsl(60,70%,48%);flex:25'></i><i style='background:hsl(30,80%,50%);flex:25'></i><i style='background:hsl(0,70%,45%);flex:20'></i>" \
-               f"<b style='left:{min(max(v, 1), 99):.0f}%'></b></div><div class='amt'><span>basso</span><span>moderato</span><span>alto</span><span>molto alto</span></div>"
+        zone = "<div class='amb'><i style='background:hsl(125,60%,42%);flex:40'></i><i style='background:hsl(60,70%,48%);flex:20'></i><i style='background:hsl(30,80%,50%);flex:20'></i><i style='background:hsl(0,70%,45%);flex:20'></i>" \
+               f"<b style='left:{min(max(v, 1), 99):.0f}%'></b></div><div class='amt'><span>basso</span><span>40</span><span>moderato</span><span>elevato</span><span>molto alto</span></div>"
         pesi = sorted(h["pesi"].get(k, {}).items(), key=lambda t: -t[1])[:3]
         mx = max([p_ for _g, p_ in pesi] or [1])
         peso_html = "".join(f"<div class='amw'><span>{e(g)}</span><i style='width:{p_ / mx * 100:.0f}%'></i><b>{int(p_)}%</b></div>" for g, p_ in pesi)
         ver = ""
         if a.get("nuovo") is not None and not np.isnan(a["nuovo"]):
-            diff = a["nuovo"] - a["standard"]
-            diff13 = a["nuovo_2013"] - a["standard_2013"]
-            if diff > 0.005 and diff13 >= -0.005:
-                chip, ct = "ok", "meglio dell'indice standard"
-            elif diff13 < -0.005 or diff < -0.005:
-                chip, ct = "wa", "non meglio dell'indice standard"
-            else:
-                chip, ct = "wa", "alla pari con l'indice standard"
+            diff, diff13 = a["nuovo"] - a["standard"], a["nuovo_2013"] - a["standard_2013"]
+            chip, ct = ("ok", "meglio dell'indice standard") if diff > 0.005 and diff13 >= -0.005 else (("wa", "non meglio dell'indice standard") if diff13 < -0.005 or diff < -0.005 else ("wa", "alla pari con l'indice standard"))
             ver = (f"<div class='amh'>Quanto ha funzionato in passato</div><div class='amv2'>{a['nuovo'] * 100:.0f} <span class='mu'>su 100</span></div>"
-                   f"<div class='mu'>È la capacità di dare un numero più alto ai giorni che poi sono stati pericolosi. 50 = come tirare a indovinare, 100 = perfetta.</div>"
-                   f"<span class='pvch {chip}'>{ct}</span><div class='mu' style='margin-top:4px'>Dal 2013 a oggi: {a['nuovo_2013'] * 100:.0f} su 100 (l'indice standard: {a['standard_2013'] * 100:.0f}).</div>")
+                   f"<div class='mu'>Capacità di dare un numero più alto ai giorni che poi sono stati pericolosi. 50 = come tirare a indovinare, 100 = perfetta.</div>"
+                   f"<span class='pvch {chip}'>{ct}</span><div class='mu' style='margin-top:4px'>Dal 2013 a oggi: {a['nuovo_2013'] * 100:.0f} su 100 (indice standard: {a['standard_2013'] * 100:.0f}).</div>")
+        da = x.get("da_soglia", "")
+        da_txt = f"{da[8:10]}/{da[5:7]}/{da[:4]}" if da else ""
+        riga_soglia = ""
+        if x.get("giorni_soglia") is not None:
+            if x.get("da_inizio"):
+                riga_soglia = f"<tr><td>{'Sopra' if x['sopra'] else 'Sotto'} 40</td><td><b>da sempre</b> <span class='mu'>(in tutto il periodo calcolato)</span></td></tr>"
+            else:
+                riga_soglia = f"<tr><td>{'Sopra' if x['sopra'] else 'Sotto'} 40 da</td><td><b>{x['giorni_soglia']} {'giorno' if x['giorni_soglia'] == 1 else 'giorni'}</b> <span class='mu'>(dal {da_txt})</span></td></tr>"
+        tab = ("<table class='amtab'>"
+               f"<tr><td>Ieri</td><td>{_dv(v, x['ieri'])}</td></tr><tr><td>Una settimana fa</td><td>{_dv(v, x['sett'])}</td></tr><tr><td>Un mese fa</td><td>{_dv(v, x.get('mese_fa'))}</td></tr>"
+               f"<tr><td>Media dell'ultima settimana</td><td>{_dv(v, x.get('media_sett'))}</td></tr><tr><td>Media dell'ultimo mese</td><td>{_dv(v, x.get('media_mese'))}</td></tr>{riga_soglia}</table>")
         cards += (f"<div class='am3'><div class='amk'>{lab[k][0]}</div><div class='mu'>{lab[k][1]}</div><div class='amv' style='color:{col(v)}'>{v:.0f}<span>/100</span></div>"
-                  f"<div class='aml' style='color:{col(v)}'>Rischio {name}</div>{zone}<div class='mu' style='margin-top:6px'>{lab[k][2]}</div>"
-                  f"<div class='amh'>Com'è cambiato</div><div class='amc'>Ieri era {_delta(v, x['ieri'])}</div><div class='amc'>Una settimana fa era {_delta(v, x['sett'])}</div>"
-                  f"<div class='amh'>Cosa pesa di più nel numero</div>{peso_html}{ver}</div>")
+                  f"<div class='aml' style='color:{col(v)}'>Rischio {name}</div><div class='amf'>{_frase(v, x, name)}</div>{zone}{_spark(x.get('spark'))}"
+                  f"<div class='amh'>Confronto con il passato</div>{tab}"
+                  f"<details class='amd2'><summary>Cosa pesa nel numero e quanto è affidabile</summary><div class='mu' style='margin:6px 0'>{lab[k][2]}</div>{peso_html}{ver}</details></div>")
     std = d["value"]
+    ov = h["orizzonti"]
+    tutte_mod = all(armor_index.band(x["v"])[0] == armor_index.band(list(ov.values())[0]["v"])[0] for x in ov.values())
+    riep = (f"Oggi il rischio è <b>{armor_index.band(list(ov.values())[0]['v'])[0]}</b> su tutte e tre le scadenze." if tutte_mod
+            else "Le tre scadenze <b>non coincidono</b>: " + ", ".join(f"{lab[k][0].lower()} {armor_index.band(x['v'])[0]}" for k, x in ov.items()) + ".")
     return ("<div id='amod' class='cmodal'><div class='cbox'><button class='cx' aria-label='Chiudi'>×</button><div class='cbody'>"
             "<h3 style='margin-top:0'>Indice Armor: il rischio a tre scadenze</h3>"
-            "<div class='explain'><p><b>Come si legge, in 10 secondi.</b> Ogni scheda è un numero da 1 a 100: <b>più è alto, più il mercato è a rischio</b>. Intorno a 50 il rischio è nella media. "
-            "Sono gli stessi dati, contati in modo diverso a seconda dell'orizzonte: a una settimana pesa di più la paura sui mercati, a tre mesi pesano di più credito e prezzi delle azioni. "
-            "<b>Se i tre numeri sono molto diversi</b>, ti dicono che il rischio sta crescendo solo in un orizzonte (per esempio solo a breve).</p></div>"
+            f"<div class='explain'><p><b>Come si legge, in 10 secondi.</b> Ogni scheda è un numero da 1 a 100: <b>più è alto, più il mercato è a rischio</b>. Sotto 40 il rischio è basso, tra 40 e 60 è moderato, oltre 60 è elevato. "
+            f"{riep} Le tre schede usano gli stessi dati, contati in modo diverso: a una settimana pesa di più la paura sui mercati, a tre mesi pesano di più credito e prezzi delle azioni.</p></div>"
             f"<div class='am3w'>{cards}</div>"
-            f"<div class='amsum'><b>Media dei tre: {h['media']:.0f}</b> · Numero mostrato nella pagina «Oggi»: <b>{std:.0f}</b>. "
-            "Nella pagina «Oggi» resta quello di sempre, perché la media dei tre non si è dimostrata migliore.</div>"
+            f"<div class='amsum'><b>Media delle tre scadenze: {h['media']:.0f}</b> · Numero mostrato nella pagina «Oggi»: <b>{std:.0f}</b>. "
+            "Nella pagina «Oggi» resta quello di sempre, perché la media delle tre non si è dimostrata migliore.</div>"
             "<details class='gl'><summary>Quanto possiamo fidarci</summary><p class='mu'>I pesi sono stati decisi in anticipo, non adattati ai dati già visti. A una settimana il nuovo numero è appena meglio di quello standard; "
             "a tre mesi, dal 2013 a oggi, è uguale o peggio. Quindi: utile per capire <i>che tipo</i> di rischio cresce, non per prevedere un crollo.</p></details>"
             "<p><button class='btn pri' data-chart='armor_index' id='amodchart'>Apri il grafico dell'Indice Armor</button> <button class='btn' data-go='indici'>Come è calcolato</button></p>"
@@ -258,6 +299,6 @@ CSS = """
 .vgl{display:flex;justify-content:space-between;font-size:9px;color:var(--mu);line-height:1.1;margin-top:3px;text-align:center}
 .htr{margin-top:6px;padding-top:6px;border-top:1px solid rgba(128,128,128,.3)}.htrb{font-size:14px}.htrb .trb,.htrb .trg,.htrb .tr0{font-size:18px}
 .aix{cursor:pointer}.am3w{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
-.am3{border:1px solid var(--bd);border-radius:18px;padding:14px 15px;background:var(--bg);box-shadow:0 2px 10px rgba(0,0,0,.12)}.amk{font-weight:800;font-size:16px}.amh{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);margin:12px 0 4px;border-top:1px dashed var(--bd);padding-top:8px}.amb{display:flex;height:10px;border-radius:99px;overflow:hidden;position:relative;margin:10px 0 3px}.amb i{display:block}.amb b{position:absolute;top:-3px;width:5px;height:16px;border-radius:3px;background:var(--tx);box-shadow:0 0 0 2px var(--bg);transform:translateX(-50%)}.amt{display:flex;justify-content:space-between;font-size:9.5px;color:var(--mu)}.amc{font-size:13px;margin:2px 0}.amu{color:var(--bad);font-weight:700}.amd{color:var(--ok);font-weight:700}.amw{display:grid;grid-template-columns:1fr 54px 34px;gap:6px;align-items:center;font-size:12px;margin:3px 0}.amw i{display:block;height:7px;border-radius:99px;background:var(--ac)}.amw b{text-align:right}.amv2{font-size:20px;font-weight:800}.amsum{border:1px solid var(--bd);border-radius:14px;padding:10px 14px;background:var(--card);margin:6px 0 10px;font-size:14px}.amv{font-size:40px;font-weight:800;line-height:1.05}.amv span{font-size:15px;color:var(--mu)}.aml{font-weight:800}
+.am3{border:1px solid var(--bd);border-radius:18px;padding:14px 15px;background:var(--bg);box-shadow:0 2px 10px rgba(0,0,0,.12)}.amk{font-weight:800;font-size:16px}.amh{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);margin:12px 0 4px;border-top:1px dashed var(--bd);padding-top:8px}.amb{display:flex;height:10px;border-radius:99px;overflow:hidden;position:relative;margin:10px 0 3px}.amb i{display:block}.amb b{position:absolute;top:-3px;width:5px;height:16px;border-radius:3px;background:var(--tx);box-shadow:0 0 0 2px var(--bg);transform:translateX(-50%)}.amt{display:flex;justify-content:space-between;font-size:9.5px;color:var(--mu)}.amc{font-size:13px;margin:2px 0}.amu{color:var(--bad);font-weight:700}.amd{color:var(--ok);font-weight:700}.amw{display:grid;grid-template-columns:1fr 54px 34px;gap:6px;align-items:center;font-size:12px;margin:3px 0}.amw i{display:block;height:7px;border-radius:99px;background:var(--ac)}.amw b{text-align:right}.amv2{font-size:20px;font-weight:800}.amf{font-size:14px;line-height:1.45;margin:8px 0 4px}.amsp{width:100%;height:60px;display:block;margin-top:10px;border-radius:10px;background:var(--card)}.amsl{display:flex;justify-content:space-between;font-size:10px;color:var(--mu)}.amtab{width:100%;border-collapse:collapse;font-size:13px}.amtab td{padding:6px 0;border-bottom:1px solid var(--bd);vertical-align:top}.amtab td:first-child{color:var(--mu);width:46%;padding-right:8px}.amtab tr:last-child td{border-bottom:0}.amd2{margin-top:10px;border:1px solid var(--bd);border-radius:12px;padding:0 12px;background:var(--card)}.amd2 summary{padding:10px 0;font-weight:700;font-size:13px;cursor:pointer}.amsum{border:1px solid var(--bd);border-radius:14px;padding:10px 14px;background:var(--card);margin:6px 0 10px;font-size:14px}.amv{font-size:40px;font-weight:800;line-height:1.05}.amv span{font-size:15px;color:var(--mu)}.aml{font-weight:800}
 #amod{z-index:26}#dkt{transition:opacity .4s}
 """
