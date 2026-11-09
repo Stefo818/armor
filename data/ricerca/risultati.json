@@ -1,5 +1,5 @@
 {
- "data": "2026-11-08",
+ "data": "2026-11-09",
  "versione": "Fase A (forma iniziale)",
  "fine_ricerca": "2018-12-31",
  "nota": "Gli anni 2019-oggi non sono stati usati: sono riservati alla prova finale (patch 23).",
@@ -2890,7 +2890,7 @@
   }
  ],
  "analoghi_oggi": {
-  "data": "2026-11-08",
+  "data": "2026-11-09",
   "colonne": [
    "eps_g12",
    "eps_g3",
@@ -3109,5 +3109,5 @@
   "rialzo_6_su_k": 18,
   "nota": "Non ancora validato: si mostra nell'app solo se supera la verifica della Fase B."
  },
- "secondi": 8.1
+ "secondi": 17.2
 }
