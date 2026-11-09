@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import archivio_dati, infobox, mondo, novita, tensione, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import archivio_dati, infobox, mondo, novita, saldi, tensione, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -881,7 +881,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                 f"<a href='#indici' data-go='indici'>Vedi tutti i semafori ›</a></div>") if sem else ""
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
-    pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("mercati", "Mercati"), ("indici", "Indici"), ("regime", "Regime di tensione"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
+    pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("mercati", "Mercati"), ("saldi", "Saldi"), ("indici", "Indici"), ("regime", "Regime di tensione"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
              ("fiducia", "Quanto fidarsi"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi")]
     nav = "<nav class='pgnav'>" + "".join(f"<button data-p='{k}'>{l}</button>" for k, l in pages) + "</nav>"
     lazy_pages: dict[str, str] = {}
@@ -938,6 +938,15 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             (sd / "mercati.json").write_text(md_json, encoding="utf-8")
     except Exception as ex:  # noqa: BLE001
         print("Dati Mercati non letti:", str(ex)[:120], flush=True)
+    sd_json = None
+    try:
+        sd_json = saldi.carica()
+        if lazy and sd_json:
+            sd = out.parent / "series"
+            sd.mkdir(exist_ok=True)
+            (sd / "saldi.json").write_text(sd_json, encoding="utf-8")
+    except Exception as ex:  # noqa: BLE001
+        print("Dati Saldi non letti:", str(ex)[:120], flush=True)
     cf_json = None
     try:
         cfd = confronto.build(sp, vwce_display(), aix)
@@ -1049,6 +1058,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     p_arc = _safe(archivio_dati.html, 'Archivio dati')
     p_nz = _safe(lambda: novita.block(None if lazy else nz_json), "Notizie")
     p_md = _safe(lambda: mondo.block(None if lazy else md_json), "Mercati")
+    p_sd = _safe(lambda: saldi.block(None if lazy else sd_json), "Saldi")
     nz_dock = ("<p><a href='#notizie' class='btn pri' data-go='notizie'>Apri tutte le notizie</a></p>"
                + "".join(f"<div class='nzi {i.get('label', 'neutro')}'><b>{html.escape(i['title'])}</b><div class='me'>{html.escape(i.get('source', ''))} · {html.escape(i.get('group', ''))}</div></div>"
                          for i in sorted([x for x in newsmod.load_latest().get('items', []) if x.get('kind') in ('macro', 'sector')], key=lambda x: -x['score'])[:12]))
@@ -1087,7 +1097,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
 {page('oggi', p_oggi)}{page('indici', p_indici)}{page('regime', p_regime)}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
-{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('notizie', p_nz)}{page('mercati', p_md)}{page('allarmi', p_al)}
+{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('notizie', p_nz)}{page('mercati', p_md)}{page('saldi', p_sd)}{page('allarmi', p_al)}
 {dock}{semafori.lista_html(sem) if sem else ''}
 <script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>

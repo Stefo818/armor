@@ -213,7 +213,7 @@ def top_json(m: pd.DataFrame, close: pd.DataFrame, nomi: dict, settori: dict | N
     from . import mondo
     chiavi = ["r1g", "r1s", "r1m", "r3m", "r6m", "r1a"]
     sel = set()
-    for k in chiavi:
+    for k in chiavi + ["r3g"]:
         if k in m:
             s = m[k].dropna().sort_values()
             sel |= set(s.index[:n]) | set(s.index[-n:])
@@ -229,7 +229,10 @@ def top_json(m: pd.DataFrame, close: pd.DataFrame, nomi: dict, settori: dict | N
         if valuta not in ("USD", "EUR"):
             eur = [None] * 6   # altre valute: niente conversione (resta il rendimento in valuta locale)
         items.append({"t": t, "n": nomi.get(t, t), "c": "titoli", "s": inf.get("s") or "n/d", "v": valuta, "p": round(float(m.at[t, "prezzo"]), 2), "r": loc, "e": eur,
-                      "k": [round(float(x), 4 if x < 10 else 2) for x in close[t].dropna().iloc[-30:].values], "cap": inf.get("cap")})
+                      "k": [round(float(x), 4 if x < 10 else 2) for x in close[t].dropna().iloc[-30:].values], "cap": inf.get("cap"),
+                      "x3": None if "r3g" not in m or pd.isna(m.at[t, "r3g"]) else round(float(m.at[t, "r3g"]), 5),
+                      "beta": None if "beta" not in m or pd.isna(m.at[t, "beta"]) else round(float(m.at[t, "beta"]), 2),
+                      "k6": [round(float(x), 4 if x < 10 else 2) for x in close[t].dropna().iloc[-126::2].values], "paese": inf.get("p"), "ind": inf.get("i")})
     return {"asof": str(close.dropna(how="all").index[-1].date()), "universo": int(len(m)), "items": items}
 
 

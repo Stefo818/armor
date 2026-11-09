@@ -458,6 +458,10 @@ def main() -> None:
         from . import titoli
         d = titoli.aggiorna()
         print({"titoli_in_classifica": len(d["items"]), "universo_filtrato": d["universo"], "dati_al": d["asof"]})
+    elif cmd == "saldi-aggiorna":   # Patch 46: fondamentali, notizie, punteggio Salute e report per i candidati (dopo titoli-aggiorna)
+        from . import saldi
+        d = saldi.aggiorna()
+        print({"titoli": len(d["titoli"]), "dati_al": d["asof"]})
     elif cmd == "titoli-prova":   # python -m armor titoli-prova NVDA : mostra indicatori, eventi 8-K e notizie classificate di un solo titolo
         from . import titoli_prova
         titoli_prova.main(sys.argv[2] if len(sys.argv) > 2 else "NVDA")

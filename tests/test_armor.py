@@ -1839,3 +1839,55 @@ def test_titoli_eventi_e_temi():
                       "statusModule": {"primaryCompletionDateStruct": {"date": "2027-02"}}}}]}
     assert ev.catalizzatori_studi(j, "2026-11-09")[0]["id"] == "NCT1"
     assert ev.rischio_binario("Biotechnology", 1e6, 1) and not ev.rischio_binario("Software", 1e6, 1)
+
+
+def _finti_saldi():
+    from armor import saldi
+    r = np.random.default_rng(4)
+    items, fond, nz = [], {}, {}
+    for i in range(40):
+        t = f"T{i}"
+        rr = [-0.02 - 0.01 * (i % 7)] * 5 + [0.1]
+        items.append({"t": t, "n": f"Azienda {i}", "c": "titoli", "s": "Technology" if i % 2 else "Energy", "v": "USD", "p": 10.0 + i, "r": rr, "e": rr, "k": [1, 2, 3], "k6": [1, 2, 3, 2],
+                      "x3": -0.03 - 0.001 * i, "beta": 1.1, "cap": 1e9 * (i + 1), "paese": "United States", "ind": "Software"})
+        fond[t] = {"nome": f"Azienda {i}", "settore": "Technology" if i % 2 else "Energy", "industria": "Software", "paese": "United States", "cap": 1e9 * (i + 1),
+                   "ricavi_q_1a": {"var": 0.1 - i * 0.01, "f": "▲" if i < 10 else "▼"}, "ricavi_ttm": 1e9, "ps": 1 + i * 0.3, "pe": 10 + i, "ps_f": 1 + i * 0.2, "pe_f": None, "ev_ebitda": 8 + i * 0.5,
+                   "piotroski": {"score": 9 - i % 10, "su": 9}, "altman": {"z": 4 - i * 0.1, "zona": "sicura"}, "copertura_interessi": 10 - i * 0.2, "debito_netto_ebitda": i * 0.1,
+                   "current_ratio": 2 - i * 0.02, "margine_lordo": 0.6 - i * 0.01, "margine_fcf": 0.2 - i * 0.005, "roe": 0.2, "mesi_cassa": 3.0 if i == 5 else None, "diluizione": 0.01 * i,
+                   "analisti": {"raccomandazione": 2.0, "target": 20.0 + i, "n": 8}, "insider_acq_90g": 2 if i == 3 else None, "short_float": 0.05, "rpo": None, "rpo_anni": None}
+        nz[t] = []
+    nz["T1"] = [{"title": "Azienda 1 cuts guidance for 2027", "time": "2026-11-06T10:00:00Z", "source": "Reuters", "link": "http://x"}]
+    nz["T2"] = [{"title": "Azienda 2 to be acquired by BigCo", "time": "2026-11-06T10:00:00Z"}]
+    return saldi, {"asof": "2026-11-06", "items": items}, fond, nz
+
+
+def test_saldi_punteggio_report_e_registro(tmp_path, monkeypatch):
+    saldi, top, fond, nz = _finti_saldi()
+    monkeypatch.setattr(saldi, "REGISTRO", tmp_path / "reg.csv")
+    d = saldi.costruisci(top, fond, nz, [{"n": "ETF X", "t": "XX", "c": "etf", "s": "Azionario USA", "v": "USD", "p": 50, "r": [-0.01, -0.02, -0.03, -0.04, -0.05, 0.1], "k": [1, 2]}],
+                         {"XLK": {"1g": -0.01, "1s": -0.02, "1m": -0.03, "3m": 0.0, "6m": 0.0}}, 1.1)
+    assert len(d["classifiche"]["1g"]) <= 100 and "T2" not in d["titoli"] and d["escluse_acquisizioni"] == ["T2"]
+    assert d["classifiche"]["1g"] == sorted(d["classifiche"]["1g"], key=lambda t: d["titoli"][t]["r"]["1g"])
+    sc = {t: x["s"] for t, x in d["titoli"].items()}
+    assert all(1 <= v <= 100 for v in sc.values() if v is not None)
+    assert sc["T0"] > sc["T39"]                          # azienda più solida e più a buon prezzo: punteggio più alto
+    assert sc["T5"] <= 15 and "cassa" in " ".join(d["titoli"]["T5"]["tetti"])   # meno di 6 mesi di cassa: tetto
+    assert d["titoli"]["T1"]["causa"] == "azienda" and "Previsioni tagliate" in d["titoli"]["T1"]["causa_t"]
+    rep = d["dett"]["T1"]["report"]
+    assert set(rep) == {"perche", "salute", "favorevole", "rischi", "nota"} and rep["rischi"] and "consulenza" in rep["nota"]
+    assert d["etf_classifiche"]["1g"] == ["XX"] and d["etf"]["XX"]["r"]["3g"] is None
+    n1 = saldi.registra(d, "2026-11-06")
+    assert n1 > 0 and saldi.registra(d, "2026-11-06") == 0       # nessun doppione
+    h = saldi.block(saldi.json.dumps(d))
+    assert "armor-sd-data" in h and "non è una consulenza finanziaria" in h.lower()
+
+
+def test_saldi_verifica_per_fascia():
+    saldi = __import__("armor.saldi", fromlist=["x"])
+    idx = pd.bdate_range("2026-01-01", periods=120)
+    close = pd.DataFrame({"A": np.linspace(10, 20, 120), "B": np.linspace(10, 5, 120)}, index=idx)
+    spy = pd.Series(np.linspace(100, 110, 120), index=idx)
+    reg = pd.DataFrame({"data": [idx[0], idx[0]], "ticker": ["A", "B"], "periodo": ["1g", "1g"], "punteggio": [90, 10], "prezzo": [10, 10]})
+    v = saldi.verifica(close, spy, reg)
+    f = {x["fascia"]: x for x in v["orizzonti"]["1m"]["fasce"]}
+    assert f["81-100"]["medio"] > 0 > f["1-20"]["medio"] and f["81-100"]["su"] == 1.0 and f["1-20"]["su"] == 0.0

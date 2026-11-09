@@ -236,7 +236,7 @@ def aggiorna(log=print) -> dict:
     fx = cl["EURUSD=X"].dropna()
     d = costruisci(cl.drop(columns=["EURUSD=X"]), uni, fx)
     if motore is not None:   # titoli di tutto il mercato dal motore (Patch 45): classifiche già calcolate, in sostituzione dei soli S&P 500
-        d["items"] += [{k: v for k, v in i.items() if k != "cap"} for i in motore["items"]]
+        d["items"] += [{k: i[k] for k in ("t", "n", "c", "s", "v", "p", "r", "e", "k")} for i in motore["items"]]
         d["titoli_universo"] = motore.get("universo")
     d["eurusd"] = round(float(fx.iloc[-1]), 4)
     FILE.write_text(dumps(d), encoding="utf-8")

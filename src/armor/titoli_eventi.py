@@ -86,7 +86,7 @@ def causa_calo(r_titolo: float | None, r_settore: float | None, beta: float, eve
     if ecc is not None and r_titolo < 0 and abs(ecc) < 0.3 * abs(r_titolo):
         return {"tipo": "settore", "ecc": ecc, "testo": "Il calo segue quello del settore o del mercato: non c'è una causa legata solo all'azienda."}
     if neg:
-        return {"tipo": "azienda", "ecc": ecc, "testo": neg[0]["etichetta"] + (f" ({neg[0]['data']})" if neg[0].get("data") else "") + "."}
+        return {"tipo": "azienda", "ecc": ecc, "testo": neg[0]["etichetta"] + (f" ({neg[0]['data'][8:]}/{neg[0]['data'][5:7]})" if neg[0].get("data") else "") + "."}
     return {"tipo": "ignota", "ecc": ecc, "testo": "Causa non identificata dalle notizie disponibili."}
 
 
