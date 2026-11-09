@@ -1,6 +1,6 @@
 {
- "data_utc": "2026-11-08T18:06:05Z",
- "oggi": "2026-11-08",
+ "data_utc": "2026-11-09T07:16:48Z",
+ "oggi": "2026-11-09",
  "ultima_previsione": "2026-11-06",
  "giorni_da_ultima": 1,
  "fonti": [
@@ -8,7 +8,7 @@
    "nome": "aaa_m",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
@@ -22,7 +22,7 @@
   {
    "nome": "ai_capex_ocf",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
@@ -30,412 +30,412 @@
    "nome": "anfci",
    "chiave": false,
    "ultima_data": "2026-10-30",
-   "giorni_ritardo": 9,
+   "giorni_ritardo": 10,
    "stato": "ok"
   },
   {
    "nome": "armor_index",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "baa10y",
    "chiave": true,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "baa_lungo",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "baa_m",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "be10y",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "breadth200",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "breadth50",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "busloans",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "busloans_g6",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "cape",
    "chiave": false,
    "ultima_data": "2023-09-30",
-   "giorni_ritardo": 1135,
+   "giorni_ritardo": 1136,
    "stato": "warning"
   },
   {
    "nome": "cape_m",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "ccsa",
    "chiave": false,
    "ultima_data": "2026-10-24",
-   "giorni_ritardo": 15,
+   "giorni_ritardo": 16,
    "stato": "ok"
   },
   {
    "nome": "ccsa_yoy",
    "chiave": false,
    "ultima_data": "2026-10-24",
-   "giorni_ritardo": 15,
+   "giorni_ritardo": 16,
    "stato": "ok"
   },
   {
    "nome": "cfnai",
    "chiave": true,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "chargeoff_biz",
    "chiave": false,
    "ultima_data": "2026-04-01",
-   "giorni_ritardo": 221,
+   "giorni_ritardo": 222,
    "stato": "ok"
   },
   {
    "nome": "ciss",
    "chiave": true,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "claims_up",
    "chiave": false,
    "ultima_data": "2026-10-31",
-   "giorni_ritardo": 8,
+   "giorni_ritardo": 9,
    "stato": "ok"
   },
   {
    "nome": "copper",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "core_cpi",
    "chiave": true,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "core_pce",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "core_pce_yoy",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "core_yoy",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "cot_am_net",
    "chiave": false,
    "ultima_data": "2026-11-03",
-   "giorni_ritardo": 5,
+   "giorni_ritardo": 6,
    "stato": "ok"
   },
   {
    "nome": "cot_dealer_net",
    "chiave": false,
    "ultima_data": "2026-11-03",
-   "giorni_ritardo": 5,
+   "giorni_ritardo": 6,
    "stato": "ok"
   },
   {
    "nome": "cot_lev_net",
    "chiave": false,
    "ultima_data": "2026-11-03",
-   "giorni_ritardo": 5,
+   "giorni_ritardo": 6,
    "stato": "ok"
   },
   {
    "nome": "cp",
    "chiave": true,
    "ultima_data": "2026-04-01",
-   "giorni_ritardo": 221,
+   "giorni_ritardo": 222,
    "stato": "ok"
   },
   {
    "nome": "cp_g4",
    "chiave": false,
    "ultima_data": "2026-04-01",
-   "giorni_ritardo": 221,
+   "giorni_ritardo": 222,
    "stato": "ok"
   },
   {
    "nome": "cp_gdp",
    "chiave": false,
    "ultima_data": "2026-04-01",
-   "giorni_ritardo": 221,
+   "giorni_ritardo": 222,
    "stato": "ok"
   },
   {
    "nome": "cpi",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "cpi_nsa",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "cpi_shiller",
    "chiave": false,
    "ultima_data": "2023-09-30",
-   "giorni_ritardo": 1135,
+   "giorni_ritardo": 1136,
    "stato": "warning"
   },
   {
    "nome": "cpi_yoy",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "cpi_yoy_lungo",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "credit_ratio",
    "chiave": false,
    "ultima_data": "2025-10-01",
-   "giorni_ritardo": 403,
+   "giorni_ritardo": 404,
    "stato": "warning"
   },
   {
    "nome": "curve_lunga",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "dax",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "delinq_biz",
    "chiave": true,
    "ultima_data": "2026-04-01",
-   "giorni_ritardo": 221,
+   "giorni_ritardo": 222,
    "stato": "ok"
   },
   {
    "nome": "delinq_cc",
    "chiave": false,
    "ultima_data": "2026-04-01",
-   "giorni_ritardo": 221,
+   "giorni_ritardo": 222,
    "stato": "ok"
   },
   {
    "nome": "dexuseu",
    "chiave": false,
    "ultima_data": "2026-10-30",
-   "giorni_ritardo": 9,
+   "giorni_ritardo": 10,
    "stato": "ok"
   },
   {
    "nome": "dgorder",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "dgs10",
    "chiave": false,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "dgs2",
    "chiave": false,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "div_shiller",
    "chiave": false,
    "ultima_data": "2023-06-30",
-   "giorni_ritardo": 1227,
+   "giorni_ritardo": 1228,
    "stato": "warning"
   },
   {
    "nome": "dxy",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "earn_shiller",
    "chiave": false,
    "ultima_data": "2023-06-30",
-   "giorni_ritardo": 1227,
+   "giorni_ritardo": 1228,
    "stato": "warning"
   },
   {
    "nome": "eem",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "empire",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "eps_g12",
    "chiave": false,
    "ultima_data": "2026-11-01",
-   "giorni_ritardo": 7,
+   "giorni_ritardo": 8,
    "stato": "ok"
   },
   {
    "nome": "eps_g3",
    "chiave": false,
    "ultima_data": "2026-11-01",
-   "giorni_ritardo": 7,
+   "giorni_ritardo": 8,
    "stato": "ok"
   },
   {
    "nome": "eps_sp",
    "chiave": false,
    "ultima_data": "2026-11-01",
-   "giorni_ritardo": 7,
+   "giorni_ritardo": 8,
    "stato": "ok"
   },
   {
    "nome": "epu",
    "chiave": false,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "equity_value",
    "chiave": false,
    "ultima_data": "2026-04-01",
-   "giorni_ritardo": 221,
+   "giorni_ritardo": 222,
    "stato": "ok"
   },
   {
    "nome": "erp",
    "chiave": false,
    "ultima_data": "2026-11-01",
-   "giorni_ritardo": 7,
+   "giorni_ritardo": 8,
    "stato": "ok"
   },
   {
    "nome": "eurusd",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "fear_greed",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "fedfunds",
    "chiave": false,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "ftsemib",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "fwd_growth",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
@@ -443,419 +443,419 @@
    "nome": "gdp",
    "chiave": false,
    "ultima_data": "2026-07-01",
-   "giorni_ritardo": 130,
+   "giorni_ritardo": 131,
    "stato": "ok"
   },
   {
    "nome": "gold",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "gpr",
    "chiave": false,
    "ultima_data": "2026-11-02",
-   "giorni_ritardo": 6,
+   "giorni_ritardo": 7,
    "stato": "ok"
   },
   {
    "nome": "gpr_act",
    "chiave": false,
    "ultima_data": "2026-11-02",
-   "giorni_ritardo": 6,
+   "giorni_ritardo": 7,
    "stato": "ok"
   },
   {
    "nome": "gpr_threat",
    "chiave": false,
    "ultima_data": "2026-11-02",
-   "giorni_ritardo": 6,
+   "giorni_ritardo": 7,
    "stato": "ok"
   },
   {
    "nome": "gs10_m",
    "chiave": true,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "gs10_shiller",
    "chiave": false,
    "ultima_data": "2023-09-30",
-   "giorni_ritardo": 1135,
+   "giorni_ritardo": 1136,
    "stato": "warning"
   },
   {
    "nome": "hy_oas",
    "chiave": true,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "hyg",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "icsa",
    "chiave": true,
    "ultima_data": "2026-10-31",
-   "giorni_ritardo": 8,
+   "giorni_ritardo": 9,
    "stato": "ok"
   },
   {
    "nome": "ief",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "ig_oas",
    "chiave": false,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "indpro",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "indpro_g12",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "infl5y5y",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "infl_acc",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "isratio",
    "chiave": false,
    "ultima_data": "2026-08-01",
-   "giorni_ritardo": 99,
+   "giorni_ritardo": 100,
    "stato": "ok"
   },
   {
    "nome": "iwm",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "iyt",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "kcfsi",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "kre",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "m2",
    "chiave": true,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "m2_yoy",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "margin_debt",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "margin_sp",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "margin_yoy",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "move",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "nasdaq100",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "net_liq",
    "chiave": false,
    "ultima_data": "2026-11-04",
-   "giorni_ritardo": 4,
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
    "nome": "net_liq_13w",
    "chiave": false,
    "ultima_data": "2026-11-04",
-   "giorni_ritardo": 4,
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
    "nome": "neworder",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "nfci",
    "chiave": true,
    "ultima_data": "2026-10-30",
-   "giorni_ritardo": 9,
+   "giorni_ritardo": 10,
    "stato": "ok"
   },
   {
    "nome": "nfci_credit",
    "chiave": false,
    "ultima_data": "2026-10-30",
-   "giorni_ritardo": 9,
+   "giorni_ritardo": 10,
    "stato": "ok"
   },
   {
    "nome": "nfci_leverage",
    "chiave": false,
    "ultima_data": "2026-10-30",
-   "giorni_ritardo": 9,
+   "giorni_ritardo": 10,
    "stato": "ok"
   },
   {
    "nome": "nfci_risk",
    "chiave": false,
    "ultima_data": "2026-10-30",
-   "giorni_ritardo": 9,
+   "giorni_ritardo": 10,
    "stato": "ok"
   },
   {
    "nome": "nh_nl",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "nikkei",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "payems",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "pe_m",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "pe_trailing",
    "chiave": false,
    "ultima_data": "2023-06-30",
-   "giorni_ritardo": 1227,
+   "giorni_ritardo": 1228,
    "stato": "warning"
   },
   {
    "nome": "permit",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "permit_yoy",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "philly",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "pput",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "price_shiller",
    "chiave": false,
    "ultima_data": "2023-09-30",
-   "giorni_ritardo": 1135,
+   "giorni_ritardo": 1136,
    "stato": "warning"
   },
   {
    "nome": "ps_m",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "real10y",
    "chiave": false,
    "ultima_data": "2026-11-05",
-   "giorni_ritardo": 3,
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
    "nome": "real_ff",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "recprob",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "rel_banche",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rel_cicl",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rel_credito",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rel_emergenti",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rel_eqw",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rel_rame_oro",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rel_semi",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rel_small",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rel_trasp",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "retail",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "rev_breadth",
    "chiave": true,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
@@ -863,230 +863,230 @@
    "nome": "rrp",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "rsp",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sahm",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "sahm_rt",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "sales_g12",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xlb",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xlc",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xle",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xlf",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xli",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xlk",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xlp",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xlre",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xlu",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xlv",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sec_xly",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "skew",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sloos",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "smh",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sp500",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sp_high",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sp_low",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "sp_open",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "spy",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "stlfsi",
    "chiave": false,
    "ultima_data": "2026-10-30",
-   "giorni_ritardo": 9,
+   "giorni_ritardo": 10,
    "stato": "ok"
   },
   {
    "nome": "stoxx50",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "t10y2y",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "t10y3m",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "tb3ms",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "tga",
    "chiave": false,
    "ultima_data": "2026-11-04",
-   "giorni_ritardo": 4,
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
    "nome": "top_fcf_yield",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "top_pe",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "top_ps",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
@@ -1094,69 +1094,69 @@
    "nome": "umcsent",
    "chiave": false,
    "ultima_data": "2026-09-01",
-   "giorni_ritardo": 68,
+   "giorni_ritardo": 69,
    "stato": "ok"
   },
   {
    "nome": "unrate",
    "chiave": true,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "usd_broad",
    "chiave": false,
    "ultima_data": "2026-10-30",
-   "giorni_ritardo": 9,
+   "giorni_ritardo": 10,
    "stato": "ok"
   },
   {
    "nome": "usrec",
    "chiave": false,
    "ultima_data": "2026-10-01",
-   "giorni_ritardo": 38,
+   "giorni_ritardo": 39,
    "stato": "ok"
   },
   {
    "nome": "val_pe_ndx",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "val_pe_sp500",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "val_pe_vwce",
    "chiave": true,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "val_ps_ndx",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "val_ps_sp500",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "val_ps_vwce",
    "chiave": false,
-   "ultima_data": "2026-11-08",
+   "ultima_data": "2026-11-09",
    "giorni_ritardo": 0,
    "stato": "ok"
   },
@@ -1164,70 +1164,70 @@
    "nome": "vix",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "vix3m",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "vix6m",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "vix9d",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "vt",
    "chiave": true,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "vvix",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "vwce_de",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
    "nome": "walcl",
    "chiave": false,
    "ultima_data": "2026-11-04",
-   "giorni_ritardo": 4,
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
    "nome": "wresbal",
    "chiave": false,
    "ultima_data": "2026-11-04",
-   "giorni_ritardo": 4,
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
    "nome": "wti",
    "chiave": false,
    "ultima_data": "2026-11-06",
-   "giorni_ritardo": 2,
+   "giorni_ritardo": 3,
    "stato": "ok"
   }
  ]
