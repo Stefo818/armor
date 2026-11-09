@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-09T11:36:35Z",
+ "data_utc": "2026-11-09T14:49:29Z",
  "oggi": "2026-11-09",
  "ultima_previsione": "2026-11-06",
  "giorni_da_ultima": 1,
@@ -71,15 +71,22 @@
   {
    "nome": "breadth200",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "breadth50",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
+   "stato": "ok"
+  },
+  {
+   "nome": "btc",
+   "chiave": false,
+   "ultima_data": "2026-11-08",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -141,8 +148,8 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-05",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
@@ -386,8 +393,8 @@
   {
    "nome": "epu",
    "chiave": false,
-   "ultima_data": "2026-11-05",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-08",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -402,6 +409,13 @@
    "chiave": false,
    "ultima_data": "2026-11-01",
    "giorni_ritardo": 8,
+   "stato": "ok"
+  },
+  {
+   "nome": "eth",
+   "chiave": false,
+   "ultima_data": "2026-11-08",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -491,8 +505,8 @@
   {
    "nome": "hy_oas",
    "chiave": true,
-   "ultima_data": "2026-11-05",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
@@ -519,8 +533,8 @@
   {
    "nome": "ig_oas",
    "chiave": false,
-   "ultima_data": "2026-11-05",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
@@ -629,8 +643,22 @@
    "stato": "ok"
   },
   {
+   "nome": "mweq",
+   "chiave": false,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 3,
+   "stato": "ok"
+  },
+  {
    "nome": "nasdaq100",
    "chiave": true,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 3,
+   "stato": "ok"
+  },
+  {
+   "nome": "natgas",
+   "chiave": false,
    "ultima_data": "2026-11-06",
    "giorni_ritardo": 3,
    "stato": "ok"
@@ -687,8 +715,8 @@
   {
    "nome": "nh_nl",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -703,6 +731,13 @@
    "chiave": false,
    "ultima_data": "2026-10-01",
    "giorni_ritardo": 39,
+   "stato": "ok"
+  },
+  {
+   "nome": "pe_fwd",
+   "chiave": false,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -755,11 +790,25 @@
    "stato": "warning"
   },
   {
+   "nome": "ps_fwd",
+   "chiave": false,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
+   "stato": "ok"
+  },
+  {
    "nome": "ps_m",
    "chiave": true,
    "ultima_data": "2026-11-06",
    "giorni_ritardo": 3,
    "stato": "ok"
+  },
+  {
+   "nome": "putcall_cboe",
+   "chiave": false,
+   "ultima_data": "2019-10-04",
+   "giorni_ritardo": 2593,
+   "stato": "warning"
   },
   {
    "nome": "real10y",
@@ -972,6 +1021,13 @@
    "stato": "ok"
   },
   {
+   "nome": "silver",
+   "chiave": false,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 3,
+   "stato": "ok"
+  },
+  {
    "nome": "skew",
    "chiave": false,
    "ultima_data": "2026-11-06",
@@ -1042,6 +1098,13 @@
    "stato": "ok"
   },
   {
+   "nome": "stoxx600",
+   "chiave": false,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 3,
+   "stato": "ok"
+  },
+  {
    "nome": "t10y2y",
    "chiave": false,
    "ultima_data": "2026-11-06",
@@ -1102,6 +1165,13 @@
    "chiave": true,
    "ultima_data": "2026-10-01",
    "giorni_ritardo": 39,
+   "stato": "ok"
+  },
+  {
+   "nome": "urth",
+   "chiave": false,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
