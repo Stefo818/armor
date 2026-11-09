@@ -55,7 +55,13 @@ Curva tassi 10Y-3M,3m_10,1.0,669,-0.0173,-0.0151,-0.02,-0.026,-0.0164,2000-01-01
 Curva tassi 10Y-3M,3m_15,0.0,669,-0.0119,-0.0056,-0.026,-0.034,-0.0099,2000-01-01,scartata
 Curva tassi 10Y-3M,6m_10,1.0,663,0.0084,-0.0421,-0.009,-0.023,-0.0118,2000-01-01,scartata
 Curva tassi 10Y-3M,6m_20,0.0,663,-0.0287,0.0057,-0.024,-0.075,-0.0197,2000-01-01,scartata
-Rischio geopolitico GPR,,,0,,,,,,,storico troppo breve
+Rischio geopolitico GPR,10g_5,1.0,675,0.0176,0.0031,0.008,0.026,0.0116,2000-01-01,scartata
+Rischio geopolitico GPR,1m_5,0.0,674,-0.0067,-0.0045,0.032,-0.021,-0.0058,2000-01-01,scartata
+Rischio geopolitico GPR,1m_10,1.0,674,0.0017,0.0019,0.002,-0.025,0.0018,2000-01-01,scartata
+Rischio geopolitico GPR,3m_10,1.0,669,-0.0316,-0.012,-0.006,-0.052,-0.024,2000-01-01,scartata
+Rischio geopolitico GPR,3m_15,0.0,669,-0.0473,0.0012,-0.002,-0.023,-0.0315,2000-01-01,scartata
+Rischio geopolitico GPR,6m_10,1.0,663,-0.0195,-0.0217,-0.004,-0.058,-0.0204,2000-01-01,scartata
+Rischio geopolitico GPR,6m_20,0.0,663,-0.0455,0.004,-0.008,0.012,-0.0324,2000-01-01,scartata
 Prezzo/fatturato S&P 500,10g_5,1.0,334,,-0.0149,,-0.004,-0.0149,2013-01-02,periodo di test troppo breve
 Prezzo/fatturato S&P 500,1m_5,0.0,334,,-0.08,,0.006,-0.08,2013-01-02,periodo di test troppo breve
 Prezzo/fatturato S&P 500,1m_10,1.0,334,,-0.0232,,-0.021,-0.0232,2013-01-02,periodo di test troppo breve
@@ -63,12 +69,13 @@ Prezzo/fatturato S&P 500,3m_10,1.0,334,,-0.1493,,-0.016,-0.1493,2013-01-02,perio
 Prezzo/fatturato S&P 500,3m_15,0.0,334,,-0.1944,,-0.005,-0.1944,2013-01-02,periodo di test troppo breve
 Prezzo/fatturato S&P 500,6m_10,1.0,334,,-0.3317,,-0.047,-0.3317,2013-01-02,periodo di test troppo breve
 Prezzo/fatturato S&P 500,6m_20,0.0,334,,-0.4319,,0.08,-0.4319,2013-01-02,periodo di test troppo breve
-Sentiment AAII (rialzisti meno ribassisti),10g_5,1.0,675,-0.0032,-0.0009,-0.007,0.005,-0.0023,2000-01-01,scartata
-Sentiment AAII (rialzisti meno ribassisti),1m_5,0.0,674,-0.0049,-0.0037,-0.015,-0.021,-0.0044,2000-01-01,scartata
-Sentiment AAII (rialzisti meno ribassisti),1m_10,1.0,674,-0.002,-0.0067,-0.005,-0.048,-0.0037,2000-01-01,scartata
-Sentiment AAII (rialzisti meno ribassisti),3m_10,1.0,669,-0.0135,-0.0029,-0.037,-0.009,-0.0094,2000-01-01,scartata
-Sentiment AAII (rialzisti meno ribassisti),3m_15,0.0,669,-0.0013,0.0048,-0.01,-0.003,0.0007,2000-01-01,scartata
-Sentiment AAII (rialzisti meno ribassisti),6m_10,1.0,663,-0.0292,-0.0037,-0.027,-0.028,-0.019,2000-01-01,scartata
-Sentiment AAII (rialzisti meno ribassisti),6m_20,0.0,663,0.052,0.0155,-0.042,0.014,0.0426,2000-01-01,scartata
-Fear & Greed CNN,,,0,,,,,,,storico troppo breve
-Ampiezza: titoli sopra media 200g,,,0,,,,,,,storico troppo breve
+Sentiment AAII (rialzisti meno ribassisti),,,0,,,,,,,storico troppo breve
+Fear & Greed CNN,,,250,,,,,,,storico troppo breve
+Ampiezza: titoli sopra media 200g,,,301,,,,,,,storico troppo breve
+Algoritmo: gradient boosting,10g_5,1.0,322,-0.0035,-0.0395,-0.04,-0.13,-0.0189,2000-01-01,scartata
+Algoritmo: gradient boosting,1m_5,0.0,321,-0.0024,-0.0135,-0.003,-0.066,-0.0069,2000-01-01,scartata
+Algoritmo: gradient boosting,1m_10,1.0,321,-0.03,-0.0256,-0.002,0.066,-0.0284,2000-01-01,scartata
+Algoritmo: gradient boosting,3m_10,1.0,319,-0.0069,0.0028,-0.021,0.14,-0.0034,2000-01-01,scartata
+Algoritmo: gradient boosting,3m_15,0.0,319,-0.0096,-0.0425,-0.035,0.041,-0.0207,2000-01-01,scartata
+Algoritmo: gradient boosting,6m_10,1.0,316,0.0036,-0.0482,-0.001,0.003,-0.0181,2000-01-01,scartata
+Algoritmo: gradient boosting,6m_20,0.0,316,-0.0019,-0.0919,-0.05,-0.115,-0.0267,2000-01-01,scartata
