@@ -281,6 +281,13 @@ def tutto(skip_download: bool = False) -> None:
             print("[previsti]", with_timeout(previsti.aggiorna, 1000, "P/E previsti"))
         except Exception as e:  # noqa: BLE001
             print("[previsti] non riusciti:", str(e)[:100])
+        try:   # «Regime di tensione» (PROTOCOLLO_REGIME.md): esperimento rifatto ogni ~30 giorni, usa la cache di A1
+            from . import tensione
+            import time as _t
+            if not tensione.FILE.exists() or _t.time() - tensione.FILE.stat().st_mtime > 30 * 86400:
+                tensione.run()
+        except Exception as e:  # noqa: BLE001
+            print("[regime] esperimento non riuscito:", str(e)[:100])
     try:   # serie derivate (crescita utili, inflazione annua, liquidità Fed, forza relativa...): veloce, anche senza download
         from . import fondamentali
         fondamentali.aggiorna_derivate()
@@ -439,6 +446,10 @@ def main() -> None:
     elif cmd == "previsti":
         from . import previsti
         print(previsti.aggiorna(forza=True))
+    elif cmd == "esperimento-regime":   # Patch 43: regime di tensione, 4 varianti walk-forward (~1 minuto)
+        from . import tensione
+        r = tensione.run()
+        print("variante scelta:", r["scelta"], "| adozione:", r["adozione"])
     elif cmd == "audit-dati":
         from . import audit_dati
         raise SystemExit(0 if audit_dati.esegui()["ok"] else 1)

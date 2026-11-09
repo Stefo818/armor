@@ -17,7 +17,7 @@ SERIES = [
     ("mweq", "MSCI World Equal Weight (MWEQ)", "#14b8a6", "", 0, "a"), ("rsp", "S&P 500 Equal Weight", "#f97316", "", 0, "a"),
     ("urth", "MSCI World (URTH)", "#84cc16", "", 0, "a"), ("stoxx600", "Europa STOXX 600", "#ec4899", "", 0, "a"), ("eem", "Mercati emergenti", "#ef4444", "", 0, "a"),
     ("dax", "DAX", "#06b6d4", "", 0, "a"), ("ftsemib", "FTSE MIB", "#22c55e", "", 0, "a"), ("nikkei", "Nikkei 225", "#eab308", "", 0, "a"), ("iwm", "Small cap USA", "#8b5cf6", "", 0, "a"),
-    ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("p_calo_1m", "Prob. calo ≥10% a 1 mese", "#ef4444", "%", 1, "rischio"),
+    ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"), ("p_calo_1m", "Prob. calo ≥10% a 1 mese", "#ef4444", "%", 1, "rischio"),
     ("p_up_1m", "Prob. rialzo ≥5% a 1 mese", "#22c55e", "%", 1, "rischio"), ("p_calo_10g", "Prob. calo ≥5% a 10 giorni", "#f97316", "%", 0, "rischio"),
     ("p_calo_3m", "Prob. calo ≥10% a 3 mesi", "#dc2626", "%", 0, "rischio"),
     ("g_paura", "Famiglia Paura e stress", "#06b6d4", "", 0, "rischio"), ("g_credito", "Famiglia Credito", "#14b8a6", "", 0, "rischio"),
@@ -84,6 +84,11 @@ def build(sp: pd.Series, vw: pd.Series, aix: dict | None) -> dict | None:
 
     out = {"sp500": al(sp), "vwce": al(vw, 5) if len(vw) else pd.Series(np.nan, index=idx)}
     out["armor"] = al(aix["hist"], 3)
+    try:
+        from . import tensione
+        out["regime"] = al(tensione.pct_espanso(tensione.pressione(aix["hist"].dropna())) * 100, 3)
+    except Exception:  # noqa: BLE001
+        pass
     rh = DATA / "risk_history.csv"
     if rh.exists():
         h = pd.read_csv(rh, parse_dates=["date"]).set_index("date")

@@ -1657,3 +1657,57 @@ def test_ticker_items_notizie_recenti_prima():
     it = lambda h, s: {"title": f"T{h}", "kind": "macro", "label": "neutro", "score": s, "time": (n - timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%SZ")}  # noqa: E731
     out = cruscotto.ticker_items({"items": [it(30, 5), it(2, 1), it(10, 3)]}, [], None)
     assert [x["t"].split(" ", 2)[2] for x in out] == ["• T2", "• T10", "• T30"] and all(x["n"] == 1 for x in out)
+
+
+def test_regime_pressione_e_percentile():
+    from armor import tensione as t
+    a = pd.Series([50.0, 50.0, 30.0, 45.0], index=pd.bdate_range("2020-01-01", periods=4))
+    P = t.pressione(a)
+    assert abs(P.iloc[0] - 10) < 1e-9 and abs(P.iloc[1] - (0.97 * 10 + 10)) < 1e-9
+    assert abs(P.iloc[2] - 0.97 * P.iloc[1]) < 1e-9 and abs(P.iloc[3] - (0.97 * P.iloc[2] + 5)) < 1e-9
+    s = pd.Series(np.arange(300, dtype=float), index=pd.bdate_range("2020-01-01", periods=300))
+    pe = t.pct_espanso(s)
+    assert pe.iloc[:249].isna().all() and abs(pe.iloc[-1] - 1.0) < 1e-9
+
+
+def test_regime_no_lookahead_e_stato():
+    from armor import tensione as t
+    p = _prices(1500, seed=3)
+    a = pd.Series(np.clip(40 + 15 * np.sin(np.arange(1500) / 80) + np.random.default_rng(2).normal(0, 3, 1500), 1, 99), index=p.index)
+    full = t.variabili(a, p)
+    cut = t.variabili(a.iloc[:900], p.iloc[:900])
+    for c in ("min20", "ma60", "P", "Pn", "dd"):
+        x, y = full[c].iloc[:900].values, cut[c].values
+        assert np.allclose(x, y, equal_nan=True)
+    st = t.stato_di(full)
+    assert set(st.unique()) <= set(t.NOMI_STATO)
+    assert (st[full["A"] < 35] == "calma").all()
+    assert (full["V1"] <= (full["min20"] >= 45)).all()
+
+
+def test_regime_esiti_e_episodi():
+    from armor import tensione as t
+    p = _prices(900, seed=5)
+    o = t.esiti(p)
+    i = 300
+    fut = p.iloc[i + 1:i + 127]
+    assert o["b"].iloc[i] == float(fut.min() / p.iloc[i] - 1 <= -0.10)
+    assert o["a"].iloc[i] == float(fut.min() < p.iloc[i - 125:i + 1].min())
+    assert o[["a", "b", "c"]].iloc[-5:].isna().all().all()
+    cond = pd.Series(False, index=p.index)
+    cond.iloc[100:110] = True
+    cond.iloc[130:140] = True      # meno di 60 sedute dopo: stesso episodio
+    cond.iloc[400:420] = True
+    ep = t.episodi_di(cond, p)
+    assert [e["inizio"] for e in ep] == [str(p.index[100].date()), str(p.index[400].date())]
+    assert ep[1]["durata"] == 20
+    km = t.kaplan_meier(ep, p)
+    assert len(km) == 12 and all(km[i] <= km[i + 1] + 1e-9 for i in range(11))
+
+
+def test_regime_frase_e_box():
+    from armor import tensione as t
+    o = {"data": "2026-11-06", "A": 50.3, "min20": 39.0, "ma60": 44.0, "Pn": 0.7, "dd": -0.02, "stato": "formazione", "sopra45": 12, "sopra40": 20, "v": {k: False for k in t.VARIANTI}}
+    r = {"stati": {"tutto": {"formazione": {"n": 500, "a": 0.55, "b": 0.3}, "tutti": {"a": 0.32, "b": 0.28}}, "2013_oggi": {}}, "adozione": {"adottata": False}}
+    h = t.box_oggi(o, r)
+    assert "Tensione in formazione" in h and "Non verificato fuori campione" in h and "12" in h and "55%" in h
