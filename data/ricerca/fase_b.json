@@ -1,5 +1,5 @@
 {
- "data": "2026-11-08",
+ "data": "2026-11-09",
  "versione": "Fase B",
  "fine_ricerca": "2018-12-31",
  "regole": "PIANO_MODELLO §6 (pre-registrate in ricerca.py)",
@@ -7426,9 +7426,9 @@
   }
  ],
  "mancanti": [],
- "secondi": 95.3,
+ "secondi": 161.0,
  "analoghi_oggi": {
-  "data": "2026-11-08",
+  "data": "2026-11-09",
   "colonne": [
    "eps_g12",
    "eps_g3",
