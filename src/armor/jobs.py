@@ -276,6 +276,11 @@ def tutto(skip_download: bool = False) -> None:
             audit_dati.esegui()
         except Exception as e:  # noqa: BLE001
             print("[audit] non riuscito:", str(e)[:100])
+        try:   # P/E e P/S previsti dell'S&P 500 (una volta a settimana, ~5 minuti)
+            from . import previsti
+            print("[previsti]", with_timeout(previsti.aggiorna, 1000, "P/E previsti"))
+        except Exception as e:  # noqa: BLE001
+            print("[previsti] non riusciti:", str(e)[:100])
     try:   # serie derivate (crescita utili, inflazione annua, liquidità Fed, forza relativa...): veloce, anche senza download
         from . import fondamentali
         fondamentali.aggiorna_derivate()
@@ -431,6 +436,9 @@ def main() -> None:
     elif cmd == "serie-euro":   # segmenti, confronto tra serie e tra motori su VWCE in euro (~1 minuto)
         from . import serie_eur
         print(serie_eur.run())
+    elif cmd == "previsti":
+        from . import previsti
+        print(previsti.aggiorna(forza=True))
     elif cmd == "audit-dati":
         from . import audit_dati
         raise SystemExit(0 if audit_dati.esegui()["ok"] else 1)

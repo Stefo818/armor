@@ -56,6 +56,13 @@ YF = {
     "smh": ("SMH", "America/New_York", "16:30"),
     "iyt": ("IYT", "America/New_York", "16:30"),
     "kre": ("KRE", "America/New_York", "16:30"),
+    "btc": ("BTC-USD", "UTC", "23:59"),       # Patch 40: nuove serie del grafico di confronto
+    "eth": ("ETH-USD", "UTC", "23:59"),
+    "silver": ("SI=F", "America/New_York", "18:30"),
+    "natgas": ("NG=F", "America/New_York", "18:30"),
+    "urth": ("URTH", "America/New_York", "16:30"),
+    "stoxx600": ("^STOXX", "Europe/Berlin", "17:45"),
+    "mweq": ("MWEQ.DE", "Europe/Berlin", "17:50"),
     "copper": ("HG=F", "America/New_York", "18:30"),
 }
 
@@ -259,6 +266,26 @@ def fetch_ls() -> pd.Series:
     return parse_ls(_get(LS_URL, tries=3).text)
 
 
+PC_URL = "https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/equitypc.csv"
+
+
+def parse_cboe_pc(text: str) -> pd.Series:
+    """Put/Call storico CBOE (azioni): salta le righe di intestazione e legge DATE e P/C Ratio."""
+    lines = text.splitlines()
+    k = next(i for i, ln in enumerate(lines) if ln.strip().upper().startswith("DATE"))
+    df = pd.read_csv(io.StringIO("\n".join(lines[k:])))
+    df.columns = [c.strip().upper() for c in df.columns]
+    col = next(c for c in df.columns if "P/C" in c)
+    s = pd.Series(pd.to_numeric(df[col], errors="coerce").values, index=pd.to_datetime(df["DATE"], errors="coerce")).dropna()
+    s = s[s > 0]
+    s.name = "putcall_cboe"
+    return s
+
+
+def fetch_cboe_pc() -> pd.Series:
+    return parse_cboe_pc(_get(PC_URL, tries=2).text)
+
+
 def fetch_cboe(url: str) -> pd.Series:
     r = _get(url)
     txt = r.text
@@ -386,6 +413,11 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
             store.set_status(st, "vwce_ls", True, "", store.upsert("vwce_ls", fetch_ls()))
         except Exception as e:  # noqa: BLE001
             store.set_status(st, "vwce_ls", False, "L&S non raggiungibile: " + str(e)[:100])
+    if not only or "putcall_cboe" in only:   # Put/Call storico (fino al ~2019): se la fonte non risponde il grafico usa solo l'archivio SPY
+        try:
+            store.set_status(st, "putcall_cboe", True, "", store.upsert("putcall_cboe", fetch_cboe_pc()))
+        except Exception as e:  # noqa: BLE001
+            store.set_status(st, "putcall_cboe", False, "CBOE put/call non raggiungibile: " + str(e)[:80])
     for sid, url in CBOE.items():
         if only and sid not in only:
             continue

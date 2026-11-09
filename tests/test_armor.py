@@ -1581,3 +1581,25 @@ def test_audit_confronta_con_riferimento():
     res = audit_dati.controlla(vix=v, sp=pd.Series([1.0, 2.0], index=ix), ls=pd.Series([1.0, 2.0], index=ix), xe=pd.Series(dtype=float), rif=rif)
     ok = {x["controllo"]: x["ok"] for x in res}
     assert ok["VIX 05/11"] and not ok["VIX 06/11"]
+
+
+# ---- patch 40: grafico di confronto esteso
+def test_parse_cboe_putcall():
+    from armor import sources
+    t = "Cboe Equity Put/Call Ratio\nx\nDATE,CALL,PUT,TOTAL,P/C Ratio\n11/1/2006,976510,623929,1600439,0.64\n11/2/2006,1100,900,2000,0.82\n"
+    s = sources.parse_cboe_pc(t)
+    assert len(s) == 2 and abs(s.iloc[0] - 0.64) < 1e-9
+
+
+def test_previsti_aggrega():
+    from armor import previsti
+    righe = [{"cap": 100.0, "utile": 5.0, "ricavi": 50.0} for _ in range(120)]
+    a = previsti.aggrega(righe)
+    assert abs(a["pe_fwd"] - 20) < 1e-9 and abs(a["ps_fwd"] - 2) < 1e-9
+    assert previsti.aggrega(righe[:10]) is None
+
+
+def test_glossario_copre_tutte_le_serie():
+    from armor import confronto, glossario_serie
+    mancanti = [k for k, *_ in confronto.SERIES if glossario_serie.scheda(k) is None]
+    assert not mancanti, mancanti

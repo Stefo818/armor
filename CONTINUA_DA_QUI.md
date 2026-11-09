@@ -518,3 +518,12 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 ## PATCH 39 — grafico di confronto (Grafici)
 - S&P 500 e VWCE con linea continua; linee e pulsanti degli indicatori attivi con bagliore nel proprio colore (i spenti sono attenuati).
 - Zoom per selezione: trascinando con mouse o dito in orizzontale si evidenzia un periodo e si ingrandisce (barra «Zoom: … Azzera zoom»); i pulsanti Periodo azzerano lo zoom; un tocco singolo mostra il riquadro valori. (confronto.py)
+
+## PATCH 40 — grafico «Indice Armor contro i mercati» (PIANO_ESPANSIONE.md)
+- confronto.py riscritto: linee continue e senza bagliore (il bagliore resta sulle icone dei pulsanti attivi); ~50 serie in 8 gruppi (mercati in alto in base 100: S&P, VWCE, Nasdaq, MWEQ, RSP, MSCI World, STOXX 600, emergenti, DAX, FTSE MIB, Nikkei, small cap; in basso rischio Armor e 8 famiglie, volatilità, credito/tassi, valutazioni incl. Buffett indicator, materie prime e cripto, sentimento/valute, mercato). Tutte accendibili, compresi S&P e VWCE. Serie senza dati non compaiono.
+- Scorrimento: tasto destro + trascina, due dita (scorri e allarga/stringi per zoom), tasti ← →, pulsanti ◀ ▶; selezione con trascinamento = zoom; «Azzera zoom».
+- infobox.py (window.armorInfo): scheda al passaggio del mouse (250 ms), pressione lunga o tocco su ⓘ; testi in glossario_serie.py (60 voci, test di copertura). Valori di riferimento (ott 2008, mar 2020, ott 2022, ultimo) calcolati dai dati.
+- Nuove fonti in sources.YF: btc, eth, silver, natgas, urth, stoxx600, mweq (MWEQ.DE: se Yahoo non lo trova la linea manca); Put/Call storico CBOE (`putcall_cboe`, + archivio SPY).
+- previsti.py: P/E e P/S previsti S&P 500 (yfinance su ~500 titoli, 1 volta/settimana dentro `tutto`; comando `python -m armor previsti`); la storia parte dal primo giro. NON fatto: versione VWCE (partecipazioni) — rimandato.
+- confronto.json ~1,7 MB (440 KB compresso da GitHub Pages).
+- sw.js cache armor-v40.
