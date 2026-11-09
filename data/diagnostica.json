@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-09T16:02:17Z",
+ "data_utc": "2026-11-09T16:58:59Z",
  "oggi": "2026-11-09",
  "ultima_previsione": "2026-11-06",
  "giorni_da_ultima": 1,
@@ -288,8 +288,8 @@
   {
    "nome": "dax",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -442,8 +442,8 @@
   {
    "nome": "ftsemib",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -645,8 +645,8 @@
   {
    "nome": "mweq",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -1093,15 +1093,15 @@
   {
    "nome": "stoxx50",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "stoxx600",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -1275,8 +1275,8 @@
   {
    "nome": "vwce_de",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
