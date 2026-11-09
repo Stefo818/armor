@@ -16,6 +16,8 @@ FILE = DATA / "saldi.json"
 REGISTRO = DATA / "saldi_registro.csv"
 VERIFICA = DATA / "saldi_verifica.json"
 LOG = DATA / "protocollo_saldi_log.csv"
+RICOSTRUITO = DATA / "saldi_ricostruito.csv"      # selezioni ricostruite dopo il fatto (bilanci di oggi): NON entrano nella verifica
+OFFSET_RICOSTRUZIONE = (10, 7, 4)                  # giorni di calendario indietro
 PERIODI = [("1g", "1 giorno"), ("3g", "3 giorni"), ("1s", "1 settimana"), ("1m", "1 mese"), ("3m", "3 mesi"), ("6m", "6 mesi")]
 IDX = {"1g": 0, "1s": 1, "1m": 2, "3m": 3, "6m": 4}      # posizione nel vettore r di titoli_top (1g, 1s, 1m, 3m, 6m, 1a)
 PESI = {"solidita": 0.30, "qualita": 0.25, "calo": 0.20, "valutazione": 0.15, "fiducia": 0.10}
@@ -350,12 +352,13 @@ def costruisci(top: dict, fond: dict, notizie: dict, etf: list[dict] | None, ret
 
 
 # ---------------------------------------------------------------- registro e verifica
-def registra(d: dict, data: str, per_periodo: int = 30) -> int:
+def registra(d: dict, data: str, per_periodo: int = 30, file=None) -> int:
     """Aggiunge a data/saldi_registro.csv i `per_periodo` titoli più calati per periodo, con punteggio e componenti (una riga per data/ticker/periodo)."""
-    esiste = REGISTRO.exists() and REGISTRO.stat().st_size > 0
+    _f = file or REGISTRO
+    esiste = _f.exists() and _f.stat().st_size > 0
     gia = set()
     if esiste:
-        for r in REGISTRO.read_text(encoding="utf-8").splitlines()[1:]:
+        for r in _f.read_text(encoding="utf-8").splitlines()[1:]:
             c = r.split(",")
             gia.add((c[0], c[1], c[2]))
     righe = []
@@ -367,7 +370,7 @@ def registra(d: dict, data: str, per_periodo: int = 30) -> int:
             c = x.get("comp") or {}
             righe.append(",".join([data, t, p, "" if x["s"] is None else str(x["s"]), str(x["p"])] + ["" if c.get(k) is None else str(c[k]) for k in PESI]))
     if righe:
-        with open(REGISTRO, "a", encoding="utf-8") as f:
+        with open(_f, "a", encoding="utf-8") as f:
             if not esiste:
                 f.write("data,ticker,periodo,punteggio,prezzo," + ",".join(PESI) + "\n")
             f.write("\n".join(righe) + "\n")
@@ -410,6 +413,55 @@ def verifica(close: pd.DataFrame, ref: pd.Series, registro: pd.DataFrame | None 
                           "su": float(np.mean([a > 0 for a, _ in g])) if g else None, "spy": float(np.mean([b for _, b in g])) if g else None})
         out["orizzonti"][nome] = {"righe": len(righe), "fasce": fasce}
     return out
+
+
+def date_passate(idx, oggi, offsets=OFFSET_RICOSTRUZIONE) -> list:
+    """Ultima seduta disponibile a ciascun offset (giorni di calendario) prima di `oggi`."""
+    out = set()
+    for o in offsets:
+        j = idx.searchsorted(pd.Timestamp(oggi) - pd.Timedelta(days=o), side="right") - 1
+        if j >= 0 and idx[j] < pd.Timestamp(oggi):
+            out.add(idx[j])
+    return sorted(out)
+
+
+def top_a(arch: dict, dt, nomi: dict, settori: dict | None = None) -> dict:
+    """Classifiche (schema titoli_top.json) come si vedevano alla seduta `dt`: stessi filtri di oggi, solo prezzi fino a quel giorno."""
+    from . import titoli
+    c = arch["close"]
+    c = c[c.index <= dt]
+    v = arch["vol"].reindex(c.index)
+    ref = c["SPY"] if "SPY" in c else None
+    cc = c.drop(columns=[x for x in titoli.ausiliari() if x in c])
+    m = titoli.liquidi(titoli.metriche(cc, v.reindex(columns=cc.columns), ref))
+    return titoli.top_json(m, cc, nomi, settori)
+
+
+def storico_selezioni(close: pd.DataFrame, nomi: dict, ultimi: int = 20) -> dict:
+    """Selezioni dei giorni scorsi (registro vero + ricostruito) con il rendimento da allora a oggi."""
+    parti = []
+    for ric, f in ((False, REGISTRO), (True, RICOSTRUITO)):
+        if f.exists() and f.stat().st_size > 0:
+            df = pd.read_csv(f, dtype={"data": str})
+            df["ric"] = ric
+            parti.append(df)
+    if not parti:
+        return {"date": [], "nomi": {}}
+    df = pd.concat(parti)
+    reali = set(df.loc[~df["ric"], "data"])
+    df = df[~(df["ric"] & df["data"].isin(reali))]
+    ultimo = close.ffill().iloc[-1]
+    date, usati = [], set()
+    for dt in sorted(df["data"].unique())[-ultimi:]:
+        g = df[df["data"] == dt]
+        per = {}
+        for p, _ in PERIODI:
+            gp = g[g["periodo"] == p]
+            per[p] = [[t, None if pd.isna(sc) else int(sc), float(pr), None if t not in ultimo or pd.isna(ultimo[t]) or not pr else round(float(ultimo[t] / pr - 1), 4)]
+                      for t, sc, pr in zip(gp["ticker"], gp["punteggio"], gp["prezzo"])]
+            usati |= set(gp["ticker"])
+        date.append({"data": dt, "ric": bool(g["ric"].iloc[0]), "per": per})
+    return {"date": date, "nomi": {t: nomi.get(t, t) for t in usati}}
 
 
 # ---------------------------------------------------------------- lavoro serale
@@ -465,24 +517,44 @@ def aggiorna(log=print) -> dict:
     registra_protocollo()
     top = json.loads((DATA / "titoli_top.json").read_text(encoding="utf-8"))
     mm = json.loads((DATA / "mercati_mondo.json").read_text(encoding="utf-8")) if (DATA / "mercati_mondo.json").exists() else {"items": []}
+    nomi = {i["t"]: i["n"] for i in top["items"]}
+    arch = titoli.carica_prezzi()
+    passati = {}
+    try:   # ricostruzione una tantum delle selezioni di 10, 7 e 4 giorni fa (prezzi di allora, bilanci di oggi), segnate come ricostruite
+        fatte = set(pd.read_csv(RICOSTRUITO, dtype={"data": str})["data"]) if RICOSTRUITO.exists() and RICOSTRUITO.stat().st_size > 0 else set()
+        if arch is not None:
+            settori = json.loads(titoli.SETTORI.read_text(encoding="utf-8")) if titoli.SETTORI.exists() else {}
+            for dt in date_passate(arch["close"].index, top["asof"]):
+                if str(dt.date()) not in fatte:
+                    passati[dt] = top_a(arch, dt, nomi, settori)
+    except Exception as e:  # noqa: BLE001
+        log("[saldi] ricostruzione non possibile: " + str(e)[:100])
     cls = candidati(top)
-    tk = sorted({t for l in cls.values() for t in l})
-    log(f"[saldi] candidati: {len(tk)} titoli")
-    ind, ev8k, nz = arricchisci(tk, {i["t"]: i["n"] for i in top["items"]}, log)
+    tk = sorted({t for l in cls.values() for t in l} | {t for tp in passati.values() for l in candidati(tp).values() for t in l})
+    log(f"[saldi] candidati: {len(tk)} titoli ({len(passati)} date ricostruite)")
+    ind, ev8k, nz = arricchisci(tk, nomi, log)
     etf = [i for i in mm.get("items", []) if i["c"] == "etf"]
     rs = {}
     for i in mm.get("items", []):
         if i["c"] == "settori" and i["t"] in ETF_SETTORE.values():
             rs[i["t"]] = {"1g": i["r"][0], "1s": i["r"][1], "1m": i["r"][2], "3m": i["r"][3], "6m": i["r"][4]}
     d = costruisci(top, ind, nz, etf, rs, mm.get("eurusd"), eventi_8k=ev8k)
+    for dt, tp in passati.items():
+        try:
+            dp = costruisci(tp, ind, nz, None, {}, mm.get("eurusd"), eventi_8k=ev8k)
+            log(f"[saldi] ricostruita {dt.date()}: +{registra(dp, str(dt.date()), file=RICOSTRUITO)} righe")
+        except Exception as e:  # noqa: BLE001
+            log(f"[saldi] ricostruzione {dt.date()} fallita: " + str(e)[:100])
+    log(f"[saldi] registro +{registra(d, d['asof'])}")
+    if arch is not None:
+        d["storico"] = storico_selezioni(arch["close"], {**nomi, **{t: (x.get("nome") or t) for t, x in ind.items()}})
     FILE.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":"), default=lambda o: None), encoding="utf-8")
-    log(f"[saldi] scritto {FILE.name}: {len(d['titoli'])} titoli; registro +{registra(d, d['asof'])}")
+    log(f"[saldi] scritto {FILE.name}: {len(d['titoli'])} titoli")
     try:
-        arch = titoli.carica_prezzi()
         if arch is not None and "SPY" in arch["close"]:
             VERIFICA.write_text(json.dumps(verifica(arch["close"], arch["close"]["SPY"])), encoding="utf-8")
     except Exception as e:  # noqa: BLE001
-        log("[saldi] verifica non calcolata: " + str(e)[:80])
+        log("[saldi] verifica non calcolata: " + str(e)[:100])
     return d
 
 
@@ -535,7 +607,7 @@ IND_INFO = {
 }
 
 JS = r"""<script>(function(){var W=document.querySelector('[data-sd]');if(!W||W.dataset.on)return;W.dataset.on=1;
-var D=null,PER='1g',TIPO='Azione',AREA='',DIM='',SET='',ORD='r',OPEN=null,INFO=JSON.parse(W.getAttribute('data-ii')||'{}');
+var D=null,SEL=-1,SPER='1m',PER='1g',TIPO='Azione',AREA='',DIM='',SET='',ORD='r',OPEN=null,INFO=JSON.parse(W.getAttribute('data-ii')||'{}');
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function pc(x,d){if(x==null)return '—';var s=(x*100).toFixed(d==null?1:d).replace('.',',');return (x>0?'+':'')+s+'%'}
 function nm(x,d){return x==null?'—':Number(x).toFixed(d==null?1:d).replace('.',',')}
@@ -567,11 +639,16 @@ h+='<div class="sdc"><button data-tp="Azione" class="'+(TIPO==='Azione'?'on':'')
 '<select id="sdd"><option value="">Tutte le dimensioni</option>'+[['grandi','Grandi (> 10 mld)'],['medie','Medie (2-10 mld)'],['piccole','Piccole (< 2 mld)']].map(function(v){return '<option value="'+v[0]+'"'+(DIM===v[0]?' selected':'')+'>'+v[1]+'</option>'}).join('')+'</select>'+
 '<select id="sds"><option value="">Tutti i settori</option>'+sets.map(function(v){return '<option'+(SET===v?' selected':'')+'>'+esc(v)+'</option>'}).join('')+'</select>'+
 '<select id="sdo"><option value="r"'+(ORD==='r'?' selected':'')+'>Ordina per calo</option><option value="s"'+(ORD==='s'?' selected':'')+'>Ordina per punteggio</option></select></div>';
-h+='<p class="mu">Dati al '+D.asof.split('-').reverse().join('/')+'. I punteggi dicono <b>salute e probabilità di recupero stimate</b>, non un rimbalzo sicuro. '+a.length+' risultati. Tocca una scheda per il dettaglio e il report.</p><div class="sdl">'+(a.length?a.map(riga).join(''):'<p class="mu">Nessun risultato con questi filtri.</p>')+'</div>';
+h+='<p class="mu">Dati al '+D.asof.split('-').reverse().join('/')+'. I punteggi dicono <b>salute e probabilità di recupero stimate</b>, non un rimbalzo sicuro. '+a.length+' risultati. Tocca una scheda per il dettaglio e il report.</p><div class="sdl">'+(a.length?a.map(riga).join(''):'<p class="mu">Nessun risultato con questi filtri.</p>')+'</div>'+passate();
 W.innerHTML=h;
+W.querySelectorAll('[data-sel]').forEach(function(b){b.onclick=function(){SEL=+b.dataset.sel;render()}});W.querySelectorAll('[data-sp]').forEach(function(b){b.onclick=function(){SPER=b.dataset.sp;render()}});
 W.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){PER=b.dataset.p;OPEN=null;render()}});W.querySelectorAll('[data-tp]').forEach(function(b){b.onclick=function(){TIPO=b.dataset.tp;OPEN=null;render()}});
 W.querySelector('#sda').onchange=function(){AREA=this.value;render()};W.querySelector('#sdd').onchange=function(){DIM=this.value;render()};W.querySelector('#sds').onchange=function(){SET=this.value;render()};W.querySelector('#sdo').onchange=function(){ORD=this.value;render()};
 W.querySelectorAll('.sdr').forEach(function(r){r.onclick=function(){var t=r.dataset.t;if(TIPO!=='Azione')return;OPEN=OPEN===t?null:t;render()}})}
+function passate(){var S=D.storico;if(!S||!S.date||!S.date.length)return '';var d=S.date[SEL<0||SEL>=S.date.length?S.date.length-1:SEL],h='<h3 style="margin-top:22px">Selezioni dei giorni scorsi</h3><p class="mu">I titoli più calati come si vedevano in quei giorni, con il rendimento da allora a oggi. Le date «ricostruite» usano i prezzi di allora ma i bilanci di oggi: servono a vedere cosa è successo dopo, non entrano nella verifica del punteggio.</p><div class="sdc">'+S.date.map(function(x,i){return '<button data-sel="'+i+'" class="'+(x===d?'on':'')+'">'+x.data.slice(8)+'/'+x.data.slice(5,7)+(x.ric?' (ricostruita)':'')+'</button>'}).join('')+'</div><div class="sdc">'+D.periodi.map(function(p){return '<button data-sp="'+p[0]+'" class="'+(p[0]===SPER?'on':'')+'">'+p[1]+'</button>'}).join('')+'</div>';
+var rows=(d.per[SPER]||[]);if(!rows.length)return h+'<p class="mu">Nessun titolo registrato per questo periodo.</p>';
+var ok=rows.filter(function(r){return r[3]!=null}),su=ok.filter(function(r){return r[3]>0}).length,med=ok.length?ok.map(function(r){return r[3]}).sort(function(a,b){return a-b})[Math.floor(ok.length/2)]:null;
+h+='<p>'+(ok.length?'Da allora: <b>'+su+' su '+ok.length+'</b> in rialzo, rendimento mediano <b class="'+(med>=0?'pos':'neg')+'">'+pc(med)+'</b>.':'')+'</p><div class="scroll"><table class="tbl"><tr><th>Titolo</th><th>Punteggio allora</th><th>Prezzo allora</th><th>Da allora</th></tr>'+rows.map(function(r){return '<tr><td>'+esc(S.nomi[r[0]]||r[0])+' <span class="tk">'+esc(r[0])+'</span></td><td>'+(r[1]==null?'—':r[1])+'</td><td>'+nm(r[2],2)+'</td><td class="'+(r[3]==null?'':r[3]>=0?'pos':'neg')+'">'+pc(r[3])+'</td></tr>'}).join('')+'</table></div>';return h}
 function go(j){D=j;if(!D||!D.titoli){W.innerHTML='<p class="mu">Dati non ancora disponibili: si generano con il lavoro serale «Motore titoli».</p>';return}render()}
 var emb=document.getElementById('armor-sd-data');if(emb){go(JSON.parse(emb.textContent))}else{fetch('series/saldi.json?'+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()}).then(go).catch(function(){W.innerHTML='<p class="mu">Saldi non disponibili (serve la connessione, oppure il lavoro serale non è ancora girato).</p>'})}
 })();</script>"""

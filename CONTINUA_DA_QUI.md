@@ -583,3 +583,11 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - Pagina «Opportunità» (dopo Saldi, lazy: series/opportunita.json). CLI `opportunita-aggiorna` (sabato, workflow opportunita.yml, 120 min) e `opportunita-rinfresca` (nel lavoro titoli giornaliero). site.yml ascolta «Opportunita Armor».
 - NON TESTATO su dati reali. Non fatto: test storico con bilanci SEC; accelerazione trimestrale; USAspending; reazione del prezzo dopo le trimestrali; il centro delle fasce è un'ipotesi.
 - sw.js armor-v47. Test: 120 passed.
+
+## PATCH 48 — Dati iniziali di Saldi/Opportunità e area Titoli/ETF in Mercati
+- Nuova richiesta utente (7 lavori, ordine scelto: dati → grafico interattivo (49) → tooltip e spiegazioni (50) → icone raggruppate (51) → logo/font/restyling (52, con 3 bozze di font e logo da scegliere)).
+- saldi.py: ricostruzione una tantum delle selezioni di 10, 7 e 4 giorni fa (prezzi di allora dall'archivio, bilanci di oggi) in data/saldi_ricostruito.csv, FUORI dalla verifica; sezione pagina «Selezioni dei giorni scorsi» (data, periodo, punteggio allora, prezzo allora, rendimento da allora). titoli.py: `ausiliari()`.
+- opportunita.py: «Settimana scorsa (ricostruita)» (stesso metodo, `d["prec"]`, colonna «Da allora», data/opportunita_ricostruito.csv, esclusa dalle statistiche); `rinfresca` aggiorna anche «da allora».
+- mondo.py (Mercati): nuova vista «Titoli azionari ed ETF» con più cresciuti e più calati affiancati, ricerca per nome/simbolo, periodi e euro/locale.
+- Workflow titoli.yml e opportunita.yml salvano anche i file ricostruiti. sw.js armor-v48. Test: 122 passed.
+- Saldi era vuoto perché saldi.json non è ancora stato creato dal lavoro «Motore titoli» (controllare Actions).

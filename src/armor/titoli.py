@@ -236,6 +236,12 @@ def top_json(m: pd.DataFrame, close: pd.DataFrame, nomi: dict, settori: dict | N
     return {"asof": str(close.dropna(how="all").index[-1].date()), "universo": int(len(m)), "items": items}
 
 
+def ausiliari() -> list[str]:
+    """Simboli nell'archivio prezzi che non sono titoli da classificare: benchmark, cambio ed ETF dei temi."""
+    from . import titoli_eventi as _ev
+    return ["SPY", "EURUSD=X", "VT"] + sorted({v[1] for v in _ev.TEMI.values()})
+
+
 def aggiorna(log=print, usa_estero: bool = True) -> dict:
     """Lavoro giornaliero: universo → prezzi → filtri → metriche → data/titoli_top.json."""
     uni = universo_usa()
@@ -243,8 +249,7 @@ def aggiorna(log=print, usa_estero: bool = True) -> dict:
         est = universo_estero(log)
         uni = pd.concat([uni, est], ignore_index=True).drop_duplicates("t")
     log(f"[titoli] universo: {len(uni)} simboli")
-    from . import titoli_eventi as _ev
-    extra = ["SPY", "EURUSD=X", "VT"] + sorted({v[1] for v in _ev.TEMI.values()})
+    extra = ausiliari()
     tk = sorted(set(uni["t"]) | set(extra))
     arch = aggiorna_prezzi(tk, log=log)
     c, v = arch["close"], arch["vol"]

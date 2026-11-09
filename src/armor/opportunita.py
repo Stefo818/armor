@@ -15,6 +15,7 @@ from .config import DATA, ROOT
 FILE = DATA / "opportunita.json"
 REGISTRO = DATA / "opportunita_registro.csv"
 LOG = DATA / "protocollo_opportunita_log.csv"
+RICOSTRUITO = DATA / "opportunita_ricostruito.csv"   # settimane ricostruite (prezzi di allora, bilanci di oggi): non entrano nel riepilogo
 PESI = {"revisioni": 0.20, "momentum": 0.15, "crescita": 0.15, "qualita": 0.15, "sorpresa": 0.10, "contratti": 0.10, "catalizzatori": 0.10, "valutazione": 0.05}
 NOMI = {"revisioni": "Revisioni delle stime", "momentum": "Momentum", "crescita": "Crescita", "qualita": "Qualità", "sorpresa": "Sorpresa e deriva",
         "contratti": "Contratti e visibilità", "catalizzatori": "Catalizzatori e temi", "valutazione": "Valutazione ragionevole"}
@@ -247,9 +248,10 @@ def costruisci(cand: dict, prezzi: dict, vol: dict, temi: list[dict], oggi: str,
 
 
 # ---------------------------------------------------------------- registro e storico
-def registra(d: dict, settimana: str) -> int:
-    esiste = REGISTRO.exists() and REGISTRO.stat().st_size > 0
-    gia = {tuple(r.split(",")[:2]) for r in REGISTRO.read_text(encoding="utf-8").splitlines()[1:]} if esiste else set()
+def registra(d: dict, settimana: str, file=None) -> int:
+    _f = file or REGISTRO
+    esiste = _f.exists() and _f.stat().st_size > 0
+    gia = {tuple(r.split(",")[:2]) for r in _f.read_text(encoding="utf-8").splitlines()[1:]} if esiste else set()
     righe = []
     for t in d["ordine"]:
         if (settimana, t) in gia:
@@ -261,7 +263,7 @@ def registra(d: dict, settimana: str) -> int:
             return "" if not f.get(h) else f"{f[h][k]:.4f}"
         righe.append(",".join([settimana, t, str(x["s"]), str(x["p"])] + [g(h, k) for h in ("1m", "3m") for k in ("med", "lo", "hi")]))
     if righe:
-        with open(REGISTRO, "a", encoding="utf-8") as fh:
+        with open(_f, "a", encoding="utf-8") as fh:
             if not esiste:
                 fh.write("data,ticker,punteggio,prezzo,m1_med,m1_lo,m1_hi,m3_med,m3_lo,m3_hi\n")
             fh.write("\n".join(righe) + "\n")
@@ -271,14 +273,25 @@ def registra(d: dict, settimana: str) -> int:
 def storico(close: pd.DataFrame, vt: pd.Series, spy: pd.Series | None = None, registro: pd.DataFrame | None = None) -> dict:
     """Per settimana: previsto (mediana e fascia) e risultato reale a 1 e 3 mesi (21 e 63 sedute). Riepilogo contro VT (MSCI World) e S&P 500 e copertura della fascia 10-90."""
     if registro is None:
-        if not REGISTRO.exists():
+        parti = []
+        for ric, f in ((False, REGISTRO), (True, RICOSTRUITO)):
+            if f.exists() and f.stat().st_size > 0:
+                x = pd.read_csv(f, parse_dates=["data"])
+                x["ric"] = ric
+                parti.append(x)
+        if not parti:
             return {"settimane": [], "riepilogo": {}}
-        registro = pd.read_csv(REGISTRO, parse_dates=["data"])
+        registro = pd.concat(parti)
+        reali = set(registro.loc[~registro["ric"], "data"])
+        registro = registro[~(registro["ric"] & registro["data"].isin(reali))]
+    if "ric" not in registro:
+        registro = registro.assign(ric=False)
     idx = close.index
     sett, accum = [], {"1m": [], "3m": []}
     for data, g in registro.groupby("data"):
         i = idx.searchsorted(pd.Timestamp(data))
-        riga = {"data": str(pd.Timestamp(data).date()), "scelte": []}
+        ric = bool(g["ric"].iloc[0])
+        riga = {"data": str(pd.Timestamp(data).date()), "ric": ric, "scelte": []}
         for x in g.itertuples():
             sc = {"t": x.ticker, "s": int(x.punteggio), "p": float(x.prezzo)}
             for h, off, pre in (("1m", 21, "m1"), ("3m", 63, "m3")):
@@ -291,7 +304,8 @@ def storico(close: pd.DataFrame, vt: pd.Series, spy: pd.Series | None = None, re
                         r = float(p1 / p0 - 1)
                         b = float(vt.iloc[i + off] / vt.iloc[i] - 1) if pd.notna(vt.iloc[i]) and pd.notna(vt.iloc[i + off]) else None
                         sc[h]["reale"], sc[h]["vt"] = r, b
-                        accum[h].append((r, b, sc[h]["prev"]))
+                        if not ric:
+                            accum[h].append((r, b, sc[h]["prev"]))
             riga["scelte"].append(sc)
         sett.append(riga)
     riep = {}
@@ -328,6 +342,47 @@ def forza_temi(ret_etf: dict, gdelt=ev.gdelt_volumi) -> list[dict]:
 
 
 # ---------------------------------------------------------------- lavoro settimanale
+def _prepara(c_all, v_all, dt=None):
+    """Prezzi fino alla seduta `dt` (o all'ultima), metriche con i filtri di liquidità e la preselezione dei 600 titoli per momentum."""
+    from . import titoli
+    c = c_all if dt is None else c_all[c_all.index <= dt]
+    v = v_all.reindex(c.index)
+    ref = c["SPY"] if "SPY" in c else None
+    cc = c.drop(columns=[x for x in titoli.ausiliari() if x in c])
+    m = titoli.metriche(cc, v.reindex(columns=cc.columns), ref)
+    m = m[(m["prezzo"] >= titoli.MIN_PREZZO) & (m["controvalore20"] >= MIN_CONTROVALORE) & ~m["anomalo"].astype(bool) & (m["n_giorni"] >= 200)]
+    pre = pd.concat([m[k].rank(pct=True) for k in ("mom12_1", "dd52", "r1m", "volrel") if k in m], axis=1).mean(axis=1).sort_values(ascending=False)
+    return cc, m, list(pre.index[:600])
+
+
+def _selezione(cc, m, tk, ind, ev8k, nz, forza, temi, mm, vt, oggi, sab, centri, ev_=ev):
+    """Candidati, punteggi e report per le date indicate con i dati fondamentali già raccolti."""
+    cand, prezzi, vol = {}, {}, {}
+    for t in tk:
+        i = ind.get(t)
+        if not i or (i.get("cap") or 0) < MIN_CAP:
+            continue
+        if not ((i.get("analisti") or {}).get("n") or 0) >= MIN_ANALISTI and not i.get("rpo"):
+            continue
+        rs = ev_.riassumi(nz.get(t, []), i.get("ricavi_ttm"))
+        gravi = [e for e in ev8k.get(t, []) if e["item"] in ("1.03", "3.01", "4.02")]
+        tm = [x for x in ev_.temi_di(i.get("descrizione") or "") if forza.get(x) is not None]
+        nome_tema = max(tm, key=lambda x: forza[x]) if tm else None
+        i = dict(i)
+        i["rischio_binario"] = ev_.rischio_binario(i.get("industria"), i.get("ricavi_ttm"), None)
+        cand[t] = {"ind": i, "voci": voci(i, m.loc[t].to_dict(), rs["eventi"], ev8k.get(t, []), forza.get(nome_tema) if nome_tema else None), "area": saldi.area_di(t, i.get("paese")),
+                   "settore": i.get("settore"), "eventi": rs["eventi"], "notizie": nz.get(t, []), "nome_tema": nome_tema, "esclusa": rs["escludi"] or bool(gravi)}
+        s = cc[t].dropna()
+        prezzi[t] = {"p": round(float(s.iloc[-1]), 2), "v": i.get("valuta") or "USD", "k": [round(float(x), 4 if x < 10 else 2) for x in s.iloc[-126::2].values]}
+        prezzi[t].update(_rend(s))
+        vol[t] = vol_titolo(s)
+    return costruisci(cand, prezzi, vol, temi, oggi, sab, centri, mm.get("eurusd"), {}), cand
+
+
+def _sabato(ts) -> str:
+    return str((pd.Timestamp(ts) + pd.Timedelta(days=(5 - pd.Timestamp(ts).weekday()) % 7)).date())
+
+
 def aggiorna(log=print) -> dict:
     from . import titoli
     registra_protocollo()
@@ -337,17 +392,21 @@ def aggiorna(log=print) -> dict:
         titoli.aggiorna(log)
         arch = titoli.carica_prezzi()
     c_all, v_all = arch["close"], arch["vol"]
-    ref = c_all["SPY"] if "SPY" in c_all else None
-    vt = c_all["VT"] if "VT" in c_all else (ref if ref is not None else pd.Series(dtype=float))
-    cc = c_all.drop(columns=[x for x in ["SPY", "VT", "EURUSD=X"] + [v[1] for v in ev.TEMI.values()] if x in c_all])
-    m = titoli.metriche(cc, v_all.reindex(columns=cc.columns), ref)
-    m = m[(m["prezzo"] >= titoli.MIN_PREZZO) & (m["controvalore20"] >= MIN_CONTROVALORE) & ~m["anomalo"].astype(bool) & (m["n_giorni"] >= 200)]
-    pre = pd.concat([m[k].rank(pct=True) for k in ("mom12_1", "dd52", "r1m", "volrel") if k in m], axis=1).mean(axis=1).sort_values(ascending=False)
-    tk = list(pre.index[:600])
-    log(f"[opp] preselezionati {len(tk)} titoli su {len(m)}")
+    vt = c_all["VT"] if "VT" in c_all else (c_all["SPY"] if "SPY" in c_all else pd.Series(dtype=float))
+    cc, m, tk = _prepara(c_all, v_all)
+    oggi = str(cc.dropna(how="all").index[-1].date())
+    prec = None
+    dt_prec = c_all.index[max(c_all.index.searchsorted(pd.Timestamp(oggi) - pd.Timedelta(days=7), side="right") - 1, 0)]
+    try:
+        cc_p, m_p, tk_p = _prepara(c_all, v_all, dt_prec)
+        prec = (cc_p, m_p, tk_p)
+    except Exception as e:  # noqa: BLE001
+        log("[opp] settimana scorsa non ricostruibile: " + str(e)[:100])
+    union = list(dict.fromkeys(tk + (prec[2] if prec else [])))
+    log(f"[opp] preselezionati {len(tk)} titoli su {len(m)} (+ settimana scorsa: {len(union) - len(tk)} in più)")
     top = json.loads((DATA / "titoli_top.json").read_text(encoding="utf-8")) if (DATA / "titoli_top.json").exists() else {"items": []}
     nomi = {i["t"]: i["n"] for i in top["items"]}
-    ind, ev8k, nz = saldi.arricchisci(tk, nomi, log, giorni_8k=90)
+    ind, ev8k, nz = saldi.arricchisci(union, nomi, log, giorni_8k=90)
     mm = json.loads((DATA / "mercati_mondo.json").read_text(encoding="utf-8")) if (DATA / "mercati_mondo.json").exists() else {"items": []}
     ret_etf = {}
     for x in ["VT"] + [v[1] for v in ev.TEMI.values()]:
@@ -357,33 +416,11 @@ def aggiorna(log=print) -> dict:
                 ret_etf[x] = {"1m": float(ss.iloc[-1] / ss.iloc[-22] - 1), "3m": float(ss.iloc[-1] / ss.iloc[-64] - 1)}
     temi = forza_temi(ret_etf)
     forza = {x["tema"]: x["forza"] for x in temi}
-    cand, prezzi, vol = {}, {}, {}
-    for t in tk:
-        i = ind.get(t)
-        if not i or (i.get("cap") or 0) < MIN_CAP:
-            continue
-        if not ((i.get("analisti") or {}).get("n") or 0) >= MIN_ANALISTI and not i.get("rpo"):
-            continue
-        rs = ev.riassumi(nz.get(t, []), i.get("ricavi_ttm"))
-        gravi = [e for e in ev8k.get(t, []) if e["item"] in ("1.03", "3.01", "4.02")]
-        tm = [x for x in ev.temi_di(i.get("descrizione") or "") if forza.get(x) is not None]
-        nome_tema = max(tm, key=lambda x: forza[x]) if tm else None
-        i = dict(i)
-        i["rischio_binario"] = ev.rischio_binario(i.get("industria"), i.get("ricavi_ttm"), None)
-        row = m.loc[t].to_dict()
-        cand[t] = {"ind": i, "voci": voci(i, row, rs["eventi"], ev8k.get(t, []), forza.get(nome_tema) if nome_tema else None), "area": saldi.area_di(t, i.get("paese")), "settore": i.get("settore"),
-                   "eventi": rs["eventi"], "notizie": nz.get(t, []), "nome_tema": nome_tema, "esclusa": rs["escludi"] or bool(gravi)}
-        s = cc[t].dropna()
-        prezzi[t] = {"p": round(float(s.iloc[-1]), 2), "v": i.get("valuta") or "USD", "k": [round(float(x), 4 if x < 10 else 2) for x in s.iloc[-126::2].values]}
-        prezzi[t].update(_rend(s))
-        vol[t] = vol_titolo(s)
-    log(f"[opp] candidati dopo i filtri: {len(cand)}")
-    oggi = str(cc.dropna(how="all").index[-1].date())
-    sab = str((pd.Timestamp(oggi) + pd.Timedelta(days=(5 - pd.Timestamp(oggi).weekday()) % 7)).date())
+    sab = _sabato(oggi)
     st = storico(c_all, vt)
     centri = centri_reali(st.get("riepilogo", {}))
-    studi = {}
-    d = costruisci(cand, prezzi, vol, temi, oggi, sab, centri, mm.get("eurusd"), studi)
+    d, cand = _selezione(cc, m, tk, ind, ev8k, nz, forza, temi, mm, vt, oggi, sab, centri)
+    log(f"[opp] candidati dopo i filtri: {len(cand)}")
     for t in d["ordine"]:   # catalizzatori biotech: studi di fase 2/3 con fine primaria nei prossimi 6 mesi (solo per i 30 scelti)
         if "biotech" in (cand[t]["ind"].get("industria") or "").lower():
             try:
@@ -392,6 +429,18 @@ def aggiorna(log=print) -> dict:
                 d["dett"][t]["cataliz"] += [{"data": s_["data"], "t": f"Fine primaria studio fase {s_['fase']} ({s_['id']})"} for s_ in ev.catalizzatori_studi(j, oggi)[:2]]
             except Exception:  # noqa: BLE001
                 pass
+    if prec:
+        try:
+            dp, _ = _selezione(prec[0], prec[1], prec[2], ind, ev8k, nz, forza, temi, mm, vt, str(pd.Timestamp(dt_prec).date()), _sabato(dt_prec), centri)
+            ult = cc.ffill().iloc[-1]
+            for t in dp["ordine"]:
+                p0 = dp["titoli"][t]["p"]
+                dp["titoli"][t]["da_allora"] = None if t not in ult or pd.isna(ult[t]) or not p0 else round(float(ult[t] / p0 - 1), 4)
+            dp["ric"] = True
+            d["prec"] = dp
+            log(f"[opp] settimana scorsa ({dp['settimana']}) ricostruita: {len(dp['ordine'])} scelte; registro +{registra(dp, dp['settimana'], file=RICOSTRUITO)}")
+        except Exception as e:  # noqa: BLE001
+            log("[opp] ricostruzione fallita: " + str(e)[:100])
     log(f"[opp] registro +{registra(d, sab)}")
     d["storico"] = storico(c_all, vt)
     FILE.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":"), default=lambda o: None), encoding="utf-8")
@@ -426,6 +475,12 @@ def rinfresca(log=print) -> None:
                 d["titoli"][t]["p"] = round(float(s.iloc[-1]), 2)
                 d["titoli"][t].update({k: v for k, v in _rend(s).items()})
     vt = c_all["VT"] if "VT" in c_all else c_all["SPY"]
+    for t in (d.get("prec") or {}).get("ordine", []):
+        if t in c_all:
+            s_ = c_all[t].dropna()
+            p0 = d["prec"]["titoli"][t]["p"]
+            if len(s_) and p0:
+                d["prec"]["titoli"][t]["da_allora"] = round(float(s_.iloc[-1] / p0 - 1), 4)
     d["storico"] = storico(c_all, vt)
     d["aggiornato"] = str(c_all.dropna(how="all").index[-1].date())
     FILE.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":"), default=lambda o: None), encoding="utf-8")
@@ -442,14 +497,15 @@ CSS_EXTRA = """<style>.opt{display:grid;grid-template-columns:repeat(auto-fit,mi
 .ops td.g{background:rgba(31,143,85,.18)}.ops td.r{background:rgba(192,57,43,.18)}.ops td.n{color:var(--mu);text-align:center}.ops{font-size:12px}</style>"""
 
 JS = r"""<script>(function(){var W=document.querySelector('[data-op]');if(!W||W.dataset.on)return;W.dataset.on=1;
-var D=null,AREA='',DIM='',OPEN=null,INFO=JSON.parse(W.getAttribute('data-ii')||'{}'),CK=['revisioni','momentum','crescita','qualita','sorpresa','contratti','catalizzatori','valutazione'];
+var D=null,SEL='att',AREA='',DIM='',OPEN=null,INFO=JSON.parse(W.getAttribute('data-ii')||'{}'),CK=['revisioni','momentum','crescita','qualita','sorpresa','contratti','catalizzatori','valutazione'];
+function S(){return SEL==='prec'&&D.prec?D.prec:D}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function pc(x,d){if(x==null)return '—';var s=(x*100).toFixed(d==null?1:d).replace('.',',').replace('-','−');return (x>0?'+':'')+s+'%'}
 function nm(x,d){return x==null?'—':Number(x).toFixed(d==null?1:d).replace('.',',')}
 function col(s){if(s==null)return '#64748b';return s>=70?'#16a34a':s>=40?'#d97706':'#dc2626'}
 function info(k){var i=INFO[k];if(!i)return '';return '<em class="aii" data-info="'+esc(JSON.stringify({t:i[0],s:[['Cos\'è',i[1]],['Come si legge',i[2]]]}))+'">i</em>'}
 function spark(k,w,h){if(!k||k.length<2)return '';var mn=Math.min.apply(null,k),mx=Math.max.apply(null,k),r=mx-mn||1;return '<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;max-width:520px;height:'+h+'px"><polyline fill="none" stroke="#3b82f6" stroke-width="2" points="'+k.map(function(v,i){return (i*(w-2)/(k.length-1)+1).toFixed(1)+','+((h-4)-(v-mn)/r*(h-8)+2).toFixed(1)}).join(' ')+'"/></svg>'}
-function det(t){var x=D.titoli[t],d=D.dett[t];if(!d)return '';var r=d.report,h='<div class="sdd" onclick="event.stopPropagation()"><h4>Ultimi 6 mesi</h4>'+spark(x.k,520,110);
+function det(t){var x=S().titoli[t],d=S().dett[t];if(!d)return '';var r=d.report,h='<div class="sdd" onclick="event.stopPropagation()"><h4>Ultimi 6 mesi</h4>'+spark(x.k,520,110);
 h+='<h4>Punteggio Potenziale: '+(x.s==null?'—':x.s+'/100')+' <span class="mu" style="font-weight:400">(fattori usati: '+x.usati+' su 8)</span></h4>';
 CK.forEach(function(k,i){var n=Object.keys(D.pesi)[i],v=x.comp[k];h+='<div style="font-size:12px">'+n+' ('+Math.round(D.pesi[n]*100)+'%): <b>'+(v==null?'dati insufficienti':v+'/100')+'</b></div><div class="sdb"><i style="width:'+(v||0)+'%;background:'+col(v)+'"></i></div>'});
 h+='<h4>Perché è promettente</h4><p>'+esc(r.promettente)+'</p><h4>Cosa potrebbe andare storto</h4><p>'+esc(r.storto)+'</p>';
@@ -460,9 +516,9 @@ var I=d.ind,ks=[['ps','P/S',2],['pe','P/E',1],['ps_f','P/S previsto',2],['ev_ebi
 h+='<h4>Indicatori</h4><div class="sdk">'+ks.filter(function(k){return I[k[0]]!=null}).map(function(k){var v=I[k[0]];return '<div><span>'+k[1]+info(k[0])+'</span><b>'+nm(k[2]>=3?v*100:v,k[2]>=3?1:k[2])+(k[2]>=3?'%':'')+'</b></div>'}).join('')+'</div>';
 if(d.notizie.length)h+='<h4>Notizie positive recenti</h4><div class="sdn">'+d.notizie.map(function(n){return '<div>'+esc(n.d.slice(8)+'/'+n.d.slice(5,7))+' · <span class="etq">'+esc(n.e)+'</span> <a href="'+esc(n.l||'#')+'" target="_blank" rel="noopener">'+esc(n.t)+'</a></div>'}).join('')+'</div>';
 return h+'<p class="mu">'+esc(r.nota)+'</p></div>'}
-function riga(t){var x=D.titoli[t],eur=x.eur!=null?' · '+nm(x.eur,2)+' €':'';
+function riga(t){var x=S().titoli[t],eur=x.eur!=null?' · '+nm(x.eur,2)+' €':'';
 var h='<div class="sdr" data-t="'+esc(t)+'"><div class="top"><span class="nm">'+esc(x.n)+' <span class="tk">'+esc(x.t)+' · '+esc(x.sett)+' · '+esc(x.area)+'</span></span><span class="sds" style="background:'+col(x.s)+'" title="Potenziale (1-100)">'+(x.s==null?'—':x.s)+'</span></div><div class="met">';
-h+='<span>7 giorni <b>'+pc(x.r7)+'</b></span><span>1 mese <b>'+pc(x.r1m)+'</b></span><span>Prezzo <b>'+nm(x.p,2)+' '+(x.v==='EUR'?'€':x.v)+'</b>'+eur+'</span><span>Fatturato trim. <b>'+(x.ric?x.ric.f+' '+pc(Math.abs(x.ric.v),0):'—')+'</b></span><span>P/S <b>'+nm(x.ps,1)+'</b></span><span>P/E <b>'+nm(x.pe,1)+'</b></span><span>P/S prev. <b>'+nm(x.ps_f,1)+'</b></span>'+(x.cap_rpo!=null?'<span>Cap./RPO <b>'+nm(x.cap_rpo,1)+'</b></span>':'')+'</div>';
+h+=(x.da_allora!=null?'<span>Da allora <b>'+pc(x.da_allora)+'</b></span>':'')+'<span>7 giorni <b>'+pc(x.r7)+'</b></span><span>1 mese <b>'+pc(x.r1m)+'</b></span><span>Prezzo <b>'+nm(x.p,2)+' '+(x.v==='EUR'?'€':x.v)+'</b>'+eur+'</span><span>Fatturato trim. <b>'+(x.ric?x.ric.f+' '+pc(Math.abs(x.ric.v),0):'—')+'</b></span><span>P/S <b>'+nm(x.ps,1)+'</b></span><span>P/E <b>'+nm(x.pe,1)+'</b></span><span>P/S prev. <b>'+nm(x.ps_f,1)+'</b></span>'+(x.cap_rpo!=null?'<span>Cap./RPO <b>'+nm(x.cap_rpo,1)+'</b></span>':'')+'</div>';
 if(x.mot&&x.mot.length)h+='<ul class="opm">'+x.mot.map(function(m){return '<li>'+esc(m)+'</li>'}).join('')+'</ul>';
 h+='<div class="opf">3 mesi: '+esc(x.fasce['3m']?x.fasce['3m'].txt:'—')+'</div>';
 return h+(OPEN===t?det(t):'')+'</div>'}
@@ -472,13 +528,13 @@ if(!S.settimane||!S.settimane.length)return h+'<p class="mu">Lo storico parte da
 var any=Object.keys(R).length;
 if(any){h+='<div class="scroll"><table class="tbl"><tr><th>Orizzonte</th><th>Scelte</th><th>Rendimento medio</th><th>MSCI World (VT)</th><th>Battono VT</th><th>Dentro la fascia 10-90</th></tr>'+Object.keys(R).map(function(k){var r=R[k];return '<tr><td>'+(k==='1m'?'1 mese':'3 mesi')+'</td><td>'+r.n+'</td><td>'+pc(r.medio,1)+'</td><td>'+pc(r.vt,1)+'</td><td>'+(r.batte_vt==null?'—':Math.round(r.batte_vt*100)+'%')+'</td><td>'+(r.dentro_fascia==null?'—':Math.round(r.dentro_fascia*100)+'%')+'</td></tr>'}).join('')+'</table></div><p class="mu">La fascia 10-90 dovrebbe contenere circa l\'80% dei risultati: se è molto diversa, le fasce vanno corrette. Lo storico si mostra anche quando è negativo.</p>'}
 else h+='<p class="mu">Nessuna scelta ha ancora 1 mese di storia: le celle compaiono man mano. Verde = pari o sopra la mediana prevista, rosso = sotto.</p>';
-S.settimane.slice().reverse().forEach(function(w,i){h+='<details'+(i===0?' open':'')+'><summary>Settimana del '+esc(w.data.split('-').reverse().join('/'))+' ('+w.scelte.length+' scelte)</summary><div class="scroll"><table class="tbl ops"><tr><th>Titolo</th><th>Punt.</th><th>Previsione 1m</th><th>Reale 1m</th><th>Previsione 3m</th><th>Reale 3m</th></tr>'+w.scelte.map(function(s){return '<tr><td>'+esc(s.t)+'</td><td>'+s.s+'</td><td class="n">'+pc(s['1m'].prev.med,0)+'</td>'+cella(s,'1m')+'<td class="n">'+pc(s['3m'].prev.med,0)+'</td>'+cella(s,'3m')+'</tr>'}).join('')+'</table></div></details>'});
+S.settimane.slice().reverse().forEach(function(w,i){h+='<details'+(i===0?' open':'')+'><summary>Settimana del '+esc(w.data.split('-').reverse().join('/'))+(w.ric?' (ricostruita, non conta nelle statistiche)':'')+' ('+w.scelte.length+' scelte)</summary><div class="scroll"><table class="tbl ops"><tr><th>Titolo</th><th>Punt.</th><th>Previsione 1m</th><th>Reale 1m</th><th>Previsione 3m</th><th>Reale 3m</th></tr>'+w.scelte.map(function(s){return '<tr><td>'+esc(s.t)+'</td><td>'+s.s+'</td><td class="n">'+pc(s['1m'].prev.med,0)+'</td>'+cella(s,'1m')+'<td class="n">'+pc(s['3m'].prev.med,0)+'</td>'+cella(s,'3m')+'</tr>'}).join('')+'</table></div></details>'});
 return h}
-function render(){var ids=D.ordine.filter(function(t){var x=D.titoli[t];return (!AREA||x.area===AREA)&&(!DIM||x.dim===DIM)});
-var h='<div class="sdc"><select id="opa"><option value="">Tutte le aree</option>'+['USA','Europa','Asia','Altri'].map(function(v){return '<option'+(AREA===v?' selected':'')+'>'+v+'</option>'}).join('')+'</select><select id="opd"><option value="">Tutte le dimensioni</option>'+[['grandi','Grandi (> 10 mld)'],['medie','Medie (2-10 mld)'],['piccole','Piccole (< 2 mld)']].map(function(v){return '<option value="'+v[0]+'"'+(DIM===v[0]?' selected':'')+'>'+v[1]+'</option>'}).join('')+'</select></div>';
+function render(){var ids=S().ordine.filter(function(t){var x=S().titoli[t];return (!AREA||x.area===AREA)&&(!DIM||x.dim===DIM)});
+var h='<div class="sdc"><button data-sl="att" class="'+(SEL==='att'?'on':'')+'">Selezione attuale</button>'+(D.prec?'<button data-sl="prec" class="'+(SEL==='prec'?'on':'')+'">Settimana scorsa (ricostruita)</button>':'')+'</div><div class="sdc"><select id="opa"><option value="">Tutte le aree</option>'+['USA','Europa','Asia','Altri'].map(function(v){return '<option'+(AREA===v?' selected':'')+'>'+v+'</option>'}).join('')+'</select><select id="opd"><option value="">Tutte le dimensioni</option>'+[['grandi','Grandi (> 10 mld)'],['medie','Medie (2-10 mld)'],['piccole','Piccole (< 2 mld)']].map(function(v){return '<option value="'+v[0]+'"'+(DIM===v[0]?' selected':'')+'>'+v[1]+'</option>'}).join('')+'</select></div>';
 if(D.temi&&D.temi.length){h+='<h3>Temi della settimana</h3><div class="opt">'+D.temi.filter(function(t){return t.forza!=null}).slice(0,6).map(function(t){return '<div><b>'+esc(t.tema)+'</b>forza <b style="display:inline;color:'+col(t.forza)+'">'+t.forza+'/100</b><span class="mu"> · notizie '+(t.notizie==null?'—':t.notizie)+' · prezzi '+(t.prezzi==null?'—':t.prezzi)+' · ETF '+esc(t.etf)+'</span></div>'}).join('')+'</div>'}
-h+='<p class="mu">Selezione del '+D.settimana.split('-').reverse().join('/')+' (dati al '+D.asof.split('-').reverse().join('/')+'). Il punteggio dice quanto il titolo somiglia ai fattori che storicamente hanno dato rendimenti migliori: <b>non è una previsione</b>. '+ids.length+' titoli. Tocca una scheda per il dettaglio.</p><div class="sdl">'+(ids.length?ids.map(riga).join(''):'<p class="mu">Nessun risultato con questi filtri.</p>')+'</div>'+storico();
-W.innerHTML=h;W.querySelector('#opa').onchange=function(){AREA=this.value;render()};W.querySelector('#opd').onchange=function(){DIM=this.value;render()};
+h+='<p class="mu">'+(SEL==='prec'?'<b>Ricostruita</b>: prezzi e momentum del '+S().asof.split('-').reverse().join('/')+', ma bilanci, stime e notizie di oggi, quindi può includere informazioni arrivate dopo. Serve a vedere cosa è successo da allora, non entra nelle statistiche. ':'')+'Selezione del '+S().settimana.split('-').reverse().join('/')+' (dati al '+S().asof.split('-').reverse().join('/')+'). Il punteggio dice quanto il titolo somiglia ai fattori che storicamente hanno dato rendimenti migliori: <b>non è una previsione</b>. '+ids.length+' titoli. Tocca una scheda per il dettaglio.</p><div class="sdl">'+(ids.length?ids.map(riga).join(''):'<p class="mu">Nessun risultato con questi filtri.</p>')+'</div>'+storico();
+W.innerHTML=h;W.querySelectorAll('[data-sl]').forEach(function(b){b.onclick=function(){SEL=b.dataset.sl;OPEN=null;render()}});W.querySelector('#opa').onchange=function(){AREA=this.value;render()};W.querySelector('#opd').onchange=function(){DIM=this.value;render()};
 W.querySelectorAll('.sdr').forEach(function(r){r.onclick=function(){var t=r.dataset.t;OPEN=OPEN===t?null:t;render()}})}
 function go(j){D=j;if(!D||!D.ordine||!D.ordine.length){W.innerHTML='<p class="mu">Nessuna selezione ancora: si genera ogni sabato con il lavoro «Opportunità Armor».</p>';return}render()}
 var emb=document.getElementById('armor-op-data');if(emb){go(JSON.parse(emb.textContent))}else{fetch('series/opportunita.json?'+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()}).then(go).catch(function(){W.innerHTML='<p class="mu">Opportunità non disponibili (serve la connessione, oppure il lavoro del sabato non è ancora girato).</p>'})}

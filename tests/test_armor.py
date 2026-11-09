@@ -1945,3 +1945,62 @@ def test_opportunita_storico_contro_vt():
     r = st["riepilogo"]["1m"]
     assert r["n"] == 2 and r["batte_vt"] == 0.5 and st["settimane"][0]["scelte"][1]["1m"]["reale"] < 0   # il negativo si mostra
     assert r["dentro_fascia"] is not None
+
+
+def _archivio_finto(n=60, giorni=300):
+    r = np.random.default_rng(7)
+    idx = pd.bdate_range(end="2026-11-06", periods=giorni)
+    close = pd.DataFrame({f"A{i}": 20 * np.exp(np.cumsum(r.normal(0.0003, 0.02, giorni))) for i in range(n)}, index=idx)
+    close["SPY"] = 400 * np.exp(np.cumsum(r.normal(0.0004, 0.01, giorni)))
+    close["VT"] = 100 * np.exp(np.cumsum(r.normal(0.0004, 0.01, giorni)))
+    vol = pd.DataFrame(5e6, index=idx, columns=close.columns)
+    return {"close": close, "vol": vol}
+
+
+def _ind_finto(tk):
+    return {t: {"nome": f"Az {t}", "valuta": "USD", "settore": "Technology", "industria": "Software", "paese": "United States", "cap": 2e9, "ricavi_ttm": 1e9, "ricavi_q_1a": {"var": 0.1, "f": "▲"},
+                "analisti": {"n": 5, "target": 30.0}, "piotroski": {"score": 6, "su": 9}, "crescita_ricavi": 0.2, "rev_eps_30": 0.05, "rev_eps_90": 0.1, "rev_su": 3, "rev_giu": 1, "gross_su_attivo": 0.3,
+                "roe": 0.2, "margine_fcf": 0.1, "ps": 3, "pe": 20, "ps_f": 2.5, "sue": {"sue": 1.0}} for t in tk}
+
+
+def test_saldi_ricostruzione_e_storico(tmp_path, monkeypatch):
+    from armor import saldi, titoli
+    arch = _archivio_finto()
+    monkeypatch.setattr(titoli, "carica_prezzi", lambda: arch)
+    monkeypatch.setattr(titoli, "SETTORI", tmp_path / "settori.json")
+    for nome in ("FILE", "REGISTRO", "VERIFICA", "RICOSTRUITO", "LOG"):
+        monkeypatch.setattr(saldi, nome, tmp_path / (nome + ".x"))
+    monkeypatch.setattr(saldi, "DATA", tmp_path)
+    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30: (_ind_finto(tk), {}, {t: [] for t in tk}))
+    cc = arch["close"].drop(columns=["SPY", "VT"])
+    top = titoli.top_json(titoli.metriche(cc, arch["vol"][cc.columns], arch["close"]["SPY"]), cc, {t: f"Az {t}" for t in cc}, {}, n=30)
+    (tmp_path / "titoli_top.json").write_text(saldi.json.dumps(top), encoding="utf-8")
+    ds = saldi.date_passate(arch["close"].index, "2026-11-06")
+    assert len(ds) == 3 and all(d < pd.Timestamp("2026-11-06") for d in ds)
+    d = saldi.aggiorna(log=lambda *a: None)
+    ric = pd.read_csv(saldi.RICOSTRUITO)
+    assert ric["data"].nunique() == 3 and ric["data"].max() < "2026-11-06"
+    st = d["storico"]
+    assert [x["ric"] for x in st["date"]].count(True) == 3 and st["date"][-1]["ric"] is False
+    assert any(r[3] is not None for x in st["date"] for r in x["per"]["1m"])
+    n_prima = len(ric)
+    saldi.aggiorna(log=lambda *a: None)
+    assert len(pd.read_csv(saldi.RICOSTRUITO)) == n_prima          # la ricostruzione non si ripete
+    assert "Selezioni dei giorni scorsi" in saldi.JS
+
+
+def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
+    from armor import opportunita as op
+    from armor import saldi, titoli
+    arch = _archivio_finto()
+    monkeypatch.setattr(titoli, "carica_prezzi", lambda: arch)
+    for nome in ("FILE", "REGISTRO", "RICOSTRUITO", "LOG"):
+        monkeypatch.setattr(op, nome, tmp_path / (nome + ".x"))
+    monkeypatch.setattr(op, "DATA", tmp_path)
+    monkeypatch.setattr(op, "forza_temi", lambda r: [{"tema": "Robotica", "forza": 60, "notizie": 50, "prezzi": 70, "etf": "BOTZ"}])
+    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30: (_ind_finto(tk), {}, {t: [] for t in tk}))
+    d = op.aggiorna(log=lambda *a: None)
+    assert d["ordine"] and d["prec"]["ric"] and d["prec"]["settimana"] < d["settimana"] and d["prec"]["ordine"]
+    assert all("da_allora" in x for x in d["prec"]["titoli"].values())
+    assert pd.read_csv(op.RICOSTRUITO)["data"].nunique() == 1 and not any(w["ric"] is False and w["data"] == d["prec"]["settimana"] for w in d["storico"]["settimane"])
+    assert any(w["ric"] for w in d["storico"]["settimane"])
