@@ -42,5 +42,9 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m armor opportunita-rinfresca
+      - name: Storico dei maggiori titoli del VWCE per il grafico
+        env:
+          PYTHONPATH: src
+        run: python -m armor serie-azioni
       - name: Salva i risultati compatti nel repository
-        run: bash scripts/salva.sh "Motore titoli - classifiche e saldi automatici" data/titoli_top.json data/mercati_mondo.json data/universo data/saldi.json data/saldi_registro.csv data/saldi_ricostruito.csv data/saldi_verifica.json data/protocollo_saldi_log.csv data/opportunita.json
+        run: bash scripts/salva.sh "Motore titoli - classifiche e saldi automatici" data/titoli_top.json data/mercati_mondo.json data/universo data/saldi.json data/saldi_registro.csv data/saldi_ricostruito.csv data/saldi_verifica.json data/protocollo_saldi_log.csv data/opportunita.json data/azioni

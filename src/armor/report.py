@@ -7,8 +7,9 @@ import pandas as pd
 
 import json
 
+from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import archivio_dati, infobox, mondo, novita, opportunita, saldi, tensione, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import archivio_dati, economia, inclinazione, infobox, mondo, novita, opportunita, saldi, tensione, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -819,6 +820,11 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                     chartdata[i["key"]] = {"l": i["name"], "dec": min(i["dec"], 2), **sitedata.ser_payload(ss, min(i["dec"], 2))}
             except Exception:  # noqa: BLE001
                 pass
+    try:
+        from . import grafico
+        chartdata.update(grafico.extra_chartdata(sitedata))
+    except Exception:  # noqa: BLE001
+        pass
     for k, name in list(extra13.EXTRA_KEYS.items()):
         try:
             ss = store.load(k)
@@ -883,7 +889,8 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
     pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("mercati", "Mercati"), ("saldi", "Saldi"), ("opportunita", "Opportunità"), ("indici", "Indici"), ("regime", "Regime di tensione"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
              ("fiducia", "Quanto fidarsi"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi")]
-    nav = "<nav class='pgnav'>" + "".join(f"<button data-p='{k}'>{l}</button>" for k, l in pages) + "</nav>"
+    from . import navigazione
+    nav = navigazione.html(pages)
     lazy_pages: dict[str, str] = {}
 
     def page(k, inner):
@@ -956,6 +963,15 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             (sd / "opportunita.json").write_text(op_json, encoding="utf-8")
     except Exception as ex:  # noqa: BLE001
         print("Dati Opportunità non letti:", str(ex)[:120], flush=True)
+    ec_json = None
+    try:
+        ec_json = economia.carica()
+        if lazy and ec_json:
+            sd = out.parent / "series"
+            sd.mkdir(exist_ok=True)
+            (sd / "economia.json").write_text(ec_json, encoding="utf-8")
+    except Exception as ex:  # noqa: BLE001
+        print("Dati Economia non letti:", str(ex)[:120], flush=True)
     cf_json = None
     try:
         cfd = confronto.build(sp, vwce_display(), aix)
@@ -1031,10 +1047,14 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                 + "<h2 style='margin-top:26px'>Mappa settimanale dei segnali</h2>" + map_intro + map_full
                 + "<h2 style='margin-top:26px'>Confronto con le grandi crisi</h2>" + _safe(lambda: extra13.crisi_html(aix, sp), "Confronto crisi"))
     p_az = ("<h2>Salute delle aziende in VWCE</h2>" + _safe(lambda: aziende.html(aziende.load()), "Aziende VWCE"))
-    p_macro = ("<h2>Dati economici anticipati</h2>" + _safe(extra13.early_html, "Dati economici") + "<h2 style='margin-top:26px'>Liquidità e tassi della Fed</h2>" + _safe(extra13.fed_html, "Liquidità Fed"))
+    p_macro = ("<h2>Dati economici anticipati</h2>" + _safe(extra13.early_html, "Dati economici") + "<h2 style='margin-top:26px'>Liquidità e tassi della Fed</h2>" + _safe(extra13.fed_html, "Liquidità Fed") + _safe(lambda: economia.block(None if lazy else ec_json), "Economia nel mondo"))
     p_val = (f"<h2>Quanto è «caro» il mercato: P/E e P/S in tempo reale</h2>{parts.valuation_block(vcards, ctxs, cape)}")
     p_graf = f"<h2>Confronto: Indice Armor, S&amp;P 500 e VWCE</h2>{cf_intro}{cf_full}<h2 style='margin-top:26px'>Grafici interattivi</h2>{parts.charts_section(chip_opts)}"
-    p_prev = (f"<h2>Previsioni per periodo: calo o rialzo?</h2>{chiaro.PREV_INTRO}"
+    def _incl():
+        pp = p[p.index >= "1985-01-01"]
+        v = json.loads(inclinazione.FILE_VERIFICA.read_text(encoding="utf-8")) if inclinazione.FILE_VERIFICA.exists() else None
+        return inclinazione.html(inclinazione.oggi(pp, store.load("vix"), store.load("armor_index")), v)
+    p_prev = (_safe(_incl, "Inclinazione") + f"<h2 style='margin-top:26px'>Previsioni per periodo: calo o rialzo?</h2>{chiaro.PREV_INTRO}"
               f"<div class='grid4'>{cards}</div>"
               f"<h3 style='margin-top:22px'>Scenari da 1 settimana a 1 anno</h3><div class='card'>{_safe(percorsi.html, 'Scenari')}</div>"
               f"<h3 style='margin-top:22px'>Quanto ti puoi fidare: l'errore reale delle previsioni</h3><div class='card scroll'>{insight.honest_html(insight.honest(pred))}</div>"
@@ -1102,7 +1122,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     dock_js = extra13.DOCK_JS_LAZY if lazy else extra13.DOCK_JS
     tabs_js = parts.TABS_JS_LAZY if lazy else parts.TABS_JS
     body = f"""
-<header><div><h1>Armor</h1><div class='muted'>Quanto è rischioso il mercato oggi per il tuo VWCE · dati del {date.strftime('%d/%m/%Y')} · pagina generata {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div>{forza.HTML}</header>
+<header><div>{marchio.html()}<div class='muted'>Quanto è rischioso il mercato oggi per il tuo VWCE · dati del {date.strftime('%d/%m/%Y')} · pagina generata {datetime.now().strftime('%d/%m/%Y %H:%M')}</div></div>{forza.HTML}</header>
 {nav}{_safe(forza.banner_dati_fermi, 'Avviso dati')}
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}

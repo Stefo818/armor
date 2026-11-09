@@ -293,6 +293,14 @@ def tutto(skip_download: bool = False) -> None:
         fondamentali.aggiorna_derivate()
     except Exception as e:  # noqa: BLE001
         print("[fondamentali] derivate non calcolate:", str(e)[:120])
+    try:   # inclinazione del mercato: tendenza di fondo e verdetto di direzione (registrato ogni giorno, verificato sugli esiti)
+        from . import inclinazione
+        from .features import closed_sp500 as _cs
+        _p = _cs()
+        from . import store as _st
+        inclinazione.aggiorna(_p[_p.index >= "1985-01-01"], _st.load("vix"), _st.load("armor_index"))
+    except Exception as e:  # noqa: BLE001
+        print("[inclinazione] non aggiornata:", str(e)[:120])
     try:   # segnali classici, mesi simili e modelli in ombra a 6-12 mesi (PIANO_MODELLO, Fase C)
         from . import ciclico
         ciclico.aggiorna()
@@ -462,6 +470,19 @@ def main() -> None:
         from . import saldi
         d = saldi.aggiorna()
         print({"titoli": len(d["titoli"]), "dati_al": d["asof"]})
+    elif cmd == "serie-azioni":   # storico dei maggiori titoli del VWCE per il grafico interattivo
+        from . import grafico
+        grafico.aggiorna()
+    elif cmd == "economia-aggiorna":   # Patch 54: finestra sul mondo (FRED, BCE, Eurostat) → data/economia.json
+        from . import economia
+        d = economia.aggiorna()
+        print({"indicatori": len(d["items"]), "non_disponibili": len(d["errori"]), "dati_al": d["asof"]})
+    elif cmd == "economia-prova":   # elenca gli indicatori che la fonte non ha dato e il motivo
+        from . import economia
+        d = economia.aggiorna()
+        for k, v in d["errori"].items():
+            print(k, "->", v)
+        print("vecchi:", [x["id"] for x in d["items"] if x["old"]])
     elif cmd == "opportunita-aggiorna":   # Patch 47: le 30 aziende della settimana con punteggio Potenziale (sabato)
         from . import opportunita
         d = opportunita.aggiorna()

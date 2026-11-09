@@ -5,7 +5,7 @@ set -u
 MSG="$1"; shift
 git config user.name "armor-bot"
 git config user.email "armor-bot@users.noreply.github.com"
-git add "$@" 2>/dev/null
+for d in "$@"; do [ -e "$d" ] && git add "$d" 2>/dev/null; done   # un percorso mancante non blocca gli altri
 git diff --cached --quiet && { echo "Niente da salvare"; exit 0; }
 git commit -q -m "$MSG"
 for i in 1 2 3 4 5; do
@@ -17,7 +17,7 @@ for i in 1 2 3 4 5; do
   for d in "$@"; do [ -e "$d" ] && mkdir -p "$T/$(dirname "$d")" && cp -a "$d" "$T/$(dirname "$d")/"; done
   git reset -q --hard origin/main
   (cd "$T" && find . -type f) | while read -r f; do mkdir -p "$(dirname "$f")"; cp -a "$T/$f" "$f"; done
-  git add "$@" 2>/dev/null
+  for d in "$@"; do [ -e "$d" ] && git add "$d" 2>/dev/null; done
   git diff --cached --quiet && { echo "Niente da salvare"; exit 0; }
   git commit -q -m "$MSG"
   if git push -q origin HEAD:main; then echo "Salvato (via sicura)"; exit 0; fi

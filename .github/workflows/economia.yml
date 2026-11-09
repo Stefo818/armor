@@ -1,0 +1,29 @@
+name: Economia Armor
+on:
+  schedule:
+    - cron: '20 4 * * *'   # ogni mattina (ora UTC)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
+jobs:
+  economia:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: '1'
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Scarica gli indicatori economici
+        env:
+          PYTHONPATH: src
+        run: python -m armor economia-aggiorna
+      - name: Salva i risultati nel repository
+        run: bash scripts/salva.sh "Economia - indicatori del mondo" data/economia.json

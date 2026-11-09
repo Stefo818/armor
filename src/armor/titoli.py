@@ -222,7 +222,10 @@ def top_json(m: pd.DataFrame, close: pd.DataFrame, nomi: dict, settori: dict | N
     for t in sorted(sel):
         inf = settori.get(t) or {}
         valuta = inf.get("v") or "USD"
-        r = mondo.rendimenti(close[t], fx, valuta if valuta in ("USD", "EUR") else "USD")
+        try:
+            r = mondo.rendimenti(close[t], fx, valuta if valuta in ("USD", "EUR") else "USD")
+        except Exception:  # noqa: BLE001  una serie anomala non deve fermare tutta la classifica
+            r = None
         if r is None:
             continue
         loc, eur = r

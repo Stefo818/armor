@@ -420,14 +420,30 @@ CSS += """
 .pgnav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 .pg{display:none}.pg.on{display:block}
 """
+from . import marchio as _mk  # noqa: E402
+CSS += _mk.CSS + """
+body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;-webkit-font-smoothing:antialiased;background-image:radial-gradient(1200px 400px at 50% -120px,rgba(59,130,246,.14),transparent 70%);background-repeat:no-repeat}
+header{align-items:center;gap:12px;margin-bottom:14px}header .muted{margin-top:6px;line-height:1.35}
+h2{display:flex;align-items:center;gap:10px;font-size:19px;letter-spacing:-.01em}h2::before{content:'';width:4px;height:20px;border-radius:3px;background:linear-gradient(180deg,var(--ac),#6366f1)}
+.card,.analysis,.vmini,.mdcard,.hchip{border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px -12px rgba(15,23,42,.18);transition:transform .15s,box-shadow .15s}
+@media(prefers-color-scheme:dark){.card,.analysis,.vmini,.mdcard,.hchip{box-shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7)}}
+.btn,.chip,.cranges button{transition:all .15s}.btn.pri,.chip.on,.cranges button.on{background:linear-gradient(135deg,var(--ac),#6366f1);color:#fff;border-color:transparent}
+.explain{border-left:3px solid var(--ac);background:linear-gradient(90deg,rgba(59,130,246,.08),transparent)}
+.tbl th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu)}.tbl tr:hover td{background:rgba(59,130,246,.05)}
+a{color:var(--ac)}.pg.on{animation:pgin .25s ease}@keyframes pgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.pg.on{animation:none}}
+"""
+
 
 TABS_JS = r"""
 <script>
-(function(){var B=document.querySelectorAll('.pgnav button'),P=document.querySelectorAll('.pg');
+(function(){var B=document.querySelectorAll('.pgnav button'),P=document.querySelectorAll('.pg'),LAST={};
 function show(id,push){var ok=false;P.forEach(function(p){var on=p.id==='p-'+id;p.classList.toggle('on',on);if(on)ok=true});if(!ok){id='oggi';document.getElementById('p-oggi').classList.add('on')}
-B.forEach(function(b){b.classList.toggle('on',b.dataset.p===id)});try{localStorage.setItem('armor_tab',id)}catch(e){}
+if(window.armorEnsure)window.armorEnsure(id);var gid='oggi';B.forEach(function(b){var on=b.dataset.p===id;b.classList.toggle('on',on);if(on)gid=b.dataset.g||'oggi'});LAST[gid]=id;
+B.forEach(function(b){b.hidden=!!b.dataset.g&&b.dataset.g!==gid});document.querySelectorAll('.gnav button').forEach(function(g){g.classList.toggle('on',g.dataset.g===gid)});
+var ab=document.querySelector('.pgnav button.on');if(ab&&ab.scrollIntoView)ab.scrollIntoView({block:'nearest',inline:'center'});try{localStorage.setItem('armor_tab',id)}catch(e){}
 if(push!==false){try{history.replaceState(null,'','#'+id)}catch(e){}}window.scrollTo(0,0);setTimeout(function(){document.dispatchEvent(new Event('tabshown'));window.dispatchEvent(new Event('resize'))},30)}
-B.forEach(function(b){b.onclick=function(){show(b.dataset.p)}});
+B.forEach(function(b){b.onclick=function(){show(b.dataset.p)}});document.querySelectorAll('.gnav button').forEach(function(g){g.onclick=function(){var f=null;B.forEach(function(b){if(!f&&b.dataset.g===g.dataset.g)f=b.dataset.p});show(LAST[g.dataset.g]||f)}});
 window.armorTab=show;
 var h=(location.hash||'').slice(1),s=null;try{s=localStorage.getItem('armor_tab')}catch(e){}show(h&&document.getElementById('p-'+h)?h:(s||'oggi'),false);
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[data-go]');if(a){e.preventDefault();show(a.dataset.go)}})})();
@@ -463,6 +479,5 @@ window.armorLoadDock=function(cb){if(window.armorDockReady)return cb&&cb();if(cb
 fetch('pages/dock.html?'+Date.now()).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){var tp=document.createElement('template');tp.innerHTML=t;
 tp.content.querySelectorAll('[data-dpane]').forEach(function(n){var id=n.dataset.dpane;if(id==='_cal'){document.getElementById('caltpl').innerHTML=n.innerHTML}else{var q=document.getElementById('d-'+id);if(q)window.armorInject(q,n.innerHTML)}});
 window.armorDockReady=true;_dkc.forEach(function(f){f()});_dkc=[];if(window.armorPaint)window.armorPaint()}).catch(function(){_dk=null;var q=document.querySelector('#dock .dpane.on');if(q)q.innerHTML='<p class="muted">Contenuto non caricato (sei offline?).</p>'})};"""
-TABS_JS_LAZY = ("<script>" + LAZY_CORE + "</script>" + TABS_JS.replace(
-    "B.forEach(function(b){b.classList.toggle('on',b.dataset.p===id)});", "B.forEach(function(b){b.classList.toggle('on',b.dataset.p===id)});if(window.armorEnsure)window.armorEnsure(id);", 1))
+TABS_JS_LAZY = "<script>" + LAZY_CORE + "</script>" + TABS_JS
 assert "armorEnsure(id)" in TABS_JS_LAZY

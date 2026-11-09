@@ -667,12 +667,8 @@ def pagina(o: dict | None, r: dict | None = None, g: dict | None = None) -> str:
             "Qui l'idea è stata trasformata in un indicatore misurato, con regole scritte <b>prima</b> di guardare i risultati recenti (file PROTOCOLLO_REGIME.md). "
             "Sono frequenze storiche, non previsioni, e gli episodi indipendenti sono pochi.</p></div>")
     top = box_oggi(o, r) if o else ""
-    graf = ""
-    if g:
-        graf = ("<h3 style='margin-top:18px'>S&amp;P 500 (scala logaritmica) e periodi di regime</h3>"
-                f"<canvas id='rtgraf' class='rtg' data-g='{_h.escape(json.dumps(g), quote=True)}'></canvas>"
-                "<div class='rtl'><span><i style='background:rgba(153,27,27,.55)'></i>Persistente con mercato in calo</span><span><i style='background:rgba(220,38,38,.4)'></i>Persistente</span>"
-                "<span><i style='background:rgba(217,119,6,.35)'></i>In formazione</span><span><i style='background:rgba(22,163,74,.25)'></i>Calma</span></div>" + GRAF_JS)
+    from . import grafico
+    graf = grafico.block(g)
     if not r:
         return CSS + head + top + graf + "<p class='mu'>L'esperimento sul periodo 2013–oggi non è ancora stato eseguito: lo esegue il lavoro mensile (comando <code>esperimento-regime</code>).</p>"
     ad = r["adozione"]

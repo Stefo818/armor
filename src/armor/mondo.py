@@ -4,6 +4,7 @@ Rendimenti in euro (default) e in valuta locale. Le liste sono curate a mano: un
 import io
 import json
 
+import numpy as np
 import pandas as pd
 
 from .config import DATA
@@ -119,6 +120,8 @@ def rendimenti(s: pd.Series, fx: pd.Series | None, valuta: str) -> tuple[list, l
     if len(mv) and (mv.max() > SOGLIA_MAX or mv.min() < SOGLIA_MIN):
         return None
     last, t1 = float(s.iloc[-1]), s.index[-1]
+    if not np.isfinite(last) or last <= 0:
+        return None
     loc, eur = [], []
     for key, _n, d in PERIODI:
         if key == "1g":
@@ -130,6 +133,12 @@ def rendimenti(s: pd.Series, fx: pd.Series | None, valuta: str) -> tuple[list, l
                 eur.append(None)
                 continue
             p0 = _prezzo_a(s, t0)
+            if p0 is None:   # la serie inizia pochi giorni dopo t0 (tolleranza di 4 giorni): si usa il primo prezzo disponibile
+                p0 = float(s.iloc[0])
+        if p0 is None or not np.isfinite(p0) or p0 <= 0:
+            loc.append(None)
+            eur.append(None)
+            continue
         r = last / p0 - 1
         loc.append(round(float(r), 5))
         if valuta == "EUR" or fx is None or fx.empty:

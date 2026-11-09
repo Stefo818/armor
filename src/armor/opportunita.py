@@ -267,6 +267,16 @@ def registra(d: dict, settimana: str, file=None) -> int:
             if not esiste:
                 fh.write("data,ticker,punteggio,prezzo,m1_med,m1_lo,m1_hi,m3_med,m3_lo,m3_hi\n")
             fh.write("\n".join(righe) + "\n")
+    if righe:   # i punteggi dei singoli fattori, per poter capire in seguito quali funzionano davvero (file separato: non cambia il registro)
+        ff = _f.with_name(_f.stem + "_fattori.csv")
+        nuovo = not (ff.exists() and ff.stat().st_size > 0)
+        with open(ff, "a", encoding="utf-8") as fh:
+            if nuovo:
+                fh.write("data,ticker,fattore,valore\n")
+            for t in d["ordine"]:
+                if any(r.startswith(f"{settimana},{t},") for r in righe):
+                    for k, v in (d["titoli"][t].get("comp") or {}).items():
+                        fh.write(f"{settimana},{t},{str(k).replace(',', ' ')},{'' if v is None else v}\n")
     return len(righe)
 
 
@@ -388,9 +398,8 @@ def aggiorna(log=print) -> dict:
     registra_protocollo()
     arch = titoli.carica_prezzi()
     if arch is None:
-        log("[opp] archivio prezzi assente: lo ricostruisco (lento)")
-        titoli.aggiorna(log)
-        arch = titoli.carica_prezzi()
+        log("[opp] archivio prezzi assente: serve prima un giro riuscito di «Motore titoli Armor» (salva la cache dei prezzi). Esco senza errore.")
+        raise SystemExit(0)
     c_all, v_all = arch["close"], arch["vol"]
     vt = c_all["VT"] if "VT" in c_all else (c_all["SPY"] if "SPY" in c_all else pd.Series(dtype=float))
     cc, m, tk = _prepara(c_all, v_all)

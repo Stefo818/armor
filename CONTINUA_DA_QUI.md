@@ -591,3 +591,36 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - mondo.py (Mercati): nuova vista «Titoli azionari ed ETF» con più cresciuti e più calati affiancati, ricerca per nome/simbolo, periodi e euro/locale.
 - Workflow titoli.yml e opportunita.yml salvano anche i file ricostruiti. sw.js armor-v48. Test: 122 passed.
 - Saldi era vuoto perché saldi.json non è ancora stato creato dal lavoro «Motore titoli» (controllare Actions).
+
+## PATCH 49-52 — Grafico interattivo, tooltip, navigazione, marchio e restyling
+- 49: src/armor/grafico.py: grafico a canvas (zoom con rotella/pizzico, scorrimento a trascinamento, 1/3/5/10 anni/Tutto, tocco per leggere i valori) con serie selezionabili: S&P 500 con fasce di regime, VWCE, VT, Nasdaq 100, 12 maggiori titoli del VWCE (data/azioni/*.csv, comando `serie-azioni`, passo in titoli.yml), Indice Armor, VIX, rischi 1/3/6 mesi, spread, CAPE, curva, NFCI. Prezzi in base 100 log; indicatori a scala propria. Sostituisce il vecchio grafico in Regime di tensione (tensione.pagina). Serie extra in series/px_*.json via report.
+- 50: mappa.py e infobox.py: bug dei popup (stato `pinned` duplicato tra copie dello script; chiusura immediata del 2° tocco su ⓘ; chiusura al passaggio verso il popup) corretti; popup a pannello in basso su schermi stretti; area di tocco ⓘ più grande; testi «cosa significa questo colore» (rischio basso = non aumenta il rischio, alto = lo aumenta).
+- 51: src/armor/navigazione.py: 5 sezioni con icone SVG (Oggi, Mercati, Rischio, Grafici, Il mio piano) + sotto-pagine; le 18 pagine sono tutte presenti. parts.TABS_JS aggiornato (gruppo attivo, ultima pagina per gruppo).
+- 52: src/armor/marchio.py (scudo con freccia + ARMOR con gamba della R a freccia, SVG incorporato), icone PNG rigenerate in web/, web/logo.svg, restyling (gradienti, ombre, tabelle, titoli). PROVVISORIO: Logo 1 + Font 3. Tre bozze di logo e di font in PROPOSTE_LOGO_FONT.html: se l'utente ne sceglie altre si sostituiscono marchio.py e le icone (generatore /tmp/brand/brand.py non nel repo).
+- Non fatto: raggruppamento delle schede interne dell'Assistente (dock) in sezioni; NON TESTATO su dati reali né su telefono vero. sw.js armor-v52. Test: 124 passed.
+
+## PATCH 53 — Correzione crash classifiche e logo A con freccia
+- Bug (Actions «Opportunita Armor» e probabilmente anche «Motore titoli» → Saldi vuoto): mondo.rendimenti dava TypeError quando una serie iniziava pochi giorni dopo t0 (p0 None). Ora usa il primo prezzo (tolleranza 4 giorni) e restituisce None per prezzi non validi; titoli.top_json ignora le serie che falliscono; opportunita.aggiorna non ricostruisce più l'archivio prezzi (20+ minuti) ma esce con un messaggio se manca la cache (serve prima un giro riuscito di «Motore titoli Armor»).
+- Logo: A in cerchio con la freccia in stile «gamba della R» (scende e risale), + ARMOR Font 3. Icone PNG e web/logo.svg rigenerati.
+- Test: 125 passed. sw.js armor-v53.
+
+## Patch 54 — Economia nel mondo
+- `src/armor/economia.py`: catalogo di 180 indicatori (FRED, BCE, Eurostat; Banca Mondiale/FMI/BRI via FRED) per Mondo/America/Europa/Asia e 9 argomenti. Pagina `macro`: blocco aggiunto sotto «Liquidità e tassi della Fed» (sezioni esistenti invariate).
+- Comandi: `economia-aggiorna` (scrive data/economia.json), `economia-prova` (elenca gli indicatori mancanti e quelli vecchi). Workflow `Economia Armor` (ogni giorno 04:20 UTC), nella lista di site.yml.
+- Il CSV di FRED dalla sandbox si bloccava con l'intestazione «Mozilla/5.0 (Armor personal research)»: economia.py usa l'intestazione standard (con FRED_API_KEY usa l'API ufficiale). Se in Actions i dati FRED degli altri moduli risultano vuoti, provare lo stesso.
+- Non verificato: Eurostat (fiducia dei consumatori europei: bloccato in sandbox, il codice è testato solo su dati sintetici), BCE intermittente (504).
+- sw.js = armor-v54. Test: 128.
+
+## Patch 55 — Inclinazione del mercato + dati per la verifica
+- `src/armor/inclinazione.py`: tendenza di fondo (3 segnali) + breve termine (10 sedute) + verdetto di direzione a 1 e 3 mesi SOLO se i due periodi (1985-2012, 2013-oggi) concordano di almeno 4 punti sulla frequenza normale. Prova su 40 anni: con questi segnali il verdetto è quasi sempre «nessun segnale affidabile» (prima del 2013 il trend funzionava, dopo si è invertito; AUC fuori campione ≈ 0,5). Non è un bug: è il risultato misurato.
+- Registrato ogni giorno in data/inclinazione_registro.csv (dentro `tutto`), verifica sugli esiti in data/inclinazione_verifica.json; blocco in cima alla pagina Previsioni.
+- Opportunità: nuovo data/opportunita_registro_fattori.csv (+ ricostruito_fattori) con i punteggi dei singoli fattori, per capire in seguito quali funzionano.
+- scripts/salva.sh: un percorso mancante non blocca più il salvataggio degli altri.
+- Da fare (non fatto): rapporto mensile unico che confronti Saldi/Opportunità/Inclinazione con gli esiti reali; serve qualche settimana di dati reali.
+- sw.js = armor-v55. Test: 130.
+
+## Patch 56 — Direzione per situazione (sostituisce la logica della Patch 55)
+- Analisi: l'«inversione dopo il 2013» era in gran parte un artefatto (2000-2012 = due soli orsi contati migliaia di volte; ~32 episodi indipendenti dal 1985, esito misto). Robusto in 3 epoche: PAURA (VIX>30, oppure VIX 25-30 sopra la media a 200 sedute) = di solito si compra; ORSO CONFERMATO (sotto la media da ≥40 sedute) = debole (2000-12 e 2013+; anni '90 pochi casi); Indice Armor ≥55 con prezzi sopra la media = mesi successivi buoni.
+- `inclinazione.py` riscritto: situazioni, 3 epoche, verdetto solo se concordano in tutte le epoche valide (≥100 giorni e ≥3 episodi, soglia 3 punti). Registro nuovo data/inclinazione_registro2.csv. ATTENZIONE: le situazioni sono scelte guardando la storia (in-sample): la prova vera è il registro da oggi.
+- Bug evitato: f-string con backslash non compila su Python 3.11 (verificare sempre con python3.11 -m compileall).
+- sw.js = armor-v56. Test: 130.

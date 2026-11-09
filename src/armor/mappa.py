@@ -356,7 +356,7 @@ MAPPA_CSS = """
 .mpt tr.sep td{height:6px}
 .mpop{position:fixed;z-index:40;max-width:340px;width:calc(100vw - 20px);background:var(--card);color:var(--tx);border:1px solid var(--ac);border-radius:12px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.5);font-size:13px;line-height:1.45;display:none}
 .mpop b.t{font-size:14px}.mpop .big{font-size:22px;font-weight:800}.mpop ul{margin:6px 0;padding-left:18px}.mpop .x{position:absolute;right:6px;top:2px;border:0;background:transparent;color:var(--mu);font-size:22px;cursor:pointer}
-.mpop .tag{display:inline-block;padding:1px 8px;border-radius:99px;color:#fff;font-weight:700;font-size:12px}.mpop .mu{color:var(--mu);font-size:12px}
+.mpop.sheet{left:8px;right:8px;top:auto;bottom:8px;width:auto;max-width:none;max-height:62vh;overflow:auto}.mpop .tag{display:inline-block;padding:1px 8px;border-radius:99px;color:#fff;font-weight:700;font-size:12px}.mpop .mu{color:var(--mu);font-size:12px}
 .c2w{margin:6px 0}.c2bar{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}.c2nav{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
 .c2g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.c2g .cw{text-align:center;font-size:12px;color:var(--mu);font-weight:700}
 .c2d{min-height:62px;border:1px solid var(--bd);border-radius:8px;padding:3px 3px 2px;font-size:11px;background:var(--card);display:flex;flex-direction:column;gap:0;overflow:hidden;cursor:pointer;color:var(--tx);line-height:1.2}
@@ -375,17 +375,20 @@ MAPPA_JS = r"""
 function nf(x,d){return x==null?'n.d.':x.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function sg(x,d){return x==null?'n.d.':(x>0?'+':'')+nf(x,d)+'%'}
 var BANDS=[[20,'molto basso'],[40,'basso'],[60,'moderato'],[80,'elevato'],[101,'molto alto']];
+function meaning(v){if(v==null)return '';return v<34?'<b>Cosa significa:</b> segnale tranquillo. Non aumenta il rischio di calo stimato: è una condizione favorevole.':v<67?'<b>Cosa significa:</b> segnale intermedio. Aumenta il rischio solo in parte: né rassicurante né preoccupante.':'<b>Cosa significa:</b> segnale di stress. Spinge l\'Indice Armor verso l\'alto, cioè <b>aumenta</b> la probabilità stimata di cali (non vuol dire che il calo avverrà).'}
 function bandName(v){for(var i=0;i<BANDS.length;i++)if(v<BANDS[i][0])return BANDS[i][1];return 'molto alto'}
 function col(v){var h=125*(1-Math.min(Math.max((v-1)/99,0),1));return 'hsl('+h.toFixed(0)+',70%,42%)'}
 function rcol(x){var t=Math.max(-1,Math.min(1,x/4));return 'hsl('+(60+t*62).toFixed(0)+',68%,'+(40+(1-Math.abs(t))*4)+'%)'}
 function dm(s){var a=s.split('-');return a[2]+'/'+a[1]+'/'+a[0]}
 var MES=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
 var pop=document.getElementById('mpop');if(!pop){pop=document.createElement('div');pop.id='mpop';pop.className='mpop';document.body.appendChild(pop)}
-var pinned=false;
-function showPop(html,el){pop.innerHTML='<button class="x" aria-label="Chiudi">×</button>'+html;pop.style.display='block';var r=el.getBoundingClientRect(),w=pop.offsetWidth,h=pop.offsetHeight;
+function isPin(){return pop.dataset.pin==='1'}function setPin(v){pop.dataset.pin=v?'1':'0'}var hideT=null;
+function hideSoon(){clearTimeout(hideT);hideT=setTimeout(function(){if(!isPin())pop.style.display='none'},300)}
+pop.addEventListener('mouseenter',function(){clearTimeout(hideT)});pop.addEventListener('mouseleave',function(){if(!isPin())hideSoon()});
+function showPop(html,el){clearTimeout(hideT);pop.innerHTML='<button class="x" aria-label="Chiudi">×</button>'+html;pop.style.display='block';if(window.innerWidth<640){pop.classList.add('sheet');pop.style.left='';pop.style.top='';return}pop.classList.remove('sheet');var r=el.getBoundingClientRect(),w=pop.offsetWidth,h=pop.offsetHeight;
 var x=Math.min(Math.max(8,r.left+r.width/2-w/2),window.innerWidth-w-8),y=r.top-h-8;if(y<8)y=Math.min(r.bottom+8,window.innerHeight-h-8);pop.style.left=x+'px';pop.style.top=Math.max(8,y)+'px'}
-pop.addEventListener('click',function(e){if(e.target.className==='x'){pinned=false;pop.style.display='none'}});
-document.addEventListener('click',function(e){if(!e.target.closest||(!e.target.closest('.mpop')&&!e.target.closest('.mpt td.c'))){pinned=false;pop.style.display='none'}});
+pop.addEventListener('click',function(e){if(e.target.className==='x'){setPin(0);pop.style.display='none'}});
+document.addEventListener('click',function(e){if(!e.target.closest||(!e.target.closest('.mpop')&&!e.target.closest('.mpt td.c'))){setPin(0);pop.style.display='none'}});
 function init(root){
 if(root.dataset.on)return;root.dataset.on='1';
 var D=null,per=+(root.dataset.per||156),open=root.dataset.open==='1',selRow=null,selCell=null;
@@ -418,7 +421,7 @@ else if(r.t==='fam'){
 else{
  var sv=r.sv,prev2=c>0?r.v[c-1]:null,ch=(prev2!=null&&r.v[c]!=null)?r.v[c]-prev2:null;
  h='<b class="t">'+r.n+' · settimana al '+d+'</b><div class="big" style="color:'+(sc==null?'inherit':col(sc))+'">'+valTxt(r,c)+'</div>'+
- (sc!=null?'<div>Rischio <span class="tag" style="background:'+col(sc)+'">'+sc+'/100 · '+bandName(sc)+'</span></div>':'')+
+ (sc!=null?'<div>Rischio <span class="tag" style="background:'+col(sc)+'">'+sc+'/100 · '+bandName(sc)+'</span></div><div class="mu" style="margin-top:4px">'+meaning(sc)+'</div>':'')+
  '<ul>'+(r.rd?'<li><b>Cosa misura:</b> '+r.rd+'</li>':'')+(r.wo?'<li><b>Quando preoccupa:</b> '+r.wo+'</li>':'')+(r.zn?'<li><b>Perché questo colore:</b> '+r.zn+'.</li>':'')+
  (ch!=null?'<li>Rispetto alla settimana prima: '+(ch>0?'+':'')+nf(ch,r.d==null?1:r.d)+'.</li>':'')+(r.ni?'<li>Monitorato ma <b>non ancora nell\'Indice Armor</b>: entra solo se il test automatico mensile lo promuove.</li>':'<li>Fa parte di «'+r.g+'» (peso '+((D.fam[r.g]||{}).w||0)+'% dell\'indice).</li>')+'</ul>'+
  (sv?'<div class="mu">Scala reale: '+[10,30,50,70,90].map(function(t,i){return sv[i]==null?'':'<span class="tag" style="background:'+col(t)+'">'+nf(sv[i],r.d==null?1:r.d)+'</span> '}).join('')+'(dal verde al rosso)</div>':'')+aft+stats(r)}
@@ -450,14 +453,14 @@ function draw(){
  '<div class="mu" style="margin-top:6px">Tocca (o passa il mouse su) un quadratino per sapere perché ha quel colore. Tocca il nome di una riga per vedere a quali valori reali corrispondono i colori. '+D.pc+'</div>';
  var sc=root.querySelector('.mpscroll');sc.scrollLeft=sc.scrollWidth;showScale()}
 function showScale(){var el=root.querySelector('#mpsc');if(!el)return;if(selRow==null){el.innerHTML='';return}var r=D.rows[selRow],h='';
- if(r.sv){h='<b>'+r.n+'</b> — a che valori corrispondono i colori: '+[10,30,50,70,90].map(function(t,i){return r.sv[i]==null?'':'<span style="background:'+col(t)+'">'+nf(r.sv[i],r.d==null?1:r.d)+(r.u==='%'?'%':'')+'</span>'}).join('')+' (verde → rosso)'}
+ if(r.sv){h='<b>'+r.n+'</b> — a che valori corrispondono i colori: '+[10,30,50,70,90].map(function(t,i){return r.sv[i]==null?'':'<span style="background:'+col(t)+'">'+nf(r.sv[i],r.d==null?1:r.d)+(r.u==='%'?'%':'')+'</span>'}).join('')+' (dal verde: valori calmi che non aumentano il rischio, al rosso: valori da stress che lo aumentano; <b>troppo alto</b> o <b>troppo basso</b> dipende dall\'indicatore: vedi «Quando preoccupa» toccando un quadratino)'}
  else if(r.t==='ret'){h='<b>'+r.n+'</b> — verde = settimana in rialzo, rosso = in calo; il colore pieno si raggiunge a ±4%.'}
- else{h='<b>'+r.n+'</b> — 1–20 molto basso, 20–40 basso, 40–60 moderato, 60–80 elevato, 80–100 molto alto.'}el.innerHTML=h}
+ else{h='<b>'+r.n+'</b> — il colore indica il <b>rischio</b> che questo segnale segnala, non il suo valore. <span class="gl">1–40 verde: segnale calmo, <b>non</b> aumenta il rischio di cali. 40–60 giallo: intermedio. 60–100 arancio/rosso: segnale di stress, <b>aumenta</b> il rischio stimato di cali.</span> Non prevede un crollo: indica quanto le condizioni somigliano a quelle storicamente più fragili.'}el.innerHTML=h}
 root.addEventListener('click',function(e){var b=e.target.closest('button');if(b&&b.dataset.per){per=+b.dataset.per;draw();return}if(b&&b.dataset.open){open=!open;draw();return}
  var rl=e.target.closest('td.rl');if(rl){var i=+rl.parentNode.dataset.r;var r=D.rows[i];if(r&&r.t==='fam'&&((D.fam[r.g]||{}).keys||[]).length&&e.offsetX<18){open=!open;draw();return}selRow=(selRow===i)?null:i;root.querySelectorAll('td.rl').forEach(function(x){x.classList.toggle('sel',x===rl&&selRow===i)});showScale();return}
- var td=e.target.closest('td.c');if(td&&td.dataset.c){e.stopPropagation();pinned=true;showPop(detail(+td.parentNode.dataset.r,+td.dataset.c),td)}});
-root.addEventListener('mouseover',function(e){if(pinned||!window.matchMedia('(hover:hover)').matches)return;var td=e.target.closest('td.c');if(td&&td.dataset.c)showPop(detail(+td.parentNode.dataset.r,+td.dataset.c),td)});
-root.addEventListener('mouseout',function(e){if(pinned)return;var td=e.target.closest('td.c');if(td)pop.style.display='none'});
+ var td=e.target.closest('td.c');if(td&&td.dataset.c){e.stopPropagation();setPin(1);showPop(detail(+td.parentNode.dataset.r,+td.dataset.c),td)}});
+root.addEventListener('mouseover',function(e){if(isPin()||!window.matchMedia('(hover:hover)').matches)return;var td=e.target.closest('td.c');if(td&&td.dataset.c)showPop(detail(+td.parentNode.dataset.r,+td.dataset.c),td)});
+root.addEventListener('mouseout',function(e){if(isPin())return;var td=e.target.closest('td.c');if(td)hideSoon()});
 }
 window.armorMappa=function(scope){(scope||document).querySelectorAll('.mpw[data-mappa]').forEach(init)};
 window.armorMappa();

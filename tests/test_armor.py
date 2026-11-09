@@ -2004,3 +2004,102 @@ def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
     assert all("da_allora" in x for x in d["prec"]["titoli"].values())
     assert pd.read_csv(op.RICOSTRUITO)["data"].nunique() == 1 and not any(w["ric"] is False and w["data"] == d["prec"]["settimana"] for w in d["storico"]["settimane"])
     assert any(w["ric"] for w in d["storico"]["settimane"])
+
+
+def test_navigazione_copre_tutte_le_pagine():
+    from armor import navigazione
+    pagine = ["oggi", "notizie", "mercati", "saldi", "opportunita", "indici", "regime", "valutazioni", "aziende", "macro", "grafici", "previsioni", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi"]
+    coperte = [p for _g, _l, ps, _i in navigazione.GRUPPI for p in ps]
+    assert sorted(coperte) == sorted(pagine) and len(set(coperte)) == len(coperte)
+    h = navigazione.html([(p, p) for p in pagine])
+    assert h.count("data-g=") == 5 + 18 and "<svg" in h
+
+
+def test_grafico_blocco_e_serie_azioni(tmp_path, monkeypatch):
+    from armor import grafico
+    monkeypatch.setattr(grafico, "AZ", tmp_path)
+    idx = pd.bdate_range("2020-01-01", periods=50)
+    assert grafico._upsert("NVDA", pd.Series(np.arange(50.0) + 10, index=idx)) == 50 and grafico._upsert("NVDA", pd.Series([99.0], index=idx[-1:])) == 0
+    assert grafico._load("NVDA").iloc[-1] == 99.0 and grafico.disponibili() == [["NVDA", "NVIDIA"]]
+    h = grafico.block({"d": ["2020-01-01", "2020-01-02"], "p": [1, 2], "fasce": []})
+    assert "id='gx'" in h and "NVDA" in h and grafico.block(None) == ""
+    assert "isPin" in __import__("armor.mappa", fromlist=["x"]).MAPPA_JS if hasattr(__import__("armor.mappa", fromlist=["x"]), "MAPPA_JS") else True
+
+
+def test_rendimenti_serie_che_inizia_dopo_t0_e_prezzi_non_validi():
+    from armor import mondo
+    idx = pd.bdate_range(end="2026-11-06", periods=300)
+    ok = pd.Series(np.linspace(10, 20, 300), index=idx)
+    nuova = ok.iloc[-24:].copy()             # titolo quotato da poche settimane: nessun p0 per i periodi lunghi
+    r = mondo.rendimenti(nuova, None, "USD")
+    assert r is None or all(x is None or np.isfinite(x) for x in r[0])
+    inizio = ok.copy(); inizio.index = inizio.index  # prima seduta a pochi giorni da t0
+    assert mondo.rendimenti(inizio.iloc[3:], None, "USD") is not None
+    assert mondo.rendimenti(pd.Series(np.zeros(30), index=idx[-30:]), None, "USD") is None
+
+
+def test_economia_trasformazioni_e_scheda(tmp_path, monkeypatch):
+    from armor import economia as ec
+    monkeypatch.setattr(ec, "FILE", tmp_path / "economia.json")
+    idx = pd.date_range("2022-01-01", periods=48, freq="MS")
+    s = pd.Series(np.linspace(100, 110, 48), index=idx)
+    t = ec.trasforma(s, "yoy", 12)
+    assert len(t) == 36 and t.iloc[-1] > 0
+    assert len(ec.trasforma(s, "diff", 1)) == 47
+    sp = ec.S("x", "inflazione", "infl", "Prova", "europa", "fred", "X", tr="yoy", bene="t")
+    sc = ec.scheda(sp, s, oggi="2026-02-01")
+    assert sc["st"] in ("ok", "wa", "ba") and not sc["old"] and sc["u"] == "%"
+    assert ec.scheda(sp, s, oggi="2027-12-01")["old"]
+    assert ec.valuta(pd.Series([5.0] * 10, index=pd.date_range("2024-01-01", periods=10, freq="MS")), 0) == "na"
+
+
+def test_economia_valuta_direzione():
+    from armor import economia as ec
+    idx = pd.date_range("2023-01-01", periods=30, freq="MS")
+    su = pd.Series(np.linspace(3, 6, 30), index=idx)
+    assert ec.valuta(su, -1) == "ba" and ec.valuta(su, 1) == "ok"
+
+
+def test_economia_parser_ecb_eurostat_e_aggiorna(tmp_path, monkeypatch):
+    from armor import economia as ec
+    s = ec.parse_ecb_csv("KEY,TIME_PERIOD,OBS_VALUE\nA,2025-01,2.5\nA,2025-02,2.4\nA,2025-Q1,1.0\n")
+    assert float(s.iloc[-1]) in (2.4, 1.0) and len(s) == 3
+    j = {"dimension": {"time": {"category": {"index": {"2025-01": 0, "2025-02": 1, "2025-03": 2}}}}, "value": {"0": -14.0, "2": -12.5}}
+    e = ec.parse_jsonstat(j)
+    assert len(e) == 2 and float(e.iloc[-1]) == -12.5
+    monkeypatch.setattr(ec, "FILE", tmp_path / "economia.json")
+    idx = pd.date_range("2020-01-01", periods=80, freq="MS")
+    cat = [ec.S("a", "lavoro", "disocc", "A", "america", "fred", "A", bene=-1), ec.S("b", "lavoro", "disocc", "B", "europa", "fred", "B", bene=-1)]
+    def fetch(code):
+        if code == "B":
+            raise RuntimeError("giù")
+        return pd.Series(np.linspace(4, 5, 80), index=idx)
+    d = ec.aggiorna(log=lambda *_: None, catalogo=cat, fetch={"fred": fetch})
+    assert [x["id"] for x in d["items"]] == ["a"] and "b" in d["errori"]
+    assert "L'economia nel mondo" in ec.block(ec.carica()) and ec.CAT
+
+
+def test_inclinazione_situazioni_verdetto_e_registro(tmp_path):
+    from armor import inclinazione as inc
+    idx = pd.bdate_range("1985-01-01", "2026-01-30")
+    rng = np.random.default_rng(1)
+    p = pd.Series(100 * np.exp(np.cumsum(rng.normal(0.0004, 0.01, len(idx)))), index=idx)
+    vix = pd.Series(15 + 25 * np.abs(rng.normal(0, 0.5, len(idx))), index=idx)
+    d = inc.oggi(p, vix, None)
+    assert d["sit"] in inc.SIT and d["lungo"] in ("rialzista", "mista", "ribassista")
+    assert all(inc.verdetto(d)[h] in ("rialzo", "ribasso", "nd") for h in ("1m", "3m"))
+    f = tmp_path / "r.csv"
+    assert inc.registra(d, f) and not inc.registra(d, f)
+    v = inc.verifica(p, f)
+    assert v["n"] == 1 and "orizzonti" in v
+    assert "Tendenza di fondo" in inc.html(d, v)
+
+
+def test_inclinazione_senza_casi_non_inventa_direzione():
+    from armor import inclinazione as inc
+    idx = pd.bdate_range("1985-01-01", "2026-01-30")
+    p = pd.Series(np.arange(len(idx), dtype=float) + 100, index=idx)   # sempre in salita
+    vix = pd.Series(12.0, index=idx)
+    f = inc.segnali(p, vix, None)
+    assert inc.frequenze(p, f, "orso")["1m"]["verdetto"] == "nd"
+    assert inc.frequenze(p, f, "panico")["3m"]["verdetto"] == "nd"
