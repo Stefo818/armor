@@ -39,17 +39,24 @@ def riepilogo(df: pd.DataFrame, spot: float, day: str) -> dict:
             "n_contratti": int(len(df)), "volume_totale": float(df.volume.sum())}
 
 
+def venerdi_se_weekend(d: str) -> str:
+    """Le righe salvate di sabato o domenica (versioni precedenti) appartengono alla seduta del venerdi'."""
+    t = pd.Timestamp(d)
+    return (t - pd.Timedelta(days=t.dayofweek - 4)).strftime("%Y-%m-%d") if t.dayofweek >= 5 else str(d)
+
+
 def archive_spy_options() -> str:
     import yfinance as yf
 
-    day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    t = yf.Ticker("SPY")
+    h = t.history(period="7d")["Close"].dropna()
+    day = h.index[-1].strftime("%Y-%m-%d")   # data dell'ultima seduta USA chiusa (non quella del giro: il sabato la catena e' quella di venerdi')
     chains = ARCHIVE / "chains"
     chains.mkdir(parents=True, exist_ok=True)
     f = chains / f"spy_{day}.csv.gz"
     if f.exists():
         return "gia' archiviato oggi"
-    t = yf.Ticker("SPY")
-    spot = float(t.history(period="1d")["Close"].iloc[-1])
+    spot = float(h.iloc[-1])
     frames = []
     tutte = list(t.options)
     lontane = [min(tutte, key=lambda e, g=g: abs((pd.Timestamp(e) - pd.Timestamp(day)).days - g)) for g in (60, 90, 180)] if tutte else []
@@ -65,5 +72,7 @@ def archive_spy_options() -> str:
     row = riepilogo(df, spot, day)
     s = ARCHIVE / "spy_options_summary.csv"
     old = pd.read_csv(s) if s.exists() else pd.DataFrame()
+    if len(old):
+        old["date"] = old["date"].map(venerdi_se_weekend)
     pd.concat([old, pd.DataFrame([row])]).drop_duplicates("date", keep="last").to_csv(s, index=False, float_format="%.5g")
     return "ok"

@@ -6,7 +6,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from . import armor_index, semafori, store
+from . import armor_index, semafori
 
 e = _h.escape
 
@@ -49,7 +49,7 @@ def _dm(iso: str) -> str:
     return f"{iso[8:10]}/{iso[5:7]}"
 
 
-def trend_dated(s: pd.Series, d: int, risk: bool, rel: bool = True, live: bool = True) -> str:
+def trend_dated(s: pd.Series, d: int, risk: bool, rel: bool = True, live: bool = True, thr: float | None = None) -> str:
     """Variazioni rispetto a due chiusure con la data esplicita (niente «Ieri», che nel weekend ingannava).
     Il valore mostrato e' l'ultima chiusura; la chiusura precedente e quella di una settimana prima sono calcolate
     sulla stessa serie e, se c'e' un prezzo in diretta, il browser le ricalcola con le stesse regole (vedi report.paint)."""
@@ -68,7 +68,7 @@ def trend_dated(s: pd.Series, d: int, risk: bool, rel: bool = True, live: bool =
         pct = diff / ref * 100 if ref else None
         t = (f"{pct:+.1f}%" if rel else f"{diff:+.{d}f}").replace(".", ",").replace("-", "\u2212")
         return (f"<div class='tcl'><span class='mu'>Il {_dm(dt.strftime('%Y-%m-%d'))}</span> <b>{_fmt(ref, d)}</b> "
-                f"{arrow(pct if rel else diff, 1.0 if rel else 0.0, risk)} <span class='mu'>({t})</span></div>")
+                f"{arrow(pct if rel else diff, (1.0 if rel else 0.0) if thr is None else thr, risk)} <span class='mu'>({t})</span></div>")
     attrs = (f" data-h='{json.dumps(_closes(s), separators=(',', ':'))}' data-d='{d}' data-risk='{1 if risk else 0}'") if live else ""
     return f"<div class='trow'{attrs}>{one(prev)}{one(wk)}</div>"
 
@@ -79,11 +79,11 @@ def hero_trend(d: dict | None) -> str:
     h = d["hist"].dropna()
     if len(h) < 7:
         return ""
-    now, ieri, sett = float(h.iloc[-1]), float(h.iloc[-2]), float(h.iloc[-6])
+    now, sett = float(h.iloc[-1]), float(h.iloc[-6])
     ch = now - sett
     word = "in aumento" if ch > 2 else ("in calo" if ch < -2 else "stabile")
     return (f"<div class='htr'><div class='htrb'>{arrow(ch, 2.0)} <b>Rischio {word}</b> <span class='mu'>(rispetto a una settimana fa)</span></div>"
-            f"<div class='trow'>{trend_cells(now, ieri, sett, 0, 1.0, True)}</div></div>")
+            f"{trend_dated(h, 0, True, rel=False, live=False, thr=1.0)}</div>")
 
 
 def _vix_gauge(v: float | None) -> str:
@@ -132,7 +132,7 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
         s = ser.dropna()
         if s.empty:
             continue
-        x, x1, x5 = float(s.iloc[-1]), float(s.iloc[-2]) if len(s) > 1 else None, float(s.iloc[-6]) if len(s) > 5 else None
+        x = float(s.iloc[-1])
         dd = (x / float(s.rolling(252, min_periods=60).max().iloc[-1]) - 1) * 100
         cards += (f"<div class='kc lq' data-k='{key}' data-chart='{chart}'><div class='kt'>{nm}</div><div class='kv lqp'>{_fmt(x, 2)}</div><div class='lqc'></div>"
                   f"{trend_dated(s, 2, False)}<div class='mu'>Dal massimo a 1 anno: {_fmt(dd, 1)}%</div></div>")

@@ -527,3 +527,11 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - previsti.py: P/E e P/S previsti S&P 500 (yfinance su ~500 titoli, 1 volta/settimana dentro `tutto`; comando `python -m armor previsti`); la storia parte dal primo giro. NON fatto: versione VWCE (partecipazioni) — rimandato.
 - confronto.json ~1,7 MB (440 KB compresso da GitHub Pages).
 - sw.js cache armor-v40.
+
+## PATCH 41 — pagina «Oggi» riordinata, Semafori ridisegnati, schede delle famiglie
+- Nuovo ordine di «Oggi»: 1) Indice Armor + schede VIX/Put-Call/S&P/VWCE; 2) Semafori di oggi (nuovo); 3) valutazioni P/E-P/S, prossimo evento, grafico di confronto; 4) tutto il resto (Oggi cosa faccio, affidabilità, bilancio, ciclico, mappa, calendario).
+- Semafori di oggi (semafori.oggi_html): barra proporzionale ok/attenzione/allarme (tocca → elenco), una pillola per gruppo (12 gruppi dei semafori; pallini colorati per indicatore; tocca → indicatori del gruppo con valore e frase), riga «Cambiati da <data>» da data/semafori_storia.csv (scritto a ogni build, idempotente per data; parte da oggi, il confronto compare dal giorno dopo).
+- Mappa settimanale e pagina Indici: ogni intestazione ha la scheda (ⓘ, mouse fermo, pressione lunga): cosa misura, cosa comprende (lista indicatori e peso della famiglia da armor_index.GROUPS), come leggere i numeri, valori a dic 2007 / mar 2020 / ott 2022 / oggi; ogni indicatore: cosa misura, quando preoccuparsi, soglie, famiglia. Testi in mappa.FAM_INFO / ROW_INFO.
+- Termometro Indice Armor: «Il 05/11 …» con le date reali (non più «Ieri»). Il riquadro dei 3 orizzonti (finestra Armor) usa ancora «Ieri / Sett. fa».
+- Archivio opzioni SPY: la data è quella dell'ultima seduta USA chiusa; le righe salvate di sabato/domenica sono ricondotte al venerdì (archive.venerdi_se_weekend, anche in lettura).
+- Pulizia ruff (F) in cruscotto.py. sw.js cache armor-v41.

@@ -1603,3 +1603,31 @@ def test_glossario_copre_tutte_le_serie():
     from armor import confronto, glossario_serie
     mancanti = [k for k, *_ in confronto.SERIES if glossario_serie.scheda(k) is None]
     assert not mancanti, mancanti
+
+
+# ---- patch 41: semafori di oggi, cambi, schede mappa
+def test_semafori_cambiati_e_storia(tmp_path, monkeypatch):
+    from armor import semafori
+    monkeypatch.setattr(semafori, "_storia_path", lambda: tmp_path / "s.csv")
+    it = [{"key": "a", "name": "A", "group": "G1", "light": "ok", "value": 1.0, "dec": 1, "unit": "", "read": "r"},
+          {"key": "b", "name": "B", "group": "G1", "light": "wa", "value": 2.0, "dec": 1, "unit": "", "read": "r"}]
+    semafori.registra_colori(it, "2026-11-06")
+    it[0] = dict(it[0], light="ba")
+    semafori.registra_colori(it, "2026-11-09")
+    semafori.registra_colori(it, "2026-11-09")   # idempotente
+    ch, dt = semafori.cambiati(it, "2026-11-09")
+    assert dt == "2026-11-06" and len(ch) == 1 and ch[0]["key"] == "a" and (ch[0]["da"], ch[0]["a"]) == ("ok", "ba")
+    h = semafori.oggi_html(it, "2026-11-09")
+    assert "Cambiati dal 06/11" in h and "data-sg='0'" in h
+
+
+def test_weekend_options_date():
+    from armor import archive
+    assert archive.venerdi_se_weekend("2026-11-07") == "2026-11-06" and archive.venerdi_se_weekend("2026-11-09") == "2026-11-09"
+
+
+def test_hero_trend_con_date():
+    from armor import cruscotto
+    h = pd.Series(range(40, 50), index=pd.bdate_range("2026-10-26", periods=10), dtype=float)
+    out = cruscotto.hero_trend({"hist": h})
+    assert "Il 05/11" in out and "Il 30/10" in out and "Ieri" not in out

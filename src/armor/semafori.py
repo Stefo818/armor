@@ -182,7 +182,9 @@ def _arch_series(col: str) -> pd.Series:
     d = pd.read_csv(f)
     if col not in d:
         return pd.Series(dtype=float)
-    x = pd.Series(d[col].values, index=pd.to_datetime(d["date"]))
+    from .archive import venerdi_se_weekend
+    x = pd.Series(d[col].values, index=pd.to_datetime(d["date"].map(venerdi_se_weekend)))
+    x = x[~x.index.duplicated(keep="last")]
     if col.startswith("pc_"):   # rapporto put/call <= 0 = snapshot degenere (mercato chiuso): non e' un dato
         x = x.where(x > 0)
     return x.dropna()
@@ -409,3 +411,94 @@ def cliccabile(testo: str) -> str:
     return re.sub(r"(\d+) rossi, (\d+) gialli, (\d+) verdi",
                   lambda m: (f"<a href='#' class='semlk' data-semlist='ba'>{m.group(1)} rossi</a>, <a href='#' class='semlk' data-semlist='wa'>{m.group(2)} gialli</a>, "
                              f"<a href='#' class='semlk' data-semlist='ok'>{m.group(3)} verdi</a> · <a href='#' class='semlk' data-semlist='all'>vedi la lista</a>"), testo)
+
+
+# ---------------------------------------------------------------- blocco «Semafori di oggi» (Patch 41): barra proporzionale, pillole per famiglia, cambi da ieri
+def _storia_path():
+    from .config import DATA
+    return DATA / "semafori_storia.csv"
+
+
+def registra_colori(items: list[dict], oggi: str) -> None:
+    """Salva i colori di oggi (una riga per indicatore, idempotente per data). Il file serve a mostrare «cambiati da ieri»."""
+    p = _storia_path()
+    old = pd.read_csv(p) if p.exists() else pd.DataFrame(columns=["date", "key", "light"])
+    new = pd.DataFrame([{"date": oggi, "key": i["key"], "light": i["light"]} for i in items])
+    d = pd.concat([old[old["date"] != oggi], new]).sort_values(["date", "key"])
+    d = d[d["date"] >= (pd.Timestamp(oggi) - pd.Timedelta(days=400)).strftime("%Y-%m-%d")]
+    d.to_csv(p, index=False)
+
+
+def cambiati(items: list[dict], oggi: str) -> tuple[list[dict], str | None]:
+    """Indicatori il cui colore e' diverso rispetto all'ultima data precedente a oggi. Restituisce (elenco, data di confronto)."""
+    p = _storia_path()
+    if not p.exists():
+        return [], None
+    d = pd.read_csv(p)
+    prima = d[d["date"] < oggi]
+    if prima.empty:
+        return [], None
+    dt = prima["date"].max()
+    ref = dict(zip(prima[prima["date"] == dt]["key"], prima[prima["date"] == dt]["light"]))
+    out = [{"name": i["name"], "key": i["key"], "da": ref[i["key"]], "a": i["light"]} for i in items if i["key"] in ref and ref[i["key"]] != i["light"] and "na" not in (ref[i["key"]], i["light"])]
+    return out, dt
+
+
+def _stato_gruppo(its: list[dict]) -> str:
+    n = {k: sum(1 for i in its if i["light"] == k) for k in ("ba", "wa", "ok")}
+    if n["ba"] and n["ba"] >= max(1, n["ok"]):
+        return "ba"
+    if n["ba"] or n["wa"]:
+        return "wa"
+    return "ok"
+
+
+def oggi_html(items: list[dict], oggi: str) -> str:
+    if not items:
+        return ""
+    e = _h.escape
+    n = overall(items)
+    tot = max(1, n["ok"] + n["wa"] + n["ba"])
+    inf = sum(1 for i in items if i["light"] == "na")
+    seg = "".join(f"<a href='#' class='sgs {k}' data-semlist='{k}' style='flex:{n[k]}' title='{lab}'><b>{n[k]}</b><span>{lab}</span></a>"
+                  for k, lab in (("ok", "tranquilli"), ("wa", "attenzione"), ("ba", "allarme")) if n[k])
+    groups = {}
+    for i in items:
+        groups.setdefault(i["group"], []).append(i)
+    pills, panels = "", ""
+    for gi, (g, its) in enumerate(groups.items()):
+        st = _stato_gruppo(its)
+        dots = "".join(f"<i class='{i['light']}'></i>" for i in sorted(its, key=lambda i: {"ba": 0, "wa": 1, "ok": 2, "na": 3}[i["light"]]))
+        pills += f"<button type='button' class='sgp {st}' data-sg='{gi}'><span class='sgn'>{e(g)}</span><span class='sgd'>{dots}</span></button>"
+        rows = "".join(f"<div class='smi {i['light']}' data-chart='{e(i['key'])}'><span class='dot'></span><div class='smn'><b>{e(i['name'])}</b><span>{e(i['read'])}</span></div>"
+                       f"<div class='smv'>{fmt(i['value'], i['dec'], i['unit'])}</div></div>"
+                       for i in sorted(its, key=lambda i: {"ba": 0, "wa": 1, "ok": 2, "na": 3}[i["light"]]))
+        panels += f"<div class='sgpan' data-sgp='{gi}' hidden><h4>{e(g)}</h4>{rows}</div>"
+    ch, dt = cambiati(items, oggi)
+    if dt is None:
+        cambio = "<div class='sgc mu'>Cambi rispetto a ieri: il confronto parte dal prossimo aggiornamento.</div>"
+    elif not ch:
+        cambio = f"<div class='sgc mu'>Nessun cambio di colore rispetto al {dt[8:10]}/{dt[5:7]}.</div>"
+    else:
+        nm = {"ok": "verde", "wa": "giallo", "ba": "rosso"}
+        txt = " · ".join(f"<b>{e(c['name'])}</b>: <span class='{c['da']}t'>{nm.get(c['da'], '')}</span> → <span class='{c['a']}t'>{nm.get(c['a'], '')}</span>" for c in ch[:8])
+        cambio = f"<div class='sgc'>Cambiati dal {dt[8:10]}/{dt[5:7]}: {txt}{' …' if len(ch) > 8 else ''}</div>"
+    return (f"<div class='card sgbox'><div class='sght'><b>Semafori di oggi</b><span class='mu'>{tot} indicatori" + (f" · {inf} solo informativi" if inf else "") + "</span></div>"
+            f"<div class='sgbar'>{seg}</div><div class='sgpills'>{pills}</div>{panels}{cambio}"
+            "<div class='sgl'><a href='#' data-semlist='all'>Vedi tutti i semafori ›</a> <a href='#indici' data-go='indici'>Schede con le spiegazioni ›</a></div></div>")
+
+
+OGGI_JS = r"""<script>(function(){document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('.sgp');if(!b)return;var box=b.closest('.sgbox'),i=b.getAttribute('data-sg'),p=box.querySelector('[data-sgp="'+i+'"]'),open=!p.hidden;
+[].forEach.call(box.querySelectorAll('.sgpan'),function(x){x.hidden=true});[].forEach.call(box.querySelectorAll('.sgp'),function(x){x.classList.remove('sel')});if(!open){p.hidden=false;b.classList.add('sel')}})})();</script>"""
+
+OGGI_CSS = """
+.sgbox{padding:12px 14px}.sght{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.sgbar{display:flex;gap:3px;height:38px;border-radius:10px;overflow:hidden}.sgs{display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;text-decoration:none;font-size:12px;min-width:88px}
+.sgs b{font-size:17px}.sgs span{font-size:11px;opacity:.95}.sgs.ok{background:var(--ok)}.sgs.wa{background:var(--warn);color:#1a1a1a}.sgs.ba{background:var(--bad)}
+.sgpills{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}.sgp{display:flex;flex-direction:column;gap:3px;align-items:flex-start;border:1px solid var(--bd);border-left-width:4px;background:var(--bg);color:var(--tx);border-radius:10px;padding:6px 9px;font:inherit;font-size:12px;cursor:pointer;text-align:left}
+.sgp.ok{border-left-color:var(--ok)}.sgp.wa{border-left-color:var(--warn)}.sgp.ba{border-left-color:var(--bad)}.sgp.sel{outline:2px solid var(--ac)}.sgn{font-weight:700}
+.sgd{display:flex;gap:3px;flex-wrap:wrap;max-width:150px}.sgd i{width:9px;height:9px;border-radius:50%;background:var(--mu)}.sgd i.ok{background:var(--ok)}.sgd i.wa{background:var(--warn)}.sgd i.ba{background:var(--bad)}
+.sgpan{margin:8px 0;border-top:1px solid var(--bd);padding-top:6px}.sgpan h4{margin:2px 0 4px}.sgpan[hidden]{display:none}
+.sgc{font-size:12.5px;margin:8px 0 4px}.okt{color:var(--ok);font-weight:700}.wat{color:var(--warn);font-weight:700}.bat{color:var(--bad);font-weight:700}
+.sgl{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-top:6px}
+"""

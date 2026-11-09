@@ -930,8 +930,8 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             (sd / "confronto.json").write_text(cf_json, encoding="utf-8")
     except Exception as ex:  # noqa: BLE001
         print("Grafico di confronto non creato:", str(ex)[:160], flush=True)
-    cf_intro = ("<div class='explain'><p>In alto <b>S&amp;P 500</b> (giallo tratteggiato) e <b>VWCE</b> (blu tratteggiato), sotto l'<b>Indice Armor</b> e le probabilità di calo (rosso) e di rialzo (verde), giorno per giorno dal 2000. "
-                "Serve a vedere se ai picchi dell'indice sono seguiti davvero cali del mercato. Puoi accendere altre linee (VIX, spread, famiglie) e cambiare periodo.</p></div>")
+    cf_intro = ("<div class='explain'><p>In alto i mercati (<b>S&amp;P 500</b>, <b>VWCE</b> e altri a scelta), sotto l'<b>Indice Armor</b> e le probabilità di calo (rosso) e di rialzo (verde), giorno per giorno dal 2000. "
+                "Serve a vedere se ai picchi dell'indice sono seguiti davvero cali del mercato. Puoi accendere altre linee (VIX, credito, valutazioni, oro, bitcoin…), cambiare periodo, ingrandire e scorrere. Tieni il mouse fermo o il dito premuto su un nome per leggere cosa significa.</p></div>")
     if not cf_json:
         cf_small = cf_full = "<p class='mu'>Grafico non disponibile oggi.</p>"
     elif lazy:
@@ -966,14 +966,20 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
         print("Indici a 3 orizzonti non calcolati:", str(ex)[:120], flush=True)
         hz3 = None
     kpi = _safe(lambda: cruscotto.kpi_html(sem, sp, vwce_display(), store.load("vix")), "Indici principali")
-    p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>{_safe(diagnostica.banner, 'Avviso diario')}{_safe(affidabilita.html, 'Affidabilità')}"
+    try:
+        semafori.registra_colori(sem, today_d.isoformat())
+    except Exception as ex:  # noqa: BLE001
+        print("Storico semafori non salvato:", str(ex)[:100], flush=True)
+    sem_new = _safe(lambda: semafori.oggi_html(sem, today_d.isoformat()), "Semafori di oggi") if sem else ""
+    p_oggi = (f"<a id='oggi'></a>{topbtns}"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
-              f"{('<div class=card><b>Semafori di oggi:</b> ' + sem_line + '</div>') if sem_line else ''}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
+              f"{sem_new}"
+              f"<section class='b5'>{parts.valuations_mini(vcards)}</section>{ui.next_event_html(today_d)}"
+              f"<h2 style='margin-top:22px'>Indice Armor contro i mercati, giorno per giorno</h2>{cf_intro}{cf_small}"
+              f"<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>{_safe(diagnostica.banner, 'Avviso diario')}{_safe(affidabilita.html, 'Affidabilità')}"
               f"<section class='b5'>{chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}</section>"
               f"{_safe(ciclico.box_rischio, 'Rischio ciclico')}{_safe(ciclico.box_simili, 'Mesi simili')}"
-              f"<section class='b5'>{parts.valuations_mini(vcards)}</section>{ui.next_event_html(today_d)}"
-              f"<h2 style='margin-top:22px'>Indice Armor contro S&amp;P 500 e VWCE, giorno per giorno</h2>{cf_intro}{cf_small}"
               f"<h2 style='margin-top:22px'>Mappa dei segnali, settimana per settimana</h2>{map_intro}{map_small}"
               "<div class='topbtns' style='margin-top:10px'><button class='btn pri' data-cal='1'>Apri il calendario: previsto e reale</button><button class='btn' data-go='indici'>Mappa completa</button></div>"
               f"{more}")
@@ -1058,7 +1064,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>
 <script>window.HELP={json.dumps(help_all, ensure_ascii=False)};window.LABELS={json.dumps(labels_all, ensure_ascii=False)};</script>
 {parts.MODAL}
-{livefeed.JS}{infobox.JS}{archivio_dati.JS}{dock_js}{forza.JS}{semafori.LISTA_JS}{'' if lazy else '<script>' + insight.EP_JS + '</script><script>' + parts.AL_JS + '</script>' + ui.PAC_JS}{tabs_js}
+{livefeed.JS}{infobox.JS}{semafori.OGGI_JS}{archivio_dati.JS}{dock_js}{forza.JS}{semafori.LISTA_JS}{'' if lazy else '<script>' + insight.EP_JS + '</script><script>' + parts.AL_JS + '</script>' + ui.PAC_JS}{tabs_js}
 """
     out.write_text(TEMPLATE.replace("{{JS}}", parts.JS if lazy else parts.JS_FULL).replace("{{BODY}}", body), encoding="utf-8")
     if lazy:
@@ -1110,7 +1116,7 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+archivio_dati.CSS+infobox.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+archivio_dati.CSS+infobox.CSS+semafori.OGGI_CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();

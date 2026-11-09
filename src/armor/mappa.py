@@ -19,6 +19,34 @@ EXTRA = [("epu", "Incertezza politica ed economica (EPU)", "Sentimento e ampiezz
 FAMW = {g: v[0] for g, v in armor_index.GROUPS.items()}
 
 
+
+# schede esplicative delle famiglie (Patch 41): cosa misurano e come leggerle; l'elenco degli indicatori e i pesi sono letti da armor_index.GROUPS
+FAM_INFO = {
+    "Paura e stress dei mercati": ("Quanto gli operatori professionisti si stanno proteggendo e quanto si aspettano che i prezzi oscillino: volatilità implicita (VIX), struttura a termine, costo delle protezioni contro i crolli (SKEW), tensione sui titoli di Stato (MOVE), volatilità realizzata.",
+                                   "Sale di colpo nelle crisi (2008, marzo 2020) e scende piano nei periodi calmi. Sopra 70 = paura alta: spesso accompagna i minimi di mercato, quindi non è un segnale di vendita ma di forte instabilità. Un valore basso a lungo (compiacenza) lascia più spazio a brutte sorprese."),
+    "Credito e liquidità": ("Quanto costa e quanto è facile ottenere credito: spread delle obbligazioni societarie rischiose, condizioni finanziarie (NFCI, STLFSI).",
+                            "È la famiglia più seria: quando il credito si irrigidisce le imprese soffrono e i cali diventano lunghi. Sopra 70 = credito sotto stress. Si muove più lentamente della paura, ma i segnali sono più duraturi."),
+    "Tassi e obbligazioni": ("Il costo del denaro e la forma della curva dei tassi: curve 10Y-3M e 10Y-2Y, rendimento reale e nominale a 10 anni.",
+                             "Curva invertita e tassi reali alti sono storicamente sfavorevoli per le azioni (valgono meno i guadagni futuri). Sopra 70 = tassi e curva sfavorevoli; non dà il momento esatto di un calo."),
+    "Valutazioni": ("Quanto è caro il mercato: CAPE di Shiller, P/E e P/S dell'S&P 500.",
+                    "Può restare vicino a 100 per anni senza che succeda nulla (anni 2000, 2020-oggi): misura il margine di sicurezza, non il momento del calo. Valutazioni alte rendono i cali più profondi e i rendimenti dei prossimi 10 anni più bassi."),
+    "Tendenza dei prezzi": ("Se i prezzi stanno davvero salendo o scendendo: distanza dal massimo a 1 anno e posizione rispetto alla media mobile a 200 giorni.",
+                            "Sopra 70 = il mercato è già in calo o ha perso la tendenza. È la famiglia che ha più peso quando il calo è già iniziato: conferma, non anticipa."),
+    "Sentimento e ampiezza": ("L'umore degli investitori e quanti titoli partecipano al rialzo: sondaggio AAII, percentuale di titoli sopra la media a 200 giorni, forza del dollaro.",
+                              "Euforia estrema o ampiezza in calo (pochi titoli che trainano) rendono il mercato fragile. Sopra 70 = sentimento fragile o rialzo concentrato."),
+    "Economia reale": ("Lo stato dell'economia: regola di Sahm sulla disoccupazione e richieste di sussidi.",
+                       "Gli utili delle aziende di VWCE dipendono dall'economia. Sopra 70 = il lavoro sta peggiorando; i dati sono mensili o settimanali e arrivano con ritardo."),
+    "Modello statistico Armor": ("Le probabilità di calo a 1 e 3 mesi stimate dal modello A1 di Armor, calibrato su 25 anni di dati.",
+                                 "È la sintesi matematica di molti segnali insieme. Sopra 70 il modello vede un rischio molto superiore al normale; non è una previsione del giorno del calo."),
+}
+ROW_INFO = {
+    "vwce": ("Rendimento settimanale di VWCE (prezzo di chiusura serale Lang & Schwarz).", "Verde = rialzo, rosso = ribasso. Serve da confronto con i colori delle righe sotto."),
+    "sp500": ("Rendimento settimanale dell'S&P 500.", "Verde = rialzo, rosso = ribasso. Confrontalo con VWCE: le differenze vengono dal cambio e dalla composizione."),
+    "armor": ("L'Indice Armor: sintesi 1-100 di tutti gli indicatori sotto, pesati per famiglia.",
+              "Sotto 35 calma, 35-50 normale, sopra 50 tensione, sopra 65 stress alto. Dice quanto il terreno è instabile, non il giorno del calo."),
+}
+
+
 def _num(x, d=2):
     if x is None:
         return None
@@ -184,7 +212,41 @@ def build_mappa(sp: pd.Series, aix: dict, vw: pd.Series) -> dict | None:
             rows[-1]["ni"] = 1
         except Exception:  # noqa: BLE001
             continue
-    return {"w": [t.strftime("%Y-%m-%d") for t in W], "rows": rows, "fam": fam, "f4": f4, "f4v": f4v, "asof": str(W[-1].date()),
+    info = {}
+    refd = [pd.Timestamp(x) for x in ("2007-12-31", "2020-03-20", "2022-10-14")]
+
+    def refs(sc_full):
+        try:
+            a = _asof(sc_full, refd + [pd.Timestamp(W[-1])])
+            return " · ".join(f"{lab}: {'n.d.' if pd.isna(v) else int(round(v))}" for lab, v in zip(("dic 2007", "mar 2020", "ott 2022", "oggi"), a.values))
+        except Exception:  # noqa: BLE001
+            return None
+    for r in rows:
+        k, t = r["k"], r["t"]
+        if k in ROW_INFO:
+            cos, come = ROW_INFO[k]
+            sec = [["Cos'è", cos], ["Come si legge", come]]
+            if k == "armor":
+                sec.append(["Valori in momenti chiave", refs(hist) or ""])
+            info[k] = {"t": r["n"], "s": sec}
+        elif t == "fam":
+            g = r["g"]
+            cos, come = FAM_INFO.get(g, ("", ""))
+            items = armor_index.GROUPS.get(g, (0, []))[1]
+            nomi = [_row_meta(it[0])["n"] for it in items]
+            peso = FAMW.get(g, 0)
+            sc_full = 1 + 99 * ((G[g] - 0.10) / 0.75).clip(0, 1)
+            sec = [["Cosa misura", cos], ["Cosa comprende", ", ".join(nomi) + f". Peso della famiglia nell'Indice Armor: {peso}% (gli indicatori della famiglia contano allo stesso modo)."],
+                   ["Come leggere i numeri", "Ogni cella va da 1 a 100 ed è la posizione dell'indicatore rispetto alla propria storia (percentile) mescolata con soglie fisse: verde = zona tranquilla, giallo = attenzione, rosso = tensione. " + come],
+                   ["Valori in momenti chiave", refs(sc_full) or ""], ["Come usarla", "Tocca il nome per aprire o chiudere i singoli indicatori: ognuno ha la sua scheda. I dati mensili e settimanali arrivano con ritardo."]]
+            info[k] = {"t": r["n"], "s": sec}
+        elif t == "ind":
+            sec = [["Cosa misura", r.get("rd") or r["n"]], ["Quando preoccuparsi", r.get("wo") or "—"]]
+            if r.get("zn"):
+                sec.append(["Soglie dei colori", r["zn"]])
+            sec.append(["Famiglia", f"{r['g']}" + (f" (peso {FAMW[r['g']]}% nell'Indice)" if r["g"] in FAMW else "")])
+            info[k] = {"t": r["n"], "s": sec}
+    return {"w": [t.strftime("%Y-%m-%d") for t in W], "rows": rows, "fam": fam, "info": info, "f4": f4, "f4v": f4v, "asof": str(W[-1].date()),
             "bz": [_num(x, 4) for x in (lambda g: (g[9], g[49], g[89]))(bande.zgrid(5, pd.Timestamp(W[-1])))],
             "pc": "Put/Call sulle opzioni SPY: l'archivio ha iniziato a raccogliere il dato da poco; la riga comparirà quando ci saranno abbastanza giorni."}
 
@@ -370,7 +432,8 @@ function draw(){
  var body='',grp='';
  function rowHtml(r,i){var cl=r.t==='fam'?'rl fm':(r.t==='ind'?'rl ind':'rl'),lab=r.n;
   if(r.t==='fam'){var kc=((D.fam[r.g]||{}).keys||[]).length;lab=(kc?(open?'▾ ':'▸ '):'')+r.n}
-  var s='<tr data-r="'+i+'"><td class="'+cl+(selRow===i?' sel':'')+'" title="'+r.n+'">'+lab+'</td>';
+  var inf=D.info&&D.info[r.k],ia=inf?" data-info='"+JSON.stringify(inf).replace(/&/g,'&amp;').replace(/'/g,'&#39;')+"'":'';
+  var s='<tr data-r="'+i+'"><td class="'+cl+(selRow===i?' sel':'')+'"'+ia+(inf?'':' title="'+r.n+'"')+'>'+lab+(inf?'<em class="aii"'+ia+'>i</em>':'')+'</td>';
   cols.forEach(function(c){var v=(r.t==='ret')?r.v[c]:r.sc[c];if(v==null){s+='<td class="c n"></td>';return}
    var bg=r.t==='ret'?rcol(v):col(r.t==='ind'?(v):v),tx=r.t==='ret'?(Math.abs(v)<10?nf(v,1).replace('-','−'):nf(v,0)):v;s+='<td class="c" data-c="'+c+'" style="background:'+bg+'">'+tx+'</td>'});return s+'</tr>'}
  D.rows.forEach(function(r,i){
