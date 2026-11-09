@@ -5,7 +5,7 @@ on:
     - cron: '5,35 22 * * 1-5'      # dopo le 23 italiane: prende la chiusura serale (Lang & Schwarz chiude alle 23)
     - cron: '15 6,12 * * 0,6'      # nel weekend due volte al giorno
   workflow_run:   # il sito si ricostruisce subito dopo ogni aggiornamento dei dati
-    workflows: ["Aggiornamento giornaliero Armor", "Notizie e analisi Armor", "Ricerca modello Armor", "Convalida mensile Armor", "Agenda del mattino Armor"]
+    workflows: ["Aggiornamento giornaliero Armor", "Notizie e analisi Armor", "Ricerca modello Armor", "Convalida mensile Armor", "Agenda del mattino Armor", "Mercati Armor"]
     types: [completed]
   workflow_dispatch:
 permissions:

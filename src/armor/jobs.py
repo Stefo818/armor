@@ -450,6 +450,10 @@ def main() -> None:
         from . import tensione
         r = tensione.run()
         print("variante scelta:", r["scelta"], "| adozione:", r["adozione"])
+    elif cmd == "mercati-mondo":   # Patch 44: classifiche per periodo (Yahoo, a blocchi); lo lancia mercati.yml dopo la chiusura USA
+        from . import mondo
+        d = mondo.aggiorna()
+        print({"attività": len(d["items"]), "mancanti": d["mancanti"][:40]})
     elif cmd == "audit-dati":
         from . import audit_dati
         raise SystemExit(0 if audit_dati.esegui()["ok"] else 1)

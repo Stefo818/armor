@@ -1,0 +1,28 @@
+name: Mercati Armor
+on:
+  schedule:
+    - cron: '35 22 * * 1-5'   # dopo la chiusura di Wall Street (ora UTC)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
+jobs:
+  mercati:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Classifiche dei mercati (titoli, ETF, cripto, materie prime, paesi)
+        env:
+          PYTHONPATH: src
+        run: python -m armor mercati-mondo
+      - name: Salva i dati nel repository
+        run: bash scripts/salva.sh "Classifiche mercati automatiche" data/mercati_mondo.json data/universo

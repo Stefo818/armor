@@ -1711,3 +1711,35 @@ def test_regime_frase_e_box():
     r = {"stati": {"tutto": {"formazione": {"n": 500, "a": 0.55, "b": 0.3}, "tutti": {"a": 0.32, "b": 0.28}}, "2013_oggi": {}}, "adozione": {"adottata": False}}
     h = t.box_oggi(o, r)
     assert "Tensione in formazione" in h and "Non verificato fuori campione" in h and "12" in h and "55%" in h
+
+
+def test_mondo_rendimenti_eur_e_filtri():
+    from armor import mondo
+    idx = pd.bdate_range("2025-01-01", periods=300)
+    s = pd.Series(100 * 1.001 ** np.arange(300), index=idx)
+    fx = pd.Series(np.linspace(1.0, 1.2, 300), index=idx)    # euro che si rafforza: i dollari valgono meno
+    loc, eur = mondo.rendimenti(s, fx, "USD")
+    r1m = s.iloc[-1] / s[s.index <= idx[-1] - pd.Timedelta(days=30)].iloc[-1] - 1
+    f0 = fx[fx.index <= idx[-1] - pd.Timedelta(days=30)].iloc[-1]
+    assert abs(loc[2] - r1m) < 1e-4 and abs(eur[2] - ((1 + r1m) * f0 / fx.iloc[-1] - 1)) < 1e-4 and eur[2] < loc[2]
+    assert abs(loc[0] - (s.iloc[-1] / s.iloc[-2] - 1)) < 1e-4 and loc[5] is not None
+    l2, e2 = mondo.rendimenti(s, fx, "EUR")
+    assert e2 == l2
+    assert mondo.rendimenti(s.iloc[:10], fx, "USD") is None
+    bad = s.copy()
+    bad.iloc[100] = bad.iloc[99] * 5
+    assert mondo.rendimenti(bad, fx, "USD") is None   # +400% in un giorno: scartato
+
+
+def test_mondo_costruisci_e_pagina():
+    from armor import mondo
+    idx = pd.bdate_range("2025-01-01", periods=300)
+    cl = pd.DataFrame({"SPY": 100 * 1.001 ** np.arange(300), "EWJ": 50 * 1.0005 ** np.arange(300), "GC=F": np.linspace(2000, 2500, 300)}, index=idx)
+    fx = pd.Series(1.1, index=idx)
+    d = mondo.costruisci(cl, mondo.universo(), fx)
+    assert {x["t"] for x in d["items"]} >= {"SPY", "EWJ", "GC=F"} and "VWCE.DE" in d["mancanti"]
+    x = [i for i in d["items"] if i["t"] == "EWJ"][0]
+    assert x["iso"] == "JPN" and len(x["k"]) == 30 and len(x["r"]) == 6 == len(x["e"])
+    assert len({u["t"] + u["c"] for u in mondo.universo()}) == len(mondo.universo())
+    h = mondo.block(mondo.dumps(d))
+    assert "armor-md-data" in h and "Cresciuti di più" in h
