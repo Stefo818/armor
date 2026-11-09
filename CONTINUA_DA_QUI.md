@@ -535,3 +535,10 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - Termometro Indice Armor: «Il 05/11 …» con le date reali (non più «Ieri»). Il riquadro dei 3 orizzonti (finestra Armor) usa ancora «Ieri / Sett. fa».
 - Archivio opzioni SPY: la data è quella dell'ultima seduta USA chiusa; le righe salvate di sabato/domenica sono ricondotte al venerdì (archive.venerdi_se_weekend, anche in lettura).
 - Pulizia ruff (F) in cruscotto.py. sw.js cache armor-v41.
+
+## PATCH 42 — Notizie
+- Nuova pagina «Notizie» (menu, dopo Oggi): novita.py; archivio degli ultimi 30 giorni dai file data/news/AAAA-MM-GG.json (deduplicato per titolo, ordine dal più recente), diviso per giorno (Oggi / Ieri / data), filtri (Tutte, Macro e Fed, Mercati, Aziende di VWCE, Settori e temi, Solo negative/positive), ricerca testuale, titolo in italiano con l'originale sotto, link, tono, fonte, temi. Dati in series/notizie.json (a richiesta) o incorporati nel file locale.
+- Assistente: nuova scheda «Notizie» (le 12 più importanti + pulsante «Apri tutte le notizie»). Toccando il testo di una notizia nella barra in basso si apre l'Assistente sulla scheda Notizie (toccando il resto della barra, come prima).
+- Barra in basso: cambio ogni 9 s (era 5), dissolvenza 400 ms, ferma con mouse o dito sopra (riparte dopo 3 s); notizie dalla più recente alla meno recente con data breve («oggi 14:20», «ven 06/11 17:00»), dopo indice ed eventi; window.TICKER ora è una lista di {t, n}.
+- Nota: «divise per giorni» nella barra = data breve davanti a ogni notizia; la pagina Notizie ha le intestazioni di giorno.
+- sw.js cache armor-v42.

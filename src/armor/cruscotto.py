@@ -172,17 +172,24 @@ def armor_window(h: dict | None, d: dict | None) -> str:
             "</div></div></div>")
 
 
-def ticker_items(news: dict, evs: list[dict], aix: dict | None) -> list[str]:
+def ticker_items(news: dict, evs: list[dict], aix: dict | None) -> list[dict]:
+    """Elementi della barra in basso. Le notizie vengono dopo indice ed eventi, dalla piu' recente alla meno recente, con la data breve."""
+    from datetime import datetime, timedelta, timezone
+
+    from . import novita
     out = []
     if aix:
-        out.append(f"Indice Armor {aix['value']:.0f}/100 · rischio {armor_index.band(aix['value'])[0]}")
+        out.append({"t": f"Indice Armor {aix['value']:.0f}/100 · rischio {armor_index.band(aix['value'])[0]}", "n": 0})
     for x in evs[:2]:
-        out.append(f"📅 {x['date'][8:10]}/{x['date'][5:7]}: {x['nome']}")
-    its = [i for i in (news or {}).get("items", []) if i.get("kind") in ("macro", "sector")]
-    for i in its[:7]:
+        out.append({"t": f"📅 {x['date'][8:10]}/{x['date'][5:7]}: {x['nome']}", "n": 0})
+    now = datetime.now(timezone.utc)
+    its = [i for i in (news or {}).get("items", []) if i.get("kind") in ("macro", "sector") and i.get("time")]
+    rec = [i for i in its if datetime.fromisoformat(i["time"].replace("Z", "+00:00")) > now - timedelta(days=3)] or its
+    rec = sorted(rec, key=lambda x: -x["score"])[:10]
+    for i in sorted(rec, key=lambda x: x["time"], reverse=True):
         tag = {"negativo": "▼", "positivo": "▲"}.get(i.get("label"), "•")
         t = i["title"].rsplit(" - ", 1)[0]
-        out.append(f"{tag} {t[:110]}")
+        out.append({"t": f"{novita.etichetta_giorno(i['time'], now)} {tag} {t[:100]}", "n": 1})
     return out
 
 
@@ -201,11 +208,14 @@ setInterval(mv,15000);setTimeout(mv,1500);
 
 TICKER_JS = r"""
 <script>
-(function(){var el=document.getElementById('dkt');if(!el)return;var items=window.TICKER||[],i=0;
+(function(){var el=document.getElementById('dkt');if(!el)return;var items=(window.TICKER||[]).map(function(x){return typeof x==='string'?{t:x,n:0}:x}),i=0,cur=null,hold=false,SEC=9000;
 function vw(){var q=window.LIVE&&window.LIVE.quotes&&window.LIVE.quotes.vwce;if(!q||!q.price)return null;var c=q.chg!=null?(' '+(q.chg>=0?'▲':'▼')+Math.abs(q.chg*100).toFixed(2).replace('.',',')+'%'):'';
-return 'VWCE '+q.price.toFixed(2).replace('.',',')+' €'+c}
-function next(){var all=[];var v=vw();if(v)all.push(v);items.forEach(function(x){all.push(x)});if(!all.length)return;var t=all[i%all.length];i++;el.style.opacity=0;setTimeout(function(){el.textContent=t;el.style.opacity=1},250)}
-next();setInterval(next,5000)})();
+return {t:'VWCE '+q.price.toFixed(2).replace('.',',')+' €'+c,n:0}}
+function next(){if(hold)return;var all=[];var v=vw();if(v)all.push(v);items.forEach(function(x){all.push(x)});if(!all.length)return;cur=all[i%all.length];i++;el.style.opacity=0;setTimeout(function(){el.textContent=cur.t;el.style.opacity=1},400)}
+next();setInterval(next,SEC);
+var bar=document.getElementById('dockbar');if(bar){var rel=null;function h(){hold=true;clearTimeout(rel)}function r(){clearTimeout(rel);rel=setTimeout(function(){hold=false},3000)}
+ bar.addEventListener('mouseenter',h);bar.addEventListener('mouseleave',r);bar.addEventListener('touchstart',h,{passive:true});bar.addEventListener('touchend',r,{passive:true})}
+el.addEventListener('click',function(e){if(cur&&cur.n&&window.armorDock){e.stopPropagation();window.armorDock('notizie')}})})();
 </script>
 """
 
@@ -222,5 +232,5 @@ CSS = """
 .htr{margin-top:6px;padding-top:6px;border-top:1px solid rgba(128,128,128,.3)}.htrb{font-size:14px}.htrb .trb,.htrb .trg,.htrb .tr0{font-size:18px}
 .aix{cursor:pointer}.am3w{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:10px 0}
 .am3{border:1px solid var(--bd);border-radius:12px;padding:10px 12px;background:var(--bg)}.amv{font-size:40px;font-weight:800;line-height:1.05}.amv span{font-size:15px;color:var(--mu)}.aml{font-weight:800}
-#amod{z-index:26}#dkt{transition:opacity .25s}
+#amod{z-index:26}#dkt{transition:opacity .4s}
 """

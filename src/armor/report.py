@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import archivio_dati, infobox, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import archivio_dati, infobox, novita, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -881,7 +881,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                 f"<a href='#indici' data-go='indici'>Vedi tutti i semafori ›</a></div>") if sem else ""
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
-    pages = [("oggi", "Oggi"), ("indici", "Indici"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
+    pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("indici", "Indici"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
              ("fiducia", "Quanto fidarsi"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi")]
     nav = "<nav class='pgnav'>" + "".join(f"<button data-p='{k}'>{l}</button>" for k, l in pages) + "</nav>"
     lazy_pages: dict[str, str] = {}
@@ -920,6 +920,15 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             (sd / "cal.json").write_text(cal_json, encoding="utf-8")
     except Exception as ex:  # noqa: BLE001
         print("Mappa/calendario non creati:", str(ex)[:160], flush=True)
+    nz_json = None
+    try:
+        nz_json = novita.dumps(novita.archivio())
+        if lazy:
+            sd = out.parent / "series"
+            sd.mkdir(exist_ok=True)
+            (sd / "notizie.json").write_text(nz_json, encoding="utf-8")
+    except Exception as ex:  # noqa: BLE001
+        print("Archivio notizie non creato:", str(ex)[:120], flush=True)
     cf_json = None
     try:
         cfd = confronto.build(sp, vwce_display(), aix)
@@ -1024,6 +1033,10 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
              + det('Confronto degli indicatori con il passato', comparison_html(date, sp, p) + "<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = verso più rischio, verde = verso meno rischio.</p>")
              + det('Affidabilità del modello (test dal 2000)', avh) + det('Variabili provate e non adottate', chal_html) + det('Dati, fonti e archivio', dc) + gloss)
     p_arc = _safe(archivio_dati.html, 'Archivio dati')
+    p_nz = _safe(lambda: novita.block(None if lazy else nz_json), "Notizie")
+    nz_dock = ("<p><a href='#notizie' class='btn pri' data-go='notizie'>Apri tutte le notizie</a></p>"
+               + "".join(f"<div class='nzi {i.get('label', 'neutro')}'><b>{html.escape(i['title'])}</b><div class='me'>{html.escape(i.get('source', ''))} · {html.escape(i.get('group', ''))}</div></div>"
+                         for i in sorted([x for x in newsmod.load_latest().get('items', []) if x.get('kind') in ('macro', 'sector')], key=lambda x: -x['score'])[:12]))
     p_al = ("<h2>Allarmi personali</h2>" + parts.alerts_section(al_opts, al_now))
     p_sto = p_sto + "<h2>Rapporto mensile</h2>" + _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile") + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Salute dei dati</h2>" + _safe(diagnostica.badge, "Stato del diario") + _safe(lambda: salute.html(salute.compute()), "Salute dei dati") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
     vix_s = store.load("vix")
@@ -1032,6 +1045,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     dock_tabs = [
         ("oggi", "Oggi cosa faccio", extra13.oggi_html(aix, div, soon, n_pru) + extra13.divergence_html(div) + "" + bilancio.day_html(bil)),
         ("ai", "Analisi di oggi", parts.analysis_section(rep_an, arch_an)),
+        ("notizie", "Notizie", nz_dock),
         ("dieci", "Ultimi 10 anni", _safe(lambda: decennio.html(ind10, tr10), "Analisi dei 10 anni")),
         ("sett", "Rapporto settimanale", bilancio.weekly_html(wk)),
         ("mens", "Rapporto mensile", _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile")),
@@ -1058,7 +1072,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
 {page('oggi', p_oggi)}{page('indici', p_indici)}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
-{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('allarmi', p_al)}
+{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('notizie', p_nz)}{page('allarmi', p_al)}
 {dock}{semafori.lista_html(sem) if sem else ''}
 <script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>
@@ -1116,7 +1130,7 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+archivio_dati.CSS+infobox.CSS+semafori.OGGI_CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+archivio_dati.CSS+infobox.CSS+semafori.OGGI_CSS+novita.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();

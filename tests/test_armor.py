@@ -1631,3 +1631,29 @@ def test_hero_trend_con_date():
     h = pd.Series(range(40, 50), index=pd.bdate_range("2026-10-26", periods=10), dtype=float)
     out = cruscotto.hero_trend({"hist": h})
     assert "Il 05/11" in out and "Il 30/10" in out and "Ieri" not in out
+
+
+# ---- patch 42: notizie
+def test_novita_archivio_dedup_e_ordine(tmp_path):
+    import json
+    from datetime import datetime, timezone
+
+    from armor import novita
+    now = datetime(2026, 11, 9, 12, 0, tzinfo=timezone.utc)
+    mk = lambda t, ti, lb="neutro": {"title": ti, "title_en": "EN " + ti, "source": "S", "link": "http://x", "time": t, "kind": "macro", "group": "g", "themes": [], "label": lb}  # noqa: E731
+    (tmp_path / "2026-11-07.json").write_text(json.dumps({"items": [mk("2026-11-07T10:00:00Z", "A", "negativo"), mk("2026-11-06T10:00:00Z", "B")]}))
+    (tmp_path / "2026-11-08.json").write_text(json.dumps({"items": [mk("2026-11-07T10:00:00Z", "A", "positivo"), mk("2026-11-08T09:00:00Z", "C")]}))
+    (tmp_path / "2026-09-01.json").write_text(json.dumps({"items": [mk("2026-09-01T10:00:00Z", "VECCHIA")]}))
+    a = novita.archivio(30, now, tmp_path)
+    assert [i["ti"] for i in a["items"]] == ["C", "A", "B"] and a["items"][1]["lb"] == "positivo"
+    assert novita.etichetta_giorno("2026-11-09T09:20:00Z", now) == "oggi 10:20" and novita.etichetta_giorno("2026-11-08T09:20:00Z", now).startswith("ieri")
+
+
+def test_ticker_items_notizie_recenti_prima():
+    from datetime import datetime, timedelta, timezone
+
+    from armor import cruscotto
+    n = datetime.now(timezone.utc)
+    it = lambda h, s: {"title": f"T{h}", "kind": "macro", "label": "neutro", "score": s, "time": (n - timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%SZ")}  # noqa: E731
+    out = cruscotto.ticker_items({"items": [it(30, 5), it(2, 1), it(10, 3)]}, [], None)
+    assert [x["t"].split(" ", 2)[2] for x in out] == ["• T2", "• T10", "• T30"] and all(x["n"] == 1 for x in out)
