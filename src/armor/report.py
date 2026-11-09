@@ -1148,7 +1148,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 
 
 TEMPLATE = """<!doctype html><html lang='it'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Armor - rischio cali VWCE</title><meta name='theme-color' content='#0e1a3a'><link rel='manifest' href='manifest.webmanifest'><link rel='icon' href='favicon.png'><link rel='apple-touch-icon' href='apple-touch-icon.png'><meta name='apple-mobile-web-app-capable' content='yes'><meta name='mobile-web-app-capable' content='yes'><style>
+<title>Armor - rischio cali VWCE</title><meta name='theme-color' content='#0e1a3a'><link rel='manifest' href='manifest.webmanifest'><link rel='icon' href='favicon.png?v=2'><link rel='apple-touch-icon' href='apple-touch-icon.png?v=2'><meta name='apple-mobile-web-app-capable' content='yes'><meta name='mobile-web-app-capable' content='yes'><style>
 :root{--bg:#f4f6f9;--card:#fff;--tx:#1b2330;--mu:#667085;--bd:#e3e8ef;--ok:#1f8f55;--warn:#c77d0a;--bad:#c0392b;--ac:#2a6fdb;--okbg:#e7f5ee;--warnbg:#fdf3e1;--badbg:#fbe9e7}
 @media(prefers-color-scheme:dark){:root{--bg:#0e131b;--card:#161d28;--tx:#e8edf5;--mu:#93a0b4;--bd:#263040;--ok:#4cc38a;--warn:#f0b54a;--bad:#ff7a6b;--ac:#6ea4ff;--okbg:#12301f;--warnbg:#3a2c10;--badbg:#3d1a16}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif;padding:16px;max-width:1200px;margin:auto}
