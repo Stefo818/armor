@@ -15,14 +15,8 @@ data/series/aaii_*.csv
 data/intraday.json
 data.json
 registro.csv
+
+# archivio dei prezzi e cache dei fondamentali (stanno in actions/cache)
+data/_cache/
+
 key fred.txt
-key fred.txt
-
-# file di lavoro locali
-scratch/
-
-# Documenti di lavoro
-*.docx
-*.pdf
-
-data/affidabilita.json

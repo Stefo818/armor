@@ -1743,3 +1743,99 @@ def test_mondo_costruisci_e_pagina():
     assert len({u["t"] + u["c"] for u in mondo.universo()}) == len(mondo.universo())
     h = mondo.block(mondo.dumps(d))
     assert "armor-md-data" in h and "Cresciuti di più" in h
+
+
+NASDAQ_TXT = """Symbol|Security Name|Market Category|Test Issue|Financial Status|Round Lot Size|ETF|NextShares
+AAPL|Apple Inc. - Common Stock|Q|N|N|100|N|N
+ZZZZ|Test Corp|Q|Y|N|100|N|N
+QQQ|Invesco QQQ Trust|G|N|N|100|Y|N
+XYZW|Foo Acquisition Corp. - Class A|S|N|N|100|N|N
+WARR|Bar Inc. - Warrants|S|N|N|100|N|N
+TQQQ|ProShares UltraPro QQQ|G|N|N|100|N|N
+File Creation Time: 1109202622:00|||||||
+"""
+OTHER_TXT = """ACT Symbol|Security Name|Exchange|CQS Symbol|ETF|Round Lot Size|Test Issue|NASDAQ Symbol
+JPM|JPMorgan Chase & Co. Common Stock|N|JPM|N|100|N|JPM
+BRK.B|Berkshire Hathaway Inc. Class B|N|BRK.B|N|100|N|BRK-B
+File Creation Time: 1109202622:00|||||||
+"""
+
+
+def test_titoli_universo_e_filtri():
+    from armor import titoli
+    df = titoli.filtra_elenco(pd.concat([titoli.parse_nasdaq_listed(NASDAQ_TXT), titoli.parse_other_listed(OTHER_TXT)], ignore_index=True))
+    assert sorted(df.t) == ["AAPL", "BRK-B", "JPM"]
+
+
+def test_titoli_metriche_e_liquidi():
+    from armor import titoli
+    idx = pd.bdate_range("2025-06-01", periods=300)
+    r = np.random.default_rng(0)
+    c = pd.DataFrame({"A": 50 * np.exp(np.cumsum(r.normal(0, .01, 300))), "B": 0.5 * np.exp(np.cumsum(r.normal(0, .01, 300))), "C": 20 * np.exp(np.cumsum(r.normal(0, .01, 300)))}, index=idx)
+    v = pd.DataFrame({"A": 1e6, "B": 1e6, "C": 100.0}, index=idx)
+    c.iloc[-3, 2] = c.iloc[-4, 2] * 6   # dato anomalo
+    ref = pd.Series(100 * np.exp(np.cumsum(r.normal(0, .008, 300))), index=idx)
+    m = titoli.metriche(c, v, ref)
+    assert abs(m.at["A", "r1m"] - (c.A.iloc[-1] / c.A.iloc[-22] - 1)) < 1e-9 and m.at["C", "anomalo"] and not m.at["A", "anomalo"]
+    assert set(titoli.liquidi(m).index) == {"A"}     # B costa meno di 1, C anomalo e illiquido
+
+
+def test_titoli_archivio_incrementale(tmp_path, monkeypatch):
+    from armor import titoli
+    monkeypatch.setattr(titoli, "CACHE", tmp_path)
+    monkeypatch.setattr(titoli, "PREZZI", tmp_path / "p.pkl.gz")
+    chiamate = []
+
+    def finto(tk, per, log):
+        chiamate.append((tuple(tk), per))
+        n = 300 if per == "14mo" else 10
+        idx = pd.bdate_range(end="2026-11-06", periods=n)
+        return pd.DataFrame({t: np.linspace(10, 20, n) for t in tk}, index=idx), pd.DataFrame({t: 1000.0 for t in tk}, index=idx)
+    a = titoli.aggiorna_prezzi(["X", "Y"], scarica=finto)
+    assert a["close"].shape == (280, 2) and chiamate[0][1] == "14mo"
+    chiamate.clear()
+    a = titoli.aggiorna_prezzi(["X", "Y", "Z"], scarica=finto)
+    assert [c[1] for c in chiamate] == ["10d", "14mo"] and set(a["close"].columns) == {"X", "Y", "Z"}
+
+
+def test_titoli_formule():
+    from armor import titoli_fond as f
+    cur = {"ni": 10, "cfo": 15, "assets": 100, "ltd": 20, "ca": 60, "cl": 30, "shares": 100, "revenue": 120, "gross": 60}
+    prev = {"ni": 5, "cfo": 8, "assets": 100, "ltd": 25, "ca": 50, "cl": 30, "shares": 100, "revenue": 100, "gross": 45}
+    assert f.piotroski(cur, prev)["score"] == 9
+    assert f.piotroski({"ni": 1}, {"ni": 1}) is None
+    x = {"ca": 60, "cl": 30, "assets": 100, "retained": 20, "ebit": 10, "cap": 200, "liab": 50, "revenue": 120, "equity_book": 50}
+    assert abs(f.altman(x)["z"] - (1.2 * .3 + 1.4 * .2 + 3.3 * .1 + .6 * 4 + 1.2)) < 0.006
+    assert abs(f.altman(x, False)["z"] - (6.56 * .3 + 3.26 * .2 + 6.72 * .1 + 1.05 * 1.0)) < 0.006
+    assert f.mesi_cassa(100, -50) == 6.0 and f.mesi_cassa(100, 5) is None
+    assert abs(f.diluizione(110, 100) - 0.1) < 1e-9 and f.freccia(110, 100)["f"] == "▲"
+    assert f.sue(1.1, 1.0, [0.1, -0.1, 0.05, 0.0, 0.1])["tipo"] == "sue" and f.sue(1.1, 1.0)["sue"] == 0.1
+    r = f.rapporti(1000, 500, 50, 600, 80, rpo=2000)
+    assert r["ps"] == 2 and r["pe"] == 20 and r["rpo_anni"] == 4 and r["cap_rpo"] == 0.5
+    facts = {"facts": {"us-gaap": {"RevenueRemainingPerformanceObligation": {"units": {"USD": [
+        {"end": "2025-09-30", "val": 1000, "form": "10-Q", "filed": "2025-11-05"}, {"end": "2026-09-30", "val": 3000, "form": "10-Q", "filed": "2026-11-05"}]}}}}}
+    assert f.rpo_da_facts(facts)["rpo"] == 3000 and f.rpo_da_facts(facts, "2026-01-01")["rpo"] == 1000   # nessuno sguardo al futuro
+    sub = {"filings": {"recent": {"form": ["8-K", "10-Q", "8-K"], "filingDate": ["2026-11-05", "2026-11-01", "2025-01-01"], "items": ["1.01,9.01", "", "2.02"], "accessionNumber": ["a", "b", "c"]}}}
+    e = f.eventi_8k(sub, 30, "2026-11-09")
+    assert len(e) == 1 and e[0]["item"] == "1.01" and e[0]["tono"] == "pos"
+
+
+def test_titoli_eventi_e_temi():
+    from armor import titoli_eventi as ev
+    c = ev.classifica("Acme wins contract worth $1.2 billion from Navy")
+    assert c["evento"] == "contratto" and c["importo"] == 1.2e9 and ev.pct_fatturato(c["importo"], 4e9) == 0.3
+    assert ev.classifica("Rosen Law Firm encourages investors who lost money to inquire")["spam"]
+    assert ev.classifica("Foo cuts guidance after weak demand")["saldi"] == -2
+    assert ev.classifica("Foo to be acquired by Bar")["saldi"] == "escludi"
+    assert ev.classifica("Weather is nice") is None
+    r = ev.riassumi([{"title": "Rosen Law Firm reminds investors", "time": "2026-11-05T10:00:00Z"}, {"title": "Foo misses estimates", "time": "2026-11-06T10:00:00Z"}])
+    assert len(r["eventi"]) == 1 and r["n_spam"] == 1
+    assert ev.causa_calo(-0.10, -0.09, 1.0, [])["tipo"] == "settore"
+    assert ev.causa_calo(-0.20, -0.02, 1.0, r["eventi"])["tipo"] == "azienda"
+    assert ev.causa_calo(-0.20, -0.02, 1.0, [])["tipo"] == "ignota"
+    assert "Robotica" in ev.temi_di("A new humanoid robot factory") and ev.accelerazione([1] * 84) == 1.0
+    assert ev.accelerazione([1] * 70 + [3] * 14) == 3.0 and ev.forza_tema(3.0, .2, .2)["forza"] == 100 and ev.forza_tema(None, None, None)["forza"] is None
+    j = {"studies": [{"protocolSection": {"identificationModule": {"nctId": "NCT1", "briefTitle": "t"}, "designModule": {"phases": ["PHASE3"]},
+                      "statusModule": {"primaryCompletionDateStruct": {"date": "2027-02"}}}}]}
+    assert ev.catalizzatori_studi(j, "2026-11-09")[0]["id"] == "NCT1"
+    assert ev.rischio_binario("Biotechnology", 1e6, 1) and not ev.rischio_binario("Software", 1e6, 1)

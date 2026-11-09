@@ -1,11 +1,9 @@
 """Pagina «Mercati»: chi è cresciuto di più e chi è calato di più (titoli, ETF, settori, cripto, materie prime, fondi, paesi) per periodo.
 Dati: Yahoo Finance (prezzi rettificati) scaricati in blocchi dal lavoro `mercati.yml`; risultato in data/mercati_mondo.json.
 Rendimenti in euro (default) e in valuta locale. Le liste sono curate a mano: un ticker che Yahoo non conosce viene saltato e finisce in `mancanti`."""
-import html as _h
 import io
 import json
 
-import numpy as np
 import pandas as pd
 
 from .config import DATA
@@ -211,18 +209,35 @@ def _scarica(tickers: list[str], periodo: str = "15mo", blocco: int = 80, log=pr
     return c
 
 
+def _titoli_motore() -> dict | None:
+    """data/titoli_top.json se esiste ed è recente (≤ 6 giorni)."""
+    f = DATA / "titoli_top.json"
+    try:
+        d = json.loads(f.read_text(encoding="utf-8"))
+        if (pd.Timestamp.today().normalize() - pd.Timestamp(d["asof"])).days <= 6 and d.get("items"):
+            return d
+    except Exception:  # noqa: BLE001
+        pass
+    return None
+
+
 def aggiorna(log=print) -> dict:
     uni = universo()
-    try:
-        uni += sp500()
-    except Exception as e:  # noqa: BLE001
-        log("[mondo] titoli S&P 500 non disponibili: " + str(e)[:80])
+    motore = _titoli_motore()
+    if motore is None:
+        try:
+            uni += sp500()
+        except Exception as e:  # noqa: BLE001
+            log("[mondo] titoli S&P 500 non disponibili: " + str(e)[:80])
     tk = sorted({u["t"] for u in uni} | {"EURUSD=X"})
     cl = _scarica(tk, log=log)
     if cl.empty or "EURUSD=X" not in cl:
         raise RuntimeError("download Yahoo non riuscito")
     fx = cl["EURUSD=X"].dropna()
     d = costruisci(cl.drop(columns=["EURUSD=X"]), uni, fx)
+    if motore is not None:   # titoli di tutto il mercato dal motore (Patch 45): classifiche già calcolate, in sostituzione dei soli S&P 500
+        d["items"] += [{k: v for k, v in i.items() if k != "cap"} for i in motore["items"]]
+        d["titoli_universo"] = motore.get("universo")
     d["eurusd"] = round(float(fx.iloc[-1]), 4)
     FILE.write_text(dumps(d), encoding="utf-8")
     log(f"[mondo] {len(d['items'])} attività, {len(d['mancanti'])} mancanti, dati al {d['asof']}")
@@ -275,7 +290,7 @@ h+='<p class="mu">Dati al '+D.asof.split('-').reverse().join('/')+'. «In euro»
 var tit=rank('titoli').slice(0,100);
 h+='<div class="mdg">'+donut(groupBy(tit,function(x){return x.s}).slice(0,10),'Settori tra i 100 titoli '+(DIR>0?'cresciuti':'calati')+' di più')+donut(groupBy(rank('paesi').slice(0,10),function(x){return x.s}),'Aree geografiche tra i 10 paesi '+(DIR>0?'cresciuti':'calati')+' di più')+'</div>'+updown();
 h+='<div class="mdcard"><h3>Planisfero: rendimento per paese ('+nm+')</h3>'+continenti()+'<div class="mdmap" id="mdmap"><p class="mu" style="padding:14px">Caricamento della mappa…</p></div><div class="mdtip" id="mdtip">Tocca un paese per vedere il dettaglio. Verde = salito, rosso = sceso; colore pieno al 95° percentile del periodo. Paesi chiari: nessun ETF. Due dita per ingrandire.</div></div>';
-CAT.forEach(function(c){var a=rank(c[0]);var note='';if(c[0]==='titoli')note='<p class="mu">Per ora: i 500 titoli dell\'S&amp;P 500. L\'universo completo (anche piccole società) arriva con il motore titoli.</p>';if(c[0]==='fondi')note='<p class="mu">I fondi comuni non hanno dati gratuiti affidabili: qui si usano gli ETF raggruppati per tipo.</p>';if(c[0]==='materie')note='<p class="mu">Contratti futures: nei giorni di cambio scadenza il prezzo può avere un salto.</p>';
+CAT.forEach(function(c){var a=rank(c[0]);var note='';if(c[0]==='titoli')note='<p class="mu">'+(D.titoli_universo?'Tutto il mercato con liquidità sufficiente ('+D.titoli_universo+' titoli analizzati, anche piccole società): qui le classifiche.':'Per ora: i 500 titoli dell\'S&amp;P 500.')+'</p>';if(c[0]==='fondi')note='<p class="mu">I fondi comuni non hanno dati gratuiti affidabili: qui si usano gli ETF raggruppati per tipo.</p>';if(c[0]==='materie')note='<p class="mu">Contratti futures: nei giorni di cambio scadenza il prezzo può avere un salto.</p>';
 h+='<div class="mdcard"><h3>'+c[1]+' · '+(DIR>0?'più cresciuti':'più calati')+' ('+nm+')</h3>'+(a.length?bars(a.slice(0,10))+'<details style="margin-top:8px"><summary>Mostra la tabella (fino a 50 di '+a.length+')</summary>'+table(a.slice(0,50),c[0]==='fondi')+'</details>':'<p class="mu">Nessun dato disponibile per questa categoria.</p>')+note+'</div>'});
 W.innerHTML=h;
 W.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){PER=+b.dataset.p;render()}});W.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){DIR=+b.dataset.d;render()}});W.querySelectorAll('[data-e]').forEach(function(b){b.onclick=function(){EUR=+b.dataset.e;render()}});mappa()}

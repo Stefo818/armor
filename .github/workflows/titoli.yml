@@ -1,0 +1,38 @@
+name: Motore titoli Armor
+on:
+  schedule:
+    - cron: '15 22 * * 1-5'   # dopo la chiusura di Wall Street (ora UTC)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
+jobs:
+  titoli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONUNBUFFERED: '1'
+      SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/cache@v4
+        with:
+          path: data/_cache
+          key: titoli-cache-${{ github.run_id }}
+          restore-keys: titoli-cache-
+      - run: pip install -r requirements.txt tzdata
+      - name: Universo, prezzi e classifiche di tutto il mercato
+        env:
+          PYTHONPATH: src
+        run: python -m armor titoli-aggiorna
+      - name: Classifiche della pagina Mercati (usa i titoli appena calcolati)
+        env:
+          PYTHONPATH: src
+        run: python -m armor mercati-mondo
+      - name: Salva i risultati compatti nel repository
+        run: bash scripts/salva.sh "Motore titoli: classifiche automatiche" data/titoli_top.json data/mercati_mondo.json data/universo

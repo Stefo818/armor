@@ -454,6 +454,13 @@ def main() -> None:
         from . import mondo
         d = mondo.aggiorna()
         print({"attività": len(d["items"]), "mancanti": d["mancanti"][:40]})
+    elif cmd == "titoli-aggiorna":   # Patch 45: universo, prezzi, filtri, classifiche → data/titoli_top.json (lento: 20-40 minuti la prima volta)
+        from . import titoli
+        d = titoli.aggiorna()
+        print({"titoli_in_classifica": len(d["items"]), "universo_filtrato": d["universo"], "dati_al": d["asof"]})
+    elif cmd == "titoli-prova":   # python -m armor titoli-prova NVDA : mostra indicatori, eventi 8-K e notizie classificate di un solo titolo
+        from . import titoli_prova
+        titoli_prova.main(sys.argv[2] if len(sys.argv) > 2 else "NVDA")
     elif cmd == "audit-dati":
         from . import audit_dati
         raise SystemExit(0 if audit_dati.esegui()["ok"] else 1)
