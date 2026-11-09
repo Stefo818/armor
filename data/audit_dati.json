@@ -1,0 +1,98 @@
+{
+ "generato": "2026-11-09T10:56Z",
+ "ok": true,
+ "n_controlli": 15,
+ "n_falliti": 0,
+ "controlli": [
+  {
+   "controllo": "VIX 06/11",
+   "ok": true,
+   "dettaglio": "archivio 25.64 · riferimento 25.64",
+   "grave": true
+  },
+  {
+   "controllo": "VIX 05/11",
+   "ok": true,
+   "dettaglio": "archivio 28.18 · riferimento 28.18",
+   "grave": true
+  },
+  {
+   "controllo": "VIX 04/11",
+   "ok": true,
+   "dettaglio": "archivio 16.61 · riferimento 16.61",
+   "grave": true
+  },
+  {
+   "controllo": "VIX 03/11",
+   "ok": true,
+   "dettaglio": "archivio 20.83 · riferimento 20.83",
+   "grave": true
+  },
+  {
+   "controllo": "VIX 02/11",
+   "ok": true,
+   "dettaglio": "archivio 21.15 · riferimento 21.15",
+   "grave": true
+  },
+  {
+   "controllo": "VIX 30/10",
+   "ok": true,
+   "dettaglio": "archivio 19.42 · riferimento 19.42",
+   "grave": true
+  },
+  {
+   "controllo": "VIX 29/10",
+   "ok": true,
+   "dettaglio": "archivio 17.20 · riferimento 17.20",
+   "grave": true
+  },
+  {
+   "controllo": "Date allineate",
+   "ok": true,
+   "dettaglio": "VIX 06/11, S&P 500 06/11, VWCE (L&S) 06/11",
+   "grave": true
+  },
+  {
+   "controllo": "VWCE: L&S vs Xetra (ultimi 60 giorni)",
+   "ok": true,
+   "dettaglio": "scarto massimo 1.48%",
+   "grave": false
+  },
+  {
+   "controllo": "VIX: valori validi",
+   "ok": true,
+   "dettaglio": "9283 righe",
+   "grave": true
+  },
+  {
+   "controllo": "VIX: salti giornalieri plausibili",
+   "ok": true,
+   "dettaglio": "massimo 69.7% in un giorno",
+   "grave": false
+  },
+  {
+   "controllo": "S&P 500: valori validi",
+   "ok": true,
+   "dettaglio": "24831 righe",
+   "grave": true
+  },
+  {
+   "controllo": "S&P 500: salti giornalieri plausibili",
+   "ok": true,
+   "dettaglio": "massimo 4.4% in un giorno",
+   "grave": false
+  },
+  {
+   "controllo": "VWCE (L&S): valori validi",
+   "ok": true,
+   "dettaglio": "1703 righe",
+   "grave": true
+  },
+  {
+   "controllo": "VWCE (L&S): salti giornalieri plausibili",
+   "ok": true,
+   "dettaglio": "massimo 4.0% in un giorno",
+   "grave": false
+  }
+ ]
+}
