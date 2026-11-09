@@ -413,17 +413,11 @@ def verifica(close: pd.DataFrame, ref: pd.Series, registro: pd.DataFrame | None 
 
 
 # ---------------------------------------------------------------- lavoro serale
-def aggiorna(log=print) -> dict:
+def arricchisci(tk: list[str], nomi: dict, log=print, giorni_8k: int = 30) -> tuple[dict, dict, dict]:
+    """Per un elenco di titoli: indicatori (yfinance con cache 7 giorni + SEC RPO), 8-K recenti e notizie (Google News). Restituisce (ind, ev8k, notizie)."""
     import concurrent.futures as cf
 
-    from . import news, titoli
-    registra_protocollo()
-    top = json.loads((DATA / "titoli_top.json").read_text(encoding="utf-8"))
-    mm = json.loads((DATA / "mercati_mondo.json").read_text(encoding="utf-8")) if (DATA / "mercati_mondo.json").exists() else {"items": []}
-    cls = candidati(top)
-    tk = sorted({t for l in cls.values() for t in l})
-    log(f"[saldi] candidati: {len(tk)} titoli")
-    by = {i["t"]: i for i in top["items"]}
+    from . import news
 
     def uno(t):
         return t, tf.da_yf(t)
@@ -435,7 +429,7 @@ def aggiorna(log=print) -> dict:
     try:
         cik = tf.cik_map()
     except Exception as e:  # noqa: BLE001
-        log("[saldi] SEC non disponibile: " + str(e)[:80])
+        log("[sec] non disponibile: " + str(e)[:80])
     ind, ev8k = {}, {}
     for t in tk:
         d = fond.get(t)
@@ -446,7 +440,7 @@ def aggiorna(log=print) -> dict:
         if c:
             try:
                 rpo = tf.rpo_da_facts(tf.sec_json(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{c}.json") or {})
-                ev8k[t] = tf.eventi_8k(tf.sec_json(f"https://data.sec.gov/submissions/CIK{c}.json") or {})
+                ev8k[t] = tf.eventi_8k(tf.sec_json(f"https://data.sec.gov/submissions/CIK{c}.json") or {}, giorni_8k)
             except Exception:  # noqa: BLE001
                 pass
         ind[t] = tf.indicatori(d, rpo)
@@ -454,7 +448,7 @@ def aggiorna(log=print) -> dict:
     def notizie_di(t):
         try:
             import requests
-            nome = (ind.get(t) or {}).get("nome") or by[t]["n"]
+            nome = (ind.get(t) or {}).get("nome") or nomi.get(t, t)
             xml = requests.get(news.GOOGLE.format(q=f'"{nome}"+stock'), timeout=30, headers=news.UA).text
             return t, news.parse_rss(xml)[:20]
         except Exception:  # noqa: BLE001
@@ -463,6 +457,18 @@ def aggiorna(log=print) -> dict:
     with cf.ThreadPoolExecutor(4) as ex:
         for t, n_ in ex.map(notizie_di, tk):
             nz[t] = n_
+    return ind, ev8k, nz
+
+
+def aggiorna(log=print) -> dict:
+    from . import titoli
+    registra_protocollo()
+    top = json.loads((DATA / "titoli_top.json").read_text(encoding="utf-8"))
+    mm = json.loads((DATA / "mercati_mondo.json").read_text(encoding="utf-8")) if (DATA / "mercati_mondo.json").exists() else {"items": []}
+    cls = candidati(top)
+    tk = sorted({t for l in cls.values() for t in l})
+    log(f"[saldi] candidati: {len(tk)} titoli")
+    ind, ev8k, nz = arricchisci(tk, {i["t"]: i["n"] for i in top["items"]}, log)
     etf = [i for i in mm.get("items", []) if i["c"] == "etf"]
     rs = {}
     for i in mm.get("items", []):

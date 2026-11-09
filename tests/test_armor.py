@@ -1891,3 +1891,57 @@ def test_saldi_verifica_per_fascia():
     v = saldi.verifica(close, spy, reg)
     f = {x["fascia"]: x for x in v["orizzonti"]["1m"]["fasce"]}
     assert f["81-100"]["medio"] > 0 > f["1-20"]["medio"] and f["81-100"]["su"] == 1.0 and f["1-20"]["su"] == 0.0
+
+
+def _finti_opp(n=40):
+    from armor import opportunita as op
+    cand, prezzi, vol = {}, {}, {}
+    for i in range(n):
+        t = f"O{i}"
+        ind = {"nome": f"Opp {i}", "valuta": "USD", "cap": 1e9 * (i + 1), "settore": "Technology", "paese": "United States", "ricavi_ttm": 1e9, "crescita_ricavi": 0.4 - i * 0.01,
+               "rev_eps_30": 0.2 - i * 0.01, "rev_eps_90": 0.3 - i * 0.01, "rev_su": 10 - i % 10, "rev_giu": i % 10, "sue": {"sue": 2 - i * 0.1}, "gross_su_attivo": 0.5 - i * 0.01,
+               "roe": 0.3, "accruals": i * 0.01, "piotroski": {"score": 9 - i % 9}, "ps_f": 5, "ps": 6, "sw": False, "ricavi_q_1a": {"f": "▲", "var": 0.3}, "analisti": {"target": 20, "target_min": 10, "target_max": 30, "n": 6},
+               "prossima_trimestrale": "2026-11-20", "rpo": {"rpo": 1e9}, "rpo_anni": 1.5 - i * 0.02}
+        m = {"mom12_1": 0.8 - i * 0.02, "dd52": -0.02 - i * 0.005}
+        cand[t] = {"ind": ind, "voci": op.voci(ind, m, [], [], 70.0 if i < 5 else None), "area": "USA", "settore": "Technology", "eventi": [], "notizie": [], "nome_tema": "Robotica" if i < 5 else None}
+        prezzi[t] = {"p": 10.0 + i, "v": "USD", "r7": 0.01, "r1m": 0.02, "k": [1, 2, 3]}
+        vol[t] = 0.4
+    return op, cand, prezzi, vol
+
+
+def test_opportunita_punteggio_fasce_e_registro(tmp_path, monkeypatch):
+    op, cand, prezzi, vol = _finti_opp()
+    monkeypatch.setattr(op, "REGISTRO", tmp_path / "reg.csv")
+    cand["O7"]["esclusa"] = True
+    d = op.costruisci(cand, prezzi, vol, [{"tema": "Robotica", "forza": 80}], "2026-11-06", "2026-11-07", eurusd=1.1)
+    assert len(d["ordine"]) == 30 and "O7" not in d["ordine"] and d["ordine"][0] in ("O0", "O1")
+    s = [d["titoli"][t]["s"] for t in d["ordine"]]
+    assert s == sorted(s, reverse=True) and all(1 <= x <= 100 for x in s)
+    x = d["titoli"]["O0"]
+    assert x["usati"] >= 4 and x["eur"] == round(10 / 1.1, 2) and len(x["mot"]) <= 3 and x["fasce"]["1a"]["lo"] < x["fasce"]["1a"]["med"] < x["fasce"]["1a"]["hi"]
+    assert "consulenza" in d["dett"]["O0"]["report"]["nota"] and d["dett"]["O0"]["cataliz"][0]["t"] == "Prossima trimestrale"
+    assert op.registra(d, "2026-11-07") == 30 and op.registra(d, "2026-11-07") == 0
+    assert "armor-op-data" in op.block(op.json.dumps(d)) and "non è una consulenza" in op.block().lower()
+
+
+def test_opportunita_fascia_matematica():
+    op = __import__("armor.opportunita", fromlist=["x"])
+    f = op.fascia(0.30, 1.0)
+    assert abs(f["med"] - 0.07) < 1e-9 and f["lo"] < 0 < f["hi"]
+    assert op.fascia(0.30, 4.0)["hi"] > op.fascia(0.30, 1.0)["hi"] and op.fascia(None, 1) is None
+    assert abs(op.fascia(0.3, 1, 0.2)["med"] - 0.2) < 1e-9
+    assert "×" in op.testo_fascia(op.fascia(0.9, 2.0)) and "tra" in op.testo_fascia(f)
+    assert op.centri_reali({"1m": {"n": 10, "mediana": 0.1}, "3m": {"n": 40, "mediana": 0.05}}) == {"3m": 0.05}
+
+
+def test_opportunita_storico_contro_vt():
+    op = __import__("armor.opportunita", fromlist=["x"])
+    idx = pd.bdate_range("2026-01-01", periods=100)
+    close = pd.DataFrame({"A": np.linspace(10, 20, 100), "B": np.linspace(10, 5, 100)}, index=idx)
+    vt = pd.Series(np.linspace(100, 105, 100), index=idx)
+    reg = pd.DataFrame({"data": [idx[0]] * 2, "ticker": ["A", "B"], "punteggio": [90, 80], "prezzo": [10, 10], "m1_med": [0.01] * 2, "m1_lo": [-0.2] * 2, "m1_hi": [0.2] * 2,
+                        "m3_med": [0.02] * 2, "m3_lo": [-0.3] * 2, "m3_hi": [0.3] * 2})
+    st = op.storico(close, vt, registro=reg)
+    r = st["riepilogo"]["1m"]
+    assert r["n"] == 2 and r["batte_vt"] == 0.5 and st["settimane"][0]["scelte"][1]["1m"]["reale"] < 0   # il negativo si mostra
+    assert r["dentro_fascia"] is not None

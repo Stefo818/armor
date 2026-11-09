@@ -243,12 +243,14 @@ def aggiorna(log=print, usa_estero: bool = True) -> dict:
         est = universo_estero(log)
         uni = pd.concat([uni, est], ignore_index=True).drop_duplicates("t")
     log(f"[titoli] universo: {len(uni)} simboli")
-    tk = sorted(set(uni["t"]) | {"SPY", "EURUSD=X"})
+    from . import titoli_eventi as _ev
+    extra = ["SPY", "EURUSD=X", "VT"] + sorted({v[1] for v in _ev.TEMI.values()})
+    tk = sorted(set(uni["t"]) | set(extra))
     arch = aggiorna_prezzi(tk, log=log)
     c, v = arch["close"], arch["vol"]
     ref = c["SPY"] if "SPY" in c else None
     fx = c["EURUSD=X"].dropna() if "EURUSD=X" in c else None
-    cc = c.drop(columns=[x for x in ("SPY", "EURUSD=X") if x in c])
+    cc = c.drop(columns=[x for x in extra if x in c])
     m = metriche(cc, v.reindex(columns=cc.columns), ref)
     capi = uni.set_index("t")["cap"] if "cap" in uni else None
     m = liquidi(m, capi)

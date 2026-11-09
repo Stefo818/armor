@@ -575,3 +575,11 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - CLI `saldi-aggiorna`; titoli.yml lo lancia dopo titoli-aggiorna e mercati-mondo (timeout 150 min) e salva data/saldi*.
 - NON TESTATO su dati reali. Non fatto: test storico con bilanci SEC dal 2012; confronto con la mediana a 5 anni del titolo; revisioni stime EPS; confronto contro ETF di settore nella tabella (usa SPY); traduzione dei titoli delle notizie (restano in inglese, con l'etichetta in italiano); percentili nel settore solo per la valutazione.
 - sw.js armor-v46. Test: 117 passed.
+
+## PATCH 47 — Opportunità (ultima patch del piano)
+- PROTOCOLLO_OPPORTUNITA.md (8 fattori: revisioni 20, momentum 15, crescita 15, qualità 15, sorpresa 10, contratti 10, catalizzatori e temi 10, valutazione 5; filtri cap ≥300M, controvalore ≥1M, ≥3 analisti o dati SEC; impronta in data/protocollo_opportunita_log.csv).
+- src/armor/opportunita.py: preselezione 600 per momentum, poi punteggio Potenziale 1-100 (percentili nel gruppo area+settore o nell'insieme, ≥4 fattori su 8), 3 motivi, catalizzatori, fasce di crescita lognormali 10-90 (1m, 3m, 1a, 2a; centro 7%/anno = ipotesi dichiarata finché non ci sono ≥30 scelte maturate), report «Perché è promettente / Cosa potrebbe andare storto», registro del sabato, storico previsto/reale contro VT con % dentro la fascia (si mostra anche se negativo), temi della settimana (GDELT + ETF contro VT).
+- titoli.py: l'archivio prezzi include ora VT e gli ETF dei temi (esclusi dalle classifiche). titoli_fond.py: campo `valuta`.
+- Pagina «Opportunità» (dopo Saldi, lazy: series/opportunita.json). CLI `opportunita-aggiorna` (sabato, workflow opportunita.yml, 120 min) e `opportunita-rinfresca` (nel lavoro titoli giornaliero). site.yml ascolta «Opportunita Armor».
+- NON TESTATO su dati reali. Non fatto: test storico con bilanci SEC; accelerazione trimestrale; USAspending; reazione del prezzo dopo le trimestrali; il centro delle fasce è un'ipotesi.
+- sw.js armor-v47. Test: 120 passed.

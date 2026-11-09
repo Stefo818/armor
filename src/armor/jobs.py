@@ -462,6 +462,13 @@ def main() -> None:
         from . import saldi
         d = saldi.aggiorna()
         print({"titoli": len(d["titoli"]), "dati_al": d["asof"]})
+    elif cmd == "opportunita-aggiorna":   # Patch 47: le 30 aziende della settimana con punteggio Potenziale (sabato)
+        from . import opportunita
+        d = opportunita.aggiorna()
+        print({"scelte": len(d["ordine"]), "dati_al": d["asof"]})
+    elif cmd == "opportunita-rinfresca":   # prezzi e storico delle scelte, senza ricalcolare il punteggio (giornaliero)
+        from . import opportunita
+        opportunita.rinfresca()
     elif cmd == "titoli-prova":   # python -m armor titoli-prova NVDA : mostra indicatori, eventi 8-K e notizie classificate di un solo titolo
         from . import titoli_prova
         titoli_prova.main(sys.argv[2] if len(sys.argv) > 2 else "NVDA")

@@ -258,7 +258,7 @@ def estrai(df_list: list, col: int) -> dict:
 INFO_CAMPI = ("longName", "sector", "industry", "country", "currency", "marketCap", "trailingPE", "forwardPE", "priceToSalesTrailing12Months", "enterpriseValue",
               "enterpriseToRevenue", "enterpriseToEbitda", "grossMargins", "operatingMargins", "profitMargins", "revenueGrowth", "earningsGrowth", "debtToEquity",
               "currentRatio", "freeCashflow", "totalCash", "returnOnEquity", "shortPercentOfFloat", "heldPercentInsiders", "targetMeanPrice", "targetLowPrice",
-              "targetHighPrice", "recommendationMean", "numberOfAnalystOpinions", "sharesOutstanding", "totalRevenue", "forwardEps", "trailingEps", "bookValue", "priceToBook")
+              "targetHighPrice", "recommendationMean", "numberOfAnalystOpinions", "sharesOutstanding", "totalRevenue", "forwardEps", "trailingEps", "bookValue", "priceToBook", "longBusinessSummary")
 
 
 def da_yf(ticker: str) -> dict | None:
@@ -279,6 +279,8 @@ def da_yf(ticker: str) -> dict | None:
     except Exception:  # noqa: BLE001
         return None
     d = {"info": {k: info.get(k) for k in INFO_CAMPI if info.get(k) is not None}, "ts": time.time()}
+    if d["info"].get("longBusinessSummary"):
+        d["info"]["longBusinessSummary"] = d["info"]["longBusinessSummary"][:700]
     q = [qi, qb, qc]
     d["q"] = [estrai(q, i) for i in range(min(5, qi.shape[1] if qi is not None and not qi.empty else 0))]
     a = [ai, ab, ac]
@@ -288,6 +290,27 @@ def da_yf(ticker: str) -> dict | None:
                          "eps_stima": _n(t.earnings_estimate.loc["+1y", "avg"]) if "+1y" in t.earnings_estimate.index else None}
     except Exception:  # noqa: BLE001
         d["analisti"] = {}
+    try:   # revisioni delle stime EPS a +1 anno (corrente contro 30 e 90 giorni fa) e rapporto su/giù degli ultimi 30 giorni
+        tr, rv = t.eps_trend, t.eps_revisions
+        riga = "+1y" if "+1y" in tr.index else None
+        if riga:
+            cur = _n(tr.loc[riga, "current"])
+            d["revisioni"] = {"eps": cur, "eps_30": _n(tr.loc[riga, "30daysAgo"]), "eps_90": _n(tr.loc[riga, "90daysAgo"]),
+                              "su": _n(rv.loc[riga, "upLast30days"]) if rv is not None and riga in rv.index else None,
+                              "giu": _n(rv.loc[riga, "downLast30days"]) if rv is not None and riga in rv.index else None}
+    except Exception:  # noqa: BLE001
+        d["revisioni"] = None
+    try:   # sorprese delle ultime trimestrali (EPS effettivo e atteso)
+        eh = t.earnings_history
+        d["sorprese"] = [[_n(a), _n(b)] for a, b in zip(eh["epsActual"].tolist(), eh["epsEstimate"].tolist())] if eh is not None and not eh.empty else None
+    except Exception:  # noqa: BLE001
+        d["sorprese"] = None
+    try:   # prossima trimestrale
+        cal = t.calendar
+        ed = cal.get("Earnings Date") if isinstance(cal, dict) else None
+        d["prossima_trimestrale"] = str(ed[0]) if ed else None
+    except Exception:  # noqa: BLE001
+        d["prossima_trimestrale"] = None
     try:
         ins = t.insider_purchases
         d["insider_acq_90g"] = int(_n(ins.iloc[0, 1]) or 0) if ins is not None and not ins.empty else None
@@ -320,7 +343,7 @@ def indicatori(d: dict, rpo: dict | None = None) -> dict:
     x["cap"] = cap
     ebit, intr = _n(a0.get("ebit")), _n(a0.get("interest"))
     return {
-        "nome": info.get("longName"), "settore": info.get("sector"), "industria": info.get("industry"), "paese": info.get("country"), "cap": cap,
+        "nome": info.get("longName"), "valuta": info.get("currency"), "settore": info.get("sector"), "industria": info.get("industry"), "paese": info.get("country"), "cap": cap,
         "ricavi_q": ric_q[0] if ric_q else None, "ricavi_q_1a": freccia(ric_q[0], ric_q[4]) if len(ric_q) >= 5 else None,
         "ricavi_q_prec": freccia(ric_q[0], ric_q[1]) if len(ric_q) >= 2 else None, "ricavi_ttm": ttm, "utile_ttm": ut_ttm, **rapp,
         "piotroski": piotroski(a0, a1) if a0 and a1 else None,
@@ -333,4 +356,10 @@ def indicatori(d: dict, rpo: dict | None = None) -> dict:
         "analisti": {"raccomandazione": _n(info.get("recommendationMean")), "target": _n(info.get("targetMeanPrice")), "target_min": _n(info.get("targetLowPrice")),
                      "target_max": _n(info.get("targetHighPrice")), "n": _n(info.get("numberOfAnalystOpinions"))},
         "short_float": _n(info.get("shortPercentOfFloat")), "insider_acq_90g": d.get("insider_acq_90g"),
+        "rev_eps_30": _div((d.get("revisioni") or {}).get("eps"), (d.get("revisioni") or {}).get("eps_30")) and _n(_div((d.get("revisioni") or {}).get("eps"), (d.get("revisioni") or {}).get("eps_30")) - 1),
+        "rev_eps_90": _div((d.get("revisioni") or {}).get("eps"), (d.get("revisioni") or {}).get("eps_90")) and _n(_div((d.get("revisioni") or {}).get("eps"), (d.get("revisioni") or {}).get("eps_90")) - 1),
+        "rev_su": (d.get("revisioni") or {}).get("su"), "rev_giu": (d.get("revisioni") or {}).get("giu"),
+        "sue": (sue(d["sorprese"][0][0], d["sorprese"][0][1], [(a - b) for a, b in d["sorprese"] if a is not None and b is not None]) if d.get("sorprese") and d["sorprese"][0][0] is not None else None),
+        "crescita_ricavi": _n(info.get("revenueGrowth")), "gross_su_attivo": _div(a0.get("gross"), a0.get("assets")),
+        "prossima_trimestrale": d.get("prossima_trimestrale"), "descrizione": info.get("longBusinessSummary"), "sw": info.get("industry") in ("Software - Application", "Software - Infrastructure"),
     }
