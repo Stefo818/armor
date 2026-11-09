@@ -182,7 +182,10 @@ def _arch_series(col: str) -> pd.Series:
     d = pd.read_csv(f)
     if col not in d:
         return pd.Series(dtype=float)
-    return pd.Series(d[col].values, index=pd.to_datetime(d["date"])).dropna()
+    x = pd.Series(d[col].values, index=pd.to_datetime(d["date"]))
+    if col.startswith("pc_"):   # rapporto put/call <= 0 = snapshot degenere (mercato chiuso): non e' un dato
+        x = x.where(x > 0)
+    return x.dropna()
 
 
 def credit_gap(ratio: pd.Series, lam: float = 400000.0, min_n: int = 40) -> pd.Series:

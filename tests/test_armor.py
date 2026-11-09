@@ -1539,3 +1539,45 @@ def test_pagina_live_e_archivio_nel_sito():
     import inspect
     src = inspect.getsource(parts)
     assert "window.LIVETICKS" in src and "ARMOR_TICKS" in src and "api.onvista.de" not in src
+
+
+# ---- patch 38: coerenza dei dati
+def test_parse_ls_solo_feriali_e_senza_oggi():
+    import json
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    from armor import sources
+    ms = lambda d: int(pd.Timestamp(d).value // 1_000_000)  # noqa: E731
+    pts = [[ms("2026-11-05"), 163.53], [ms("2026-11-06"), 165.01], [ms("2026-11-07"), 165.01], [ms("2026-11-08"), 165.01], [ms("2026-11-09"), 165.47]]
+    txt = json.dumps({"series": {"history": {"data": pts}}})
+    s = sources.parse_ls(txt, datetime(2026, 11, 9, 12, 0, tzinfo=ZoneInfo("Europe/Berlin")))
+    assert list(s.index.strftime("%Y-%m-%d")) == ["2026-11-05", "2026-11-06"] and s.iloc[-1] == 165.01
+    s2 = sources.parse_ls(txt, datetime(2026, 11, 9, 23, 30, tzinfo=ZoneInfo("Europe/Berlin")))
+    assert s2.index[-1] == pd.Timestamp("2026-11-09")
+
+
+def test_trend_dated_usa_date_vere():
+    from armor import cruscotto
+    s = pd.Series([17.2, 19.42, 21.15, 20.83, 16.61, 28.18, 25.64], index=pd.to_datetime(
+        ["2026-10-29", "2026-10-30", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06"]))
+    h = cruscotto.trend_dated(s, 1, True)
+    assert "Il 05/11" in h and "28,2" in h and "Il 30/10" in h and "Ieri" not in h and "data-h=" in h
+
+
+def test_putcall_degenere_non_e_un_dato(tmp_path, monkeypatch):
+    from armor import archive
+    df = pd.DataFrame({"type": ["C", "P"], "expiry": ["2026-12-18"] * 2, "strike": [700, 700], "volume": [0, 0], "openInterest": [0, 0],
+                       "impliedVolatility": [0.2, 0.2]})
+    r = archive.riepilogo(df, 700.0, "2026-11-07")
+    assert pd.isna(r["pc_open_interest"]) and pd.isna(r["pc_volume"])
+
+
+def test_audit_confronta_con_riferimento():
+    from armor import audit_dati
+    ix = pd.to_datetime(["2026-11-05", "2026-11-06"])
+    v = pd.Series([28.18, 25.64], index=ix)
+    rif = pd.DataFrame({"close": [28.18, 28.0]}, index=ix)
+    res = audit_dati.controlla(vix=v, sp=pd.Series([1.0, 2.0], index=ix), ls=pd.Series([1.0, 2.0], index=ix), xe=pd.Series(dtype=float), rif=rif)
+    ok = {x["controllo"]: x["ok"] for x in res}
+    assert ok["VIX 05/11"] and not ok["VIX 06/11"]

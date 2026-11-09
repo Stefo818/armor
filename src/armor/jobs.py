@@ -271,6 +271,11 @@ def tutto(skip_download: bool = False) -> None:
         except Exception as e:  # noqa: BLE001
             print("Archivio opzioni SPY non riuscito:", str(e)[:120])
         fonti_nuove()
+        try:   # coerenza dei dati (VIX contro la tabella di riferimento, date allineate, VWCE L&S contro Xetra): non blocca mai il ciclo
+            from . import audit_dati
+            audit_dati.esegui()
+        except Exception as e:  # noqa: BLE001
+            print("[audit] non riuscito:", str(e)[:100])
     try:   # serie derivate (crescita utili, inflazione annua, liquidità Fed, forza relativa...): veloce, anche senza download
         from . import fondamentali
         fondamentali.aggiorna_derivate()
@@ -426,6 +431,9 @@ def main() -> None:
     elif cmd == "serie-euro":   # segmenti, confronto tra serie e tra motori su VWCE in euro (~1 minuto)
         from . import serie_eur
         print(serie_eur.run())
+    elif cmd == "audit-dati":
+        from . import audit_dati
+        raise SystemExit(0 if audit_dati.esegui()["ok"] else 1)
     elif cmd == "diagnostica":   # solo controllo del diario e avvisi (usato dal controllo del mattino, che non scrive nel repository)
         from . import diagnostica
         diagnostica.esegui(scrivi_stato=False)

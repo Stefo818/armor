@@ -27,8 +27,12 @@ def riepilogo(df: pd.DataFrame, spot: float, day: str) -> dict:
     d30 = df[df.expiry == scad(30)]
     a30 = atm(d30)
     breve, lunga = df[df.expiry == scad(7)], df[df.expiry == df.loc[days.idxmax(), "expiry"]]
-    return {"date": day, "spot": spot, "pc_volume": P.volume.sum() / max(C.volume.sum(), 1),
-            "pc_open_interest": P.openInterest.sum() / max(C.openInterest.sum(), 1),
+    def rapporto(a, b):
+        """Put/Call: valido solo se entrambi i lati hanno contratti (a mercato chiuso volume e OI possono essere 0)."""
+        a, b = float(a), float(b)
+        return a / b if a > 0 and b > 0 else float("nan")
+    return {"date": day, "spot": spot, "pc_volume": rapporto(P.volume.sum(), C.volume.sum()),
+            "pc_open_interest": rapporto(P.openInterest.sum(), C.openInterest.sum()),
             "iv_atm_30d": a30, "put_skew_95": iv_at(d30, "P", 0.95) - a30, "put_skew_90": iv_at(d30, "P", 0.90) - a30,
             "put_skew_80": iv_at(d30, "P", 0.80) - a30, "call_skew_105": iv_at(d30, "C", 1.05) - a30,
             "iv_atm_breve": atm(breve), "giorni_breve": int(days[breve.index[0]]), "iv_atm_lunga": atm(lunga), "giorni_lunga": int(days[lunga.index[0]]),

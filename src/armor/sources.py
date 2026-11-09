@@ -227,6 +227,38 @@ def fallback_source(sid: str, tz: str, close: str) -> tuple[pd.Series, str]:
     raise RuntimeError("nessuna fonte di riserva")
 
 
+LS_URL = ("https://www.ls-tc.de/_rpc/json/instrument/chart/dataForInstrument?container=chart1&instrumentId=1045625&marketId=1"
+          "&series=history&type=mini&localeId=2&quotetype=mid")
+
+
+def parse_ls(text: str, ora: datetime | None = None) -> pd.Series:
+    """Chiusure giornaliere VWCE da Lang & Schwarz TradeCenter (sessione serale fino alle 23:00, come la chiusura USA).
+    Il file ha un punto per ogni giorno, weekend compresi (si ripete l'ultimo prezzo) e, per oggi, un punto provvisorio.
+    Si tengono solo i giorni feriali, si scartano le ripetizioni identiche (festivi) e il giorno in corso se prima delle 23:05 a Berlino."""
+    j = json.loads(text)
+    ser = j.get("series", j)
+    data = ser.get("history", ser) if isinstance(ser, dict) else ser
+    data = data.get("data", data) if isinstance(data, dict) else data
+    rows = {}
+    for t, v in data:
+        d = pd.Timestamp(int(t), unit="ms").normalize()
+        if d.dayofweek >= 5 or v is None or float(v) <= 0:
+            continue
+        rows[d] = float(v)
+    s = pd.Series(rows).sort_index()
+    s = s[s.diff().ne(0) | s.diff().isna()]
+    now = ora or datetime.now(ZoneInfo("Europe/Berlin"))
+    oggi = pd.Timestamp(now.date())
+    if now.hour * 60 + now.minute < 23 * 60 + 5:
+        s = s[s.index < oggi]
+    s.name = "vwce_ls"
+    return s
+
+
+def fetch_ls() -> pd.Series:
+    return parse_ls(_get(LS_URL, tries=3).text)
+
+
 def fetch_cboe(url: str) -> pd.Series:
     r = _get(url)
     txt = r.text
@@ -349,6 +381,11 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
         except Exception as e:  # noqa: BLE001
             for sid in OHLC_IDS:
                 store.set_status(st, sid, False, str(e)[:120])
+    if not only or "vwce_ls" in only:   # chiusure VWCE di riferimento (L&S); se la fonte non risponde resta l'archivio e si usa Xetra
+        try:
+            store.set_status(st, "vwce_ls", True, "", store.upsert("vwce_ls", fetch_ls()))
+        except Exception as e:  # noqa: BLE001
+            store.set_status(st, "vwce_ls", False, "L&S non raggiungibile: " + str(e)[:100])
     for sid, url in CBOE.items():
         if only and sid not in only:
             continue

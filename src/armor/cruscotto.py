@@ -40,6 +40,39 @@ def trend_cells(now, ieri, sett, d=0, thr=1.0, risk=True, rel=False) -> str:
     return one("Ieri", ieri) + one("Sett. fa", sett)
 
 
+def _closes(s: pd.Series, n: int = 12) -> list:
+    s = s.dropna()
+    return [[i.strftime("%Y-%m-%d"), round(float(v), 4)] for i, v in s.tail(n).items()]
+
+
+def _dm(iso: str) -> str:
+    return f"{iso[8:10]}/{iso[5:7]}"
+
+
+def trend_dated(s: pd.Series, d: int, risk: bool, rel: bool = True, live: bool = True) -> str:
+    """Variazioni rispetto a due chiusure con la data esplicita (niente «Ieri», che nel weekend ingannava).
+    Il valore mostrato e' l'ultima chiusura; la chiusura precedente e quella di una settimana prima sono calcolate
+    sulla stessa serie e, se c'e' un prezzo in diretta, il browser le ricalcola con le stesse regole (vedi report.paint)."""
+    s = s.dropna()
+    if s.empty:
+        return ""
+    now, dnow = float(s.iloc[-1]), s.index[-1]
+    prev = s[s.index < dnow]
+    wk = s[s.index <= dnow - pd.Timedelta(days=7)]
+
+    def one(ref_s):
+        if ref_s.empty:
+            return "<div class='tcl'><span class='mu'>n.d.</span></div>"
+        ref, dt = float(ref_s.iloc[-1]), ref_s.index[-1]
+        diff = now - ref
+        pct = diff / ref * 100 if ref else None
+        t = (f"{pct:+.1f}%" if rel else f"{diff:+.{d}f}").replace(".", ",").replace("-", "\u2212")
+        return (f"<div class='tcl'><span class='mu'>Il {_dm(dt.strftime('%Y-%m-%d'))}</span> <b>{_fmt(ref, d)}</b> "
+                f"{arrow(pct if rel else diff, 1.0 if rel else 0.0, risk)} <span class='mu'>({t})</span></div>")
+    attrs = (f" data-h='{json.dumps(_closes(s), separators=(',', ':'))}' data-d='{d}' data-risk='{1 if risk else 0}'") if live else ""
+    return f"<div class='trow'{attrs}>{one(prev)}{one(wk)}</div>"
+
+
 def hero_trend(d: dict | None) -> str:
     if not d:
         return ""
@@ -81,7 +114,7 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
     lt, ltxt = _light(sem, "vix")
     cards += (f"<div class='kc lq' data-k='vix' data-chart='vix'><div class='kt'>VIX · paura <span class='sdot {lt}'></span><small>{ltxt}</small></div>"
               f"<div class='kv lqp'>{_fmt(v, 2)}</div><div class='lqc'></div>"
-              f"{_vix_gauge(v)}<div class='trow'>{trend_cells(v, v1, v5, 1, 0.5, True, True)}</div>"
+              f"{_vix_gauge(v)}{trend_dated(vix, 2, True)}"
               "<div class='mu'>Sopra 20 nervoso, sopra 30 stress.</div></div>")
     # Put/Call
     arch = semafori._arch_series("pc_open_interest")
@@ -90,7 +123,7 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
     if pc is None:
         body = "<div class='kv'>n.d.</div><div class='mu'>In raccolta: l'archivio ha iniziato da poco, servono alcuni giorni per ieri e settimana.</div>"
     else:
-        body = (f"<div class='kv'>{_fmt(pc, 2)}</div><div class='trow'>{trend_cells(pc, p1, p5, 2, 0.02, True, True)}</div>"
+        body = (f"<div class='kv'>{_fmt(pc, 2)}</div>{trend_dated(arch, 2, True, live=False)}"
                 + ("" if len(arch) > 5 else f"<div class='mu'>Storia ancora corta ({len(arch)} {'giorno' if len(arch) == 1 else 'giorni'}).</div>"))
     cards += (f"<div class='kc' data-chart='pc_oi'><div class='kt'>Put/Call (SPY) <span class='sdot {lt}'></span><small>{ltxt}</small></div>{body}"
               "<div class='mu'>Più alto = più protezioni comprate.</div></div>")
@@ -102,7 +135,7 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
         x, x1, x5 = float(s.iloc[-1]), float(s.iloc[-2]) if len(s) > 1 else None, float(s.iloc[-6]) if len(s) > 5 else None
         dd = (x / float(s.rolling(252, min_periods=60).max().iloc[-1]) - 1) * 100
         cards += (f"<div class='kc lq' data-k='{key}' data-chart='{chart}'><div class='kt'>{nm}</div><div class='kv lqp'>{_fmt(x, 2)}</div><div class='lqc'></div>"
-                  f"<div class='trow'>{trend_cells(x, x1, x5, 2, 0.0, False, True)}</div><div class='mu'>Dal massimo a 1 anno: {_fmt(dd, 1)}%</div></div>")
+                  f"{trend_dated(s, 2, False)}<div class='mu'>Dal massimo a 1 anno: {_fmt(dd, 1)}%</div></div>")
     return f"<div class='kpis'>{cards}</div><div class='mu liveinfo' style='margin:-4px 0 10px'></div>"
 
 

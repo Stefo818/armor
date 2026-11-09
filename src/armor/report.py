@@ -11,7 +11,7 @@ from . import analysis, journal, live as livemod, outlook, parts, registry, sema
 from . import archivio_dati, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
-from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
+from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
 
 FEAT_IT = {"rv21": "volatilità recente (21 giorni)", "rv63": "volatilità a 3 mesi",
            "rv_ratio": "volatilità recente rispetto al normale", "dd252": "distanza dai massimi dell'ultimo anno",
@@ -239,7 +239,7 @@ def indicator_series(key, sp, p):
     if key == "sp500":
         return _with_live(sp, "sp500")
     if key == "vwce":
-        return _with_live(vwce_series(), "vwce")
+        return _with_live(vwce_display(), "vwce")
     if key == "dd252":
         return price_features(p)["dd252"] * 100
     if key == "vterm":
@@ -907,7 +907,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     # mappa settimanale e calendario: dati in JSON a parte (sito) o incorporati (file locale)
     map_json = cal_json = None
     try:
-        vw_h = vwce_series()
+        vw_h = vwce_display()
         mp = mappa.build_mappa(sp, aix, vw_h)
         evs_all = extra13.all_events(today_d - timedelta(days=1200), today_d + timedelta(days=75))
         cl = mappa.build_cal(sp, vw_h, store.load("vix"), aix, pd.Timestamp(today_d), evs_all)
@@ -965,7 +965,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     except Exception as ex:  # noqa: BLE001
         print("Indici a 3 orizzonti non calcolati:", str(ex)[:120], flush=True)
         hz3 = None
-    kpi = _safe(lambda: cruscotto.kpi_html(sem, sp, vwce_series(), store.load("vix")), "Indici principali")
+    kpi = _safe(lambda: cruscotto.kpi_html(sem, sp, vwce_display(), store.load("vix")), "Indici principali")
     p_oggi = (f"<a id='oggi'></a>{topbtns}<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>{_safe(diagnostica.banner, 'Avviso diario')}{_safe(affidabilita.html, 'Affidabilità')}"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
               f"{('<div class=card><b>Semafori di oggi:</b> ' + sem_line + '</div>') if sem_line else ''}"
@@ -1114,12 +1114,21 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();
-document.querySelectorAll('.lq').forEach(function(el){var q=L.quotes[el.dataset.k];if(!q)return;var d=el.dataset.k==='eurusd'?4:2;
-el.querySelector('.lqp').textContent=fmt(q.price,d)+(q.ccy?' '+q.ccy:'');
+function qdt(q,k){try{return new Date(q.time).toLocaleDateString('sv-SE',{timeZone:k==='vwce'?'Europe/Berlin':'America/New_York'})}catch(e){return ''}}
+function dmy(x){return x.slice(8,10)+'/'+x.slice(5,7)}
+function cell(lab,ref,now,dd,rel,risk){if(!ref)return '<div class="tcl"><span class="mu">n.d.</span></div>';var df=now-ref[1],pc=ref[1]?df/ref[1]*100:0,v=rel?pc:df,th=rel?1:0,bad=risk?v>0:v<0,ar=Math.abs(v)<th?'<span class="tr0">▬</span>':'<span class="'+(bad?'trb':'trg')+'">'+(v>0?'▲':'▼')+'</span>',t=(rel?(pc>=0?'+':'−')+fmt(Math.abs(pc),1)+'%':(df>=0?'+':'−')+fmt(Math.abs(df),dd));
+return '<div class="tcl"><span class="mu">'+lab+' '+dmy(ref[0])+'</span> <b>'+fmt(ref[1],dd)+'</b> '+ar+' <span class="mu">('+t+')</span></div>'}
+document.querySelectorAll('.lq').forEach(function(el){var k=el.dataset.k,q=L.quotes[k];if(!q)return;var d=k==='eurusd'?4:2,price=q.price,chg=q.chg,tr=el.querySelector('.trow[data-h]');
+if(tr){var H;try{H=JSON.parse(tr.dataset.h)}catch(e){H=null}
+if(H&&H.length){var last=H[H.length-1],qd=qdt(q,k)||last[0];
+if(!q.live){var wd=new Date(qd+'T12:00:00Z').getUTCDay();if(qd>last[0]&&(wd===0||wd===6))qd=last[0];var hit=H.filter(function(x){return x[0]===qd})[0];if(hit)price=hit[1]}
+var refs=H.filter(function(x){return x[0]<qd}),ie=refs[refs.length-1],lim=new Date(new Date(qd+'T12:00:00Z').getTime()-7*864e5).toISOString().slice(0,10),wk=refs.filter(function(x){return x[0]<=lim}),se=wk[wk.length-1],dd=+tr.dataset.d,rel=true,risk=tr.dataset.risk==='1';
+tr.innerHTML=cell('Il',ie,price,dd,rel,risk)+cell('Il',se,price,dd,rel,risk);chg=ie?price/ie[1]-1:chg}}
+el.querySelector('.lqp').textContent=fmt(price,d)+(q.ccy?' '+q.ccy:'');
 if(q.live){var nn=el.querySelector('.lqn')||el.querySelector('.kt');if(nn&&!nn.querySelector('.lvd'))nn.insertAdjacentHTML('beforeend',' <span class="lvd">● in diretta</span>')}
-var tt=el.querySelector('.lqt');if(tt&&q.time){var qd=new Date(q.time);tt.textContent='Ultimo scambio: '+qd.toLocaleString('it-IT',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+(q.venue?' · '+q.venue:'')}
-var c=el.querySelector('.lqc');if(q.chg!=null){var bad=el.dataset.k==='vix';var up=q.chg>=0;c.className='lqc '+((up!==bad)?'up':'dn');
-c.innerHTML=(up?'▲ ':'▼ ')+fmt(Math.abs(q.chg)*100,2)+'% <span class="muted">'+(q.open?'mercato aperto':'mercato chiuso')+'</span>'}});
+var tt=el.querySelector('.lqt');if(tt&&q.time){var qd2=new Date(q.time);tt.textContent='Ultimo scambio: '+qd2.toLocaleString('it-IT',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+(q.venue?' · '+q.venue:'')}
+var c=el.querySelector('.lqc');if(chg!=null){var bad=k==='vix';var up=chg>=0;c.className='lqc '+((up!==bad)?'up':'dn');
+c.innerHTML=(up?'▲ ':'▼ ')+fmt(Math.abs(chg)*100,2)+'% <span class="muted">'+(q.live?'in diretta':(q.open?'mercato aperto':'mercato chiuso'))+'</span>'}});
 var u=new Date(L.updated),m=Math.round((now-u)/60000),la=L.liveAt,txt;
 if(la&&now-la<90000){txt='In tempo reale: VWCE e S&P 500 si aggiornano ogni 15 secondi (ultimo controllo '+new Date(la).toLocaleTimeString('it-IT')+'). Gli altri prezzi, con ritardo di circa 15 minuti, ogni 15 minuti.'}
 else{txt='Prezzi con ritardo di circa 15 minuti · aggiornati '+(m<1?'ora':(m===1?'1 minuto fa':(m<90?m+' minuti fa':Math.round(m/60)+' ore fa')))+' ('+u.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')'}

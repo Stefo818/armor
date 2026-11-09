@@ -48,6 +48,21 @@ def vwce_series() -> pd.Series:
     return pd.concat([proxy[proxy.index < v.index[0]] * scale, v]).sort_index()
 
 
+def vwce_display() -> pd.Series:
+    """VWCE per la visualizzazione (schede, calendario, grafico): chiusure Lang & Schwarz (serale, allineate agli USA).
+    Prima della prima data L&S si usa la serie storica (Xetra/proxy) riscalata per non creare salti. Senza L&S: vwce_series().
+    I modelli restano sulla serie Xetra (vwce_series)."""
+    base, ls = vwce_series(), store.load("vwce_ls").dropna()
+    if ls.empty or base.empty:
+        return base if ls.empty else ls
+    t0 = ls.index[0]
+    ref = base[base.index <= t0]
+    if ref.empty:
+        return ls
+    old = base[base.index < t0] * (float(ls.iloc[0]) / float(ref.iloc[-1]))
+    return pd.concat([old, ls]).sort_index()
+
+
 def closed_sp500() -> pd.Series:
     s = store.load("sp500")
     return s[s > 0].dropna()

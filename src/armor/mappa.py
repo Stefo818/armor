@@ -219,7 +219,8 @@ def build_cal(sp: pd.Series, vw: pd.Series, vix: pd.Series, aix: dict | None, to
         pv = _num(bande.pct_of(float(rv) / ratio, v0, 1, t), 0) if rv is not None and pd.notna(rv) else None
         D.append([t.strftime("%Y-%m-%d"), _num(rs, 2), _num(rv, 2), _num(b["lo"], 2), _num(b["med"], 2), _num(b["hi"], 2),
                   _num(b["lo"] * ratio, 2), _num(b["med"] * ratio, 2), _num(b["hi"] * ratio, 2), ps, pv,
-                  _num(a0.iloc[-1], 0) if len(a0) else None, _num(v0, 1)])
+                  _num(a0.iloc[-1], 0) if len(a0) else None, _num(v0, 1),
+                  _num(sp.get(t), 2), _num(vw.get(t), 2), _num(vix.get(t), 2)])   # 13-15: chiusure del giorno (S&P, VWCE, VIX)
     rh = DATA / "risk_history.csv"
     rk = pd.read_csv(rh, parse_dates=["date"]).set_index("date") if rh.exists() else pd.DataFrame()
 
@@ -297,7 +298,7 @@ MAPPA_CSS = """
 .c2w{margin:6px 0}.c2bar{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}.c2nav{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
 .c2g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.c2g .cw{text-align:center;font-size:12px;color:var(--mu);font-weight:700}
 .c2d{min-height:62px;border:1px solid var(--bd);border-radius:8px;padding:3px 3px 2px;font-size:11px;background:var(--card);display:flex;flex-direction:column;gap:0;overflow:hidden;cursor:pointer;color:var(--tx);line-height:1.2}
-.c2d.o{border:0;background:transparent;cursor:default}.c2d.e{color:var(--mu)}.c2d b{font-size:12px}.c2d small{font-size:10px;font-weight:700;white-space:nowrap}.c2d small.v{opacity:.85;font-weight:600}
+.c2d.o{border:0;background:transparent;cursor:default}.c2d.e{color:var(--mu)}.c2d b{font-size:12px}.c2d small{font-size:10px;font-weight:700;white-space:nowrap}.c2d small.v{opacity:.85;font-weight:600}.c2d small.px{font-size:9px;font-weight:500;opacity:.75}
 .c2d.today{outline:2px solid var(--ac)}.c2d.sel{outline:3px solid var(--ac)}.c2d .ev{color:#fff}
 .c2l{display:grid;gap:4px}.c2r{display:grid;grid-template-columns:1.25fr 1fr 1fr 40px;gap:6px;align-items:center;border:1px solid var(--bd);border-radius:10px;padding:7px 9px;background:var(--card);cursor:pointer;font-size:12px}
 .c2r.sel{outline:2px solid var(--ac)}.c2r.fut{opacity:.6}.c2r .ds{font-weight:700}.c2r .pill{display:inline-block;min-width:34px;text-align:center;border-radius:6px;padding:2px 4px;color:#fff;font-weight:800;text-shadow:0 0 2px rgba(0,0,0,.55)}
@@ -422,14 +423,16 @@ var emb=document.getElementById('armor-cal-data');
 function go(j){D=j;var t=dd(j.today);ym=[t.getFullYear(),t.getMonth()];draw()}
 if(window.__ARMOR_CAL){go(window.__ARMOR_CAL)}else if(emb){go(JSON.parse(emb.textContent))}else{fetch('series/cal.json?'+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){window.__ARMOR_CAL=j;go(j)}).catch(function(){root.innerHTML='<p class="mu">Calendario non disponibile (serve la connessione).</p>'})}
 function mk(){if(Object.keys(byD).length)return;D.d.forEach(function(r){byD[r[0]]=r})}
-function line(nm,real,lo,med,hi,p){var dv=real==null?null:real-med;
- return '<tr><td><b>'+nm+'</b></td><td><span class="nw"><b>'+sg(med,1)+'</b></span><div class="mu nw">8 casi su 10:<br>'+nf(lo,1)+'% … '+sg(hi,1)+'</div></td><td><b style="color:'+(real==null?'inherit':(real>=0?'var(--ok)':'var(--bad)'))+'">'+sg(real,2)+'</b></td><td class="dv" style="color:'+(p!=null&&(p<10||p>90)?'var(--bad)':'inherit')+'">'+(dv==null?'—':(dv>0?'+':'')+nf(dv,2)+' pp<div class="mu">'+nf(p,0)+'° percentile · '+pos(p)+'</div>')+'</td></tr>'}
+function px(x){return x==null?'':nf(x,2)}
+function line(nm,real,lo,med,hi,p,cl){var dv=real==null?null:real-med;
+ return '<tr><td><b>'+nm+'</b></td><td><span class="nw"><b>'+sg(med,1)+'</b></span><div class="mu nw">8 casi su 10:<br>'+nf(lo,1)+'% … '+sg(hi,1)+'</div></td><td><b style="color:'+(real==null?'inherit':(real>=0?'var(--ok)':'var(--bad)'))+'">'+sg(real,2)+'</b>'+(cl!=null?'<div class="mu nw">chiusura '+nf(cl,2)+'</div>':'')+'</td><td class="dv" style="color:'+(p!=null&&(p<10||p>90)?'var(--bad)':'inherit')+'">'+(dv==null?'—':(dv>0?'+':'')+nf(dv,2)+' pp<div class="mu">'+nf(p,0)+'° percentile · '+pos(p)+'</div>')+'</td></tr>'}
 function evtxt(d){var e=D.ev[d];return e?e.map(function(x){return x[1]}).join(' · '):''}
 var NOTA='<p class="mu">«Previsto» = valore centrale (mediana) della distribuzione storica dei rendimenti, scalata sul VIX della sera prima; «8 casi su 10» = dal 10° al 90° percentile (fascia asimmetrica: i cali sono più ampi dei rialzi). Verificata dal 2000: contiene il reale nel 77-79% dei casi, con fasce circa un terzo più strette della vecchia ±VIX. Il percentile dice dove è caduto il reale nella distribuzione prevista (50 = al centro). <b>Direzione:</b> nessun indicatore provato (Indice Armor, VIX, momentum…) ha previsto il segno meglio della frequenza storica: per questo non c\'è una freccia su/giù, ma la fascia e la frequenza storica di rialzo.</p>';
 function panelDay(d){var r=byD[d];if(!r){return '<div class="c2p"><h4>'+dm(d)+'</h4><p class="mu">Giorno senza seduta (weekend o festivo).</p>'+(evtxt(d)?'<p>Evento: '+evtxt(d)+'</p>':'')+'</div>'}
  var fut=r[1]==null&&r[2]==null;
- return '<div class="c2p"><h4>'+dm(d)+(fut?' · previsione':'')+'</h4><table><tr><th></th><th>Previsto</th><th>Reale</th><th>Scostamento</th></tr>'+line('S&amp;P 500',r[1],r[3],r[4],r[5],r[9])+line('VWCE',r[2],r[6],r[7],r[8],r[10])+'</table>'+
- '<p>Indice Armor del giorno prima: <b style="color:'+acol(r[11]||1)+'">'+(r[11]==null?'n.d.':r[11]+' ('+bn(r[11])+')')+'</b> · VIX della sera prima: <b>'+nf(r[12],1)+'</b>.</p>'+(evtxt(d)?'<p>Eventi: <b>'+evtxt(d)+'</b></p>':'')+NOTA+'</div>'}
+ return '<div class="c2p"><h4>'+dm(d)+(fut?' · previsione':'')+'</h4><table><tr><th></th><th>Previsto</th><th>Reale</th><th>Scostamento</th></tr>'+line('S&amp;P 500',r[1],r[3],r[4],r[5],r[9],r[13])+line('VWCE',r[2],r[6],r[7],r[8],r[10],r[14])+'</table>'+
+ (r[15]!=null?'<p>Chiusure del giorno: S&amp;P 500 <b>'+nf(r[13],2)+'</b> · VWCE <b>'+nf(r[14],2)+' €</b> · VIX <b>'+nf(r[15],2)+'</b>.</p>':'')+
+ '<p>Indice Armor del giorno prima: <b style="color:'+acol(r[11]||1)+'">'+(r[11]==null?'n.d.':r[11]+' ('+bn(r[11])+')')+'</b> · VIX della sera prima: <b>'+nf(r[12],2)+'</b>.</p>'+(evtxt(d)?'<p>Eventi: <b>'+evtxt(d)+'</b></p>':'')+NOTA+'</div>'}
 function panelPer(r,kind){var ph=kind==='w'?'settimana':'mese',fut=r[2]==null&&r[3]==null,partial=!fut&&r[1]>=D.today;
  var a=r[0],b=r[1],tit=kind==='w'?'Settimana '+dm(a)+' – '+dm(b):MESI[+a.split('-')[1]-1]+' '+a.split('-')[0];
  var thr=kind==='w'?'calo ≥5% entro 10 giorni':'calo ≥10% entro 1 mese',lim=kind==='w'?-5:-10;
@@ -440,7 +443,7 @@ function panelPer(r,kind){var ph=kind==='w'?'settimana':'mese',fut=r[2]==null&&r
  '<p class="mu">Sedute considerate: '+r[17]+'. VIX a inizio '+ph+': '+nf(r[18],1)+'.</p>'+NOTA+'</div>'}
 function dayCell(y,m,d){var s=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2),r=byD[s],t=D.today,fut=s>t,c='c2d'+(s===t?' today':'')+(sel===s?' sel':'')+(fut?' e':'');
  var bg='',tx='',ev=D.ev[s]?D.ev[s].map(function(x){return '<em class="ev w'+(x[0]==='Opzioni'?2:3)+'">'+(SIG[x[0]]||x[0].slice(0,3))+'</em>'}).join(''):'';
- if(r&&r[1]!=null){bg='style="background:'+pcol(r[9])+'"';tx='<small>S '+sg(r[1],1)+'</small>'+(r[2]!=null?'<small class="v">V '+sg(r[2],1)+'</small>':'')+((r[9]<5||r[9]>95)?'<small>!</small>':'')}
+ if(r&&r[1]!=null){bg='style="background:'+pcol(r[9])+'"';tx='<small>S '+sg(r[1],1)+'</small>'+(r[13]!=null?'<small class="px">'+nf(r[13],0)+'</small>':'')+(r[2]!=null?'<small class="v">V '+sg(r[2],1)+'</small>'+(r[14]!=null?'<small class="px">'+nf(r[14],2)+'</small>':''):'')+((r[9]<5||r[9]>95)?'<small>!</small>':'')}
  else if(r&&fut){tx='<small>'+nf(r[3],1)+' … '+sg(r[5],1)+'</small>'}
  return '<div class="'+c+'" '+bg+' data-d="'+s+'"><b>'+d+'</b>'+tx+ev+'</div>'}
 function drawGrid(){mk();var y=ym[0],m=ym[1],first=new Date(y,m,1),off=(first.getDay()+6)%7,n=new Date(y,m+1,0).getDate(),cells='';
@@ -448,7 +451,7 @@ function drawGrid(){mk();var y=ym[0],m=ym[1],first=new Date(y,m,1),off=(first.ge
  var tmin=dd(D.d[0][0]);var canP=new Date(y,m-1,1)>=new Date(tmin.getFullYear(),tmin.getMonth(),1),canN=new Date(y,m+1,1)<=new Date(dd(D.today).getFullYear(),dd(D.today).getMonth()+2,1);
  return '<div class="c2nav"><button class="btn" data-nv="-1"'+(canP?'':' disabled')+'>‹</button><b>'+MESI[m][0].toUpperCase()+MESI[m].slice(1)+' '+y+'</b><button class="btn" data-nv="1"'+(canN?'':' disabled')+'>›</button></div>'+
  '<div class="c2g">'+['L','M','M','G','V','S','D'].map(function(x){return '<div class="cw">'+x+'</div>'}).join('')+cells+'</div>'+
- '<div class="mu" style="margin:6px 0">Ogni giorno: <b>S</b> = S&amp;P 500, <b>V</b> = VWCE. Colore = dove è caduto il reale nella distribuzione prevista (verde = sopra il previsto, rosso = sotto, trasparente = in linea); «!» = tra il 5% più estremo. Giorni futuri: fascia di 8 casi su 10. Tocca un giorno per il dettaglio.</div>'+(sel&&sel.slice(0,7)===y+'-'+('0'+(m+1)).slice(-2)?panelDay(sel):'')}
+ '<div class="mu" style="margin:6px 0">Ogni giorno: <b>S</b> = S&amp;P 500, <b>V</b> = VWCE, con sotto il prezzo di chiusura (VWCE: chiusura serale Lang &amp; Schwarz). Colore = dove è caduto il reale nella distribuzione prevista (verde = sopra il previsto, rosso = sotto, trasparente = in linea); «!» = tra il 5% più estremo. Giorni futuri: fascia di 8 casi su 10. Tocca un giorno per il dettaglio.</div>'+(sel&&sel.slice(0,7)===y+'-'+('0'+(m+1)).slice(-2)?panelDay(sel):'')}
 function drawList(kind){var L=kind==='w'?D.w:D.m,h='<div class="c2h"><span>'+(kind==='w'?'Settimana':'Mese')+'</span><span>S&amp;P prev. → reale</span><span>VWCE prev. → reale</span><span>Armor</span></div><div class="c2l">';
  var order=L.slice().reverse();order.forEach(function(r){var fut=r[2]==null&&r[3]==null,id=r[0],lab=kind==='w'?dm(r[0]).slice(0,5)+'–'+dm(r[1]).slice(0,5):MESI[+r[0].split('-')[1]-1].slice(0,3)+' '+r[0].slice(2,4);
   var pill=r[12]==null?'':'<span class="pill" style="background:'+acol(r[12])+'">'+r[12]+'</span>';
