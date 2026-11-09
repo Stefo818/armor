@@ -823,6 +823,8 @@ def test_vwce_sedi_serali_vince_ultimo_scambio():
                                  "timestamp": [base - day + 100, base + 16 * 3600], "indicators": {"quote": [{"close": [164.5, 165.1]}]}}]}}
     q = live.best_vwce(lambda s: yah if s == "VWCE.DE" else (_ for _ in ()).throw(RuntimeError("404")), [], v)
     assert q["venue"] == "Lang & Schwarz" and abs(q["price"] - 165.62) < 1e-9 and abs(q["chg"] - (165.62 / 164.9 - 1)) < 1e-12
+    # ha vinto una sede serale: lo storico per i grafici 1 ora / 6 ore / 1 giorno viene da Yahoo e finisce con il prezzo serale
+    assert q["_pts"][-1][1] == 165.62 and q["_pts"][0][1] == 164.5 and len(q["_pts"]) == 3
     tg = live.parse_tradegate({"last": "165,40", "executions": 12, "close": "164,80"}, now=pd.Timestamp("2023-11-14 23:30", tz="Europe/Berlin"))
     assert tg[0]["price"] == 165.4 and tg[0]["time"] == "2023-11-14T21:00:00Z"            # mercato chiuso: ora delle 22:00
     assert live.parse_tradegate({"last": "165,40", "executions": 0}) == []
@@ -1488,3 +1490,52 @@ def test_traduzione_cache_e_fallback(tmp_path):
 def test_dock_colore_distinto():
     from armor import extra13
     assert "#dockbar{" in extra13.CSS and "background:#3b4fc4" in extra13.CSS.split("#dockbar{")[1].split("}")[0]
+
+
+def test_archivio_dati_tabella_catalogo_e_live(tmp_path, monkeypatch):
+    import pandas as pd
+    from armor import archivio_dati as A, store
+    idx = pd.bdate_range("2026-10-01", periods=10)
+    serie = {"sp500": pd.Series(range(10), index=idx, dtype=float), "vix": pd.Series(20.0, index=idx), "vix6m": pd.Series(22.0, index=idx[3:])}
+    monkeypatch.setattr(store, "load", lambda k: serie.get(k, pd.Series(dtype=float)))
+    live = tmp_path / "live_daily.csv"
+    monkeypatch.setattr(A, "LIVE_DAILY", live)
+    monkeypatch.setattr(A, "OPZIONI", tmp_path / "no.csv")
+    monkeypatch.setattr(A, "REGISTRO", tmp_path / "no2.csv")
+    lv = {"quotes": {"vwce": {"price": 165.0, "time": "2026-10-09T20:00:00Z", "venue": "LS Exchange", "alts": {"Xetra": [165.2, "x"], "LS": [164.9, "y"]}},
+                     "sp500": {"price": 7300.0}, "sp_fut": {"price": 7310.0}, "vix": {"price": 21.0}, "eurusd": {"price": 1.08}}}
+    assert A.registra_live(lv, live) and A.registra_live(lv, live)                      # seconda scrittura nello stesso giorno: una sola riga
+    d = pd.read_csv(live)
+    assert len(d) == 1 and d.loc[0, "n_sedi"] == 2 and abs(d.loc[0, "spread_sedi_pct"] - (165.2 / 164.9 - 1) * 100) < 1e-3
+    t = A.tabella(giorni=5)
+    assert len(t) == 5 and t[("vol", "vix")].notna().all() and t[("sedi", "vw")].notna().sum() == 1
+    cat = {r["nome"]: r for r in A.catalogo_righe()}
+    r6 = cat["VIX e curva a termine (9 giorni, 3 e 6 mesi)"]
+    assert r6["n"] == 7 and r6["da"] == "2026-10-06" and r6["tipo"] == "storico"
+    h = A.html(giorni=5)
+    assert "solo da oggi" in h and "a pagamento altrove" in h and "data-arcg='opz'" in h and "Scarica tutto" in h
+    assert "date,vol_vix" in A.csv_text()
+
+
+def test_riepilogo_opzioni_sintetico():
+    import numpy as np
+    import pandas as pd
+    from armor import archive
+    rows = []
+    for e, g in (("2026-11-13", 7), ("2026-12-04", 28), ("2027-02-05", 90)):
+        for k in range(60, 111, 5):
+            for kind in ("C", "P"):
+                rows.append({"type": kind, "expiry": e, "strike": float(k), "impliedVolatility": 0.2 + 0.001 * abs(100 - k) + 0.001 * g / 30, "volume": 10, "openInterest": 100})
+    df = pd.DataFrame(rows)
+    r = archive.riepilogo(df, 100.0, "2026-11-06")
+    assert abs(r["iv_atm_30d"] - 0.2 - 0.001 * 28 / 30) < 1e-9 and r["put_skew_80"] > r["put_skew_90"] > 0
+    assert r["giorni_breve"] == 7 and r["giorni_lunga"] == 91 and r["iv_atm_lunga"] > r["iv_atm_breve"] and r["n_contratti"] == len(df)
+    assert not np.isnan(r["pc_volume"])
+
+
+def test_pagina_live_e_archivio_nel_sito():
+    from armor import livefeed, parts
+    assert "api.onvista.de" in livefeed.JS and "LIVETICKS" in livefeed.JS and "15000" in livefeed.JS
+    import inspect
+    src = inspect.getsource(parts)
+    assert "window.LIVETICKS" in src and "ARMOR_TICKS" in src and "api.onvista.de" not in src

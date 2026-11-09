@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import archivio_dati, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_series
@@ -882,7 +882,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
     pages = [("oggi", "Oggi"), ("indici", "Indici"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
-             ("fiducia", "Quanto fidarsi"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("allarmi", "Allarmi")]
+             ("fiducia", "Quanto fidarsi"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi")]
     nav = "<nav class='pgnav'>" + "".join(f"<button data-p='{k}'>{l}</button>" for k, l in pages) + "</nav>"
     lazy_pages: dict[str, str] = {}
 
@@ -1017,6 +1017,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
              f"<h2>Dettagli per esperti</h2><p class='muted'>Tabelle e test dietro le stime. Aprile solo se vuoi approfondire.</p>"
              + det('Confronto degli indicatori con il passato', comparison_html(date, sp, p) + "<p class='muted'>Sotto ogni valore passato: di quanto è cambiato l'indicatore da allora a oggi. Rosso = verso più rischio, verde = verso meno rischio.</p>")
              + det('Affidabilità del modello (test dal 2000)', avh) + det('Variabili provate e non adottate', chal_html) + det('Dati, fonti e archivio', dc) + gloss)
+    p_arc = _safe(archivio_dati.html, 'Archivio dati')
     p_al = ("<h2>Allarmi personali</h2>" + parts.alerts_section(al_opts, al_now))
     p_sto = p_sto + "<h2>Rapporto mensile</h2>" + _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile") + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Salute dei dati</h2>" + _safe(diagnostica.badge, "Stato del diario") + _safe(lambda: salute.html(salute.compute()), "Salute dei dati") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
     vix_s = store.load("vix")
@@ -1051,13 +1052,13 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
 {page('oggi', p_oggi)}{page('indici', p_indici)}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
-{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('allarmi', p_al)}
+{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('allarmi', p_al)}
 {dock}{semafori.lista_html(sem) if sem else ''}
 <script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>
 <script>window.HELP={json.dumps(help_all, ensure_ascii=False)};window.LABELS={json.dumps(labels_all, ensure_ascii=False)};</script>
 {parts.MODAL}
-{dock_js}{forza.JS}{semafori.LISTA_JS}{'' if lazy else '<script>' + insight.EP_JS + '</script><script>' + parts.AL_JS + '</script>' + ui.PAC_JS}{tabs_js}
+{livefeed.JS}{archivio_dati.JS}{dock_js}{forza.JS}{semafori.LISTA_JS}{'' if lazy else '<script>' + insight.EP_JS + '</script><script>' + parts.AL_JS + '</script>' + ui.PAC_JS}{tabs_js}
 """
     out.write_text(TEMPLATE.replace("{{JS}}", parts.JS if lazy else parts.JS_FULL).replace("{{BODY}}", body), encoding="utf-8")
     if lazy:
@@ -1099,7 +1100,7 @@ html{scroll-behavior:smooth;scroll-padding-top:56px}body{font-size:16px;line-hei
 .livebar{margin-bottom:12px}.lqrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .lq{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.lq.big1{grid-column:span 2;border-color:var(--ac)}
 .explain{background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;padding:2px 16px;margin:8px 0 12px;font-size:14px}.explain p{margin:10px 0}.ihelp{font-size:12px;color:var(--mu);font-weight:400;margin-top:2px;max-width:420px;line-height:1.35}.lqt{font-size:12px;margin-top:2px}.lqh{font-size:12px;margin-top:6px;line-height:1.35}.lqn{font-size:13px;color:var(--mu);font-weight:600}.lqp{font-size:26px;font-weight:700;letter-spacing:-.3px}.big1 .lqp{font-size:36px}.lqc{font-size:14px;font-weight:600}
-.up,.okc{color:var(--ok)}.dn{color:var(--bad)}#liveinfo{margin-top:6px}
+.up,.okc{color:var(--ok)}.dn{color:var(--bad)}#liveinfo{margin-top:6px}.lvd{color:var(--ok);font-size:11px;font-weight:700;white-space:nowrap}
 .hlk{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--mu);font-weight:700}
 ul.simple{margin:12px 0 4px;padding-left:20px}ul.simple li{margin:6px 0}
 .guide,details.exp{margin:12px 0}details>summary{cursor:pointer;font-weight:700;padding:10px 4px}details.exp>summary{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;color:var(--tx)}
@@ -1109,19 +1110,22 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+archivio_dati.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();
 document.querySelectorAll('.lq').forEach(function(el){var q=L.quotes[el.dataset.k];if(!q)return;var d=el.dataset.k==='eurusd'?4:2;
 el.querySelector('.lqp').textContent=fmt(q.price,d)+(q.ccy?' '+q.ccy:'');
+if(q.live){var nn=el.querySelector('.lqn')||el.querySelector('.kt');if(nn&&!nn.querySelector('.lvd'))nn.insertAdjacentHTML('beforeend',' <span class="lvd">● in diretta</span>')}
 var tt=el.querySelector('.lqt');if(tt&&q.time){var qd=new Date(q.time);tt.textContent='Ultimo scambio: '+qd.toLocaleString('it-IT',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+(q.venue?' · '+q.venue:'')}
 var c=el.querySelector('.lqc');if(q.chg!=null){var bad=el.dataset.k==='vix';var up=q.chg>=0;c.className='lqc '+((up!==bad)?'up':'dn');
 c.innerHTML=(up?'▲ ':'▼ ')+fmt(Math.abs(q.chg)*100,2)+'% <span class="muted">'+(q.open?'mercato aperto':'mercato chiuso')+'</span>'}});
-var u=new Date(L.updated),m=Math.round((now-u)/60000),i=document.getElementById('liveinfo');
-if(i){i.textContent='Prezzi con ritardo di circa 15 minuti · aggiornati '+(m<1?'ora':(m===1?'1 minuto fa':(m<90?m+' minuti fa':Math.round(m/60)+' ore fa')))+' ('+u.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')'}}
+var u=new Date(L.updated),m=Math.round((now-u)/60000),la=L.liveAt,txt;
+if(la&&now-la<90000){txt='In tempo reale: VWCE e S&P 500 si aggiornano ogni 15 secondi (ultimo controllo '+new Date(la).toLocaleTimeString('it-IT')+'). Gli altri prezzi, con ritardo di circa 15 minuti, ogni 15 minuti.'}
+else{txt='Prezzi con ritardo di circa 15 minuti · aggiornati '+(m<1?'ora':(m===1?'1 minuto fa':(m<90?m+' minuti fa':Math.round(m/60)+' ore fa')))+' ('+u.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')'}
+document.querySelectorAll('#liveinfo,.liveinfo').forEach(function(i){i.textContent=txt})}
 paint(window.LIVE);window.armorPaint=function(){paint(window.LIVE)};
-function refresh(){fetch('live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(L){window.LIVE=L;paint(L)}).catch(function(){})}
+function refresh(){fetch('live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(L){var o=window.LIVE;if(o&&o.quotes&&L.quotes){['vwce','sp500'].forEach(function(k){var a=o.quotes[k],b=L.quotes[k];if(a&&a.live&&b&&new Date(a.time)>=new Date(b.time))L.quotes[k]=a});L.liveAt=o.liveAt}window.LIVE=L;paint(L)}).catch(function(){})}
 if(location.protocol.indexOf('http')===0){refresh();setInterval(refresh,300000);setInterval(function(){paint(window.LIVE)},60000)}
 function off(){var b=document.getElementById('offline');if(!b)return;if(navigator.onLine){b.style.display='none'}else{b.style.display='';b.textContent='Sei offline: mostro gli ultimi dati salvati sul telefono.'}}
 window.addEventListener('online',off);window.addEventListener('offline',off);off();

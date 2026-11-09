@@ -150,6 +150,14 @@ def best_vwce(get, errors: list, extra: list | None = None) -> dict:
     from datetime import datetime as _d
     recent = [q for q in ok if (_d.fromisoformat(t_max[:-1]) - _d.fromisoformat(q["time"][:-1])).total_seconds() <= 300]
     best = recent[0]
+    if "_pts" not in best:   # ha vinto una sede serale (L&S, Tradegate...): senza storico i grafici 1 ora / 6 ore / 1 giorno restavano spenti
+        con_storia = [q for q in found if q.get("_pts")]
+        if con_storia:
+            pts = list(max(con_storia, key=lambda q: q["_pts"][-1][0])["_pts"])
+            t_best = int(_d.fromisoformat(best["time"][:-1]).replace(tzinfo=timezone.utc).timestamp())
+            if t_best > pts[-1][0]:
+                pts.append((t_best, float(best["price"])))
+            best["_pts"] = pts
     best["alts"] = {q["venue"]: [round(q["price"], 2), q["time"]] for q in ok}
     return best
 

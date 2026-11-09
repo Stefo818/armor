@@ -173,7 +173,9 @@ function load(cb,key){if(DATA[key])return cb(DATA);
 fetch('series/'+encodeURIComponent(key)+'.json?'+Date.now()).then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.d)DATA[key]=j;cb(DATA)}).catch(function(){cb(DATA)})}
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
-function series(s){var D=[];for(var i=0;i<s.d.length;i++)D.push([s.d[i]*86400,s.v[i]]);var I=[],I1=[],I10=[];if(s.i){for(var j=0;j<s.i.t.length;j++)I.push([s.i.t[j],s.i.v[j]]);if(s.i.t1)for(var a=0;a<s.i.t1.length;a++)I1.push([s.i.t1[a],s.i.v1[a]]);if(s.i.t10)for(var b=0;b<s.i.t10.length;b++)I10.push([s.i.t10[b],s.i.v10[b]])}return{D:D,I:I,I1:I1,I10:I10}}
+function series(s){var D=[];for(var i=0;i<s.d.length;i++)D.push([s.d[i]*86400,s.v[i]]);var I=[],I1=[],I10=[];if(s.i){for(var j=0;j<s.i.t.length;j++)I.push([s.i.t[j],s.i.v[j]]);if(s.i.t1)for(var a=0;a<s.i.t1.length;a++)I1.push([s.i.t1[a],s.i.v1[a]]);if(s.i.t10)for(var b=0;b<s.i.t10.length;b++)I10.push([s.i.t10[b],s.i.v10[b]])}
+var tk=s._k&&window.LIVETICKS&&window.LIVETICKS[s._k];if(tk&&tk.length){[I,I1,I10].forEach(function(A){tk.forEach(function(p){if(!A.length||p[0]>A[A.length-1][0])A.push(p)})})}
+return{D:D,I:I,I1:I1,I10:I10}}
 function pts(s,range){var x=series(s),D=x.D,I=x.I,r=RANGES.filter(function(a){return a[0]===range})[0];
 var last=Math.max(D.length?D[D.length-1][0]:0,I.length?I[I.length-1][0]:0,x.I1.length?x.I1[x.I1.length-1][0]:0);var from=r[2]?last-r[2]:0;
 if(range==='1h'||range==='6h'||range==='1d'||range==='1w'){var src=range==='1h'&&x.I1.length>=5?x.I1:(range==='6h'&&x.I10.length>=5?x.I10:I);var P=src.filter(function(p){return p[0]>=from});if(P.length>=5)return P;if(range==='1w'){P=D.filter(function(p){return p[0]>=from});return P.length>=3?P:[]}return[]}
@@ -202,23 +204,20 @@ var tw=tip.offsetWidth;tip.style.left=Math.min(Math.max(px-tw/2,0),w-tw)+'px';ti
 cv._m={X:X,P:P}}
 function stats_(){var P=st.P;if(!P.length){stats.innerHTML='';return}var a=P[0][1],b=P[P.length-1][1],lo=Math.min.apply(null,P.map(function(p){return p[1]})),hi=Math.max.apply(null,P.map(function(p){return p[1]}));var ch=b-a,pc=a?ch/Math.abs(a)*100:0;
 stats.innerHTML="<div>Ultimo<b>"+fmt(b,st.dec)+"</b></div><div>Variazione<b style='color:"+(ch>=0?css('--ok'):css('--bad'))+"'>"+(ch>=0?'+':'−')+fmt(Math.abs(ch),st.dec)+' ('+(ch>=0?'+':'−')+fmt(Math.abs(pc),1)+"%)</b></div><div>Minimo<b>"+fmt(lo,st.dec)+"</b></div><div>Massimo<b>"+fmt(hi,st.dec)+"</b></div>"}
-var live30=null;
-function stopLive(){if(live30){clearInterval(live30);live30=null}}
-function tickLive(){var s=st.s;if(!s||!s.i||!s.i.sym||st.range!=='1h')return;
-fetch('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(s.i.sym)+'?interval=1m&range=1d',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){
-var r0=j.chart.result[0],T=r0.timestamp||[],C=r0.indicators.quote[0].close,t1=[],v1=[],end=T[T.length-1];for(var i=0;i<T.length;i++){if(C[i]!=null&&T[i]>=end-5400){t1.push(T[i]);v1.push(C[i])}}
-if(t1.length>5){s.i.t1=t1;s.i.v1=v1;st.P=pts(s,'1h');stats_();draw(null);note('Aggiornato in diretta ogni 30 secondi (ultimo dato: '+new Date(t1[t1.length-1]*1000).toLocaleTimeString('it-IT')+'). Ritardo della fonte: circa 15 minuti.')}
-}).catch(function(){note('Il browser non permette l\'aggiornamento ogni 30 secondi: i dati si rinnovano ogni 15 minuti, a ogni aggiornamento automatico dell\'app.');stopLive()})}
+var LIVEKEYS={vwce:1,sp500:1};
+function onTick(){if(!st.s||!LIVEKEYS[st.key]||tip.style.display==='block')return;st.P=pts(st.s,st.range);stats_();draw(null);
+if(['1h','6h','1d'].indexOf(st.range)>=0){var tk=(window.LIVETICKS||{})[st.key]||[];if(tk.length)note('In diretta: si aggiorna ogni 15 secondi (ultimo dato '+new Date(tk[tk.length-1][0]*1000).toLocaleTimeString('it-IT')+').')}}
+(window.ARMOR_TICKS=window.ARMOR_TICKS||[]).push(onTick);
 function note(t){var n=root.querySelector('.clive');if(!n){n=document.createElement('div');n.className='muted clive';n.style.fontSize='12px';rbox.parentNode.insertBefore(n,rbox.nextSibling)}n.textContent=t}
-function setRange(r){stopLive();st.range=r;var cn=root.querySelector('.clive');if(cn)cn.textContent='';if(r==='1h'){tickLive();live30=setInterval(tickLive,30000)}st.P=pts(st.s,r);stats_();rbox.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.r===r)});draw(null)}
-function show(key){load(function(D){var s=D[key];st.key=key;st.s=s;if(!s){title.textContent='Grafico non disponibile';stats.innerHTML='';st.P=[];draw(null);rbox.innerHTML='';help.textContent='Questo dato non è ancora stato scaricato.';return}
+function setRange(r){st.range=r;var cn=root.querySelector('.clive');if(cn)cn.textContent='';st.P=pts(st.s,r);if(['1h','6h','1d'].indexOf(r)>=0)note(LIVEKEYS[st.key]?'In diretta: si aggiorna ogni 15 secondi mentre l\'app è aperta.':'Questo dato si aggiorna ogni 15 minuti (ritardo della fonte: circa 15 minuti).');stats_();rbox.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.r===r)});draw(null)}
+function show(key){load(function(D){var s=D[key];st.key=key;st.s=s;if(s)s._k=key;if(!s){title.textContent='Grafico non disponibile';stats.innerHTML='';st.P=[];draw(null);rbox.innerHTML='';help.textContent='Questo dato non è ancora stato scaricato.';return}
 st.dec=s.dec==null?2:s.dec;title.innerHTML='<h3 style="margin:0 0 4px">'+s.l+'</h3>';help.textContent=(window.HELP&&window.HELP[key])||'';
-var av=avail(s);rbox.innerHTML='';RANGES.forEach(function(r){var b=document.createElement('button');b.textContent=r[1];b.dataset.r=r[0];b.disabled=!av[r[0]];b.onclick=function(){setRange(r[0])};rbox.appendChild(b)});
+var av=avail(s);rbox.innerHTML='';RANGES.forEach(function(r){var b=document.createElement('button');b.textContent=r[1];b.dataset.r=r[0];b.disabled=!av[r[0]]&&!(LIVEKEYS[key]&&['1h','6h','1d'].indexOf(r[0])>=0);b.onclick=function(){setRange(r[0])};rbox.appendChild(b)});
 var want=st.range;if(!av[want]||(want==='1h'&&false)){want=['3m','1m','1y','max'].filter(function(r){return av[r]})[0]||'max'}setRange(want)},key)}
 function move(ev){var m=cv._m;if(!m)return;var r=cv.getBoundingClientRect(),x=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;var P=m.P,lo=0,hi=P.length-1;while(hi-lo>1){var mid=(lo+hi)>>1;if(m.X(P[mid][0])<x)lo=mid;else hi=mid}var i=Math.abs(m.X(P[lo][0])-x)<Math.abs(m.X(P[hi][0])-x)?lo:hi;draw(i)}
 cv.addEventListener('mousemove',move);cv.addEventListener('touchstart',move,{passive:true});cv.addEventListener('touchmove',move,{passive:true});cv.addEventListener('mouseleave',function(){draw(null)});cv.addEventListener('touchend',function(){setTimeout(function(){draw(null)},1500)});
 window.addEventListener('resize',function(){draw(null)});
-return{show:show,stop:stopLive,redraw:function(){draw(null)}}}
+return{show:show,stop:function(){},redraw:function(){draw(null)}}}
 window.armorMount=mount;
 var modal=document.getElementById('cm'),mv=null;
 function openChart(key){if(!modal)return;modal.classList.add('show');if(!mv)mv=mount(modal.querySelector('.cbody'));mv.show(key)}

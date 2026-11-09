@@ -284,6 +284,8 @@ def tutto(skip_download: bool = False) -> None:
     try:
         from . import live
         live.run()
+        from . import archivio_dati
+        archivio_dati.registra_live()
     except Exception as e:  # noqa: BLE001
         print('Prezzi live non scaricati:', str(e)[:100])
     try:   # impronta del protocollo di verifica (una volta per versione del file)
@@ -349,6 +351,11 @@ def costruisci_sito(live_first: bool = False) -> None:
         shutil.copy(live.LIVE_FILE, site / "live.json")
     for f in (ROOT / "web").glob("*"):
         shutil.copy(f, site / f.name)
+    try:
+        from . import archivio_dati
+        (site / "archivio_dati.csv").write_text(archivio_dati.csv_text(), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print("[archivio dati] CSV non scritto:", str(e)[:80])
     if (DATA / "pac_sim.json").exists():   # percorsi mensili del simulatore PAC
         shutil.copy(DATA / "pac_sim.json", site / "pac_sim.json")
     (site / ".nojekyll").write_text("")
