@@ -514,3 +514,7 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - Calendario: in ogni cella il prezzo di chiusura sotto S e V; nel dettaglio del giorno «chiusura» per S&P e VWCE e riga «Chiusure del giorno» con VIX. (mappa.build_cal: colonne 13-15.)
 - Put/Call: rapporto non valido (0) se un lato non ha contratti (archive.riepilogo) e righe <=0 ignorate in lettura (semafori._arch_series): niente più «0,00 / −100%».
 - Controllo automatico `python -m armor audit-dati` (audit_dati.py, anche nel ciclo giornaliero, scrive data/audit_dati.json): VIX contro data/riferimenti/vix_utente.csv, date allineate, VWCE L&S contro Xetra, valori e salti plausibili.
+
+## PATCH 39 — grafico di confronto (Grafici)
+- S&P 500 e VWCE con linea continua; linee e pulsanti degli indicatori attivi con bagliore nel proprio colore (i spenti sono attenuati).
+- Zoom per selezione: trascinando con mouse o dito in orizzontale si evidenzia un periodo e si ingrandisce (barra «Zoom: … Azzera zoom»); i pulsanti Periodo azzerano lo zoom; un tocco singolo mostra il riquadro valori. (confronto.py)
