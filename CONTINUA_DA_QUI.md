@@ -624,3 +624,12 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - `inclinazione.py` riscritto: situazioni, 3 epoche, verdetto solo se concordano in tutte le epoche valide (≥100 giorni e ≥3 episodi, soglia 3 punti). Registro nuovo data/inclinazione_registro2.csv. ATTENZIONE: le situazioni sono scelte guardando la storia (in-sample): la prova vera è il registro da oggi.
 - Bug evitato: f-string con backslash non compila su Python 3.11 (verificare sempre con python3.11 -m compileall).
 - sw.js = armor-v56. Test: 130.
+
+## Patch 57 — Previsioni, Calendario, swipe, Assistente
+- REGOLA PERMANENTE DELL'UTENTE: spiegare sempre in italiano semplice, senza acronimi (AUC, VIX…) o spiegandoli, con la «chiave di lettura» in apertura di ogni blocco.
+- Menu a 7 sezioni: Oggi, Mercati, Previsioni (previsioni + quanto fidarsi), Rischio, Calendario (calendario + notizie), Grafici, Piano. «Notizie» e «Calendario» sono anche sotto-schede di Oggi (stessa pagina in due gruppi: TABS_JS gestisce il gruppo corrente).
+- `previsioni_hub.py`: schede per 1 settimana/1 mese/3 mesi/6 mesi/1 anno (probabilità di rialzo vs «di solito», ventaglio dei casi), tabella di tutti i modelli (in uso e in ombra: simulazioni, A1, journal_shadow, modelli sui cicli, regime), storico lungo previsto→reale con colori rosso→verde (test sul passato dal 2000 + diario firmato) con filtri. Il vecchio contenuto di Previsioni è in un riquadro apribile in fondo. Sopra c'è il blocco «Inclinazione del mercato» della Patch 56.
+- `agenda.py` + pagina Calendario: prossimi eventi spiegati, calendario completo, previsioni recenti colorate, notizie per giorno. Il calendario NON è più nel pannello Assistente (la scheda «Calendario» dell'Assistente porta alla pagina).
+- Swipe col pollice: schede principali e sottoschede in sequenza (evita tabelle/grafici scorrevoli e canvas); nell'Assistente fra le sue schede.
+- Assistente: grafica nuova (barra sfumata, schede a pillola, riquadri più curati). Finestra «Indice Armor» riscritta in modo semplice.
+- Test: 133. sw.js = armor-v57. Non verificato: tocco vero su telefono (provato solo con eventi simulati in Chromium).

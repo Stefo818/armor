@@ -139,35 +139,62 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
     return f"<div class='kpis'>{cards}</div><div class='mu liveinfo' style='margin:-4px 0 10px'></div>"
 
 
+def _delta(v, prev):
+    if prev is None or (isinstance(prev, float) and np.isnan(prev)):
+        return "<span class='mu'>n/d</span>"
+    d = v - prev
+    if abs(d) < 0.5:
+        return f"<b>{prev:.0f}</b> <span class='mu'>(invariato)</span>"
+    cl, fr = ("amu", "▲ sale") if d > 0 else ("amd", "▼ scende")
+    return f"<b>{prev:.0f}</b> <span class='{cl}'>{fr} di {abs(d):.0f}</span>"
+
+
 def armor_window(h: dict | None, d: dict | None) -> str:
-    """Finestra dei tre indici Armor (si apre toccando l'Indice Armor)."""
+    """Finestra dei tre indici Armor (si apre toccando l'Indice Armor): tre schede chiare, con barra del livello, cosa pesa di più e quanto è affidabile."""
     if not h or not d:
         return ""
     col = armor_index.color
     cards = ""
-    lab = {"settimana": ("A breve termine", "prossima settimana"), "mese": ("A medio termine", "prossimo mese"), "3 mesi": ("A lungo termine", "prossimi 3 mesi")}
+    lab = {"settimana": ("Prossima settimana", "per chi guarda i prossimi giorni", "Conta soprattutto la paura sui mercati e come si stanno muovendo i prezzi."),
+           "mese": ("Prossimo mese", "per chi guarda le prossime settimane", "Contano paura e prezzi, ma anche lo stato del credito (quanto è facile farsi prestare soldi)."),
+           "3 mesi": ("Prossimi 3 mesi", "per chi guarda un orizzonte più lungo", "Contano di più credito e prezzi delle azioni rispetto agli utili (se sono cari o no).")}
     for k, x in h["orizzonti"].items():
         v = x["v"]
         name, _ = armor_index.band(v)
         a = x.get("auc") or {}
+        zone = "<div class='amb'><i style='background:hsl(125,60%,42%);flex:30'></i><i style='background:hsl(60,70%,48%);flex:25'></i><i style='background:hsl(30,80%,50%);flex:25'></i><i style='background:hsl(0,70%,45%);flex:20'></i>" \
+               f"<b style='left:{min(max(v, 1), 99):.0f}%'></b></div><div class='amt'><span>basso</span><span>moderato</span><span>alto</span><span>molto alto</span></div>"
+        pesi = sorted(h["pesi"].get(k, {}).items(), key=lambda t: -t[1])[:3]
+        mx = max([p_ for _g, p_ in pesi] or [1])
+        peso_html = "".join(f"<div class='amw'><span>{e(g)}</span><i style='width:{p_ / mx * 100:.0f}%'></i><b>{int(p_)}%</b></div>" for g, p_ in pesi)
         ver = ""
         if a.get("nuovo") is not None and not np.isnan(a["nuovo"]):
-            ver = (f"<div class='mu'>Verifica ({e(a['evento'])}, dal 2000): AUC {_fmt(a['nuovo'], 2)} contro {_fmt(a['standard'], 2)} dell'indice standard; "
-                   f"dal 2013 {_fmt(a['nuovo_2013'], 2)} contro {_fmt(a['standard_2013'], 2)}.</div>")
-        cards += (f"<div class='am3'><div class='mu'>{lab[k][0]} · {lab[k][1]}</div><div class='amv' style='color:{col(v)}'>{v:.0f}<span>/100</span></div>"
-                  f"<div class='aml' style='color:{col(v)}'>Rischio {name}</div><div class='trow'>{trend_cells(v, x['ieri'], x['sett'], 0, 1.0, True)}</div>{ver}</div>")
+            diff = a["nuovo"] - a["standard"]
+            diff13 = a["nuovo_2013"] - a["standard_2013"]
+            if diff > 0.005 and diff13 >= -0.005:
+                chip, ct = "ok", "meglio dell'indice standard"
+            elif diff13 < -0.005 or diff < -0.005:
+                chip, ct = "wa", "non meglio dell'indice standard"
+            else:
+                chip, ct = "wa", "alla pari con l'indice standard"
+            ver = (f"<div class='amh'>Quanto ha funzionato in passato</div><div class='amv2'>{a['nuovo'] * 100:.0f} <span class='mu'>su 100</span></div>"
+                   f"<div class='mu'>È la capacità di dare un numero più alto ai giorni che poi sono stati pericolosi. 50 = come tirare a indovinare, 100 = perfetta.</div>"
+                   f"<span class='pvch {chip}'>{ct}</span><div class='mu' style='margin-top:4px'>Dal 2013 a oggi: {a['nuovo_2013'] * 100:.0f} su 100 (l'indice standard: {a['standard_2013'] * 100:.0f}).</div>")
+        cards += (f"<div class='am3'><div class='amk'>{lab[k][0]}</div><div class='mu'>{lab[k][1]}</div><div class='amv' style='color:{col(v)}'>{v:.0f}<span>/100</span></div>"
+                  f"<div class='aml' style='color:{col(v)}'>Rischio {name}</div>{zone}<div class='mu' style='margin-top:6px'>{lab[k][2]}</div>"
+                  f"<div class='amh'>Com'è cambiato</div><div class='amc'>Ieri era {_delta(v, x['ieri'])}</div><div class='amc'>Una settimana fa era {_delta(v, x['sett'])}</div>"
+                  f"<div class='amh'>Cosa pesa di più nel numero</div>{peso_html}{ver}</div>")
     std = d["value"]
-    w = h["pesi"]
-    wtxt = "; ".join(f"<b>{k}</b>: " + ", ".join(f"{g.split()[0]} {int(v)}" for g, v in ww.items()) for k, ww in w.items())
     return ("<div id='amod' class='cmodal'><div class='cbox'><button class='cx' aria-label='Chiudi'>×</button><div class='cbody'>"
-            "<h3 style='margin-top:0'>Indice Armor: breve, medio e lungo termine</h3>"
-            "<div class='explain'><p>Stessi indicatori, ma con pesi diversi: a una settimana contano di più paura (VIX) e tendenza dei prezzi, a 3 mesi contano di più credito e valutazioni. "
-            "Quando i tre indici divergono ti dice che tipo di rischio sta crescendo.</p></div>"
+            "<h3 style='margin-top:0'>Indice Armor: il rischio a tre scadenze</h3>"
+            "<div class='explain'><p><b>Come si legge, in 10 secondi.</b> Ogni scheda è un numero da 1 a 100: <b>più è alto, più il mercato è a rischio</b>. Intorno a 50 il rischio è nella media. "
+            "Sono gli stessi dati, contati in modo diverso a seconda dell'orizzonte: a una settimana pesa di più la paura sui mercati, a tre mesi pesano di più credito e prezzi delle azioni. "
+            "<b>Se i tre numeri sono molto diversi</b>, ti dicono che il rischio sta crescendo solo in un orizzonte (per esempio solo a breve).</p></div>"
             f"<div class='am3w'>{cards}</div>"
-            f"<p><b>Media dei tre: {h['media']:.0f}</b> · Indice standard (quello mostrato in «Oggi», validato dal 2000): <b>{std:.0f}</b>. "
-            "L'indice mostrato resta lo standard: la media dei tre non è stata verificata meglio, quindi non lo sostituisce.</p>"
-            "<p class='mu'>Verifica onesta: i pesi sono stati fissati in anticipo, non stimati sui dati. L'indice a 1 settimana batte di poco quello standard; a 3 mesi no (dal 2013 è alla pari o peggio). "
-            f"Pesi usati — {wtxt}.</p>"
+            f"<div class='amsum'><b>Media dei tre: {h['media']:.0f}</b> · Numero mostrato nella pagina «Oggi»: <b>{std:.0f}</b>. "
+            "Nella pagina «Oggi» resta quello di sempre, perché la media dei tre non si è dimostrata migliore.</div>"
+            "<details class='gl'><summary>Quanto possiamo fidarci</summary><p class='mu'>I pesi sono stati decisi in anticipo, non adattati ai dati già visti. A una settimana il nuovo numero è appena meglio di quello standard; "
+            "a tre mesi, dal 2013 a oggi, è uguale o peggio. Quindi: utile per capire <i>che tipo</i> di rischio cresce, non per prevedere un crollo.</p></details>"
             "<p><button class='btn pri' data-chart='armor_index' id='amodchart'>Apri il grafico dell'Indice Armor</button> <button class='btn' data-go='indici'>Come è calcolato</button></p>"
             "</div></div></div>")
 
@@ -230,7 +257,7 @@ CSS = """
 .vgb i{position:absolute;top:-4px;width:4px;height:18px;border-radius:2px;background:var(--tx);box-shadow:0 0 0 2px var(--card);transform:translateX(-2px)}
 .vgl{display:flex;justify-content:space-between;font-size:9px;color:var(--mu);line-height:1.1;margin-top:3px;text-align:center}
 .htr{margin-top:6px;padding-top:6px;border-top:1px solid rgba(128,128,128,.3)}.htrb{font-size:14px}.htrb .trb,.htrb .trg,.htrb .tr0{font-size:18px}
-.aix{cursor:pointer}.am3w{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:10px 0}
-.am3{border:1px solid var(--bd);border-radius:12px;padding:10px 12px;background:var(--bg)}.amv{font-size:40px;font-weight:800;line-height:1.05}.amv span{font-size:15px;color:var(--mu)}.aml{font-weight:800}
+.aix{cursor:pointer}.am3w{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+.am3{border:1px solid var(--bd);border-radius:18px;padding:14px 15px;background:var(--bg);box-shadow:0 2px 10px rgba(0,0,0,.12)}.amk{font-weight:800;font-size:16px}.amh{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);margin:12px 0 4px;border-top:1px dashed var(--bd);padding-top:8px}.amb{display:flex;height:10px;border-radius:99px;overflow:hidden;position:relative;margin:10px 0 3px}.amb i{display:block}.amb b{position:absolute;top:-3px;width:5px;height:16px;border-radius:3px;background:var(--tx);box-shadow:0 0 0 2px var(--bg);transform:translateX(-50%)}.amt{display:flex;justify-content:space-between;font-size:9.5px;color:var(--mu)}.amc{font-size:13px;margin:2px 0}.amu{color:var(--bad);font-weight:700}.amd{color:var(--ok);font-weight:700}.amw{display:grid;grid-template-columns:1fr 54px 34px;gap:6px;align-items:center;font-size:12px;margin:3px 0}.amw i{display:block;height:7px;border-radius:99px;background:var(--ac)}.amw b{text-align:right}.amv2{font-size:20px;font-weight:800}.amsum{border:1px solid var(--bd);border-radius:14px;padding:10px 14px;background:var(--card);margin:6px 0 10px;font-size:14px}.amv{font-size:40px;font-weight:800;line-height:1.05}.amv span{font-size:15px;color:var(--mu)}.aml{font-weight:800}
 #amod{z-index:26}#dkt{transition:opacity .4s}
 """

@@ -22,14 +22,14 @@ ORIZZ = {"1m": 21, "3m": 63}
 SOGLIA = 0.03
 EPOCHE = [("1991-1999", "1991-01-01", "1999-12-31"), ("2000-2012", "2000-01-01", "2012-12-31"), ("2013-oggi", "2013-01-01", "2100-12-31")]
 MIN_N, MIN_EP = 100, 3
-SIT = {"panico": ("Panico: paura estrema (VIX sopra 30)", "Storicamente è stato quasi sempre un momento in cui chi vendeva ha venduto vicino ai minimi."),
-       "paura": ("Paura in una tendenza ancora sana (VIX 25-30, sopra la media a 200 giorni)", "Il mercato è nervoso ma non rotto: di solito i rimbalzi arrivano."),
-       "orso": ("Orso confermato (sotto la media a 200 giorni da almeno 40 sedute)", "Le prime settimane sotto la media sono spesso solo correzioni; dopo 40 sedute il mercato è in una fase debole vera."),
-       "correzione": ("Correzione recente (sotto la media a 200 giorni da meno di 40 sedute)", "Un calo recente senza conferma: spesso rimbalza, ma può diventare orso."),
-       "calma": ("Calma estrema (sopra la media, vicino ai massimi, VIX sotto 15)", "Poca paura: i rendimenti successivi sono stati nella norma o appena sotto."),
-       "normale": ("Tendenza normale (sopra la media a 200 giorni)", "Nessuna condizione particolare."),
-       "aix_sopra": ("Indice Armor alto (≥55) ma prezzi sopra la media", "Rischio elevato con prezzi che reggono: storicamente i mesi successivi sono stati buoni."),
-       "aix_sotto": ("Indice Armor alto (≥55) e prezzi sotto la media", "Rischio elevato e prezzi deboli insieme.")}
+SIT = {"panico": ("Panico: paura estrema (indice della paura, il VIX, sopra 30)", "Storicamente è stato quasi sempre un momento in cui chi vendeva ha venduto vicino ai minimi."),
+       "paura": ("Paura in un mercato ancora sano (indice della paura tra 25 e 30, prezzi sopra la loro media degli ultimi 200 giorni)", "Il mercato è nervoso ma non rotto: di solito i rimbalzi arrivano."),
+       "orso": ("Mercato in calo da tempo (prezzi sotto la media degli ultimi 200 giorni da almeno 40 sedute)", "Le prime settimane sotto la media sono spesso solo correzioni; dopo 40 sedute il mercato è in una fase debole vera."),
+       "correzione": ("Calo recente (prezzi sotto la media degli ultimi 200 giorni da meno di 40 sedute)", "Un calo recente senza conferma: spesso rimbalza, ma può diventare orso."),
+       "calma": ("Calma estrema (prezzi vicini ai massimi, indice della paura sotto 15)", "Poca paura: i rendimenti successivi sono stati nella norma o appena sotto."),
+       "normale": ("Situazione normale (prezzi sopra la loro media a 200 giorni)", "Nessuna condizione particolare."),
+       "aix_sopra": ("Indice Armor alto (55 o più) ma prezzi ancora sopra la media", "Rischio elevato con prezzi che reggono: storicamente i mesi successivi sono stati buoni."),
+       "aix_sotto": ("Indice Armor alto (55 o più) e prezzi sotto la media", "Rischio elevato e prezzi deboli insieme.")}
 ORDINE = ["panico", "paura", "orso", "correzione", "calma", "normale", "aix_sopra", "aix_sotto"]
 
 
@@ -217,9 +217,9 @@ def html(d: dict | None, ver: dict | None = None) -> str:
                 parti.append(f"{et}: {o['maturi']} giorni verificati, mercato salito il {_pc(o['salito_tot'])} delle volte ({dett})")
         vt = ("<p class='mu'><b>Verifica reale dal giorno in cui l'app è attiva:</b> " + ("; ".join(parti) if parti else "ancora nessun esito maturato (servono almeno 21 sedute).") + "</p>")
     sintesi = ("<b>Direzione a 1 mese:</b> " + VT[v["1m"]] + " · <b>a 3 mesi:</b> " + VT[v["3m"]])
-    extra = f"VIX {d['vix']:.1f}".replace(".", ",") + " · " if d["vix"] is not None else ""
-    extra += f"Indice Armor {d['aix']:.0f} · " if d["aix"] is not None else ""
-    return ("<h2>Inclinazione del mercato: tendenza e direzione</h2><div class='explain'><p><b>In breve.</b> La <b>tendenza</b> descrive cosa ha fatto il mercato (è un fatto, non una previsione). "
+    extra = f"Indice della paura (VIX) {d['vix']:.1f}".replace(".", ",") + " · " if d["vix"] is not None else ""
+    extra += f"Indice Armor {d['aix']:.0f}/100 · " if d["aix"] is not None else ""
+    return ("<h2>Inclinazione del mercato: tendenza e direzione</h2><div class='explain'><p><b>Chiave di lettura.</b> La <b>tendenza</b> racconta cosa ha fatto il mercato finora (è un fatto, non una previsione). "
             "La <b>direzione</b> viene letta per <b>situazione</b> (panico, correzione, orso confermato…) e viene indicata solo se, in passato, quella situazione ha battuto la frequenza normale in <b>tutte</b> le epoche (anni '90, 2000-2012, dal 2013), con casi indipendenti sufficienti. "
             "Altrimenti l'app dice «nessun segnale affidabile» invece di mostrare un ottimismo di default. «Normale» = quante volte il mercato sale comunque (circa 6 volte su 10 a un mese).</p></div>"
             f"<div class='b5 {col}' style='padding:14px;border-radius:14px'><b style='font-size:18px'>Tendenza di fondo: {cl}</b> · situazione: <b>{SIT[d['sit']][0]}</b><br>{extra}Oggi {frase}: l'S&amp;P 500 è {sopra} la media a 200 giorni ({_sg(d['trend200'])}), "

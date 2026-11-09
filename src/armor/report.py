@@ -9,7 +9,7 @@ import json
 
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import archivio_dati, economia, inclinazione, infobox, mondo, novita, opportunita, saldi, tensione, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, tensione, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -888,7 +888,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
     pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("mercati", "Mercati"), ("saldi", "Saldi"), ("opportunita", "Opportunità"), ("indici", "Indici"), ("regime", "Regime di tensione"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
-             ("fiducia", "Quanto fidarsi"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi")]
+             ("fiducia", "Quanto fidarsi"), ("calendario", "Calendario"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi")]
     from . import navigazione
     nav = navigazione.html(pages)
     lazy_pages: dict[str, str] = {}
@@ -1054,14 +1054,15 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
         pp = p[p.index >= "1985-01-01"]
         v = json.loads(inclinazione.FILE_VERIFICA.read_text(encoding="utf-8")) if inclinazione.FILE_VERIFICA.exists() else None
         return inclinazione.html(inclinazione.oggi(pp, store.load("vix"), store.load("armor_index")), v)
-    p_prev = (_safe(_incl, "Inclinazione") + f"<h2 style='margin-top:26px'>Previsioni per periodo: calo o rialzo?</h2>{chiaro.PREV_INTRO}"
+    p_prev = (_safe(lambda: previsioni_hub.html(pred), "Previsioni") + _safe(_incl, "Inclinazione")
+              + f"<details class='pvdet' open><summary>Dettagli del modello principale e di tutte le soglie</summary><h2 style='margin-top:14px'>Previsioni per periodo: calo o rialzo?</h2>{chiaro.PREV_INTRO}"
               f"<div class='grid4'>{cards}</div>"
               f"<h3 style='margin-top:22px'>Scenari da 1 settimana a 1 anno</h3><div class='card'>{_safe(percorsi.html, 'Scenari')}</div>"
               f"<h3 style='margin-top:22px'>Quanto ti puoi fidare: l'errore reale delle previsioni</h3><div class='card scroll'>{insight.honest_html(insight.honest(pred))}</div>"
               f"<h3 style='margin-top:22px'>Cali e risalite a tutte le soglie (1% … 20%)</h3><div class='card scroll'>{parts.matrix_html(mat, sim)}</div>"
               f"<h3 style='margin-top:22px'>Il percorso dopo i momenti più simili a oggi</h3>{epis}"
               f"<h3 style='margin-top:22px'>Quali indici danno segnali positivi o negativi</h3>{chiaro.signals_simple(sigs)}{chiaro.scenarios_html(sigs)}"
-              f"<h3 style='margin-top:22px'>Segnali di stress del mercato</h3>{chiaro.flags_simple(fl0)}")
+              f"<h3 style='margin-top:22px'>Segnali di stress del mercato</h3>{chiaro.flags_simple(fl0)}</details>")
     p_ctx = (parts.context_section(p)
              + "<h3 style='margin-top:18px'>Altri mercati: il rischio è globale o solo americano?</h3><div class='card scroll'>" + _safe(lambda: mercati.html(mercati.compute()), "Confronto mercati") + "</div>"
              + "<h3 style='margin-top:18px'>Opzioni e posizionamento</h3><div class='card scroll'>" + _safe(posizionamento.html, "Posizionamento") + "</div>")
@@ -1096,6 +1097,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     p_sto = p_sto + "<h2>Rapporto mensile</h2>" + _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile") + "<h2>Pagella mensile</h2>" + _safe(extra13.pagella_html, "Pagella") + "<h2>Salute dei dati</h2>" + _safe(diagnostica.badge, "Stato del diario") + _safe(lambda: salute.html(salute.compute()), "Salute dei dati") + "<h2>Apprendimento dai dati reali</h2>" + _safe(lambda: learning.html(sp), "Apprendimento")
     vix_s = store.load("vix")
     cal_html = _safe(lambda: extra13.calendar_html(_date.today(), sp, vix_s, mappa.cal_block(None if lazy else cal_json) if cal_json else ""), "Calendario")
+    p_cal = _safe(lambda: agenda.pagina(newsmod.load_latest().get("items", []), cal_html, _safe(previsioni_hub.recenti, "Previsioni recenti")), "Pagina Calendario")
     headline = (f"Indice Armor {aix['value']:.0f}/100 · " if aix else "") + verdict
     dock_tabs = [
         ("oggi", "Oggi cosa faccio", extra13.oggi_html(aix, div, soon, n_pru) + extra13.divergence_html(div) + "" + bilancio.day_html(bil)),
@@ -1105,7 +1107,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
         ("sett", "Rapporto settimanale", bilancio.weekly_html(wk)),
         ("mens", "Rapporto mensile", _safe(lambda: rapporto.html(rapporto.load_latest()), "Rapporto mensile")),
         ("pag", "Pagella", _safe(extra13.pagella_html, "Pagella")),
-        ("cal", "Calendario", "<p>Si apre il calendario con tutti gli eventi.</p><button class='btn pri' data-cal='1'>Apri il calendario</button>"),
+        ("cal", "Calendario", "<p>Il calendario ha ora una pagina tutta sua, con eventi, previsioni passate e notizie.</p><button class='btn pri' data-cal='1'>Apri il calendario</button>"),
         ("gloss", "Glossario", extra13.glossario_html()),
     ]
     if lazy:   # l'Assistente si carica alla prima apertura (pages/dock.html)
@@ -1113,11 +1115,11 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             lazy_pages["mappa"] = mappa.mappa_block(open_=False, per=52)
         if cf_json:
             lazy_pages["confronto"] = confronto.block()
-        dock_frag = "".join(f"<div data-dpane='{k}'>{h}</div>" for k, _l, h in dock_tabs) + f"<div data-dpane='_cal'>{cal_html}</div>"
+        dock_frag = "".join(f"<div data-dpane='{k}'>{h}</div>" for k, _l, h in dock_tabs)
         lazy_pages["dock"] = dock_frag
         dock = extra13.dock_html(headline, [(k, l, "<p class='mu'>Caricamento…</p>") for k, l, _h in dock_tabs]).replace("{{CAL}}", "")
     else:
-        dock = extra13.dock_html(headline, dock_tabs).replace("{{CAL}}", cal_html)
+        dock = extra13.dock_html(headline, dock_tabs).replace("{{CAL}}", "")
 
     dock_js = extra13.DOCK_JS_LAZY if lazy else extra13.DOCK_JS
     tabs_js = parts.TABS_JS_LAZY if lazy else parts.TABS_JS
@@ -1127,7 +1129,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
 {page('oggi', p_oggi)}{page('indici', p_indici)}{page('regime', p_regime)}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
-{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('notizie', p_nz)}{page('mercati', p_md)}{page('saldi', p_sd)}{page('opportunita', p_op)}{page('allarmi', p_al)}
+{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('notizie', p_nz)}{page('calendario', p_cal)}{page('mercati', p_md)}{page('saldi', p_sd)}{page('opportunita', p_op)}{page('allarmi', p_al)}
 {dock}{semafori.lista_html(sem) if sem else ''}
 <script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>

@@ -1489,7 +1489,7 @@ def test_traduzione_cache_e_fallback(tmp_path):
 
 def test_dock_colore_distinto():
     from armor import extra13
-    assert "#dockbar{" in extra13.CSS and "background:#3b4fc4" in extra13.CSS.split("#dockbar{")[1].split("}")[0]
+    assert "#dockbar{" in extra13.CSS and "#3b4fc4" in extra13.CSS.split("#dockbar{")[1].split("}")[0]
 
 
 def test_archivio_dati_tabella_catalogo_e_live(tmp_path, monkeypatch):
@@ -2008,11 +2008,12 @@ def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
 
 def test_navigazione_copre_tutte_le_pagine():
     from armor import navigazione
-    pagine = ["oggi", "notizie", "mercati", "saldi", "opportunita", "indici", "regime", "valutazioni", "aziende", "macro", "grafici", "previsioni", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi"]
+    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "valutazioni", "aziende", "macro", "grafici", "previsioni", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi"]
     coperte = [p for _g, _l, ps, _i in navigazione.GRUPPI for p in ps]
-    assert sorted(coperte) == sorted(pagine) and len(set(coperte)) == len(coperte)
+    assert set(coperte) == set(pagine)
+    assert [p for p in set(coperte) if coperte.count(p) > 1] == ["notizie"] or sorted(p for p in set(coperte) if coperte.count(p) > 1) == ["calendario", "notizie"]
     h = navigazione.html([(p, p) for p in pagine])
-    assert h.count("data-g=") == 5 + 18 and "<svg" in h
+    assert h.count("data-g=") == len(navigazione.GRUPPI) + len(coperte) and "<svg" in h
 
 
 def test_grafico_blocco_e_serie_azioni(tmp_path, monkeypatch):
@@ -2103,3 +2104,33 @@ def test_inclinazione_senza_casi_non_inventa_direzione():
     f = inc.segnali(p, vix, None)
     assert inc.frequenze(p, f, "orso")["1m"]["verdetto"] == "nd"
     assert inc.frequenze(p, f, "panico")["3m"]["verdetto"] == "nd"
+
+
+def test_previsioni_hub_direzione_storico_e_pagina(tmp_path, monkeypatch):
+    from armor import previsioni_hub as ph
+    assert ph.direzione(0.45, 0.6)[0] == "ba" and ph.direzione(0.70, 0.62)[0] == "ok" and ph.direzione(0.63, 0.62)[0] == "wa" and ph.direzione(0.52, 0.62)[0] == "ba"
+    assert ph.punteggio(-4, 1, 5, 1) == 1.0 and ph.punteggio(-4, 1, 5, -30) == 0.0 and 0.4 < ph.punteggio(-4, 1, 5, 5.5) < 0.6
+    righe = [["2026-0%d-01" % (i % 9 + 1), "1m", -4.0, 1.0, 5.0, float(i % 7) - 3, "p"] for i in range(60)]
+    rs = ph.riepilogo(righe)
+    assert rs and rs[0]["n"] == 60 and 0 <= rs[0]["dentro"] <= 1
+    h = ph.storico_html(righe)
+    assert "armor-pv-data" in h and "data-pvh" in h
+    assert "Previsioni" in ph.html(None)
+
+
+def test_swipe_e_menu_sette_sezioni():
+    from armor import parts, navigazione, extra13
+    assert "touchstart" in parts.TABS_JS and "armorStep" in parts.TABS_JS and "armorEnsure(id)" in parts.TABS_JS_LAZY
+    assert len(navigazione.GRUPPI) == 7 and {g[0] for g in navigazione.GRUPPI} >= {"previsioni", "calendario"}
+    assert "touchstart" in extra13.DOCK_JS and "armorTab('calendario')" in extra13.DOCK_JS
+
+
+def test_agenda_eventi_e_notizie_per_giorno():
+    from datetime import date, datetime, timezone
+    from armor import agenda
+    h = agenda.eventi(date(2026, 11, 9), 30)
+    assert "agev" in h or "Nessun evento" in h
+    ora = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    n = agenda.notizie([{"title": "A - Fonte", "source": "F", "group": "Mercati", "time": ora, "kind": "macro", "label": "negativo", "score": 2.0}, {"title": "B", "time": ora, "kind": "company"}])
+    assert "Oggi" in n and "negativo" in n and ">B<" not in n
+    assert "Prossimi eventi" in agenda.pagina([], "<p>cal</p>", "<p>prev</p>")
