@@ -1,2 +1,4 @@
 data/archive/chains/*.gz merge=ours
 data/archive/spy_options_summary.csv merge=union
+data/**.json merge=ours
+data/journal*.csv merge=union
