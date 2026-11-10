@@ -1731,6 +1731,39 @@ def test_regime_analoghi():
     assert "Periodi" not in t.box_oggi(o, None, None) and "Ultimi 7 giorni" in t.box_oggi(o, None, d) and "consecutive" in t.box_oggi(o, None, d)
 
 
+def test_scadenze(tmp_path, monkeypatch):
+    from datetime import date
+    from armor import scadenze as sc
+    monkeypatch.setattr(sc, "STATO", tmp_path / "st.json")
+    monkeypatch.setattr(sc, "DATA", tmp_path)
+    nolive = {"giorni": 0, "eventi": 0, "auc": None}
+    el = sc.elenco(date(2026, 11, 10), stato={}, live=nolive)
+    assert {x["id"] for x in el} >= {"opp_v2", "sem_6m", "regime_6m", "fondi_6m", "brevetti_12m", "armor_pesi", "armor_evento"}
+    assert all(x["stato"] in ("raccolta", "attesa_evento") for x in el) and sc.da_notificare(el, {}) == []
+    # a 7 giorni: avviso «pre»; alla scadenza: avviso «due»; una sola volta
+    pre = sc.elenco(date(2027, 11, 3), stato={}, live=nolive)
+    m = sc.da_notificare(pre, {})
+    assert any(x["key"] == "armor_pesi:pre" for x in m)
+    due = sc.elenco(date(2027, 11, 10), stato={}, live=nolive)
+    m = sc.da_notificare(due, {"notificate": ["armor_pesi:pre"]})
+    assert any(x["key"] == "armor_pesi:due" for x in m) and not any(x["key"] == "armor_pesi:pre" for x in m)
+    assert not any(x["key"] == "armor_pesi:due" for x in sc.da_notificare(due, {"notificate": ["armor_pesi:due"]}))
+    # evento calo: la data parte dal primo calo ≥10% e la scadenza è 90 giorni dopo
+    ev = {x["id"]: x for x in sc.elenco(date(2027, 3, 1), stato={"calo": "2027-01-01"}, live=nolive)}["armor_evento"]
+    assert ev["scadenza"] == date(2027, 4, 1) and ev["stato"] == "raccolta"
+    idx = pd.bdate_range("2026-01-01", periods=300)
+    sp = pd.Series(np.r_[np.linspace(100, 120, 200), np.linspace(120, 100, 100)], index=idx)
+    monkeypatch.delenv("NTFY_TOPIC", raising=False)
+    sc.notifica(date(2026, 12, 1), sp)
+    assert sc._carica().get("calo") == "2026-12-01"
+    assert sc.segna_fatta("sem_6m", date(2027, 5, 10)) and not sc.segna_fatta("inesistente")
+    assert "Verifiche e scadenze" in sc.html(oggi=date(2026, 11, 10)) and "Fatta il 2027-05-10" in sc.html(oggi=date(2027, 5, 10))
+    assert "Verifiche in scadenza" in sc.banner(due) and sc.banner(el) == ""
+    # AUC dal vivo: score alto prima dei cali
+    a = pd.Series(np.where(np.arange(300) % 2 == 0, 60.0, 30.0), index=idx)
+    assert sc._auc(np.array([1, 2, 3, 4.0]), np.array([False, False, True, True])) == 1.0 and sc._auc(np.array([1, 2.0]), np.array([True, True])) is None
+
+
 def test_mondo_rendimenti_eur_e_filtri():
     from armor import mondo
     idx = pd.bdate_range("2025-01-01", periods=300)
@@ -2026,7 +2059,7 @@ def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
 
 def test_navigazione_copre_tutte_le_pagine():
     from armor import navigazione
-    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "fondi", "valutazioni", "aziende", "macro", "grafici", "previsioni", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi"]
+    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "fondi", "valutazioni", "aziende", "macro", "grafici", "previsioni", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi", "verifiche"]
     coperte = [p for _g, _l, ps, _i in navigazione.GRUPPI for p in ps]
     assert set(coperte) == set(pagine)
     assert [p for p in set(coperte) if coperte.count(p) > 1] == ["notizie"] or sorted(p for p in set(coperte) if coperte.count(p) > 1) == ["calendario", "notizie"]

@@ -234,6 +234,11 @@ def run_alerts(ctx: dict) -> None:
     except Exception as e:  # noqa: BLE001
         print("[avvisi] indice/divergenza non disponibili:", str(e)[:80])
     alerts.run(ctx, r["nome"], vix, ev, move * 100 if move is not None else None, aix_band, div)
+    try:
+        from . import scadenze
+        scadenze.notifica()
+    except Exception as e:  # noqa: BLE001
+        print("[scadenze] non controllate:", str(e)[:80])
 
 
 def fonti_nuove(force: bool = False) -> None:
@@ -515,6 +520,9 @@ def main() -> None:
         from . import opportunita
         d = opportunita.aggiorna()
         print({"scelte": len(d["ordine"]), "dati_al": d["asof"]})
+    elif cmd == "scadenza-fatta":   # python -m armor scadenza-fatta <id>: segna una verifica come fatta
+        from . import scadenze
+        print("Segnata come fatta." if len(sys.argv) > 2 and scadenze.segna_fatta(sys.argv[2]) else "Indicare un id valido (es. opp_v2, sem_6m, regime_6m, fondi_6m, brevetti_12m, armor_pesi, armor_evento).")
     elif cmd == "opportunita-valuta-v2":   # Patch 71: confronto dei pesi v2 con quelli ufficiali (regola scritta in anticipo)
         from . import opportunita, titoli
         arch = titoli.carica_prezzi()
