@@ -35,4 +35,4 @@ jobs:
         continue-on-error: true
         run: python -m armor sec-aggiorna 12
       - name: Salva i dati nel repository
-        run: bash scripts/salva.sh "Grandi fondi: dati SEC" data
+        run: bash scripts/salva.sh "Grandi fondi - dati SEC" data
