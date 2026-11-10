@@ -2,3 +2,7 @@ data,segnale,valore,percentile,stato,peso
 2026-11-06,cot_lev,-18.742,33.2,normale,0
 2026-11-06,cot_am,46.744,60.7,normale,0
 2026-11-06,cot_dealer,-34.662,46.0,normale,0
+2026-11-09,mmf,0.636,15.6,basso,0
+2026-11-09,cot_lev,-18.742,30.2,normale,0
+2026-11-09,cot_am,46.744,77.5,normale,0
+2026-11-09,cot_dealer,-34.662,26.3,normale,0

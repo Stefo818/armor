@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-10T12:58:22Z",
+ "data_utc": "2026-11-10T13:43:45Z",
  "oggi": "2026-11-10",
  "ultima_previsione": "2026-11-09",
  "giorni_da_ultima": 1,
@@ -633,6 +633,13 @@
    "chiave": false,
    "ultima_data": "2026-09-01",
    "giorni_ritardo": 70,
+   "stato": "ok"
+  },
+  {
+   "nome": "mmf_assets",
+   "chiave": false,
+   "ultima_data": "2026-10-05",
+   "giorni_ritardo": 36,
    "stato": "ok"
   },
   {
