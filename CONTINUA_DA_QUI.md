@@ -675,3 +675,5 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - Sintesi: spiegazione di Mercato (giorni e settimane) contro Economia (mesi) con scala e lettura combinata.
 - Storico: periodi 1M-Tutto, cursore con data/valore/fascia, linee dei pilastri attivabili, S&P 500 sotto il massimo, statistiche, tempo per fascia, episodi simili, affidabilità.
 - sw.js: armor-v65.
+
+- Patch 67: grandi_fondi.py scarta le date duplicate nei segnali SEC (errore "duplicate labels").

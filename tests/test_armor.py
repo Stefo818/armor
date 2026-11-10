@@ -2327,3 +2327,11 @@ def test_super_armor_ui_episodi_e_barra():
     ep = u.episodi(p, st, 50.0)
     assert ep["n"] >= 1 and 0 <= ep["quota5"] <= 1
     assert "width:100%" in u.barra(1.5) and "width:2%" in u.barra(0)
+
+
+def test_su_giorni_con_date_duplicate():
+    import pandas as pd
+    from armor.grandi_fondi import su_giorni
+    pct = pd.Series([10.0, 20.0, 30.0], index=pd.to_datetime(["2020-01-01", "2020-01-01", "2020-02-01"]))
+    r = su_giorni(pct, pd.bdate_range("2020-03-01", periods=3), 2)
+    assert r.iloc[0] == 30.0

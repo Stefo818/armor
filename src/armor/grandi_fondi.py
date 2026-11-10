@@ -82,12 +82,13 @@ def carica_segnali() -> dict[str, pd.Series]:
                 out["d13"] = n
     except Exception:  # noqa: BLE001
         pass
-    return out
+    return {k: v[~v.index.duplicated(keep="last")].sort_index() for k, v in out.items()}
 
 
 def su_giorni(pct: pd.Series, giorni: pd.DatetimeIndex, ritardo: int) -> pd.Series:
     """Percentile disponibile a ogni seduta, tenendo conto del ritardo di pubblicazione."""
     d = pct.dropna().copy()
+    d = d[~d.index.duplicated(keep="last")].sort_index()
     d.index = d.index + pd.Timedelta(days=ritardo)
     return d.reindex(giorni, method="ffill")
 
@@ -161,6 +162,7 @@ def run(p: pd.Series | None = None) -> dict:
     righe = []
     for k, s in carica_segnali().items():
         nome, rit, fin, mino = SEGNALI[k]
+        s = s[~s.index.duplicated(keep="last")].sort_index()
         pct = percentile_mobile(s, fin, mino)
         pg = su_giorni(pct, p.index, rit)
         ult = pct.dropna()
