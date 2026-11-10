@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-10T17:33:52Z",
+ "data_utc": "2026-11-10T19:13:03Z",
  "oggi": "2026-11-10",
  "ultima_previsione": "2026-11-09",
  "giorni_da_ultima": 1,
@@ -918,8 +918,8 @@
   {
    "nome": "rrp",
    "chiave": false,
-   "ultima_data": "2026-11-09",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-10",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
