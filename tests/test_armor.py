@@ -1713,6 +1713,24 @@ def test_regime_frase_e_box():
     assert "Tensione in formazione" in h and "non ancora confermata su dati nuovi" in h and "12" in h and "55%" in h and "Indice Armor oggi" in h and "Come si legge" in h
 
 
+def test_regime_analoghi():
+    from armor import regime_analoghi as ra, tensione as t
+    rng = np.random.default_rng(3)
+    idx = pd.bdate_range("2000-01-03", periods=1500)
+    a = pd.Series(40 + 8 * np.sin(np.arange(1500) / 60) + rng.normal(0, 2, 1500), index=idx)
+    p = pd.Series(100 * np.exp(np.cumsum(rng.normal(0.0003, 0.01, 1500))), index=idx)
+    d = ra.calcola(a, p)
+    assert d and 1 <= len(d["analoghi"]) <= 6 and set(d["medie"]) == {"m7", "m1", "m3", "m6"}
+    pos = [idx.get_loc(pd.Timestamp(x["data"])) for x in d["analoghi"]]
+    assert max(pos) <= 1499 - 126                      # nessun periodo senza esito noto
+    assert all(abs(i - j) >= 63 for k, i in enumerate(pos) for j in pos[k + 1:])
+    h = ra.html(d)
+    assert "Ultimi 7 giorni" in h and "periodi simili su" in h and "<svg" in h and "Come funziona il confronto" in h
+    assert ra.calcola(a.iloc[:100], p.iloc[:100]) is None and "compare quando" in ra.html(None)
+    o = {"data": "x", "A": 44.0, "min20": 38.0, "Pn": 0.4, "stato": "normale", "sopra45": 0}
+    assert "Periodi" not in t.box_oggi(o, None, None) and "Ultimi 7 giorni" in t.box_oggi(o, None, d) and "consecutive" in t.box_oggi(o, None, d)
+
+
 def test_mondo_rendimenti_eur_e_filtri():
     from armor import mondo
     idx = pd.bdate_range("2025-01-01", periods=300)

@@ -9,7 +9,7 @@ import json
 
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
-from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, tensione, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -1027,8 +1027,9 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     reg_o = _safe(lambda: tensione.oggi(), "Regime di tensione") or None
     if reg_o:
         _safe(lambda: tensione.registra_ombra(reg_o), "Registro regime")
-    reg_box = _safe(lambda: tensione.CSS + tensione.box_oggi(reg_o), "Regime di tensione") if reg_o else ""
-    p_regime = _safe(lambda: tensione.pagina(reg_o, None, tensione.grafico_dati()), "Pagina regime")
+    reg_an = regime_analoghi.calcola() if reg_o else None
+    reg_box = _safe(lambda: tensione.CSS + tensione.box_oggi(reg_o, None, reg_an), "Regime di tensione") if reg_o else ""
+    p_regime = _safe(lambda: tensione.pagina(reg_o, None, tensione.grafico_dati(), reg_an), "Pagina regime")
     p_oggi = (f"<a id='oggi'></a>{topbtns}"
               f"{_safe(lambda: super_armor_ui.html(aix, p), 'Super Armor Index')}"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"

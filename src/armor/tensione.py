@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 
-from . import store
+from . import regime_analoghi, store
 from .config import DATA, ROOT
 from .features import closed_sp500, fwd_maxdd, fwd_ret
 
@@ -524,7 +524,7 @@ def _barre_storiche(stato: str, r: dict | None) -> str:
     return out
 
 
-def box_oggi(o: dict | None, r: dict | None = None) -> str:
+def box_oggi(o: dict | None, r: dict | None = None, an: dict | None = None) -> str:
     if r is None and FILE.exists():
         try:
             r = json.loads(FILE.read_text(encoding="utf-8"))
@@ -541,10 +541,10 @@ def box_oggi(o: dict | None, r: dict | None = None) -> str:
              f"<em class='rg-m2' style='left:{min(max(m20, 1), 99):.1f}%' title='Minimo a 20 sedute'></em></div>"
              "<div class='rg-zl'><span style='width:35%'>calma</span><span style='width:10%'></span><span style='width:55%'>tensione (da 45)</span></div>")
     if o["sopra45"]:
-        cont = (f"L'indice è sopra 45 da <b>{o['sopra45']}</b> sedute di fila. L'allerta «persistente» scatta quando <b>anche il giorno più tranquillo delle ultime 20 sedute</b> è sopra 45 "
+        cont = (f"L'indice è sopra 45 da <b>{o['sopra45']}</b> sedute di Borsa consecutive. L'allerta «persistente» scatta quando <b>anche il giorno più tranquillo delle ultime 20 sedute consecutive</b> è sopra 45 "
                 f"(oggi quel minimo è <b>{m20:.0f}</b>).")
     else:
-        cont = (f"L'indice oggi vale <b>{a:.0f}</b>. L'allerta «persistente» scatta solo se <b>anche il giorno più tranquillo delle ultime 20 sedute</b> resta sopra 45: "
+        cont = (f"L'indice oggi vale <b>{a:.0f}</b>. L'allerta «persistente» scatta solo se <b>anche il giorno più tranquillo delle ultime 20 sedute di Borsa consecutive</b> resta sopra 45: "
                 f"oggi quel minimo è <b>{m20:.0f}</b> (il trattino sulla scala).")
     barra = ""
     if pn is not None:
@@ -557,13 +557,16 @@ def box_oggi(o: dict | None, r: dict | None = None) -> str:
             "<p><b>I cinque stati.</b> Calma: indice sotto 35. Normale: tra 35 e 45, senza segnali. Tensione in formazione: indice sopra 45 da poco. "
             "Tensione persistente: sopra 45 senza mai scendere per almeno 20 sedute. Persistente con mercato in calo: come prima, ma l'S&amp;P 500 è già almeno il 5% sotto il suo massimo.</p>"
             "<p><b>Pressione accumulata.</b> Somma di quanto l'indice è stato sopra 40 nei giorni passati, con peso che si dimezza ogni ~23 sedute, trasformata in una scala 0–100 rispetto a tutta la storia.</p>"
+            "<p><b>Sedute consecutive.</b> Una «seduta» è un giorno di Borsa aperta. Quando si parla di giorni «di fila» o «consecutivi» si contano solo sedute una dopo l'altra, senza interruzioni.</p>"
             "<p><b>Le barre.</b> Guardano ogni giorno passato in cui il mercato era nello stesso stato di oggi e contano cosa è successo nei 6 mesi dopo, confrontandolo con un giorno qualsiasi.</p></div></details>")
     titolo = {"calma": "Il mercato è tranquillo", "normale": "Nessun segnale di tensione prolungata", "formazione": "Una tensione potrebbe formarsi",
               "persistente": "La tensione dura da settimane", "persistente_calo": "Tensione che dura e mercato già in calo"}[st]
     return (f"<section class='card rt rg' style='--rgc:{col};border-left:5px solid {col}'><div class='rg-q'>Regime di tensione · <a href='#regime' data-go='regime'>Dettagli ›</a></div>"
             f"<div class='rg-hl'><i style='background:{col}'></i><span>{NOMI_STATO[st]}</span></div><div class='rg-sub'>{titolo}.</div>"
             f"<div class='rg-pt'>Indice Armor oggi (0–100)</div>{scala}<div class='rg-t'>{cont}</div>{barra}"
-            f"<h4 class='rg-h'>E in passato, dopo giorni come oggi?</h4>{_barre_storiche(st, r)}{info}</section>")
+            f"<h4 class='rg-h'>E in passato, nello stesso regime?</h4>"
+            f"<p class='rg-t'>Qui si contano <b>tutti i giorni dal 2000</b> in cui il regime era «{NOMI_STATO[st]}» (anche non di fila) e si guarda cosa è successo nei 6 mesi dopo ciascuno.</p>"
+            f"{_barre_storiche(st, r)}{regime_analoghi.html(an) if an is not None else ''}{info}</section>")
 
 
 CSS = ("<style>"
@@ -713,7 +716,7 @@ def esempio_pac(p: pd.Series | None = None, f: pd.DataFrame | None = None) -> di
         return None
 
 
-def pagina(o: dict | None, r: dict | None = None, g: dict | None = None) -> str:
+def pagina(o: dict | None, r: dict | None = None, g: dict | None = None, an: dict | None = None) -> str:
     if r is None and FILE.exists():
         try:
             r = json.loads(FILE.read_text(encoding="utf-8"))
@@ -722,7 +725,7 @@ def pagina(o: dict | None, r: dict | None = None, g: dict | None = None) -> str:
     head = ("<h2>Regime di tensione</h2><div class='explain'><p>Hai osservato che quando l'Indice Armor resta <b>a lungo sopra 40–50</b>, il mercato tende a calare gradualmente fino a nuovi minimi. "
             "Qui l'idea è stata trasformata in un indicatore misurato, con regole scritte <b>prima</b> di guardare i risultati recenti (file PROTOCOLLO_REGIME.md). "
             "Sono frequenze storiche, non previsioni, e gli episodi indipendenti sono pochi.</p></div>")
-    top = box_oggi(o, r) if o else ""
+    top = box_oggi(o, r, an) if o else ""
     from . import grafico
     graf = grafico.block(g)
     if not r:
