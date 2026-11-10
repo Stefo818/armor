@@ -215,7 +215,12 @@ def html() -> str:
     come = ("<h3 class='fd-h3'>Come funziona la prova</h3><p class='fd-t2'>Per ogni segnale e per ogni giorno si guarda se, quando il segnale era alto (≥ 80°) o basso (≤ 20°), l'S&amp;P 500 è poi sceso di almeno il 5% nel mese o del 10% nei tre mesi "
             "più spesso del normale. Il confronto usa blocchi di date vicine (le date vicine non sono indipendenti) e si ripete separatamente sulla prima e sulla seconda metà della storia: serve che funzioni in entrambe. "
             "Usiamo ogni dato solo dal giorno in cui è stato davvero pubblicato, mai prima.</p>")
-    return (f"<div id='fdroot'><h2>Grandi fondi: cosa fanno e come leggere le loro mosse</h2>{intro}{stato_dati}{cru}{blocchi}{come}{glos}"
+    try:
+        from . import fondi_nomi
+        nomi = fondi_nomi.html()
+    except Exception:  # noqa: BLE001
+        nomi = ""
+    return (f"<div id='fdroot'><h2>Grandi fondi: cosa fanno e come leggere le loro mosse</h2>{intro}{nomi}<h3 class='fd-h3'>I segnali complessivi dei grandi operatori</h3>{stato_dati}{cru}{blocchi}{come}{glos}"
             f"<p class='fd-t2 fd-mu'>Dati al {E(str(d.get('data', 'n.d.')))}. Informazioni di contesto: non sono una consulenza finanziaria.</p></div>{CSS}")
 
 

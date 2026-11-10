@@ -150,6 +150,38 @@ def aggrega_13f(z: zipfile.ZipFile) -> pd.DataFrame:
     return g.rename(columns={"CIK": "cik", "FILINGMANAGER_NAME": "nome"})[["cik", "nome", "periodo", "deposito", "tot", "put_idx", "call_idx", "sh_idx", "n"]]
 
 
+def posizioni_roster(z: zipfile.ZipFile) -> pd.DataFrame:
+    """Un pacchetto 13F -> le prime posizioni (TOP_POS) di ogni fondo con nome del roster (fondi_nomi.ROSTER), per periodo. Serve alla pagina Grandi fondi."""
+    from . import fondi_nomi as fnm
+    sub = _controlla(_tsv(z, "SUBMISSION.tsv"), {"ACCESSION_NUMBER", "FILING_DATE", "SUBMISSIONTYPE", "PERIODOFREPORT"}, "SUBMISSION")
+    sub = sub[sub["SUBMISSIONTYPE"].str.upper() == "13F-HR"][["ACCESSION_NUMBER", "FILING_DATE", "PERIODOFREPORT"]]
+    cov = _controlla(_tsv(z, "COVERPAGE.tsv"), {"ACCESSION_NUMBER", "FILINGMANAGER_NAME"}, "COVERPAGE")[["ACCESSION_NUMBER", "FILINGMANAGER_NAME"]]
+    m = sub.merge(cov, on="ACCESSION_NUMBER")
+    m["fondo"] = m["FILINGMANAGER_NAME"].map(fnm.riconosci)
+    m = m.dropna(subset=["fondo"])
+    m["periodo"] = pd.to_datetime(m["PERIODOFREPORT"], errors="coerce")
+    m["deposito"] = pd.to_datetime(m["FILING_DATE"], errors="coerce")
+    m = m.dropna(subset=["periodo"]).sort_values("deposito").drop_duplicates(["fondo", "periodo"], keep="last")
+    if m.empty:
+        return pd.DataFrame()
+    info = m.set_index("ACCESSION_NUMBER")[["fondo", "periodo"]]
+    parti = []
+    for ch in _tsv(z, "INFOTABLE.tsv", chunksize=400000):
+        ch = _controlla(ch, {"ACCESSION_NUMBER", "NAMEOFISSUER", "CUSIP", "VALUE", "SSHPRNAMT", "PUTCALL"}, "INFOTABLE")
+        ch = ch[ch["ACCESSION_NUMBER"].isin(info.index)]
+        if ch.empty:
+            continue
+        parti.append(pd.DataFrame({"acc": ch["ACCESSION_NUMBER"], "issuer": ch["NAMEOFISSUER"].fillna(""), "cusip": ch["CUSIP"].fillna("").str.upper(), "putcall": ch["PUTCALL"].fillna("").str.upper(),
+                                   "value": pd.to_numeric(ch["VALUE"], errors="coerce").fillna(0.0), "shares": pd.to_numeric(ch["SSHPRNAMT"], errors="coerce").fillna(0.0)}))
+    if not parti:
+        return pd.DataFrame()
+    t = pd.concat(parti).groupby(["acc", "cusip", "putcall"], as_index=False).agg(issuer=("issuer", "first"), value=("value", "sum"), shares=("shares", "sum"))
+    t["tot"] = t.groupby("acc")["value"].transform("sum")
+    t = t.sort_values("value", ascending=False).groupby("acc").head(fnm.TOP_POS)
+    t = t.join(info, on="acc").drop(columns="acc")
+    return t[["fondo", "periodo", "issuer", "cusip", "putcall", "value", "shares", "tot"]]
+
+
 def serie_13f(df: pd.DataFrame) -> pd.DataFrame:
     """Dai depositanti ai segnali per periodo, con il pannello fissato dal trimestre precedente (nessuna informazione futura).
     protezione = put su ETF indicizzati / valore totale del pannello; indicizzati = azioni+call su ETF indicizzati / valore totale."""
@@ -181,7 +213,7 @@ def aggiorna_13f(max_nuovi: int = MAX_NUOVI) -> str:
     zip_ = trova_zip(LISTE_13F, "_form13f.zip", BASE_13F, finestre=True)
     ultimi = {k for k, _ in zip_[-2:]}   # gli ultimi due si riscaricano sempre (depositi tardivi)
     da_fare = [(k, u) for k, u in zip_ if k not in fatti or k in ultimi][:max_nuovi + 2]
-    nuovi = []
+    nuovi, roster = [], []
     n = 0
     for k, u in da_fare:
         if k in fatti and k not in ultimi:
@@ -194,10 +226,28 @@ def aggiorna_13f(max_nuovi: int = MAX_NUOVI) -> str:
             a = aggrega_13f(z)
             print(f"[13F] {k}: {len(a)} depositanti, periodi {sorted(a['periodo'].dt.strftime('%Y-%m-%d').unique())[:3] if len(a) else '-'}", flush=True)
             nuovi.append(a)
+            if (k, u) in zip_[-3:]:   # le posizioni dei fondi con nome servono solo per gli ultimi trimestri
+                try:
+                    pr = posizioni_roster(z)
+                    if len(pr):
+                        roster.append(pr)
+                        print(f"[13F] {k}: {pr['fondo'].nunique()} fondi con nome trovati", flush=True)
+                except Exception as e:  # noqa: BLE001
+                    print(f"[13F] {k} posizioni dei fondi non lette: {str(e)[:150]}", flush=True)
             fatti.add(k)
             n += 1
         except Exception as e:  # noqa: BLE001
             print(f"[13F] {k} saltato: {str(e)[:200]}", flush=True)
+    if roster:
+        from . import fondi_nomi as fnm
+        fr = fnm.FILE
+        fr.parent.mkdir(parents=True, exist_ok=True)
+        old = pd.read_csv(fr, parse_dates=["periodo"], dtype={"cusip": str, "putcall": str}).fillna({"putcall": ""}) if fr.exists() else pd.DataFrame()
+        nuovi_r = pd.concat(roster, ignore_index=True)
+        chiavi = set(zip(nuovi_r["fondo"], nuovi_r["periodo"]))
+        if len(old):   # un fondo-periodo riletto sostituisce quello vecchio per intero
+            old = old[[(a, b) not in chiavi for a, b in zip(old["fondo"], old["periodo"])]]
+        pd.concat([old, nuovi_r], ignore_index=True).to_csv(fr, index=False)
     if nuovi:
         tutto = pd.concat([vecchio] + nuovi, ignore_index=True) if len(vecchio) else pd.concat(nuovi, ignore_index=True)
         tutto = tutto.sort_values("deposito").drop_duplicates(["cik", "periodo"], keep="last")

@@ -2764,3 +2764,43 @@ def test_guida_indici():
     from armor import guida_indici as gi
     h = gi.html()
     assert "Nuovo qui?" in h and "Indice Armor" in h and "Super Armor Index" in h and "30%" in h and "22%" in h and "non sono consigli" in h.lower()
+
+
+def test_fondi_nomi_analisi_e_pagina():
+    from armor import fondi_nomi as fn
+    assert fn.riconosci("BERKSHIRE HATHAWAY INC") == "berkshire" and fn.riconosci("Vanguard Group Inc") == "vanguard" and fn.riconosci("Piccolo Fondo SRL") is None
+
+    def mk(per, rows, tot, fondo="berkshire"):
+        return pd.DataFrame([{"issuer": i, "cusip": c, "putcall": p, "value": v, "shares": s, "tot": tot, "periodo": pd.Timestamp(per), "fondo": fondo} for i, c, p, v, s in rows])
+    a = mk("2026-06-30", [("APPLE INC", "A", "", 400, 4), ("COCA COLA CO", "K", "", 300, 6), ("BANK AMER CORP", "B", "", 200, 5), ("OLD CO", "O", "", 100, 1), ("SPDR S&P", "S", "PUT", 10, 1)], 1000)
+    b = mk("2026-09-30", [("APPLE INC", "A", "", 300, 3), ("COCA COLA CO", "K", "", 330, 6), ("BANK AMER CORP", "B", "", 240, 6), ("NEW HOLDING SPA", "N", "", 150, 3), ("SPDR S&P", "S", "PUT", 40, 1)], 1050)
+    r = fn.analizza_fondo(b, a)
+    assert r["postura"] == "stabile" and r["nuove"] and r["chiuse"] == ["Old"] and r["put_pct"] > r["put_prec"] and r["compra"][0]["eur"] == 150
+    vendo = mk("2026-09-30", [("APPLE INC", "A", "", 100, 1), ("COCA COLA CO", "K", "", 300, 6)], 400)
+    assert fn.analizza_fondo(vendo, a)["postura"] == "vende"
+    split = mk("2026-09-30", [("APPLE INC", "A", "", 400, 40)], 400)   # 10 a 1: non è un acquisto
+    assert abs(fn.analizza_fondo(split, a)["flusso"] + 60) < 1e-6   # solo le uscite: lo split non conta come acquisto
+    info = fn.costruisci(pd.concat([a, b]))
+    assert info["berkshire"]["periodo"] == "2026-09-30" and info["vanguard"]["postura"] == "n.d." and len(info) == len(fn.ROSTER)
+    items = [{"kind": "fondo", "fondo": "berkshire", "title": "Berkshire taglia Apple", "label": "negativo", "score": 2, "source": "Reuters", "link": "http://x"},
+             {"kind": "company", "group": "Coca (KO)", "title": "Coca vola", "label": "positivo", "score": 3, "source": "CNBC", "link": "http://y"},
+             {"kind": "company", "group": "Nvidia (NVDA)", "title": "Altro", "label": "positivo", "score": 9, "source": "CNBC", "link": "http://z"}]
+    nz = fn.notizie_di(info["berkshire"], items)
+    assert {x["title"] for x in nz} == {"Berkshire taglia Apple", "Coca vola"}
+    h = fn.html(info, items)
+    assert "Berkshire Hathaway" in h and "Strategia" in h and "#dc2626" in h and "#16a34a" in h and "Vanguard" in h and "foto di fine trimestre" in h
+    assert "I fondi che osserviamo" in fn.html(fn.costruisci(pd.DataFrame()), [])
+
+
+def test_sec_posizioni_roster_pacchetto_finto():
+    import io, zipfile
+    from armor import sec_dati
+    sub = "ACCESSION_NUMBER\tFILING_DATE\tSUBMISSIONTYPE\tCIK\tPERIODOFREPORT\nA1\t2026-08-10\t13F-HR\t1\t2026-06-30\nA2\t2026-08-11\t13F-HR\t2\t2026-06-30\n"
+    cov = "ACCESSION_NUMBER\tFILINGMANAGER_NAME\nA1\tBERKSHIRE HATHAWAY INC\nA2\tPICCOLO SRL\n"
+    info = ("ACCESSION_NUMBER\tNAMEOFISSUER\tCUSIP\tVALUE\tSSHPRNAMT\tSSHPRNAMTTYPE\tPUTCALL\n"
+            "A1\tAPPLE INC\t037833100\t900\t10\tSH\t\nA1\tAPPLE INC\t037833100\t100\t1\tSH\t\nA1\tSPDR S&P\t78462F103\t50\t1\tSH\tPut\nA2\tX\t1\t5\t1\tSH\t\n")
+    b = io.BytesIO()
+    with zipfile.ZipFile(b, "w") as z:
+        z.writestr("SUBMISSION.tsv", sub); z.writestr("COVERPAGE.tsv", cov); z.writestr("INFOTABLE.tsv", info)
+    df = sec_dati.posizioni_roster(zipfile.ZipFile(io.BytesIO(b.getvalue())))
+    assert set(df["fondo"]) == {"berkshire"} and len(df) == 2 and float(df.loc[df["putcall"] == "", "value"].iloc[0]) == 1000.0 and float(df["tot"].iloc[0]) == 1050.0

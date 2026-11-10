@@ -137,10 +137,16 @@ def enrich(items: list[dict], now: datetime, kind: str, group: str) -> list[dict
 def collect(get=None, now: datetime | None = None, scorer=None) -> dict:
     now = now or datetime.now(timezone.utc)
     get = get or _get_text
+    from . import fondi_nomi
     items, errors, seen = [], [], set()
     jobs = [("macro", g, GOOGLE.format(q=quote(q))) for g, q in MACRO_QUERIES]
     jobs += [("sector", g, GOOGLE.format(q=quote(q))) for g, q in SECTOR_QUERIES]
     jobs += [("company", f"{n} ({t})", YAHOO.format(s=t)) for t, n in TOP20]
+    try:   # notizie sui grandi fondi con nome (pagina Grandi fondi)
+        from . import fondi_nomi
+        jobs += [("fondo", f"Fondo: {v[0]}", GOOGLE.format(q=quote('"' + v[0] + '" fund OR hedge fund OR stake OR portfolio'))) for k, v in fondi_nomi.ROSTER.items()]
+    except Exception:  # noqa: BLE001
+        pass
     for kind, group, url in jobs:
         try:
             raw = parse_rss(get(url))
@@ -157,7 +163,11 @@ def collect(get=None, now: datetime | None = None, scorer=None) -> dict:
                 continue
             seen.add(k)
             fresh.append(it)
-        items += enrich(fresh[:25], now, kind, group)
+        got = enrich(fresh[:6 if kind == "fondo" else 25], now, kind, group)
+        if kind == "fondo":
+            for it in got:
+                it["fondo"] = next((k for k, v in fondi_nomi.ROSTER.items() if "Fondo: " + v[0] == group), "")
+        items += got
     model = "vocabolario"
     try:
         sc = (scorer or finbert.score)([i["title"] for i in items])
