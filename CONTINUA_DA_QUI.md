@@ -677,3 +677,30 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - sw.js: armor-v65.
 
 - Patch 67: grandi_fondi.py scarta le date duplicate nei segnali SEC (errore "duplicate labels").
+
+## Patch 68 - Saldi e Opportunità: causa del calo, diluizione, comunicati, brevetti
+- `titoli_eventi.causa_calo` ha il parametro `volrel`; nuovo tipo «opaca» (voto 35); «ignota» vale 60 o 70 o 62 secondo `quota`. `titoli.top_json` aggiunge `vr` (volume relativo).
+- `titoli_fond`: `moduli_diluizione` (item «DIL» dentro `eventi_8k`), `rd_da_facts`, `comunicato_8k` (Exhibit 99.1 via index.json), `titoli_sec`, indicatori `rd_cap`, `rd_ricavi`, `rd_crescita`.
+- `saldi.arricchisci(..., comunicati_max)`: comunicati come notizie, ricerca notizie anti-omonimi (`ev.filtra_omonimi`), facts SEC letti una volta.
+- `brevetti.py` + workflow `brevetti.yml` (venerdì 22:00 UTC, opzione «solo prova»): abbina i titolari dei brevetti ai simboli. Non ancora provato su dati veri (qui nessuna rete): eseguire prima la prova e incollare l'esito. `data/brevetti_non_abbinati.csv` elenca i titolari da aggiungere a `data/universo/alias_brevetti.json`.
+- Da fare (ora Patch 70, vedi sotto): imbuto a 4 canali, pesi v2 in parallelo (ombra) con regola di adozione scritta prima, bilanci SEC a più trimestri. Patch 71: test storico con dati SEC (ottimista: mancano i prezzi dei titoli usciti dalla Borsa).
+
+## Patch 69 - Pagina «Grandi fondi», valore di confronto, variazione giornaliera del rapporto
+- Nuova pagina `fondi` (Rischio → Grandi fondi), `src/armor/fondi_ui.py`: spiegazione, «tensione» 1-100 (quanto i segnali sono fuori norma, senza direzione), confronto Super Armor Index ufficiale vs con grandi fondi al 10% (`sai_ombra`), una scheda per segnale (percentile, variazioni, come leggere alto/basso, grafico interattivo con S&P 500, cosa è successo dopo, prova), glossario. I dati del grafico stanno in `data-d` dell'SVG (gli script JSON perdono gli attributi nel caricamento a richiesta).
+- Riga «Grandi fondi» in Rischio → Indici e in Contesto; nel Super Armor Index il riquadro fondi mostra la tensione (peso 0 · in prova) e il confronto.
+- `super_armor.py`: pilastro fondi = tensione; `ombra`, colonne `fondi` e `sai_ombra` nello storico; AUC di confronto in `valuta`.
+- Variazione rispetto a ieri: P/E e P/S (prezzo live / chiusura precedente, `valuations.current` → `prev1`) e rapporto di Previsione (`semaforo_rischio.variazione`, serve il secondo giorno registrato in `semaforo_rischio_stato.csv`).
+- Regola: i grandi fondi restano a peso 0 finché un segnale non supera la prova; decidere dopo qualche settimana guardando il confronto.
+- Patch 71: fatta (vedi sotto); Patch 72: test storico.
+
+## Patch 70 - Eventi scorrevoli con esiti (Calendario e Contesto)
+- `src/armor/eventi_esiti.py`: elenco eventi scorrevole (rotellina/dito), ultimi 15 giorni + prossimi 30, frecce mese prima/dopo, pulsante Oggi. Eventi passati: atteso, reale, sintesi, verde vivo (positivo) / rosso (negativo) / grigio. Usato in Calendario (`agenda.eventi`, id evx-cal) e Contesto (`parts.context_section`, id evx-ctx).
+- Trimestrali: stima analisti vs utile reale (Yahoo `get_earnings_dates`), salvati in data/eventi_trimestrali.json dal job giornaliero (`aggiorna_trimestrali`); i risultati compaiono solo dalle prossime esecuzioni.
+- CPI, lavoro, Fed: reale da FRED; atteso = riferimento Armor (mese prima / media 3 mesi / tassi fermi) oppure consenso a mano in data/eventi_attesi.csv (data,tipo,atteso,testo). Non esiste consenso gratuito affidabile.
+- Opzioni: nessun giudizio, solo reazione dell'S&P 500 con fascia attesa.
+
+## Patch 71 - Opportunità: imbuto a canali, bilanci SEC a più trimestri, pesi v2 in prova
+- `sec_trim.py`: ricavi e utile operativo a 12 trimestri dai companyfacts SEC con data di deposito (`asof` = nessun dato dal futuro; Q4 = anno − 3 trimestri). Indicatori: accel, leva_op, margine_op_var, svolta. Collegato in `saldi.arricchisci` (`ind[t]` li riceve).
+- `opportunita.py`: pre-selezione 400 slancio + 100 ripresa + 100 volume (`pool`); `canali()` (slancio, svolta di bilancio, catalizzatori, insider) mostrati nella pagina; pesi v2 (`PESI_V2`, `FATTORI_V2`: + «svolta» 12%, «insider» 8%) calcolati in parallelo, scelte v1/v2 salvate in `data/opportunita_ombra_v1.csv`/`_v2.csv`; `valuta_v2()` applica la regola scritta in PROTOCOLLO_OPPORTUNITA.md (12 settimane a 1 mese, +0,5 punti su VT, positivo in entrambe le metà, 3 mesi non negativo) e scrive `data/opportunita_adozione.json`; `adottato()` passa i pesi v2 a ufficiali automaticamente. Comando `opportunita-valuta-v2`.
+- Non fatto: acquisti dei grandi fondi per singolo titolo (serve abbinare i 13F ai simboli: CUSIP→ticker); insider usa il conteggio di yfinance (`insider_acq_90g`).
+- Non verificato su dati reali: companyfacts SEC trimestrali (campi form/filed/start/end) e il ritardo reale di `da_yf`. Da controllare dal log del sabato («[opp] confronto pesi v1/v2»).

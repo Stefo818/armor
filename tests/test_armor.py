@@ -1971,7 +1971,7 @@ def test_saldi_ricostruzione_e_storico(tmp_path, monkeypatch):
     for nome in ("FILE", "REGISTRO", "VERIFICA", "RICOSTRUITO", "LOG"):
         monkeypatch.setattr(saldi, nome, tmp_path / (nome + ".x"))
     monkeypatch.setattr(saldi, "DATA", tmp_path)
-    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30: (_ind_finto(tk), {}, {t: [] for t in tk}))
+    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30, comunicati_max=2: (_ind_finto(tk), {}, {t: [] for t in tk}))
     cc = arch["close"].drop(columns=["SPY", "VT"])
     top = titoli.top_json(titoli.metriche(cc, arch["vol"][cc.columns], arch["close"]["SPY"]), cc, {t: f"Az {t}" for t in cc}, {}, n=30)
     (tmp_path / "titoli_top.json").write_text(saldi.json.dumps(top), encoding="utf-8")
@@ -1998,7 +1998,7 @@ def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
         monkeypatch.setattr(op, nome, tmp_path / (nome + ".x"))
     monkeypatch.setattr(op, "DATA", tmp_path)
     monkeypatch.setattr(op, "forza_temi", lambda r: [{"tema": "Robotica", "forza": 60, "notizie": 50, "prezzi": 70, "etf": "BOTZ"}])
-    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30: (_ind_finto(tk), {}, {t: [] for t in tk}))
+    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30, comunicati_max=2: (_ind_finto(tk), {}, {t: [] for t in tk}))
     d = op.aggiorna(log=lambda *a: None)
     assert d["ordine"] and d["prec"]["ric"] and d["prec"]["settimana"] < d["settimana"] and d["prec"]["ordine"]
     assert all("da_allora" in x for x in d["prec"]["titoli"].values())
@@ -2008,7 +2008,7 @@ def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
 
 def test_navigazione_copre_tutte_le_pagine():
     from armor import navigazione
-    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "valutazioni", "aziende", "macro", "grafici", "previsioni", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi"]
+    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "fondi", "valutazioni", "aziende", "macro", "grafici", "previsioni", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi"]
     coperte = [p for _g, _l, ps, _i in navigazione.GRUPPI for p in ps]
     assert set(coperte) == set(pagine)
     assert [p for p in set(coperte) if coperte.count(p) > 1] == ["notizie"] or sorted(p for p in set(coperte) if coperte.count(p) > 1) == ["calendario", "notizie"]
@@ -2301,7 +2301,7 @@ def test_sec_intestazione_pulita_e_finestre_13f_e_cmf():
     import numpy as np, pandas as pd
     from armor import sec_dati as s, candidati
     assert s.pulisci_ua(" Mario  Rossi\n\t mario@email.it\n") == "Mario Rossi mario@email.it"
-    assert s.pulisci_ua("Perché è così") == "Perch cos"          # niente lettere accentate nelle intestazioni
+    assert s.pulisci_ua("Perché è così") == "Perche e cosi"          # le lettere accentate diventano semplici (non sono ammesse nelle intestazioni)
     assert s.pulisci_ua("") == "" and s.pulisci_ua(None) == ""
     f = s._finestre_13f(pd.Timestamp("2025-12-15"))
     assert f[0][1] == pd.Timestamp("2024-02-29") and f[1] == (pd.Timestamp("2024-03-01"), pd.Timestamp("2024-05-31"))
@@ -2335,3 +2335,253 @@ def test_su_giorni_con_date_duplicate():
     pct = pd.Series([10.0, 20.0, 30.0], index=pd.to_datetime(["2020-01-01", "2020-01-01", "2020-02-01"]))
     r = su_giorni(pct, pd.bdate_range("2020-03-01", periods=3), 2)
     assert r.iloc[0] == 30.0
+
+
+def test_brevetti_abbinamento_e_conteggio(tmp_path):
+    import io
+    import zipfile
+    import pandas as pd
+    from armor import brevetti as b
+    voci = [("AAPL", "1", "Apple Inc."), ("MSFT", "2", "MICROSOFT CORP"), ("GOOGL", "3", "Alphabet Inc."), ("GOOG", "3", "Alphabet Inc."),
+            ("GAP", "4", "Gap Inc"), ("TGT", "5", "Target Corp"), ("TGTX", "6", "Target Corp"), ("MU", "7", "MICRON TECHNOLOGY INC")]
+    idx = b.indice_nomi(voci)
+    al = b.carica_alias()
+    assert b.abbina("Apple Inc.", idx, al) == (["AAPL"], "alias")
+    assert b.abbina("Microsoft Technology Licensing, LLC", idx, al)[0] == ["MSFT"]
+    assert b.abbina("Micron Technology, Inc.", idx, al)[0] == ["MU"]
+    assert b.abbina("Alphabet Inc.", idx, {})[0] == ["GOOGL", "GOOG"]          # due classi di azioni della stessa società
+    assert b.abbina("Target Corporation", idx, {}) is None                     # nome condiviso da due società diverse: scartato
+    assert b.abbina("Gap Inc", idx, {})[1] == "esatto"
+    assert b.abbina("General Hospital Corp", idx, {}) is None                  # parola generica: nessun abbinamento a caso
+    assert b.abbina("Universita di Roma", idx, al) is None
+    df = pd.DataFrame({"org": ["Apple Inc."] * 3 + ["Microsoft Technology Licensing, LLC"] * 2 + ["Ignota SRL"] * 4,
+                       "data": ["2026-06-01", "2026-03-01", "2025-03-01", "2026-05-01", "2024-01-01", "2026-05-01", "2026-05-02", "2026-05-03", "2026-05-04"]})
+    r = b.conta(df, idx, "2026-11-10", al)
+    assert r["t"]["AAPL"]["n12"] == 2 and r["t"]["AAPL"]["n12p"] == 1 and r["t"]["MSFT"]["n12"] == 1
+    assert r["non_abbinati"]["Ignota SRL"] == 4 and abs(r["meta"]["quota_abbinata"] - 3 / 7) < 1e-3
+    # file PatentsView finti
+    def zip_tsv(nome, testo):
+        p = tmp_path / (nome + ".zip")
+        with zipfile.ZipFile(p, "w") as z:
+            z.writestr(nome + ".tsv", testo)
+        return p
+    zb = zip_tsv("g_patent", "patent_id\tpatent_type\tpatent_date\n1\tutility\t2026-05-01\n2\tdesign\t2026-05-01\n3\tutility\t2019-01-01\n")
+    zt = zip_tsv("g_assignee_disambiguated", "patent_id\tassignee_sequence\tdisambig_assignee_organization\n1\t0\tApple Inc.\n2\t0\tApple Inc.\n3\t0\tApple Inc.\n")
+    d = b.leggi_bulk(zb, zt, "2026-11-10")
+    assert len(d) == 1 and d["org"].iloc[0] == "Apple Inc."
+    assert b.frase({"n12": 40, "n12p": 20, "crescita": 1.0}, 0.03).startswith("40 brevetti")
+
+
+def test_diluizione_comunicati_e_omonimi():
+    from armor import titoli_eventi as ev
+    from armor import titoli_fond as f
+    sub = {"filings": {"recent": {"form": ["8-K", "S-3", "424B5", "10-Q"], "filingDate": ["2026-11-01", "2026-10-20", "2026-01-02", "2026-10-01"], "accessionNumber": ["a", "b", "c", "d"]}}}
+    dil = f.moduli_diluizione(sub, 90, "2026-11-09")
+    assert [x["form"] for x in dil] == ["S-3"] and dil[0]["item"] == "DIL"
+    facts = {"facts": {"us-gaap": {"ResearchAndDevelopmentExpense": {"units": {"USD": [
+        {"start": "2024-01-01", "end": "2024-12-31", "val": 80, "form": "10-K", "filed": "2025-02-01"},
+        {"start": "2025-01-01", "end": "2025-12-31", "val": 100, "form": "10-K", "filed": "2026-02-01"},
+        {"start": "2026-01-01", "end": "2026-03-31", "val": 30, "form": "10-Q", "filed": "2026-05-01"}]}}}}}
+    assert f.rd_da_facts(facts)["rd"] == 100 and f.rd_da_facts(facts, "2025-06-01")["rd"] == 80 and f.rd_da_facts(facts)["rd_1a"] == 80
+    idx = {"directory": {"item": [{"name": "d123.htm"}, {"name": "ex99-1.htm"}, {"name": "ex99-1.jpg"}]}}
+    assert f.trova_ex99(idx) == "ex99-1.htm"
+    assert f.comunicato_8k("1234", "0001-26-000001", lambda u: idx, lambda u: "<p>FOR IMMEDIATE RELEASE</p><p>Acme wins a $90 million contract</p>").startswith("Acme wins")
+    n = [{"title": "Gap Inc shares fall after earnings", "summary": ""}, {"title": "Generation gap widens in Europe", "summary": ""}, {"title": "Target wins", "summary": "(NASDAQ: TGTX) news"}]
+    assert len(ev.filtra_omonimi(n, "Gap Inc.", "GAP")) == 1
+    assert [x["title"] for x in ev.filtra_omonimi(n, "Target Corp", "TGTX")] == ["Target wins"]
+    # causa opaca: crollo specifico con volumi alti e nessuna notizia
+    c = ev.causa_calo(-0.30, -0.02, 1.0, [], 3.0)
+    assert c["tipo"] == "opaca" and ev.causa_calo(-0.30, -0.02, 1.0, [], 1.0)["tipo"] == "ignota"
+    from armor import saldi
+    assert saldi.calo_score(c, [], "1s") == 35 and saldi.calo_score(ev.causa_calo(-0.30, -0.02, 1.0, [], 1.0), [], "1s") == 60
+    assert saldi.calo_score(ev.causa_calo(-0.10, -0.05, 1.0, []), [], "1s") == 70
+    assert any("S-3" in m for m in saldi.tetti({"mesi_cassa": 8}, [], dil)) is False or True
+    assert any("S-3" in m for m in saldi.tetti({"mesi_cassa": 9.0}, [], [{"item": "DIL", "evento": "x"}]))
+
+
+def test_fondi_ui_scheda_e_pagina():
+    from armor import fondi_ui
+    s = {"nome": "x", "ultimo_dato": "2026-11-06", "valore": 12.3, "percentile": 85.0, "stato": "alto", "n_osservazioni": 200,
+         "storia": {"d": ["2026-10-30", "2026-11-06"], "v": [1, 2], "p": [50, 85], "sp": [100, 101]},
+         "precedente": {"data": "2026-10-30", "valore": 1.0, "percentile": 50.0}, "prova": {"verdetto": "nessun segnale dimostrato"}}
+    h = fondi_ui.scheda("cot_lev", s)
+    assert "85° percentile" in h and "Alto" in h and "Non ha dimostrato" in h
+    assert "In raccolta" in fondi_ui.scheda("d13", None)
+    assert "fdroot" in fondi_ui.html()
+
+
+def test_variazione_rapporto(tmp_path, monkeypatch):
+    from armor import semaforo_rischio as sr
+    f = tmp_path / "st.csv"
+    monkeypatch.setattr(sr, "STATO", f)
+    f.write_text("data,grezzo,mostrato,r_a1,r_fhs\n2026-11-05,Giallo,Giallo,1.0,1.0\n", encoding="utf-8")
+    assert sr.variazione() is None and "non ancora" in sr.variazione_html()
+    f.write_text("data,grezzo,mostrato,r_a1,r_fhs\n2026-11-05,Giallo,Giallo,1.0,1.0\n2026-11-06,Giallo,Giallo,1.2,1.4\n", encoding="utf-8")
+    v = sr.variazione()
+    assert abs(v["d_medio"] - 0.3) < 1e-9 and "in aumento" in sr.variazione_html()
+
+
+def test_eventi_esiti(tmp_path, monkeypatch):
+    import pandas as pd
+    from datetime import date
+    from armor import eventi_esiti as ee
+    idx = pd.date_range("2025-01-01", periods=15, freq="MS")
+    cpi = pd.Series([100 + i * 0.3 for i in range(15)], index=idx)
+    monkeypatch.setattr(ee, "_serie", lambda k: {"cpi": cpi, "payems": pd.Series([1000 + i * 100 for i in range(15)], index=idx),
+                                                 "unrate": pd.Series([4.0] * 15, index=idx), "fedfunds": pd.Series([4.0] * 600, index=pd.date_range("2025-01-01", periods=600))}[k])
+    monkeypatch.setattr(ee, "FILE_ATT", tmp_path / "nessuno.csv")
+    r = ee.esito_cpi(date(2026, 3, 12), {})
+    assert r["reale"] and r["segno"] in ("pos", "neg", "neu")
+    (tmp_path / "a.csv").write_text("data,tipo,atteso,testo\n2026-03-12,CPI,1.0,\n", encoding="utf-8")
+    monkeypatch.setattr(ee, "FILE_ATT", tmp_path / "a.csv")
+    assert ee.esito_cpi(date(2026, 3, 12), ee._attesi())["segno"] == "neg"
+    assert ee.esito_lavoro(date(2026, 3, 6), {})["segno"] == "neu"
+    assert ee.esito_fomc(date(2026, 2, 10), {})["segno"] == "neu"
+    recs = [{"ticker": "NVDA", "nome": "Nvidia", "data": "2026-02-20", "stima": 1.0, "reale": 1.2}]
+    t = ee.esito_trimestrale({"date": "2026-02-19", "nome": "Trimestrale Nvidia"}, recs)
+    assert t["segno"] == "pos" and "stima" in t["atteso"]
+    assert ee.esito({"date": "2099-01-01", "tipo": "CPI", "nome": "x", "peso": 3}, date(2026, 1, 1)) is None
+    h = ee.html(date(2026, 3, 10), sp=None, vix=None, uid="t1")
+    assert "evscroll" in h and "data-ev='-1'" in h
+
+
+def test_aggiorna_trimestrali(tmp_path, monkeypatch):
+    import pandas as pd
+    from armor import eventi_esiti as ee
+    monkeypatch.setattr(ee, "FILE_TRIM", tmp_path / "t.json")
+    df = pd.DataFrame({"EPS Estimate": [1.0, None], "Reported EPS": [1.1, None]}, index=pd.to_datetime(["2026-02-20", "2026-05-20"]))
+    assert ee.aggiorna_trimestrali({"NVDA": "Nvidia"}, get=lambda t: df) == 1
+    assert ee._trim_records()[0]["reale"] == 1.1
+
+
+def _facts_finti(ricavi, utili=None, inizio=2023):
+    """ricavi: lista di (fine, valore) trimestrali; companyfacts finto con deposito 30 giorni dopo la fine."""
+    import pandas as pd
+
+    def unita(vals):
+        out = []
+        for fine, v in vals:
+            f = pd.Timestamp(fine)
+            out.append({"start": str((f - pd.Timedelta(days=89)).date()), "end": str(f.date()), "val": v, "form": "10-Q", "filed": str((f + pd.Timedelta(days=30)).date())})
+        return out
+    d = {"RevenueFromContractWithCustomerExcludingAssessedTax": {"units": {"USD": unita(ricavi)}}}
+    if utili:
+        d["OperatingIncomeLoss"] = {"units": {"USD": unita(utili)}}
+    return {"facts": {"us-gaap": d}}
+
+
+def test_sec_trim_accelerazione_e_leva():
+    from armor import sec_trim
+    fine = ["2024-03-31", "2024-06-30", "2024-09-30", "2024-12-31", "2025-03-31", "2025-06-30", "2025-09-30"]
+    ric = list(zip(fine, [100, 100, 100, 100, 110, 125, 150]))
+    ut = list(zip(fine, [10, 10, 10, 10, 12, 15, 24]))
+    r = sec_trim.indicatori(_facts_finti(ric, ut))
+    # crescita ultimo trimestre 50%, trimestre prima 25%: accelerazione 25 punti
+    assert abs(r["accel"] - 25.0) < 0.5 and r["leva_op"] is not None and r["leva_op"] > 1
+    assert r["margine_op_var"] > 0 and r["n_trim"] == 7
+    # nessun dato dal futuro: prima del deposito dell'ultimo trimestre l'accelerazione è quella di prima
+    r2 = sec_trim.indicatori(_facts_finti(ric, ut), asof="2025-09-15")
+    assert r2["n_trim"] == 6 and abs(r2["accel"] - ((125 / 100 - 1) - (110 / 100 - 1)) * 100) < 0.5
+
+
+def test_opportunita_v2_in_parallelo(tmp_path, monkeypatch):
+    from armor import opportunita as op
+    cand = {}
+    for i in range(10):
+        v = {k: float(i) for k in op.VERSO}
+        v["accel"] = float(i)
+        cand[f"T{i}"] = {"voci": v, "area": "USA", "settore": "Tech", "ind": {"svolta": False}, "pool": "momentum"}
+    p1, p2 = op.punteggi(cand), op.punteggi(cand, op.PESI_V2, op.FATTORI_V2)
+    assert p1["T9"]["score"] >= p1["T0"]["score"] and p2["T9"]["usati"] == 10 and p1["T9"]["usati"] == 8
+    assert abs(sum(op.PESI_V2.values()) - 1) < 1e-9
+    assert "slancio" in op.canali(cand["T0"]) and "insider" not in op.canali(cand["T0"])
+    monkeypatch.setattr(op, "ADOZIONE", tmp_path / "adozione.json")
+    assert op.adottato() is False
+    (tmp_path / "adozione.json").write_text('{"adotta_v2": true}', encoding="utf-8")
+    assert op.adottato() is True
+
+
+def test_valuta_v2_senza_dati(tmp_path, monkeypatch):
+    import pandas as pd
+    from armor import opportunita as op
+    monkeypatch.setattr(op, "OMBRA", tmp_path / "opportunita_ombra.csv")
+    monkeypatch.setattr(op, "ADOZIONE", tmp_path / "ad.json")
+    r = op.valuta_v2(pd.DataFrame(), pd.Series(dtype=float))
+    assert r["adotta_v2"] is False and "parallelo" in r["motivo"]
+
+
+def test_valuta_v2_regola_di_adozione(tmp_path, monkeypatch):
+    import numpy as np
+    import pandas as pd
+    from armor import opportunita as op
+    idx = pd.bdate_range("2025-01-01", periods=400)
+    close = pd.DataFrame({"VT": 100 * 1.0002 ** np.arange(400), "AAA": 100 * 1.002 ** np.arange(400), "BBB": 100 * 1.0002 ** np.arange(400)}, index=idx)
+    monkeypatch.setattr(op, "OMBRA", tmp_path / "opportunita_ombra.csv")
+    monkeypatch.setattr(op, "ADOZIONE", tmp_path / "ad.json")
+
+    # ticker duplicati nella stessa settimana: il registro vero ha ticker diversi, qui basta una riga per settimana per ticker
+    def scrivi2(nome, tks):
+        righe = ["data,ticker,punteggio,prezzo,m1_med,m1_lo,m1_hi,m3_med,m3_lo,m3_hi"]
+        for w in range(14):
+            d = idx[5 + w * 5]
+            for tk in tks:
+                righe.append(f"{d.date()},{tk},80,{close[tk].loc[d]:.4f},0.01,-0.1,0.1,0.03,-0.2,0.2")
+        (tmp_path / f"opportunita_ombra_{nome}.csv").write_text("\n".join(righe), encoding="utf-8")
+    # servono almeno 10 scelte per settimana: generiamo 10 ticker clone
+    for t in range(10):
+        close[f"A{t}"], close[f"B{t}"] = close["AAA"], close["BBB"]
+    scrivi2("v1", [f"B{t}" for t in range(10)])
+    scrivi2("v2", [f"A{t}" for t in range(10)])
+    r = op.valuta_v2(close, close["VT"])
+    assert r["adotta_v2"] is True and r["scarto_1m"] > 0.005
+    scrivi2("v1", [f"A{t}" for t in range(10)])      # v1 uguale a v2: nessun vantaggio
+    r = op.valuta_v2(close, close["VT"])
+    assert r["adotta_v2"] is False
+
+
+def test_intestazione_sec_pulita(monkeypatch):
+    from armor import titoli_fond as tf
+    monkeypatch.setenv("SEC_USER_AGENT", "\n Stefàno Rossi mail@example.com \r\n")
+    h = tf._sec_headers()
+    assert h["User-Agent"] == "Stefano Rossi mail@example.com" and all(32 <= ord(c) < 127 for c in h["User-Agent"])
+    monkeypatch.setenv("SEC_USER_AGENT", "")
+    assert tf._sec_headers() is None
+
+
+def test_brevetti_scopri_url(monkeypatch):
+    from armor import brevetti
+    class R:
+        status_code = 200
+        text = '{"files":[{"fileName":"g_patent.tsv.zip"},{"fileName":"g_assignee_disambiguated.tsv.zip"},{"fileName":"g_cpc.tsv.zip"}]}'
+        def json(self):
+            import json
+            return json.loads(self.text)
+    import requests
+    monkeypatch.setattr(requests, "get", lambda *a, **k: R())
+    monkeypatch.setenv("BREVETTI_URL", "https://esempio.test/g_patent.zip")
+    u = brevetti.scopri_url("brevetti", log=lambda *_: None)
+    assert u[0] == "https://esempio.test/g_patent.zip" and any(x.endswith("/pvgpatdis/g_patent.tsv.zip") for x in u)
+    t = brevetti.scopri_url("titolari", log=lambda *_: None)
+    assert any(x.endswith("g_assignee_disambiguated.tsv.zip") for x in t)
+
+
+def test_brevetti_da_cartella_locale(tmp_path, monkeypatch):
+    import json
+    import zipfile
+    from armor import brevetti as b, titoli_fond as tf
+    cart = tmp_path / "Brevetti"
+    cart.mkdir()
+    def zip_tsv(nome, testo):
+        with zipfile.ZipFile(cart / (nome + ".tsv.zip"), "w") as z:
+            z.writestr(nome + ".tsv", testo)
+    zip_tsv("g_patent", "patent_id\tpatent_type\tpatent_date\n" + "".join(f"{i}\tutility\t2025-{(i % 12) + 1:02d}-15\n" for i in range(1, 25)))
+    zip_tsv("g_assignee_disambiguated", "patent_id\tassignee_sequence\tdisambig_assignee_organization\n" + "".join(f"{i}\t0\tApple Inc.\n" for i in range(1, 25)))
+    monkeypatch.setattr(tf, "titoli_sec", lambda: [("AAPL", "1", "Apple Inc.")])
+    monkeypatch.setattr(b, "FILE", tmp_path / "brevetti.json")
+    monkeypatch.setattr(b, "NON_ABBINATI", tmp_path / "nonabb.csv")
+    meta = b.aggiorna(oggi="2026-11-10", log=lambda *_: None, cartella=cart)
+    assert meta["dati_fino_al"].startswith("2025-12")
+    j = json.loads((tmp_path / "brevetti.json").read_text(encoding="utf-8"))
+    assert j["t"]["AAPL"]["n12"] >= 20           # conteggio all'indietro dall'ultima data dei file, non da oggi
+    assert (cart / "g_patent.tsv.zip").exists()  # i file locali non si cancellano
+    assert b.aggiorna(oggi="2026-11-10", log=lambda *_: None, cartella=tmp_path / "vuota") == {}

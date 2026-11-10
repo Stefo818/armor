@@ -800,7 +800,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                  ("skew", "SKEW"), ("nfci", "Condizioni finanziarie")]
     chip_opts = [(k, l) for k, l in chip_defs if k in chartdata and (chartdata[k]["d"] or chartdata[k].get("i"))]
     # ---- nuovi moduli (ognuno protetto: se uno fallisce, la pagina resta)
-    from . import allarmi, bilancio, decennio, insight, mercati, news as newsmod, posizionamento, regime as regmod, semafori, super_armor, super_armor_ui
+    from . import fondi_ui, allarmi, bilancio, decennio, insight, mercati, news as newsmod, posizionamento, regime as regmod, semafori, super_armor, super_armor_ui
     sem = semafori.compute(p, livemod.load())
     from . import armor_index
     aix = armor_index.compute(sp)
@@ -887,7 +887,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                 f"<a href='#indici' data-go='indici'>Vedi tutti i semafori ›</a></div>") if sem else ""
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
-    pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("mercati", "Mercati"), ("saldi", "Saldi"), ("opportunita", "Opportunità"), ("indici", "Indici"), ("regime", "Regime di tensione"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
+    pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("mercati", "Mercati"), ("saldi", "Saldi"), ("opportunita", "Opportunità"), ("indici", "Indici"), ("regime", "Regime di tensione"), ("fondi", "Grandi fondi"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"),
              ("fiducia", "Quanto fidarsi"), ("calendario", "Calendario"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi")]
     from . import navigazione
     nav = navigazione.html(pages)
@@ -895,10 +895,11 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 
     def page(k, inner):
         if not lazy or k == "oggi":
-            return f"<div class='pg' id='p-{k}'>{inner}</div>"
+            extra = fondi_ui.JS if "id='fdroot'" in inner else ""
+            return f"<div class='pg' id='p-{k}'>{inner}{extra}</div>"
         late = ""
         for marker, js in (("id='epcanvas'", f"<script>{insight.EP_JS}</script>"), ("id='alkey'", f"<script>{parts.AL_JS}</script>"),
-                           ("id='embedchart'", parts.LATE_JS["embedchart"]), ("id='regsel'", parts.LATE_JS["regsel"]), ("id='pacamt'", ui.PAC_JS), ("id='pscap'", pacsim.JS)):
+                           ("id='embedchart'", parts.LATE_JS["embedchart"]), ("id='regsel'", parts.LATE_JS["regsel"]), ("id='pacamt'", ui.PAC_JS), ("id='pscap'", pacsim.JS), ("id='fdroot'", fondi_ui.JS)):
             if marker in inner:
                 late += js
         lazy_pages[k] = inner + late
@@ -1008,7 +1009,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     hero_old = (f"<section class='hero {LEVEL_CLASS[worst]}'><div class='hlk'>Il giudizio di oggi</div><div class='hl1'>{verdict}</div>"
                 f"<div class='hl2'>Il rischio di un calo importante è <b>{lvl_word}</b>.</div>{sem_line}"
                 f"<div class='hrow'>{risks_box}{opps_box}</div><div class='hl3'>{esc(note_rel)}</div></section>"
-                f"{disc_line}<h2>Gli indici più importanti</h2>{semafori.html(sem, keys_only=True)}{ten_line}{guide}")
+                f"{disc_line}{_safe(fondi_ui.riga_rischio, 'Grandi fondi (riga)')}<h2>Gli indici più importanti</h2>{semafori.html(sem, keys_only=True)}{ten_line}{guide}")
     # «Oggi» in 5 blocchi: 1 cosa faccio, 2 Indice Armor + probabilita', 3 calo o rialzo (+ Perche?), 4 P/E e P/S, 5 prossimo evento
     more = ("<div class='more'>Per i dettagli: <a href='#indici' data-go='indici'>Indici</a> · <a href='#previsioni' data-go='previsioni'>Previsioni</a> · "
             "<a href='#fiducia' data-go='fiducia'>Quanto fidarsi</a> · <a href='#storico' data-go='storico'>Storico</a> · oppure apri l'Assistente in basso.</div>")
@@ -1067,7 +1068,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     p_ctx = (parts.context_section(p)
              + "<h3 style='margin-top:18px'>Altri mercati: il rischio è globale o solo americano?</h3><div class='card scroll'>" + _safe(lambda: mercati.html(mercati.compute()), "Confronto mercati") + "</div>"
              + "<h3 style='margin-top:18px'>Opzioni e posizionamento</h3><div class='card scroll'>" + _safe(posizionamento.html, "Posizionamento") + "</div>"
-             + "<h3 style='margin-top:18px'>Grandi fondi</h3><div class='card scroll'>" + _safe(__import__("armor.grandi_fondi", fromlist=["html"]).html, "Grandi fondi") + "</div>")
+             + "<h3 style='margin-top:18px'>Grandi fondi</h3>" + _safe(fondi_ui.riga_rischio, "Grandi fondi"))
     p_an = (f"<h2>Analisi giornaliera: indici, confronto col passato e notizie</h2>{parts.analysis_section(rep_an, arch_an)}"
             f"<h2 style='margin-top:26px'>Gli ultimi 10 anni a confronto con oggi</h2><div class='card'>{_safe(lambda: decennio.html(ind10, tr10), 'Analisi dei 10 anni')}</div>"
             f"<h2 style='margin-top:26px'>Rapporto settimanale</h2>{bilancio.weekly_html(wk)}")
@@ -1130,7 +1131,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 {nav}{_safe(forza.banner_dati_fermi, 'Avviso dati')}
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
-{page('oggi', p_oggi)}{page('indici', p_indici)}{page('regime', p_regime)}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
+{page('oggi', p_oggi)}{page('indici', p_indici)}{page('regime', p_regime)}{page('fondi', _safe(fondi_ui.html, 'Pagina Grandi fondi'))}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
 {page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('notizie', p_nz)}{page('calendario', p_cal)}{page('mercati', p_md)}{page('saldi', p_sd)}{page('opportunita', p_op)}{page('allarmi', p_al)}
 {dock}{semafori.lista_html(sem) if sem else ''}
 <script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}

@@ -31,4 +31,4 @@ jobs:
           PYTHONPATH: src
         run: python -m armor opportunita-aggiorna
       - name: Salva i risultati nel repository
-        run: bash scripts/salva.sh "Opportunita - selezione settimanale" data/opportunita.json data/opportunita_registro.csv data/opportunita_ricostruito.csv data/opportunita_registro_fattori.csv data/opportunita_ricostruito_fattori.csv data/protocollo_opportunita_log.csv
+        run: bash scripts/salva.sh "Opportunita - selezione settimanale" data/opportunita.json data/opportunita_registro.csv data/opportunita_ricostruito.csv data/opportunita_registro_fattori.csv data/opportunita_ricostruito_fattori.csv data/protocollo_opportunita_log.csv data/opportunita_ombra_v1.csv data/opportunita_ombra_v2.csv data/opportunita_ombra_v1_fattori.csv data/opportunita_ombra_v2_fattori.csv data/opportunita_adozione.json

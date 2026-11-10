@@ -146,6 +146,9 @@ def current() -> list[dict]:
                 scale = (p1 / p0) if (p0 and p1) else 1.0
                 card[m] = v0 * scale
                 card["p1"], card["lkey"], card["asof"] = p1, lkey, d.strftime("%d/%m/%Y")
+                pv = (q.get(lkey) or {}).get("prev")
+                if pv:
+                    card["prev1"] = float(pv)
                 card["src"] = f"Rapporti dei fondi del {d.strftime('%d/%m/%Y')}, aggiornati con il prezzo di adesso"
                 if len(s) >= 30:
                     card[m + "_pct"] = float((s < card[m]).mean() * 100)

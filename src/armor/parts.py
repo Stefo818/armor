@@ -158,7 +158,7 @@ td[data-chart]>b,td[data-chart]{text-decoration:none}.lq[data-chart]::after{cont
 .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:700}.tag.positivo{background:var(--okbg);color:var(--ok)}.tag.negativo{background:var(--badbg);color:var(--bad)}.tag.neutro{background:var(--bg);color:var(--mu)}
 ul.news{list-style:none;padding-left:0!important}ul.news li{margin:10px 0}ul.news a{color:var(--tx)}details.co{margin:6px 0;border:1px solid var(--bd);border-radius:10px;padding:2px 12px}details.co summary{padding:8px 0}
 .eps{margin-top:0}.heroin{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
-.vminis{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-bottom:12px}.vmini{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.vmn{font-weight:800;font-size:15px;margin-bottom:6px}.vmr{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mv{border-left:5px solid var(--bd);padding-left:10px;cursor:pointer}.mv.zok{border-left-color:var(--ok)}.mv.zwa{border-left-color:var(--warn)}.mv.zba{border-left-color:var(--bad)}.ml{font-size:11px;color:var(--mu)}.mb{font-size:30px;font-weight:800;line-height:1.1}.mz{font-size:12px;font-weight:700;color:var(--mu)}.mv.zok .mz{color:var(--ok)}.mv.zwa .mz{color:var(--warn)}.mv.zba .mz{color:var(--bad)}
+.vminis{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-bottom:12px}.vmini{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.vmn{font-weight:800;font-size:15px;margin-bottom:6px}.vmr{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mv{border-left:5px solid var(--bd);padding-left:10px;cursor:pointer}.mv.zok{border-left-color:var(--ok)}.mv.zwa{border-left-color:var(--warn)}.mv.zba{border-left-color:var(--bad)}.ml{font-size:11px;color:var(--mu)}.mb{font-size:30px;font-weight:800;line-height:1.1}.mz{font-size:12px;font-weight:700;color:var(--mu)}.md{font-size:12px;font-weight:700;color:var(--mu)}.md span{font-weight:500}.md.up{color:var(--ok)}.md.dn{color:var(--bad)}.mv.zok .mz{color:var(--ok)}.mv.zwa .mz{color:var(--warn)}.mv.zba .mz{color:var(--bad)}
 .hchip{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;text-align:left}.hchip .t{font-size:12px;color:var(--mu);font-weight:700}.hchip .p{font-size:26px;font-weight:800}.hchip .l{font-size:12px}
 .hrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px}.hbox{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;font-size:14px}.hbox h4{margin:0 0 6px}.hbox ul{margin:0;padding-left:18px}.hbox li{margin:5px 0}
 .hbox.r{border-left:4px solid var(--bad)}.hbox.o{border-left:4px solid var(--ok)}
@@ -265,11 +265,15 @@ def context_section(p) -> str:
             earn = json.loads((DATA / "calendar.json").read_text(encoding="utf-8"))
         except Exception:  # noqa: BLE001
             earn = []
-        return calendario.html(calendario.events(date.today(), 45, earn))
+        try:
+            from . import eventi_esiti
+            return eventi_esiti.html(date.today(), uid="evx-ctx")
+        except Exception:  # noqa: BLE001
+            return calendario.html(calendario.events(date.today(), 45, earn))
     return ("<h2 id='contesto'>Contesto: regime, volatilità attesa e calendario</h2>"
             "<h3>Regime di mercato</h3><div class='card'>" + _safe(lambda: regime.html(regime.compute(p)), "Regime") + "</div>"
             "<h3 style='margin-top:18px'>Volatilità attesa nel prossimo mese</h3><div class='card'>" + _safe(lambda: chiaro.volatility_simple(volatility.forecast(p)), "Previsione della volatilità") + "</div>"
-            "<h3 style='margin-top:18px'>Prossimi eventi che muovono i mercati <button class='btn pri' data-cal='1' style='margin-left:8px'>Apri il calendario completo</button></h3><div class='card scroll'>" + _safe(cal, "Calendario") + "</div>")
+            "<h3 style='margin-top:18px'>Prossimi eventi che muovono i mercati <button class='btn pri' data-cal='1' style='margin-left:8px'>Apri il calendario completo</button></h3><div class='card'>" + _safe(cal, "Calendario") + "</div>")
 
 
 def portfolio_section() -> str:
@@ -349,16 +353,24 @@ def valuations_mini(cards: list[dict]) -> str:
                 cells += f"<div class='mv'><div class='ml'>{lab}</div><div class='mb'>n.d.</div></div>"
                 continue
             z = V.zone(k, m, v)
+            pv1, pr1 = c.get("prev1"), c.get("p1")
+            ch = ""
+            if pv1 and pr1:
+                x = (pr1 / pv1 - 1) * 100
+                ch = f"<div class='md {'up' if x > 0.005 else ('dn' if x < -0.005 else '')}'>{x:+.2f}% <span>vs ieri</span></div>".replace(".", ",")
+            else:
+                ch = "<div class='md'>vs ieri: n.d.</div>"
             cells += (f"<div class='mv z{z or ''}' data-chart='val_{m}_{k}'><div class='ml'>{lab}</div>"
-                      f"<div class='mb' data-v='{v:.4f}' data-dec='{dec}'>{num(v, dec)}</div><div class='mz'>{ZT.get(z, '')}</div></div>")
-        asof = f"rapporti del fondo del {c['asof']}, ricalcolati col prezzo live" if c.get("asof") else "dato non ancora disponibile"
-        out += (f"<div class='vmini' data-lk='{c.get('lkey') or ''}' data-p1='{c.get('p1') or ''}'><div class='vmn'>{names[k]}</div>"
+                      f"<div class='mb' data-v='{v:.4f}' data-dec='{dec}'>{num(v, dec)}</div>{ch}<div class='mz'>{ZT.get(z, '')}</div></div>")
+        asof = f"rapporti del fondo del {c['asof']}, ricalcolati col prezzo live; «vs ieri» = variazione rispetto alla chiusura precedente" if c.get("asof") else "dato non ancora disponibile"
+        out += (f"<div class='vmini' data-lk='{c.get('lkey') or ''}' data-p1='{c.get('p1') or ''}' data-pv='{c.get('prev1') or ''}'><div class='vmn'>{names[k]}</div>"
                 f"<div class='vmr'>{cells}</div><div class='mu'>{asof}</div></div>")
     js = ("<script>(function(){var E=document.querySelectorAll('.vmini');if(!E.length||location.protocol.indexOf('http')!==0)return;"
           "function f(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}"
           "function go(){fetch('live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(L){E.forEach(function(el){"
           "var q=L.quotes&&L.quotes[el.dataset.lk],p1=parseFloat(el.dataset.p1);if(!q||!q.price||!p1)return;var sc=q.price/p1;"
-          "el.querySelectorAll('.mb[data-v]').forEach(function(b){b.textContent=f(parseFloat(b.dataset.v)*sc,parseInt(b.dataset.dec))})})}).catch(function(){})}"
+          "el.querySelectorAll('.mb[data-v]').forEach(function(b){b.textContent=f(parseFloat(b.dataset.v)*sc,parseInt(b.dataset.dec))});"
+          "var pv=q.prev||parseFloat(el.dataset.pv);if(pv){var x=(q.price/pv-1)*100;el.querySelectorAll('.md').forEach(function(d){d.className='md '+(x>0.005?'up':(x<-0.005?'dn':''));d.innerHTML=(x>=0?'+':'')+f(x,2)+'% <span>vs ieri</span>'})}})}).catch(function(){})}"
           "go();setInterval(go,120000)})()</script>")
     return f"<div class='vminis'>{out}</div>{js}" if out else ""
 

@@ -280,7 +280,8 @@ ITEM_COMUNICATO = ("1.01", "2.02", "7.01", "8.01", "5.02", "2.05", "2.06")
 
 
 def _sec_headers() -> dict | None:
-    ua = os.environ.get("SEC_USER_AGENT", "").strip()
+    from .sec_dati import pulisci_ua
+    ua = pulisci_ua(os.environ.get("SEC_USER_AGENT", ""))   # il segreto incollato può avere a capo o lettere accentate: nelle intestazioni HTTP non sono ammessi
     return {"User-Agent": ua, "Accept-Encoding": "gzip, deflate"} if ua else None
 
 

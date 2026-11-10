@@ -10,6 +10,7 @@ Ogni settimana si scrive anche l'elenco dei titolari con più brevetti NON abbin
 Fonte dei brevetti: file gratuiti di PatentsView (USPTO), brevetti concessi. Il comando `brevetti-sonda` verifica indirizzi, dimensioni e nomi delle colonne.
 Limite: copre le società presenti nell'elenco SEC (USA e ADR); le società quotate solo all'estero (Siemens, Samsung…) richiedono alias."""
 import json
+import os
 import re
 import zipfile
 from collections import Counter
@@ -24,12 +25,74 @@ FILE = DATA / "brevetti.json"
 NON_ABBINATI = DATA / "brevetti_non_abbinati.csv"
 ALIAS_FILE = DATA / "universo" / "alias_brevetti.json"
 CACHE = DATA / "_cache" / "brevetti"
+# PatentsView è stato spostato (20 marzo 2026) sul portale dei dati USPTO: i vecchi indirizzi (s3.amazonaws.com/data.patentsview.org, data.patentsview.org) non rispondono più.
+# Gli indirizzi nuovi si cercano ogni volta (scopri_url) e, se serve, si possono incollare a mano nel workflow (variabili BREVETTI_URL e TITOLARI_URL).
+PRODOTTI_ODP = ("pvgpatdis",)   # «Granted Patent Disambiguated Data» sul portale https://data.uspto.gov/bulkdata/datasets/pvgpatdis
 URL_BULK = {
     "brevetti": ["https://s3.amazonaws.com/data.patentsview.org/download/g_patent.tsv.zip", "https://data.patentsview.org/download/g_patent.tsv.zip"],
     "titolari": ["https://s3.amazonaws.com/data.patentsview.org/download/g_assignee_disambiguated.tsv.zip", "https://data.patentsview.org/download/g_assignee_disambiguated.tsv.zip"],
 }
+NOME_FILE = {"brevetti": "g_patent", "titolari": "g_assignee_disambiguated"}
+ENV_URL = {"brevetti": "BREVETTI_URL", "titolari": "TITOLARI_URL"}
 COL_ORG = ("disambig_assignee_organization", "assignee_organization", "organization")
 UA = {"User-Agent": "Mozilla/5.0 (Armor personal research)"}
+
+
+def _intest() -> dict:
+    h = dict(UA)
+    k = "".join(c for c in os.environ.get("USPTO_API_KEY", "") if 32 < ord(c) < 127)
+    if k:
+        h["X-API-KEY"] = k
+    return h
+
+
+def _trova_stringhe(x, out: list[str]) -> None:
+    if isinstance(x, dict):
+        for v in x.values():
+            _trova_stringhe(v, out)
+    elif isinstance(x, list):
+        for v in x:
+            _trova_stringhe(v, out)
+    elif isinstance(x, str):
+        out.append(x)
+
+
+def scopri_url(chiave: str, log=print) -> list[str]:
+    """Indirizzi possibili del file: 1) variabile scritta a mano; 2) elenco dei file del prodotto sul portale USPTO (API pubblica); 3) pagina di PatentsView; 4) vecchi indirizzi."""
+    import re
+    import requests
+    out = []
+    manuale = os.environ.get(ENV_URL[chiave], "").strip()
+    if manuale:
+        out.append(manuale)
+    nome = NOME_FILE[chiave]
+    for prod in PRODOTTI_ODP:
+        for u in (f"https://api.uspto.gov/api/v1/datasets/products/{prod}", f"https://api.uspto.gov/api/v1/datasets/products/{prod.upper()}"):
+            try:
+                r = requests.get(u, headers=_intest(), timeout=40)
+                log(f"[brevetti] elenco file {u} → HTTP {r.status_code} {r.text[:200].replace(chr(10), ' ')!r}")
+                if r.status_code != 200:
+                    continue
+                try:
+                    testi: list[str] = []
+                    _trova_stringhe(r.json(), testi)
+                except ValueError:
+                    testi = re.findall(r'https?://[^"\s<>]+', r.text)
+                out += [t for t in testi if nome in t and (t.startswith("http")) and ".zip" in t.lower()]
+                # file elencati solo per nome: l'indirizzo di scarico del portale è <prodotto>/files/<nome>
+                for t in testi:
+                    if nome in t and not t.startswith("http") and t.lower().endswith(".zip"):
+                        out.append(f"https://api.uspto.gov/api/v1/datasets/products/files/{prod}/{t}")
+            except Exception as e:  # noqa: BLE001
+                log(f"[brevetti] elenco file {u}: {str(e)[:100]}")
+    for u in ("https://patentsview.org/download/data-download-tables", "https://data.uspto.gov/bulkdata/datasets/pvgpatdis"):
+        try:
+            r = requests.get(u, headers=UA, timeout=40)
+            log(f"[brevetti] pagina {u} → HTTP {r.status_code}, {len(r.text)} caratteri")
+            out += re.findall(r'https?://[^"\'\s<>]*' + re.escape(nome) + r'[^"\'\s<>]*\.zip', r.text)
+        except Exception as e:  # noqa: BLE001
+            log(f"[brevetti] pagina {u}: {str(e)[:100]}")
+    return list(dict.fromkeys(out + URL_BULK[chiave]))
 
 # nome normalizzato del titolare → ticker (gruppi con filiali che brevettano con altri nomi). Esteso da data/universo/alias_brevetti.json.
 ALIAS_BASE = {
@@ -142,12 +205,13 @@ def leggi_bulk(zip_brevetti: Path, zip_titolari: Path, oggi: str, chunk: int = 5
     """Unisce i due file: patent_id → data di concessione (solo ultimi ~25 mesi) e patent_id → titolare organizzazione. Legge a pezzi per non esaurire la memoria."""
     limite = pd.Timestamp(oggi) - pd.Timedelta(days=740)
 
-    def apri(z: Path):
+    def apri(z: Path, parte: str):
         zf = zipfile.ZipFile(z)
-        nome = [n for n in zf.namelist() if n.lower().endswith(".tsv")][0]
+        tsv = [n for n in zf.namelist() if n.lower().endswith(".tsv")]
+        nome = ([n for n in tsv if parte in n.rsplit("/", 1)[-1] and (parte != "g_assignee" or "disambiguated" in n)] or tsv)[0]
         return zf.open(nome)
     date = {}
-    with apri(zip_brevetti) as f:
+    with apri(zip_brevetti, 'g_patent') as f:
         for ch in pd.read_csv(f, sep="\t", dtype=str, chunksize=chunk, usecols=lambda c: c in ("patent_id", "patent_date", "patent_type"), on_bad_lines="skip"):
             ch = ch.dropna(subset=["patent_id", "patent_date"])
             if "patent_type" in ch:
@@ -156,7 +220,7 @@ def leggi_bulk(zip_brevetti: Path, zip_titolari: Path, oggi: str, chunk: int = 5
             ch = ch[dt >= limite]
             date.update(zip(ch["patent_id"], ch["patent_date"]))
     righe = []
-    with apri(zip_titolari) as f:
+    with apri(zip_titolari, 'g_assignee_disambiguated') as f:
         it = pd.read_csv(f, sep="\t", dtype=str, chunksize=chunk, on_bad_lines="skip")
         for ch in it:
             col = _colonna(ch.columns, COL_ORG)
@@ -171,9 +235,9 @@ def scarica(chiave: str, log=print) -> Path | None:
     import requests
     CACHE.mkdir(parents=True, exist_ok=True)
     dest = CACHE / (chiave + ".zip")
-    for url in URL_BULK[chiave]:
+    for url in scopri_url(chiave, log):
         try:
-            with requests.get(url, headers=UA, stream=True, timeout=120) as r:
+            with requests.get(url, headers=_intest(), stream=True, timeout=120) as r:
                 if r.status_code != 200:
                     log(f"[brevetti] {url}: HTTP {r.status_code}")
                     continue
@@ -190,10 +254,10 @@ def scarica(chiave: str, log=print) -> Path | None:
 def sonda(log=print) -> str:
     """Verifica che i file PatentsView siano raggiungibili e quanto pesano (richiesta HEAD), e che l'elenco SEC dia nomi e simboli."""
     import requests
-    for chiave, urls in URL_BULK.items():
-        for u in urls:
+    for chiave in URL_BULK:
+        for u in scopri_url(chiave, log):
             try:
-                r = requests.head(u, headers=UA, timeout=40, allow_redirects=True)
+                r = requests.head(u, headers=_intest(), timeout=40, allow_redirects=True)
                 log(f"{chiave}: {u} → HTTP {r.status_code}, {int(r.headers.get('content-length', 0)) / 1e6:.0f} MB")
             except Exception as e:  # noqa: BLE001
                 log(f"{chiave}: {u} → errore {str(e)[:80]}")
@@ -209,23 +273,47 @@ def sonda(log=print) -> str:
     return "fine"
 
 
-def aggiorna(oggi: str | None = None, log=print) -> dict:
-    """Scarica i due file, conta i brevetti per società quotata, scrive data/brevetti.json e l'elenco dei titolari non abbinati."""
+def aggiorna(oggi: str | None = None, log=print, cartella: str | Path | None = None) -> dict:
+    """Conta i brevetti per società quotata, scrive data/brevetti.json e l'elenco dei titolari non abbinati.
+    I due file si scaricano, oppure (cartella=...) si leggono da una cartella del PC che li contiene già (g_patent.tsv.zip e g_assignee_disambiguated.tsv.zip):
+    in quel caso non vengono cancellati. Il «12 mesi» si conta all'indietro dall'ultima data di concessione presente nei file, non da oggi:
+    il portale USPTO li aggiorna a blocchi (ad esempio fino al 31 dicembre 2025)."""
     from . import titoli_fond as tf
     oggi = oggi or str(pd.Timestamp.today().date())
-    zb, zt = scarica("brevetti", log), scarica("titolari", log)
+    if cartella:
+        cart = Path(cartella)
+        zb, zt = cart / "g_patent.tsv.zip", cart / "g_assignee_disambiguated.tsv.zip"
+        mancanti = [z.name for z in (zb, zt) if not z.exists()]
+        if mancanti:
+            log(f"[brevetti] nella cartella {cart} mancano: {', '.join(mancanti)}")
+            return {}
+        log(f"[brevetti] uso i file locali in {cart}")
+    else:
+        zb, zt = scarica("brevetti", log), scarica("titolari", log)
     if not zb or not zt:
         log("[brevetti] file non disponibili: nessun aggiornamento (l'esito non è un errore)")
         return {}
     df = leggi_bulk(zb, zt, oggi)
     log(f"[brevetti] {len(df)} coppie brevetto-titolare negli ultimi 25 mesi")
-    idx = indice_nomi(tf.titoli_sec())
-    r = conta(df, idx, oggi, carica_alias())
+    if not len(df):
+        log("[brevetti] nessuna coppia letta: controllare i nomi delle colonne dei file")
+        return {}
+    ultimo = str(pd.to_datetime(df["data"], errors="coerce").max().date())
+    rif = min(oggi, ultimo)
+    log(f"[brevetti] ultima concessione nei file: {ultimo}; i 12 mesi si contano da {rif}")
+    try:
+        voci = tf.titoli_sec()
+    except Exception as e:  # noqa: BLE001
+        log("[brevetti] elenco SEC non disponibile: " + str(e)[:100])
+        return {}
+    r = conta(df, indice_nomi(voci), rif, carica_alias())
+    r["meta"]["dati_fino_al"] = ultimo
     FILE.write_text(json.dumps({"meta": r["meta"], "t": r["t"]}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     pd.DataFrame(r["non_abbinati"].most_common(300), columns=["titolare", "brevetti_12m"]).to_csv(NON_ABBINATI, index=False)
     log(f"[brevetti] {r['meta']}")
-    for f in (zb, zt):
-        f.unlink(missing_ok=True)
+    if not cartella:
+        for f in (zb, zt):
+            f.unlink(missing_ok=True)
     return r["meta"]
 
 

@@ -205,8 +205,14 @@ def ricostruisci(p: pd.Series, armor_hist: pd.Series, dal: str = "2000-01-03") -
     P = pd.DataFrame({"armor": armor_hist.reindex(idx, method="ffill", limit=5), "economia": serie_economia(idx), "vix": serie_vix(idx)}, index=idx)
     sp = serie_previsione(idx)
     P["previsione"] = sp if sp is not None else np.nan
-    P = P[["previsione", "armor", "vix", "economia"]]
+    try:
+        from . import grandi_fondi
+        P["fondi"] = grandi_fondi.serie_tensione(idx)
+    except Exception:  # noqa: BLE001
+        P["fondi"] = np.nan
+    P = P[["previsione", "armor", "vix", "economia", "fondi"]]
     P["sai"] = combina(P)
+    P["sai_ombra"] = combina(P[["previsione", "armor", "vix", "economia", "fondi"]], {**PESI, "fondi": 10.0}).where(P["fondi"].notna())
     return P.dropna(subset=["sai"]).round(2)
 
 
@@ -228,7 +234,7 @@ def _fondi_oggi() -> dict:
     alti = [v["nome"].split(" (")[0] for v in sg.values() if v.get("stato") == "alto"]
     bassi = [v["nome"].split(" (")[0] for v in sg.values() if v.get("stato") == "basso"]
     prov = [k for k, v in sg.items() if str((v.get("prova") or {}).get("verdetto", "")).startswith("dimostrato")]
-    return {"n": len(sg), "alti": alti, "bassi": bassi, "dimostrati": prov}
+    return {"n": len(sg), "alti": alti, "bassi": bassi, "dimostrati": prov, "tensione": d.get("tensione")}
 
 
 def pilastri_oggi(aix: dict | None, p: pd.Series) -> dict:
@@ -285,7 +291,9 @@ def pilastri_oggi(aix: dict | None, p: pd.Series) -> dict:
     f = _fondi_oggi()
     if f["n"]:
         txt = (f"{len(f['alti'])} segnali alti e {len(f['bassi'])} bassi su {f['n']}; " if (f["alti"] or f["bassi"]) else f"{f['n']} segnali, tutti nella norma; ")
-        out["fondi"] = {"score": None, "testo": txt + ("alcuni hanno superato la prova e contano nel valore." if f["dimostrati"] else "nessuno ha ancora dimostrato di anticipare i cali: per questo non pesa sul valore."), "dim": f["dimostrati"]}
+        t = f.get("tensione") or {}
+        conf = (f"Valore di confronto {t['score']:.0f}/100 (quanto i grandi fondi sono fuori dalla norma, in qualsiasi direzione). " if t.get("score") is not None else "")
+        out["fondi"] = {"score": t.get("score"), "testo": conf + txt + ("alcuni hanno superato la prova e contano nel valore." if f["dimostrati"] else "nessuno ha ancora dimostrato di anticipare i cali: per questo non pesa sul valore, ma lo seguiamo ogni giorno per decidere."), "dim": f["dimostrati"]}
     else:
         out["fondi"] = {"score": None, "testo": "Dati in arrivo (fondi monetari, futures, 13F, insider): finché non ce n'è abbastanza storia non pesano sul valore.", "dim": []}
     return out
@@ -313,8 +321,15 @@ def calcola(aix: dict | None, p: pd.Series) -> dict | None:
     tot = sum(contr.values()) or 1.0
     mercato = [k for k in ("previsione", "armor", "vix") if k in w]
     mv = float(sum(w[k] * pil[k]["score"] for k in mercato) / sum(w[k] for k in mercato)) if mercato else None
+    ombra = None
+    if pil.get("fondi", {}).get("score") is not None and "fondi" not in w:   # SAI di confronto: stessi pesi + grandi fondi al 10% (non è il valore ufficiale)
+        w2 = {k: PESI[k] for k in PESI if k != "fondi" and pil.get(k, {}).get("score") is not None}
+        w2["fondi"] = 10.0
+        s2 = sum(w2.values())
+        so = float(sum(w2[k] * pil[k]["score"] for k in w2) / s2)
+        ombra = {"sai": so, "delta": so - sai}
     return {"data": str(p.index[-1].date()), "sai": sai, "pesi": w, "pilastri": pil, "concordanza": conc, "dispersione": std, "quote": {k: v / tot for k, v in contr.items()},
-            "mercato": mv, "economia": pil.get("economia", {}).get("score")}
+            "mercato": mv, "economia": pil.get("economia", {}).get("score"), "ombra": ombra}
 
 
 def confronti(oggi: dict, st: pd.DataFrame | None) -> dict:
@@ -330,7 +345,8 @@ def confronti(oggi: dict, st: pd.DataFrame | None) -> dict:
             continue
         r = x.iloc[-1]
         out[nome] = {"data": str(x.index[-1].date()), "sai": float(r["sai"]), "delta": oggi["sai"] - float(r["sai"]),
-                     "pil": {k: float(r[k]) for k in ("previsione", "armor", "vix", "economia") if k in r and pd.notna(r[k])}}
+                     "pil": {k: float(r[k]) for k in ("previsione", "armor", "vix", "economia", "fondi") if k in r and pd.notna(r[k])},
+                     "ombra": float(r["sai_ombra"]) if "sai_ombra" in r and pd.notna(r["sai_ombra"]) else None}
     return out
 
 
@@ -379,7 +395,9 @@ def cause(oggi: dict, c: dict) -> str:
 # ---------------- registrazione e prova ----------------
 def registra(oggi: dict) -> None:
     st = storia()
-    riga = {"sai": round(oggi["sai"], 2), **{k: round(oggi["pilastri"][k]["score"], 2) for k in ("previsione", "armor", "vix", "economia") if k in oggi["pilastri"] and oggi["pilastri"][k].get("score") is not None}}
+    riga = {"sai": round(oggi["sai"], 2), **{k: round(oggi["pilastri"][k]["score"], 2) for k in ("previsione", "armor", "vix", "economia", "fondi") if k in oggi["pilastri"] and oggi["pilastri"][k].get("score") is not None}}
+    if oggi.get("ombra"):
+        riga["sai_ombra"] = round(oggi["ombra"]["sai"], 2)
     df = pd.DataFrame([riga], index=[pd.Timestamp(oggi["data"])])
     st = df if st is None else pd.concat([st[st.index != df.index[0]], df]).sort_index()
     st.to_csv(STORIA, index_label="date")
@@ -409,8 +427,8 @@ def valuta(p: pd.Series, st: pd.DataFrame | None = None, step: int = 5) -> dict:
     ok_f = [r for r in out["fasce"] if r["1m_5"] is not None]
     out["ordine"] = bool(len(ok_f) >= 3 and all(all(ok_f[i][k] <= ok_f[i + 1][k] + 1e-9 for i in range(len(ok_f) - 1)) for k in ("1m_5", "3m_10")))
     anni = dd.year.values
-    for nome in ("sai", "previsione", "armor", "vix", "economia"):
-        if nome not in d:
+    for nome in ("sai", "sai_ombra", "previsione", "armor", "vix", "economia", "fondi"):
+        if nome not in d or d[nome].notna().sum() < 200:
             continue
         x = d.loc[dd, nome].values
         r = {}

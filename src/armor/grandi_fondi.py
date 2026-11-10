@@ -155,6 +155,32 @@ def stato(pct: float | None) -> str:
     return "alto" if pct >= ALTO else ("basso" if pct <= BASSO else "normale")
 
 
+def tensione_di(percentili: dict) -> dict | None:
+    """«Tensione» dei grandi fondi, 1-100: quanto i loro segnali sono fuori dalla norma, senza dire in che direzione.
+    Per ogni segnale 2 × |percentile − 50| (50° = nella norma → 0; 0° o 100° → 100); poi la media dei segnali disponibili.
+    Direzione non assunta perché nessun segnale ha ancora dimostrato se «alto» o «basso» anticipi i cali: la prova resta a due code (alto e basso)."""
+    v = {k: 2 * abs(p - 50) for k, p in percentili.items() if p is not None and np.isfinite(p)}
+    if not v:
+        return None
+    return {"score": round(float(np.clip(np.mean(list(v.values())), 1, 100)), 1), "n": len(v), "dettaglio": {k: round(x, 1) for k, x in v.items()}}
+
+
+def serie_tensione(giorni: pd.DatetimeIndex) -> pd.Series:
+    """Tensione dei grandi fondi giorno per giorno sulla storia, con i ritardi di pubblicazione (nessun dato futuro)."""
+    cols = {}
+    for k, s in carica_segnali().items():
+        nome, rit, fin, mino = SEGNALI[k]
+        s = s[~s.index.duplicated(keep="last")].sort_index()
+        pg = su_giorni(percentile_mobile(s, fin, mino), giorni, rit)
+        cols[k] = 2 * (pg - 50).abs()
+    if not cols:
+        return pd.Series(np.nan, index=giorni)
+    return pd.DataFrame(cols).mean(axis=1).clip(lower=1, upper=100)
+
+
+MAX_STORIA = 270
+
+
 def run(p: pd.Series | None = None) -> dict:
     from .features import closed_sp500
     p = closed_sp500() if p is None else p
@@ -169,12 +195,22 @@ def run(p: pd.Series | None = None) -> dict:
         d = {"nome": nome, "ultimo_dato": str(s.dropna().index[-1].date()), "valore": float(s.dropna().iloc[-1]),
              "percentile": float(ult.iloc[-1]) if len(ult) else None, "n_osservazioni": int(s.dropna().shape[0])}
         d["stato"] = stato(d["percentile"])
+        sv = s.dropna().iloc[-MAX_STORIA:]
+        pc = pct.reindex(sv.index)
+        sp = p.reindex(sv.index, method="ffill")
+        d["storia"] = {"d": [str(i.date()) for i in sv.index], "v": [round(float(x), 3) for x in sv.values],
+                       "p": [None if pd.isna(x) else round(float(x), 1) for x in pc.values], "sp": [None if pd.isna(x) else round(float(x), 1) for x in sp.values]}
+        if len(ult) >= 2:
+            d["precedente"] = {"data": str(s.dropna().index[-2].date()), "valore": float(s.dropna().iloc[-2]), "percentile": float(ult.iloc[-2])}
+        if len(ult) >= 14 and k in ("cot_lev", "cot_am", "cot_dealer", "mmf", "insider", "d13"):
+            d["trimestre_fa"] = {"data": str(ult.index[-14].date()), "percentile": float(ult.iloc[-14]), "valore": float(s.dropna().iloc[-14])}
         try:
             d["prova"] = prova(p, pg)
         except Exception as e:  # noqa: BLE001
             d["prova"] = {"verdetto": "prova non riuscita: " + str(e)[:60]}
         out["segnali"][k] = d
         righe.append({"data": out["data"], "segnale": k, "valore": round(d["valore"], 3), "percentile": None if d["percentile"] is None else round(d["percentile"], 1), "stato": d["stato"], "peso": 0})
+    out["tensione"] = tensione_di({k: v.get("percentile") for k, v in out["segnali"].items()})
     FILE.write_text(json.dumps(out, ensure_ascii=False, default=float), encoding="utf-8")
     if righe:
         try:

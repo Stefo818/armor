@@ -33,7 +33,8 @@ NOME_INDICI = re.compile(r"S&P 500 ETF|SPDR S&P 500|ISHARES CORE S&P 500|VANGUAR
 
 def pulisci_ua(v: str) -> str:
     """Il segreto incollato può contenere a capo, spazi iniziali o lettere accentate: nelle intestazioni HTTP non sono ammessi. Si tiene solo testo semplice."""
-    t = str(v or "").encode("ascii", "ignore").decode("ascii")
+    import unicodedata
+    t = unicodedata.normalize("NFKD", str(v or "")).encode("ascii", "ignore").decode("ascii")   # «à» diventa «a», non sparisce
     t = "".join(c if 32 <= ord(c) < 127 else " " for c in t)
     return " ".join(t.split())
 

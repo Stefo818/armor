@@ -19,15 +19,23 @@ RICOSTRUITO = DATA / "opportunita_ricostruito.csv"   # settimane ricostruite (pr
 PESI = {"revisioni": 0.20, "momentum": 0.15, "crescita": 0.15, "qualita": 0.15, "sorpresa": 0.10, "contratti": 0.10, "catalizzatori": 0.10, "valutazione": 0.05}
 NOMI = {"revisioni": "Revisioni delle stime", "momentum": "Momentum", "crescita": "Crescita", "qualita": "Qualità", "sorpresa": "Sorpresa e deriva",
         "contratti": "Contratti e visibilità", "catalizzatori": "Catalizzatori e temi", "valutazione": "Valutazione ragionevole"}
+# Pesi v2 (Patch 71): calcolati ogni settimana IN PARALLELO ai pesi ufficiali, senza cambiare la selezione. Diventano ufficiali solo se la regola
+# scritta in PROTOCOLLO_OPPORTUNITA.md è soddisfatta (comando `opportunita-valuta-v2`, file data/opportunita_adozione.json).
+PESI_V2 = {"revisioni": 0.15, "momentum": 0.12, "crescita": 0.12, "qualita": 0.12, "sorpresa": 0.08, "contratti": 0.08, "catalizzatori": 0.08, "valutazione": 0.05, "svolta": 0.12, "insider": 0.08}
+OMBRA = DATA / "opportunita_ombra.csv"
+ADOZIONE = DATA / "opportunita_adozione.json"
+CANALI_NOMI = {"slancio": "Slancio", "bilancio": "Svolta di bilancio", "catalizzatori": "Catalizzatori", "insider": "Acquisti di insider"}
 ORIZZONTI = [("1m", 21, 1 / 12), ("3m", 63, 0.25), ("1a", 252, 1.0), ("2a", 504, 2.0)]
 CENTRO_ANNUO = 0.07      # ipotesi dichiarata: rendimento mediano annuo del mercato azionario, finché non c'è storico reale
 Z80 = 1.2816
 MIN_CAP, MIN_CONTROVALORE, MIN_ANALISTI = 300e6, 1e6, 3
 VERSO = {"rev30": True, "rev90": True, "revsg": True, "mom": True, "dd52": True, "crescita": True, "qoq": True, "regola40": True,
          "gross": True, "roe": True, "accruals": False, "fscore": True, "sue": True, "rpo_anni": True, "rpo_cap": True, "n101": True, "ctr": True,
-         "cataliz": True, "tema": True, "psg": False}
+         "cataliz": True, "tema": True, "psg": False, "accel": True, "leva_op": True, "margine_op_var": True, "insider": True}
 FATTORI = {"revisioni": ("rev30", "rev90", "revsg"), "momentum": ("mom", "dd52"), "crescita": ("crescita", "qoq", "regola40"), "qualita": ("gross", "roe", "accruals", "fscore"),
            "sorpresa": ("sue",), "contratti": ("rpo_anni", "rpo_cap", "n101", "ctr"), "catalizzatori": ("cataliz", "tema"), "valutazione": ("psg",)}
+FATTORI_V2 = {**FATTORI, "svolta": ("accel", "leva_op", "margine_op_var"), "insider": ("insider",)}
+NOMI.update({"svolta": "Svolta di bilancio", "insider": "Acquisti di insider"})
 PDUFA = ev.PDUFA
 BREVETTI: dict = {}   # ticker → brevetti ultimi 12 mesi (data/brevetti.json), caricato da aggiorna()
 
@@ -72,26 +80,52 @@ def voci(ind: dict, m: dict, eventi: list[dict], ev8k: list[dict], tema_forza: f
         "n101": sum(1 for e in (ev8k or []) if e["item"] == "1.01"), "ctr": max(ctr) if ctr else None,
         "cataliz": float(min(sum(e["opp"] for e in pos), 4)) if eventi or pos else 0.0, "tema": tema_forza,
         "psg": (ps_f / (crescita * 100)) if ps_f and crescita and crescita > 0.02 else None,
+        "accel": ind.get("accel"), "leva_op": ind.get("leva_op"), "margine_op_var": ind.get("margine_op_var"),
+        "insider": None if ind.get("insider_acq_90g") is None else float(min(ind["insider_acq_90g"], 5)),
     }
 
 
-def punteggi(cand: dict[str, dict]) -> dict[str, dict]:
+def adottato() -> bool:
+    """True se la regola scritta in anticipo ha promosso i pesi v2 a ufficiali."""
+    try:
+        return bool(json.loads(ADOZIONE.read_text(encoding="utf-8")).get("adotta_v2"))
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def canali(c: dict, comp: dict | None = None) -> list[str]:
+    """Da quali dei 4 canali emerge il titolo: slancio (prezzi), svolta di bilancio, catalizzatori, acquisti di insider."""
+    v, ind = c["voci"], c.get("ind") or {}
+    out = []
+    if c.get("pool") == "momentum" or ((comp or {}).get("momentum") or 0) >= 70:
+        out.append("slancio")
+    if ind.get("svolta") or ((v.get("accel") or 0) > 0 and (v.get("crescita") or 0) > 0.05) or (v.get("leva_op") or 0) > 1.5:
+        out.append("bilancio")
+    if (v.get("cataliz") or 0) > 0 or (v.get("tema") or 0) >= 60:
+        out.append("catalizzatori")
+    if (v.get("insider") or 0) >= 1:
+        out.append("insider")
+    return out
+
+
+def punteggi(cand: dict[str, dict], pesi: dict | None = None, fattori: dict | None = None) -> dict[str, dict]:
     """cand: ticker → {voci, area, settore}. Percentili nel gruppo area+settore (≥ 8 titoli) o nell'insieme. Servono ≥ 4 fattori su 8."""
+    pesi, fattori = pesi or PESI, fattori or FATTORI
     gruppi: dict[tuple, list[str]] = {}
     for t, c in cand.items():
         gruppi.setdefault((c.get("area"), c.get("settore")), []).append(t)
-    pool_all = {k: [c["voci"][k] for c in cand.values()] for k in VERSO}
+    pool_all = {k: [c["voci"].get(k) for c in cand.values()] for k in VERSO}
     out = {}
     for t, c in cand.items():
         g = gruppi[(c.get("area"), c.get("settore"))]
         comp = {}
-        for f, chiavi in FATTORI.items():
+        for f, chiavi in fattori.items():
             ps = []
             for k in chiavi:
                 v = c["voci"].get(k)
                 if v is None:
                     continue
-                ref = [cand[x]["voci"][k] for x in g] if len(g) >= 8 else pool_all[k]
+                ref = [cand[x]["voci"].get(k) for x in g] if len(g) >= 8 else pool_all[k]
                 p = saldi.percentile(v, ref, VERSO[k])
                 if p is not None:
                     ps.append(p)
@@ -99,7 +133,7 @@ def punteggi(cand: dict[str, dict]) -> dict[str, dict]:
         disp = {k: v for k, v in comp.items() if v is not None}
         raw = None
         if len(disp) >= 4:
-            raw = sum(PESI[k] * v for k, v in disp.items()) / sum(PESI[k] for k in disp)
+            raw = sum(pesi[k] * v for k, v in disp.items()) / sum(pesi[k] for k in disp)
         out[t] = {"raw": raw, "comp": {k: (None if v is None else round(v)) for k, v in comp.items()}, "usati": len(disp)}
     raws = np.array([o["raw"] for o in out.values() if o["raw"] is not None])
     for o in out.values():
@@ -230,8 +264,12 @@ def report(t: dict, c: dict, s: dict, mot: list[str]) -> dict:
 def costruisci(cand: dict, prezzi: dict, vol: dict, temi: list[dict], oggi: str, settimana: str, centri: dict | None = None, eurusd: float | None = None, studi: dict | None = None, n: int = 30) -> dict:
     """cand: ticker → {ind, voci, area, settore, eventi, notizie, tema?, nome_tema?, esclusa?}; prezzi: ticker → {p, v, r7, r1m, k}; vol: ticker → volatilità annua."""
     ok = {t: c for t, c in cand.items() if not c.get("esclusa")}
-    pt = punteggi(ok)
+    v2 = adottato()
+    pt1, pt2 = punteggi(ok), punteggi(ok, PESI_V2, FATTORI_V2)
+    pt = pt2 if v2 else pt1
     ordine = sorted([t for t in ok if pt[t]["score"] is not None], key=lambda t: (-pt[t]["score"], -(pt[t]["raw"] or 0)))[:n]
+    ordine2 = sorted([t for t in ok if pt2[t]["score"] is not None], key=lambda t: (-pt2[t]["score"], -(pt2[t]["raw"] or 0)))[:n]
+    ordine1 = sorted([t for t in ok if pt1[t]["score"] is not None], key=lambda t: (-pt1[t]["score"], -(pt1[t]["raw"] or 0)))[:n]
     centri = centri or {}
     righe, dett = {}, {}
     for t in ordine:
@@ -245,15 +283,22 @@ def costruisci(cand: dict, prezzi: dict, vol: dict, temi: list[dict], oggi: str,
                     "ric": None if not ind.get("ricavi_q_1a") else {"f": ind["ricavi_q_1a"]["f"], "v": ind["ricavi_q_1a"]["var"]}, "ps": ind.get("ps"), "pe": ind.get("pe"), "ps_f": ind.get("ps_f"),
                     "cap_rpo": ind.get("cap_rpo"), "s": s["score"], "comp": s["comp"], "usati": s["usati"], "mot": mot, "k": pz.get("k"),
                     "fasce": {h: ({**b, "txt": testo_fascia(b)} if b else None) for h, b in bande.items()},
-                    "an": {"target": an.get("target"), "min": an.get("target_min"), "max": an.get("target_max"), "n": an.get("n")}}
+                    "an": {"target": an.get("target"), "min": an.get("target_min"), "max": an.get("target_max"), "n": an.get("n")},
+                    "canali": canali(c, s["comp"]), "s1": pt1[t]["score"], "s2": pt2[t]["score"]}
         rp = report({"prezzo": pz["p"]}, c, s, mot)
         dett[t] = {"report": rp, "cataliz": catalizzatori(c, oggi, (studi or {}).get(t)),
                    "notizie": [{"d": e["data"], "t": e["titolo"], "l": e.get("link"), "f": e.get("fonte"), "e": e["etichetta"]} for e in c.get("eventi", []) if (e.get("opp") or 0) != 0][:5],
                    "ind": {k: ind.get(k) for k in ("ps", "pe", "ps_f", "pe_f", "ev_ebitda", "cap_rpo", "rpo_anni", "margine_lordo", "margine_fcf", "roe", "current_ratio", "debito_netto_ebitda",
-                                                   "diluizione", "rev_eps_30", "rev_eps_90", "short_float", "insider_acq_90g", "crescita_ricavi", "rd_cap", "rd_ricavi", "rd_crescita", "brevetti")}
+                                                   "diluizione", "rev_eps_30", "rev_eps_90", "short_float", "insider_acq_90g", "crescita_ricavi", "rd_cap", "rd_ricavi", "rd_crescita", "brevetti",
+                                                   "accel", "leva_op", "margine_op_var", "svolta", "n_trim", "ultimo_deposito")}
                    | {"piotroski": (ind.get("piotroski") or {}).get("score"), "altman": (ind.get("altman") or {}).get("z"), "tema": c.get("nome_tema")}}
-    return {"asof": oggi, "settimana": settimana, "ordine": ordine, "titoli": righe, "dett": dett, "temi": temi, "pesi": {NOMI[k]: v for k, v in PESI.items()},
-            "centro_annuo": CENTRO_ANNUO, "centri_reali": centri, "protocollo": protocollo_hash()}
+    ombra = {}
+    for nome_, ord_, pt_ in (("v1", ordine1, pt1), ("v2", ordine2, pt2)):
+        ombra[nome_] = {"ordine": ord_, "titoli": {t: {"s": pt_[t]["score"], "p": prezzi[t]["p"], "comp": pt_[t]["comp"],
+                                                       "fasce": {h: fascia(vol.get(t), tt, centri.get(h)) for h, _, tt in ORIZZONTI}} for t in ord_}}
+    return {"asof": oggi, "settimana": settimana, "ordine": ordine, "titoli": righe, "dett": dett, "temi": temi, "pesi": {NOMI[k]: v for k, v in (PESI_V2 if v2 else PESI).items()},
+            "centro_annuo": CENTRO_ANNUO, "centri_reali": centri, "protocollo": protocollo_hash(), "v2_ufficiale": v2, "ombra": ombra,
+            "canali_nomi": CANALI_NOMI, "n_per_canale": {k: sum(1 for t in ordine if k in righe[t]["canali"]) for k in CANALI_NOMI}}
 
 
 # ---------------------------------------------------------------- registro e storico
@@ -287,6 +332,72 @@ def registra(d: dict, settimana: str, file=None) -> int:
                     for k, v in (d["titoli"][t].get("comp") or {}).items():
                         fh.write(f"{settimana},{t},{str(k).replace(',', ' ')},{'' if v is None else v}\n")
     return len(righe)
+
+
+def registra_ombra(d: dict, settimana: str) -> int:
+    """Salva le 30 scelte con pesi v1 e con pesi v2 in due file separati: servono a confrontarle quando i risultati maturano."""
+    n = 0
+    for nome, f in (("v1", OMBRA.with_name("opportunita_ombra_v1.csv")), ("v2", OMBRA.with_name("opportunita_ombra_v2.csv"))):
+        o = (d.get("ombra") or {}).get(nome)
+        if o:
+            n += registra({"ordine": o["ordine"], "titoli": o["titoli"]}, settimana, file=f)
+    return n
+
+
+REGOLA = {"settimane_min_1m": 12, "scarto_1m": 0.005, "settimane_min_3m": 8, "scarto_3m": 0.0}
+
+
+def _eccessi(sett: list[dict], h: str) -> list[float]:
+    """Per ogni settimana con almeno 10 scelte maturate: rendimento medio meno quello di VT."""
+    out = []
+    for w in sett:
+        r = [x[h]["reale"] - x[h]["vt"] for x in w["scelte"] if x.get(h) and x[h].get("reale") is not None and x[h].get("vt") is not None]
+        if len(r) >= 10:
+            out.append(float(np.mean(r)))
+    return out
+
+
+def valuta_v2(close: pd.DataFrame, vt: pd.Series, scrivi: bool = True) -> dict:
+    """Regola di adozione scritta in anticipo (vedi PROTOCOLLO_OPPORTUNITA.md, Patch 71):
+    i pesi v2 diventano ufficiali solo se, con almeno 12 settimane maturate a 1 mese, l'eccesso medio su VT è maggiore di quello dei pesi v1 di almeno 0,5 punti
+    sia sull'insieme sia in ciascuna delle due metà delle settimane; e, con almeno 8 settimane a 3 mesi, non è peggiore. Altrimenti restano i pesi v1."""
+    ris = {"adotta_v2": False, "motivo": ""}
+    st = {}
+    for nome in ("v1", "v2"):
+        f = OMBRA.with_name(f"opportunita_ombra_{nome}.csv")
+        if not (f.exists() and f.stat().st_size > 0):
+            ris["motivo"] = "Non ci sono ancora scelte registrate in parallelo."
+            return _scrivi_adozione(ris, scrivi)
+        st[nome] = storico(close, vt, registro=pd.read_csv(f, parse_dates=["data"]))["settimane"]
+    e1 = {h: (_eccessi(st["v1"], h), _eccessi(st["v2"], h)) for h in ("1m", "3m")}
+    n1 = min(len(e1["1m"][0]), len(e1["1m"][1]))
+    n3 = min(len(e1["3m"][0]), len(e1["3m"][1]))
+    ris.update({"settimane_1m": n1, "settimane_3m": n3})
+    if n1 < REGOLA["settimane_min_1m"]:
+        ris["motivo"] = f"Servono almeno {REGOLA['settimane_min_1m']} settimane maturate a 1 mese: ce ne sono {n1}."
+        return _scrivi_adozione(ris, scrivi)
+    a, b = np.array(e1["1m"][0][-n1:]), np.array(e1["1m"][1][-n1:])
+    d = b - a
+    meta = n1 // 2
+    ris.update({"scarto_1m": float(d.mean()), "scarto_1m_prima": float(d[:meta].mean()), "scarto_1m_seconda": float(d[meta:].mean()), "v1_1m": float(a.mean()), "v2_1m": float(b.mean())})
+    ok1 = d.mean() >= REGOLA["scarto_1m"] and d[:meta].mean() > 0 and d[meta:].mean() > 0
+    ok3 = True
+    if n3 >= REGOLA["settimane_min_3m"]:
+        d3 = np.array(e1["3m"][1][-n3:]) - np.array(e1["3m"][0][-n3:])
+        ris["scarto_3m"] = float(d3.mean())
+        ok3 = d3.mean() >= REGOLA["scarto_3m"]
+    ris["adotta_v2"] = bool(ok1 and ok3)
+    ris["motivo"] = ("Regola soddisfatta: i pesi v2 diventano ufficiali." if ris["adotta_v2"] else
+                     "Regola non soddisfatta: restano i pesi v1 (il vantaggio di v2 non è abbastanza grande o costante).")
+    return _scrivi_adozione(ris, scrivi)
+
+
+def _scrivi_adozione(ris: dict, scrivi: bool) -> dict:
+    from datetime import datetime, timezone
+    ris["data"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if scrivi:
+        ADOZIONE.write_text(json.dumps(ris, ensure_ascii=False, indent=1), encoding="utf-8")
+    return ris
 
 
 def storico(close: pd.DataFrame, vt: pd.Series, spy: pd.Series | None = None, registro: pd.DataFrame | None = None) -> dict:
@@ -371,7 +482,15 @@ def _prepara(c_all, v_all, dt=None):
     m = titoli.metriche(cc, v.reindex(columns=cc.columns), ref)
     m = m[(m["prezzo"] >= titoli.MIN_PREZZO) & (m["controvalore20"] >= MIN_CONTROVALORE) & ~m["anomalo"].astype(bool) & (m["n_giorni"] >= 200)]
     pre = pd.concat([m[k].rank(pct=True) for k in ("mom12_1", "dd52", "r1m", "volrel") if k in m], axis=1).mean(axis=1).sort_values(ascending=False)
-    return cc, m, list(pre.index[:600])
+    # imbuto a più canali (Patch 71): 400 per slancio, 100 «in ripresa» (rendimento a 1 mese alto ma slancio a 12 mesi basso: possibile svolta),
+    # 100 con volume insolito (di solito c'è una notizia). I fondamentali decidono poi chi resta.
+    mom = list(pre.index[:400])
+    resto = m.drop(index=mom)
+    ripresa = list(resto[resto["mom12_1"].rank(pct=True) < 0.5]["r1m"].sort_values(ascending=False).index[:100]) if {"mom12_1", "r1m"} <= set(m.columns) else []
+    vol = list(resto.drop(index=ripresa, errors="ignore")["volrel"].sort_values(ascending=False).index[:100]) if "volrel" in m else []
+    pool = {t: "momentum" for t in mom} | {t: "ripresa" for t in ripresa} | {t: "volume" for t in vol}
+    m = m.assign(pool=pd.Series(pool))
+    return cc, m, list(pool)
 
 
 def _selezione(cc, m, tk, ind, ev8k, nz, forza, temi, mm, vt, oggi, sab, centri, ev_=ev):
@@ -392,7 +511,7 @@ def _selezione(cc, m, tk, ind, ev8k, nz, forza, temi, mm, vt, oggi, sab, centri,
         i["brevetti"] = BREVETTI.get(t)
         i["rischio_binario"] = ev_.rischio_binario(i.get("industria"), i.get("ricavi_ttm"), None)
         cand[t] = {"ind": i, "voci": voci(i, m.loc[t].to_dict(), rs["eventi"], ev8k.get(t, []), forza.get(nome_tema) if nome_tema else None), "area": saldi.area_di(t, i.get("paese")),
-                   "settore": i.get("settore"), "eventi": rs["eventi"], "notizie": nz.get(t, []), "nome_tema": nome_tema, "esclusa": rs["escludi"] or bool(gravi) or dil_cassa}
+                   "settore": i.get("settore"), "pool": (m.loc[t, "pool"] if "pool" in m else None), "eventi": rs["eventi"], "notizie": nz.get(t, []), "nome_tema": nome_tema, "esclusa": rs["escludi"] or bool(gravi) or dil_cassa}
         s = cc[t].dropna()
         prezzi[t] = {"p": round(float(s.iloc[-1]), 2), "v": i.get("valuta") or "USD", "k": [round(float(x), 4 if x < 10 else 2) for x in s.iloc[-126::2].values]}
         prezzi[t].update(_rend(s))
@@ -463,7 +582,13 @@ def aggiorna(log=print) -> dict:
             log(f"[opp] settimana scorsa ({dp['settimana']}) ricostruita: {len(dp['ordine'])} scelte; registro +{registra(dp, dp['settimana'], file=RICOSTRUITO)}")
         except Exception as e:  # noqa: BLE001
             log("[opp] ricostruzione fallita: " + str(e)[:100])
-    log(f"[opp] registro +{registra(d, sab)}")
+    log(f"[opp] registro +{registra(d, sab)}; in parallelo v1/v2 +{registra_ombra(d, sab)}")
+    try:
+        r2 = valuta_v2(c_all, vt)
+        d["adozione_v2"] = r2
+        log("[opp] confronto pesi v1/v2: " + r2.get("motivo", ""))
+    except Exception as e:  # noqa: BLE001
+        log("[opp] confronto v1/v2 non riuscito: " + str(e)[:100])
     d["storico"] = storico(c_all, vt)
     FILE.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":"), default=lambda o: None), encoding="utf-8")
     log(f"[opp] scritto {FILE.name}: {len(d['ordine'])} scelte")
@@ -528,19 +653,24 @@ function col(s){if(s==null)return '#64748b';return s>=70?'#16a34a':s>=40?'#d9770
 function info(k){var i=INFO[k];if(!i)return '';return '<em class="aii" data-info="'+esc(JSON.stringify({t:i[0],s:[['Cos\'è',i[1]],['Come si legge',i[2]]]}))+'">i</em>'}
 function spark(k,w,h){if(!k||k.length<2)return '';var mn=Math.min.apply(null,k),mx=Math.max.apply(null,k),r=mx-mn||1;return '<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;max-width:520px;height:'+h+'px"><polyline fill="none" stroke="#3b82f6" stroke-width="2" points="'+k.map(function(v,i){return (i*(w-2)/(k.length-1)+1).toFixed(1)+','+((h-4)-(v-mn)/r*(h-8)+2).toFixed(1)}).join(' ')+'"/></svg>'}
 function det(t){var x=S().titoli[t],d=S().dett[t];if(!d)return '';var r=d.report,h='<div class="sdd" onclick="event.stopPropagation()"><h4>Ultimi 6 mesi</h4>'+spark(x.k,520,110);
-h+='<h4>Punteggio Potenziale: '+(x.s==null?'—':x.s+'/100')+' <span class="mu" style="font-weight:400">(fattori usati: '+x.usati+' su 8)</span></h4>';
-CK.forEach(function(k,i){var n=Object.keys(D.pesi)[i],v=x.comp[k];h+='<div style="font-size:12px">'+n+' ('+Math.round(D.pesi[n]*100)+'%): <b>'+(v==null?'dati insufficienti':v+'/100')+'</b></div><div class="sdb"><i style="width:'+(v||0)+'%;background:'+col(v)+'"></i></div>'});
+var CKX=Object.keys(D.pesi).length>8?CK.concat(['svolta','insider']):CK;
+h+='<h4>Punteggio Potenziale: '+(x.s==null?'—':x.s+'/100')+' <span class="mu" style="font-weight:400">(fattori usati: '+x.usati+' su '+CKX.length+')</span></h4>';
+if(x.canali&&x.canali.length)h+='<p style="font-size:12px">Emerge da: '+x.canali.map(function(c){return '<span class="etq">'+esc((D.canali_nomi||{})[c]||c)+'</span>'}).join(' ')+'</p>';
+if(x.s1!=null&&x.s2!=null)h+='<p class="mu" style="font-size:12px">In prova: con i pesi attuali '+x.s1+'/100, con i pesi v2 '+x.s2+'/100 (v2 conta solo se supera la regola scritta in anticipo).</p>';
+CKX.forEach(function(k,i){var n=Object.keys(D.pesi)[i],v=x.comp[k];h+='<div style="font-size:12px">'+n+' ('+Math.round(D.pesi[n]*100)+'%): <b>'+(v==null?'dati insufficienti':v+'/100')+'</b></div><div class="sdb"><i style="width:'+(v||0)+'%;background:'+col(v)+'"></i></div>'});
 h+='<h4>Perché è promettente</h4><p>'+esc(r.promettente)+'</p><h4>Cosa potrebbe andare storto</h4><p>'+esc(r.storto)+'</p>';
 h+='<h4>Crescita stimata (fascia, non promessa)</h4><div class="sdk">'+[['1m','1 mese'],['3m','3 mesi'],['1a','1 anno'],['2a','2 anni']].map(function(o){var f=x.fasce[o[0]];return '<div style="display:block"><b>'+o[1]+'</b><br><span style="font-size:12px">'+(f?esc(f.txt):'—')+'</span></div>'}).join('')+'</div><p class="mu" style="font-size:12px">Il centro è '+(Object.keys(D.centri_reali||{}).length?'in parte ':'')+'il rendimento mediano storico del mercato ('+Math.round(D.centro_annuo*100)+'% annuo, ipotesi) finché lo storico delle scelte non basta; l\'ampiezza dipende dalla volatilità del titolo. Il punteggio per ora ordina i titoli ma non sposta il centro.</p>';
 if(x.an&&x.an.target)h+='<p>Prezzo obiettivo medio degli analisti a 12 mesi: <b>'+nm(x.an.target,2)+'</b> (min '+nm(x.an.min,2)+' · max '+nm(x.an.max,2)+', '+(x.an.n||'?')+' analisti)</p>';
 if(d.cataliz.length)h+='<h4>Catalizzatori in arrivo</h4><div class="sdn">'+d.cataliz.map(function(c){return '<div>'+esc(c.data)+' · '+esc(c.t)+'</div>'}).join('')+'</div>';
-var I=d.ind,ks=[['ps','P/S',2],['pe','P/E',1],['ps_f','P/S previsto',2],['ev_ebitda','EV/EBITDA',1],['cap_rpo','Capitalizzazione / RPO',1],['rpo_anni','Anni di fatturato firmati',1],['piotroski','F-score',0],['margine_lordo','Margine lordo',3],['roe','ROE',3],['rev_eps_30','Stime utile 30 giorni',3],['rev_eps_90','Stime utile 90 giorni',3],['crescita_ricavi','Crescita ricavi',3]];
+var I=d.ind,ks=[['ps','P/S',2],['pe','P/E',1],['ps_f','P/S previsto',2],['ev_ebitda','EV/EBITDA',1],['cap_rpo','Capitalizzazione / RPO',1],['rpo_anni','Anni di fatturato firmati',1],['piotroski','F-score',0],['margine_lordo','Margine lordo',3],['roe','ROE',3],['rev_eps_30','Stime utile 30 giorni',3],['rev_eps_90','Stime utile 90 giorni',3],['crescita_ricavi','Crescita ricavi',3],['accel','Accelerazione ricavi (punti)',1],['leva_op','Leva operativa',1],['margine_op_var','Margine operativo (punti)',1]];
 h+='<h4>Indicatori</h4><div class="sdk">'+ks.filter(function(k){return I[k[0]]!=null}).map(function(k){var v=I[k[0]];return '<div><span>'+k[1]+info(k[0])+'</span><b>'+nm(k[2]>=3?v*100:v,k[2]>=3?1:k[2])+(k[2]>=3?'%':'')+'</b></div>'}).join('')+'</div>';
 if(d.notizie.length)h+='<h4>Notizie positive recenti</h4><div class="sdn">'+d.notizie.map(function(n){return '<div>'+esc(n.d.slice(8)+'/'+n.d.slice(5,7))+' · <span class="etq">'+esc(n.e)+'</span> <a href="'+esc(n.l||'#')+'" target="_blank" rel="noopener">'+esc(n.t)+'</a></div>'}).join('')+'</div>';
 return h+'<p class="mu">'+esc(r.nota)+'</p></div>'}
 function riga(t){var x=S().titoli[t],eur=x.eur!=null?' · '+nm(x.eur,2)+' €':'';
+var cn=(x.canali||[]).map(function(c){return '<span class="etq">'+esc((D.canali_nomi||{})[c]||c)+'</span>'}).join(' ');
 var h='<div class="sdr" data-t="'+esc(t)+'"><div class="top"><span class="nm">'+esc(x.n)+' <span class="tk">'+esc(x.t)+' · '+esc(x.sett)+' · '+esc(x.area)+'</span></span><span class="sds" style="background:'+col(x.s)+'" title="Potenziale (1-100)">'+(x.s==null?'—':x.s)+'</span></div><div class="met">';
 h+=(x.da_allora!=null?'<span>Da allora <b>'+pc(x.da_allora)+'</b></span>':'')+'<span>7 giorni <b>'+pc(x.r7)+'</b></span><span>1 mese <b>'+pc(x.r1m)+'</b></span><span>Prezzo <b>'+nm(x.p,2)+' '+(x.v==='EUR'?'€':x.v)+'</b>'+eur+'</span><span>Fatturato trim. <b>'+(x.ric?x.ric.f+' '+pc(Math.abs(x.ric.v),0):'—')+'</b></span><span>P/S <b>'+nm(x.ps,1)+'</b></span><span>P/E <b>'+nm(x.pe,1)+'</b></span><span>P/S prev. <b>'+nm(x.ps_f,1)+'</b></span>'+(x.cap_rpo!=null?'<span>Cap./RPO <b>'+nm(x.cap_rpo,1)+'</b></span>':'')+'</div>';
+if(cn)h+='<div class="opf">Canali: '+cn+'</div>';
 if(x.mot&&x.mot.length)h+='<ul class="opm">'+x.mot.map(function(m){return '<li>'+esc(m)+'</li>'}).join('')+'</ul>';
 h+='<div class="opf">3 mesi: '+esc(x.fasce['3m']?x.fasce['3m'].txt:'—')+'</div>';
 return h+(OPEN===t?det(t):'')+'</div>'}
@@ -576,6 +706,9 @@ def block(data_json: str | None = None) -> str:
     ii = _h.escape(json.dumps({**saldi.IND_INFO, "cap_rpo": ("Capitalizzazione / RPO", "Capitalizzazione divisa per i contratti firmati e non ancora fatturati (RPO).", "Più basso = il mercato prezza poco il lavoro già in portafoglio."),
                                "rev_eps_30": ("Stime sull'utile a 30 giorni", "Variazione dell'utile per azione atteso a 12 mesi rispetto a 30 giorni fa (media degli analisti).", "Positivo = gli analisti stanno alzando le stime: tra i segnali più robusti in letteratura."),
                                "rev_eps_90": ("Stime sull'utile a 90 giorni", "Come sopra, rispetto a 90 giorni fa.", "Positivo e crescente = revisioni al rialzo persistenti."),
+                               "accel": ("Accelerazione dei ricavi", "Quanto la crescita del fatturato (sull'anno prima) dell'ultimo trimestre supera quella del trimestre precedente, in punti percentuali.", "Positivo = la crescita sta accelerando; negativo = sta rallentando."),
+                               "leva_op": ("Leva operativa", "Di quanto cresce l'utile operativo per ogni 1% di crescita del fatturato.", "Sopra 1 = i costi crescono meno dei ricavi, quindi gli utili salgono più in fretta."),
+                               "margine_op_var": ("Margine operativo", "Variazione, in punti, del margine operativo rispetto allo stesso trimestre dell'anno prima.", "Positivo = l'azienda guadagna di più su ogni dollaro venduto."),
                                "crescita_ricavi": ("Crescita dei ricavi", "Variazione del fatturato dell'ultimo trimestre sullo stesso trimestre dell'anno prima.", "Sopra il 15% = crescita rapida.")}, ensure_ascii=False), quote=True)
     return (f"{saldi.CSS}{CSS_EXTRA}<h2>Opportunità: le 30 aziende della settimana</h2><div class='explain'><p>Ogni sabato Armor ordina le aziende per somiglianza ai fattori che, in letteratura, hanno storicamente accompagnato rendimenti futuri migliori: "
             "revisioni delle stime, momentum, crescita, qualità, sorprese sui conti, contratti già firmati e catalizzatori. Le crescite indicate sono <b>fasce di incertezza, non promesse</b>. "

@@ -8,6 +8,14 @@ on:
         description: 'Solo prova di accesso (non scarica i file grandi)'
         type: boolean
         default: false
+      url_brevetti:
+        description: 'Facoltativo: indirizzo diretto del file g_patent (.zip) copiato dal portale data.uspto.gov'
+        type: string
+        default: ''
+      url_titolari:
+        description: 'Facoltativo: indirizzo diretto del file g_assignee_disambiguated (.zip)'
+        type: string
+        default: ''
 permissions:
   contents: write
 concurrency:
@@ -21,6 +29,9 @@ jobs:
       PYTHONUNBUFFERED: '1'
       SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
       PYTHONPATH: src
+      USPTO_API_KEY: ${{ secrets.USPTO_API_KEY }}
+      BREVETTI_URL: ${{ inputs.url_brevetti }}
+      TITOLARI_URL: ${{ inputs.url_titolari }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

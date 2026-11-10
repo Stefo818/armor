@@ -10,7 +10,7 @@ GRUPPI = [
     ("mercati", "Mercati", ["mercati", "saldi", "opportunita", "aziende"],
      _svg("<path d='M6 3v3M6 15v3M12 2v4M12 12v6M18 6v3M18 16v4'/><rect x='4' y='6' width='4' height='9' rx='1'/><rect x='10' y='6' width='4' height='6' rx='1'/><rect x='16' y='9' width='4' height='7' rx='1'/>")),
     ("previsioni", "Previsioni", ["previsioni", "fiducia"], _svg("<circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/><path d='M3 12h2M19 12h2'/>")),
-    ("rischio", "Rischio", ["indici", "regime", "valutazioni", "macro", "contesto"],
+    ("rischio", "Rischio", ["indici", "regime", "fondi", "valutazioni", "macro", "contesto"],
      _svg("<path d='M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z'/><path d='M8.5 12l2.5 2.5 5-5'/>")),
     ("calendario", "Calendario", ["calendario", "notizie"], _svg("<rect x='3' y='5' width='18' height='16' rx='3'/><path d='M3 10h18M8 3v4M16 3v4'/><path d='M8 14h2M12 14h2M16 14h0M8 17h2'/>")),
     ("grafici", "Grafici", ["grafici", "storico", "archivio"], _svg("<path d='M3 3v18h18'/><path d='M7 15l4-5 3 3 5-7'/>")),

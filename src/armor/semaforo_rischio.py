@@ -204,6 +204,32 @@ def aggiorna(pred: dict, data: str) -> dict | None:
     return r
 
 
+def variazione() -> dict | None:
+    """Di quanto è cambiato il rapporto (rischio stimato / rischio normale) rispetto al giorno registrato prima. None finché non ci sono due giorni."""
+    try:
+        d = pd.read_csv(STATO).drop_duplicates("data", keep="last").sort_values("data")
+        if len(d) < 2:
+            return None
+        a, b = d.iloc[-2], d.iloc[-1]
+        m1, m0 = (b["r_a1"] + b["r_fhs"]) / 2, (a["r_a1"] + a["r_fhs"]) / 2
+        return {"da": str(a["data"]), "a": str(b["data"]), "medio": float(m1), "d_medio": float(m1 - m0), "p_medio": float((m1 / m0 - 1) * 100) if m0 else None,
+                "d_a1": float(b["r_a1"] - a["r_a1"]), "d_fhs": float(b["r_fhs"] - a["r_fhs"])}
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def variazione_html() -> str:
+    v = variazione()
+    f = lambda x, d=2: f"{x:+.{d}f}".replace(".", ",")
+    if not v:
+        return ("<p class='sai-t2'><b>Variazione rispetto a ieri:</b> non ancora disponibile. Il rapporto viene registrato ogni giorno: "
+                "la prima variazione compare dal secondo giorno registrato.</p>")
+    fr = "▲ in aumento" if v["d_medio"] > 0.005 else ("▼ in calo" if v["d_medio"] < -0.005 else "= invariato")
+    pc = "" if v["p_medio"] is None else f" ({f(v['p_medio'], 1)}%)"
+    return (f"<p class='sai-t2'><b>Variazione rispetto al giorno precedente ({v['da'][8:]}/{v['da'][5:7]}):</b> {fr}. Rapporto medio {f(v['d_medio'])} volte{pc}; "
+            f"modello base {f(v['d_a1'])}, modello con la paura {f(v['d_fhs'])}. Un aumento vuol dire che il rischio stimato di calo cresce rispetto al normale.</p>")
+
+
 def _pc(x):
     return f"{x * 100:.0f}%" if x is not None else "n.d."
 
@@ -226,6 +252,7 @@ def html() -> str:
         extra = "" if gz == m else f" Oggi i modelli indicano {e(gz)}, ma il colore mostrato cambia solo dopo 3 sedute uguali."
         out.append(f"<div class='pmc {css[m]}' style='padding:12px;margin:8px 0;border:1px solid var(--bd)'><b style='font-size:20px'>{e(m)}</b><small>{e(SPIEGA[m])}{extra}</small>"
                    f"<small>Rischio di oggi rispetto al normale: A1 {o['r_a1']:.1f}×, FHS+VIX {o['r_fhs']:.1f}× (1× = normale)</small></div>".replace(".", ","))
+        out.append(variazione_html())
     else:
         out.append("<p class='mu'>Il semaforo comparirà al prossimo aggiornamento giornaliero.</p>")
     if t:

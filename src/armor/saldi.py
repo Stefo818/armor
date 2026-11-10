@@ -494,17 +494,23 @@ def arricchisci(tk: list[str], nomi: dict, log=print, giorni_8k: int = 30, comun
         log("[sec] non disponibile: " + str(e)[:80])
     def _facts(c):
         f_ = tf.sec_json(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{c}.json") or {}
-        return tf.rpo_da_facts(f_), tf.rd_da_facts(f_)
+        from . import sec_trim
+        try:
+            tr_ = sec_trim.indicatori(f_)
+        except Exception:  # noqa: BLE001
+            tr_ = {}
+        return tf.rpo_da_facts(f_), tf.rd_da_facts(f_), tr_
     ind, ev8k, comunicati = {}, {}, {}
     for t in tk:
         d = fond.get(t)
         if not d:
             continue
         rpo = rd = None
+        trim = {}
         c = cik.get(t.upper())
         if c:
             try:
-                rpo, rd = _facts(c)
+                rpo, rd, trim = _facts(c)
                 sub_ = tf.sec_json(f"https://data.sec.gov/submissions/CIK{c}.json") or {}
                 ev8k[t] = tf.eventi_8k(sub_, giorni_8k) + tf.moduli_diluizione(sub_, 90)
                 if comunicati_max > 0:   # testo del comunicato allegato agli 8-K recenti (Exhibit 99.1): dice il motivo reale dietro un item generico
@@ -519,6 +525,7 @@ def arricchisci(tk: list[str], nomi: dict, log=print, giorni_8k: int = 30, comun
             except Exception as e:  # noqa: BLE001
                 log(f"[sec] {t}: {str(e)[:70]}")
         ind[t] = tf.indicatori(d, rpo, rd)
+        ind[t].update({k: v for k, v in (trim or {}).items()})
 
     def notizie_di(t):
         try:

@@ -118,6 +118,8 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
         import json as _j
         (DATA / "calendar.json").write_text(_j.dumps(ev, ensure_ascii=False), encoding="utf-8")
         print("Trimestrali trovate:", len(ev))
+        from . import eventi_esiti
+        print("Risultati trimestrali salvati:", with_timeout(lambda: eventi_esiti.aggiorna_trimestrali(dict(news.TOP20)), 180, "risultati trimestrali"))
     except Exception as e:  # noqa: BLE001
         print("Calendario/composizione non aggiornati:", str(e)[:100])
     try:
@@ -513,6 +515,12 @@ def main() -> None:
         from . import opportunita
         d = opportunita.aggiorna()
         print({"scelte": len(d["ordine"]), "dati_al": d["asof"]})
+    elif cmd == "opportunita-valuta-v2":   # Patch 71: confronto dei pesi v2 con quelli ufficiali (regola scritta in anticipo)
+        from . import opportunita, titoli
+        arch = titoli.carica_prezzi()
+        c_all = arch["close"]
+        vt = c_all["VT"] if "VT" in c_all else c_all["SPY"]
+        print(json.dumps(opportunita.valuta_v2(c_all, vt), ensure_ascii=False, indent=1))
     elif cmd == "opportunita-rinfresca":   # prezzi e storico delle scelte, senza ricalcolare il punteggio (giornaliero)
         from . import opportunita
         opportunita.rinfresca()
@@ -535,6 +543,9 @@ def main() -> None:
     elif cmd == "brevetti-aggiorna":   # scarica i brevetti concessi, li abbina alle società quotate → data/brevetti.json
         from . import brevetti
         brevetti.aggiorna()
+    elif cmd == "brevetti-locale":   # legge i due file già scaricati sul PC (cartella indicata) e scrive data/brevetti.json
+        from . import brevetti
+        print(brevetti.aggiorna(cartella=sys.argv[2] if len(sys.argv) > 2 else r"D:\Armor\Brevetti"))
     elif cmd == "sec-sonda":   # prova di accesso ai dati SEC: elenco, nomi dei file, intestazioni
         from . import sec_dati
         print(sec_dati.sonda())

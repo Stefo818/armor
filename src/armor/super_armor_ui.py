@@ -66,7 +66,8 @@ def det_previsione(o: dict) -> dict:
     if ra is not None:
         ric = (f"<div class='sai-two'><div class='sai-bar'><span>Modello base<br><small>rischio rispetto al normale</small></span><b>{_n(ra)}×</b></div>"
                f"<div class='sai-bar'><span>Modello con la paura<br><small>rischio rispetto al normale</small></span><b>{_n(rf)}×</b></div></div>"
-               "<p class='sai-t2'>«1×» vuol dire rischio normale, «2×» il doppio del normale. Quando i due numeri sono molto diversi i modelli non sono d'accordo, e il semaforo diventa Grigio.</p>")
+               "<p class='sai-t2'>«1×» vuol dire rischio normale, «2×» il doppio del normale. Quando i due numeri sono molto diversi i modelli non sono d'accordo, e il semaforo diventa Grigio.</p>"
+               + __import__("armor.semaforo_rischio", fromlist=["x"]).variazione_html())
     colori = {"Verde": "hsl(125,70%,42%)", "Giallo": "hsl(52,80%,45%)", "Arancione": "hsl(24,85%,50%)", "Rosso": "hsl(0,75%,48%)", "Grigio": "hsl(0,0%,55%)"}
     sem = ""
     if tab.get("righe"):
@@ -158,7 +159,16 @@ def det_fondi(o) -> dict:
                        f"Dato del {E(s['ultimo_dato'])}. Livello {E(s['stato'])} rispetto agli ultimi 5 anni (100° = il più alto). <b>{E(verd)}.</b>")
     if not righe:
         righe = "<p class='sai-t2'>I dati sono in arrivo: compaiono dopo i primi aggiornamenti.</p>"
-    return {"comp": "<p class='sai-t2'>Qui non si misura il «rischio»: si guarda dove si trova ogni segnale rispetto agli ultimi 5 anni. Le barre mostrano il percentile, non un pericolo.</p>" + righe,
+    t = d.get("tensione") or {}
+    top = ""
+    if t.get("score") is not None:
+        om = (o.get("ombra") or {}) if isinstance(o, dict) else {}
+        conf = (f"<p class='sai-t2'><b>Confronto in prova:</b> con i grandi fondi al 10% il Super Armor Index sarebbe <b>{om['sai']:.0f}</b> ({om['delta']:+.1f} punti rispetto all'ufficiale). "
+                "Lo confrontiamo ogni giorno per decidere nelle prossime settimane se validarlo.</p>".replace(".", ",") if om.get("sai") is not None else "")
+        top = (f"<div class='sai-two'><div class='sai-bar'><span>Tensione dei grandi fondi<br><small>0 = tutto nella norma, 100 = tutto agli estremi</small></span><b>{t['score']:.0f}</b></div></div>"
+               "<p class='sai-t2'>Non dice se il mercato scenderà o salirà: dice quanto i grandi fondi sono lontani dal loro comportamento abituale.</p>" + conf)
+    top += "<p class='sai-t2'><a href='#fondi' data-go='fondi' style='color:var(--ac);font-weight:700'>Apri la pagina completa «Grandi fondi» ›</a></p>"
+    return {"comp": top + "<p class='sai-t2'>Qui non si misura il «rischio»: si guarda dove si trova ogni segnale rispetto agli ultimi 5 anni. Le barre mostrano il percentile, non un pericolo.</p>" + righe,
             "come": ("Questo pilastro osserva cosa fanno i grandi operatori: i fondi che scommettono con la leva, i gestori di patrimoni, la liquidità parcheggiata nei fondi monetari, le posizioni dichiarate alla SEC (l'autorità di controllo dei mercati americani), gli acquisti dei dirigenti delle aziende. "
                      "Ogni segnale viene confrontato con gli ultimi 5 anni. Poi si verifica, con una regola scritta in anticipo, se in passato valori alti o bassi hanno anticipato i cali. "
                      "<b>Finché nessun segnale supera la prova, il pilastro pesa 0%</b> e non cambia il valore del Super Armor Index; se uno la supera, entra con il 10%."),
@@ -269,7 +279,7 @@ def html(aix: dict | None, p: pd.Series) -> str:
         s_, _w, k_ = freccia(ie["delta"])
         chip = f"<span class='sai-ch {k_}'>{s_} {ie['delta']:+.0f} rispetto a ieri</span>".replace("+-", "-")
     tit = titolo(o, c)
-    tiles = "".join(f"<div class='sai-tile' data-saip='{k}'>{anello((pil.get(k) or {}).get('score'))}<span>{E(NOMI[k])}</span>" + ("" if o["pesi"].get(k) else "<em>peso 0</em>") + "</div>" for k in ORDINE)
+    tiles = "".join(f"<div class='sai-tile' data-saip='{k}'>{anello((pil.get(k) or {}).get('score'))}<span>{E(NOMI[k])}</span>" + ("" if o["pesi"].get(k) else ("<em>peso 0 · in prova</em>" if k == "fondi" else "<em>peso 0</em>")) + "</div>" for k in ORDINE)
     # --- sintesi
     righe = ""
     for k in ("previsione", "armor", "vix", "economia", "fondi"):
@@ -447,6 +457,7 @@ o+="<polyline fill='none' stroke='var(--tx)' stroke-width='2.2' stroke-linejoin=
 o+="<text x='24' y='146' font-size='9' fill='var(--mu)'>"+new Date(X0).toLocaleDateString('it-IT',{month:'short',year:'2-digit'})+"</text><text x='"+(W-6)+"' y='146' font-size='9' fill='var(--mu)' text-anchor='end'>oggi</text>";
 svg.innerHTML=o;var inf=M.querySelector('.sai-mi[data-ki="'+k+'"]');if(inf)inf.textContent='Nel periodo: minimo '+Math.round(mn)+', massimo '+Math.round(mx)+', oggi '+Math.round(lv)+'.'}
 S.addEventListener('click',function(e){var t=e.target,x;
+if(t.closest('a[data-go]'))close();
 if(t.closest('[data-saix]')||t===M){close();return}
 if(x=t.closest('[data-saip]')){open('p-'+x.dataset.saip);return}
 if(t.closest('[data-saiback]')){show('sum');return}

@@ -13,6 +13,15 @@ IMPORTANZA = {3: ("Molto importante", "ba"), 2: ("Importante", "wa"), 1: ("Di co
 
 
 def eventi(oggi: date | None = None, giorni: int = 30) -> str:
+    """Eventi scorrevoli: ultimi 15 giorni con risultati, prossimi eventi, frecce per mese (Patch 70)."""
+    try:
+        from . import eventi_esiti
+        return eventi_esiti.html(oggi, uid="evx-cal")
+    except Exception:  # noqa: BLE001
+        return eventi_vecchio(oggi, giorni)
+
+
+def eventi_vecchio(oggi: date | None = None, giorni: int = 30) -> str:
     from . import extra13
     oggi = oggi or date.today()
     ev = [x for x in extra13.all_events(oggi, oggi + timedelta(days=giorni))]

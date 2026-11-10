@@ -19,4 +19,6 @@ registro.csv
 # archivio dei prezzi e cache dei fondamentali (stanno in actions/cache)
 data/_cache/
 
+# file dei brevetti scaricati a mano (diversi GB): restano solo sul PC
+Brevetti/
 key fred.txt
