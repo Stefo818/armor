@@ -242,34 +242,9 @@ def html() -> str:
         o = None
     t = carica()
     css = {"Verde": "ok", "Giallo": "wa", "Arancione": "or", "Rosso": "ba", "Grigio": "nd"}
-    out = ["<div class='explain'><p><b>Che cos'è.</b> Un colore che riassume quanto è alto oggi il rischio di un calo rispetto al normale, guardando due modelli insieme. "
-           "Verde = sotto il normale, Giallo = nella norma, Arancione = chiaramente sopra, Rosso = almeno il doppio del normale. "
-           "Grigio = i due modelli non sono d'accordo, quindi il colore non è affidabile. Il colore cambia solo dopo 3 sedute consecutive (tranne Grigio e Rosso, che scattano subito). "
-           "Non è un segnale per comprare o vendere: dice solo quanto è alta la probabilità di un calo.</p></div>"]
-    if o:
-        m = o["mostrato"]
-        gz = o.get("grezzo")
-        extra = "" if gz == m else f" Oggi i modelli indicano {e(gz)}, ma il colore mostrato cambia solo dopo 3 sedute uguali."
-        out.append(f"<div class='pmc {css[m]}' style='padding:12px;margin:8px 0;border:1px solid var(--bd)'><b style='font-size:20px'>{e(m)}</b><small>{e(SPIEGA[m])}{extra}</small>"
-                   f"<small>Rischio di oggi rispetto al normale: A1 {o['r_a1']:.1f}×, FHS+VIX {o['r_fhs']:.1f}× (1× = normale)</small></div>".replace(".", ","))
-        out.append(variazione_html())
-    else:
-        out.append("<p class='mu'>Il semaforo comparirà al prossimo aggiornamento giornaliero.</p>")
-    if t:
-        out.append(f"<h4>Cosa è successo davvero dopo ogni colore (dal {e(t['da'][:4])}, {t['n']} date)</h4><div style='overflow-x:auto'><table class='tb'><tr><th>Colore</th><th>Quante volte</th>"
-                   "<th>Calo ≥5% entro 1 mese</th><th>Calo ≥10% entro 3 mesi</th></tr>")
-        for r in t["righe"]:
-            if "quota" not in r:
-                continue
-            a, b = r["1m_5"], r["3m_10"]
-            sm = " (poche date)" if r["n"] < 100 else ""
-            out.append(f"<tr><td><span class='pmc {css[r['colore']]}' style='padding:2px 8px'>{e(r['colore'])}</span></td><td>{_pc(r['quota'])}{sm}</td>"
-                       f"<td>{_pc(a['freq'])} <small>(normale {_pc(a['freq_tutte'])}; dal 2013: {_pc(a['freq_2013_26'])})</small></td>"
-                       f"<td>{_pc(b['freq'])} <small>(normale {_pc(b['freq_tutte'])}; dal 2013: {_pc(b['freq_2013_26'])})</small></td></tr>")
-        mon = all(t["monotona"].values())
-        out.append("</table></div><p class='mu'>" + ("Dal 1990 i colori sono in ordine: più il colore è alto, più spesso è seguito da un calo. " if mon else "Attenzione: nella storia i colori non sono perfettamente in ordine. ")
-                   + "Dal 2013 i colori alti hanno visto meno cali di quanti i modelli prevedessero, ma con poche date: non basta per correggere i numeri. "
-                   "La tabella racconta il passato; i colori sono una sintesi, non cambiano le previsioni dei modelli.</p>")
+    from . import previsione_ui
+    out = ["<div class='explain'><p><b>Che cos'è.</b> Il semaforo risponde a una domanda: oggi è più o meno probabile del solito un calo importante della Borsa americana? "
+           "Due modelli stimano la probabilità e il colore riassume la loro media. Non è un segnale per comprare o vendere.</p></div>", previsione_ui.html(o, t, variazione())]
     try:
         from . import semaforo_mercati
         out.append(semaforo_mercati.html())

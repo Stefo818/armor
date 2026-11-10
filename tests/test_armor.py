@@ -2585,3 +2585,17 @@ def test_brevetti_da_cartella_locale(tmp_path, monkeypatch):
     assert j["t"]["AAPL"]["n12"] >= 20           # conteggio all'indietro dall'ultima data dei file, non da oggi
     assert (cart / "g_patent.tsv.zip").exists()  # i file locali non si cancellano
     assert b.aggiorna(oggi="2026-11-10", log=lambda *_: None, cartella=tmp_path / "vuota") == {}
+
+
+def test_previsione_ui_spiega_in_semplice():
+    import json
+    from armor import previsione_ui as pu
+    assert pu.frase_rapporto(0.7) == "il 30% in meno del solito" and pu.frase_rapporto(1.4) == "il 40% in più del solito" and pu.frase_rapporto(1.0) == "come il solito"
+    assert pu._zona(0.7) == "Verde" and pu._zona(1.0) == "Giallo" and pu._zona(1.5) == "Arancione" and pu._zona(2.5) == "Rosso"
+    assert abs(pu._pos(1.0) - 50) < 1e-6
+    o = {"r_a1": 0.7, "r_fhs": 1.4, "grezzo": "Grigio", "mostrato": "Grigio",
+         "p": {"1m_5": {"A1": 0.16, "FHS+VIX": 0.28, "normale": 0.19}, "3m_10": {"A1": 0.07, "FHS+VIX": 0.21, "normale": 0.15}}}
+    t = {"da": "1990-01-01", "righe": [{"colore": c, "n": 500, "quota": 0.2, "1m_5": {"freq": f, "freq_tutte": 0.17}, "3m_10": {"freq": f, "freq_tutte": 0.14}} for c, f in (("Verde", .1), ("Rosso", .4), ("Grigio", .15))]}
+    h = pu.html(o, t, {"da": "2026-11-06", "a": "2026-11-09", "medio": 1.05, "d_medio": -0.14, "p_medio": -12.0})
+    assert "Quanto è probabile un calo di Borsa" in h and "sceso del 12%" in h and "OGGI" in h and "tra il <b>16%</b> e il <b>28%</b>" in h
+    assert "non ancora disponibile" in pu.html(o, t, None) and "compare al prossimo" in pu.html(None, None)

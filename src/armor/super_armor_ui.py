@@ -50,37 +50,17 @@ ECO_INFO = {
 
 
 def det_previsione(o: dict) -> dict:
+    from . import previsione_ui, semaforo_rischio
     d = _leggi("semaforo_rischio_oggi.json") or {}
     tab = _leggi("semaforo_rischio_tabella.json") or {}
-    righe = []
-    for chiave, lab in (("1m_5", "Calo di almeno il 5% entro 1 mese"), ("3m_10", "Calo di almeno il 10% entro 3 mesi")):
-        p = (d.get("p") or {}).get(chiave)
-        if not p:
-            continue
-        mx = max(p.values()) or 1
-        def b(nome, val, col):
-            return f"<div class='sai-pb'><span>{nome}</span><div><i style='width:{val / mx * 100:.0f}%;background:{col}'></i></div><b>{val * 100:.0f}%</b></div>"
-        righe.append(f"<div class='sai-cr'><div class='sai-cn'><b>{lab}</b></div>{b('Normale', p['normale'], 'var(--mu)')}{b('Modello base', p['A1'], COL_PIL['previsione'])}{b('Modello con la paura', p['FHS+VIX'], 'hsl(35,90%,55%)')}</div>")
-    ra, rf = d.get("r_a1"), d.get("r_fhs")
-    ric = ""
-    if ra is not None:
-        ric = (f"<div class='sai-two'><div class='sai-bar'><span>Modello base<br><small>rischio rispetto al normale</small></span><b>{_n(ra)}×</b></div>"
-               f"<div class='sai-bar'><span>Modello con la paura<br><small>rischio rispetto al normale</small></span><b>{_n(rf)}×</b></div></div>"
-               "<p class='sai-t2'>«1×» vuol dire rischio normale, «2×» il doppio del normale. Quando i due numeri sono molto diversi i modelli non sono d'accordo, e il semaforo diventa Grigio.</p>"
-               + __import__("armor.semaforo_rischio", fromlist=["x"]).variazione_html())
-    colori = {"Verde": "hsl(125,70%,42%)", "Giallo": "hsl(52,80%,45%)", "Arancione": "hsl(24,85%,50%)", "Rosso": "hsl(0,75%,48%)", "Grigio": "hsl(0,0%,55%)"}
-    sem = ""
-    if tab.get("righe"):
-        tr = "".join(f"<tr><td><span class='sai-dot' style='background:{colori[r['colore']]}'></span>{E(r['colore'])}</td><td>{r['quota'] * 100:.0f}%</td><td>{r['1m_5']['freq'] * 100:.0f}%</td><td>{r['3m_10']['freq'] * 100:.0f}%</td></tr>"
-                     for r in tab["righe"] if "quota" in r)
-        sem = (f"<h4>Cosa è successo davvero dopo ogni colore del semaforo (dal 1990)</h4><div class='sai-tw'><table class='sai-tb'><tr><th>Colore</th><th>Quanti giorni</th><th>Calo ≥5% in 1 mese</th><th>Calo ≥10% in 3 mesi</th></tr>{tr}</table></div>"
-               f"<p class='sai-t2'>Oggi il semaforo del rischio di calo è <b>{E(str(d.get('mostrato', 'n.d.')))}</b>.</p>")
-    return {"comp": ric + "".join(righe) + sem,
-            "come": ("Due modelli stimano la probabilità che l'S&amp;P 500 (l'indice delle 500 maggiori aziende americane) perda almeno il 5% entro un mese e almeno il 10% entro tre mesi. "
-                     "Il <b>modello base</b> (A1) usa prezzi, tassi, credito e altri indicatori. Il <b>modello con la paura</b> (FHS+VIX) simula migliaia di futuri possibili riutilizzando le oscillazioni del passato, adattate a quanto è nervoso il mercato oggi (FHS significa «simulazione storica filtrata»). "
-                     "Ogni probabilità viene divisa per quella normale, cioè la frequenza storica di quel calo. Si fa la media dei due modelli e dei due periodi. "
-                     "Infine si guarda quanto quel numero è alto rispetto a tutti i giorni dal 1990: un punteggio di 82 vuol dire che oggi il rischio stimato è più alto dell'81% dei giorni."),
-            "glossario": [("S&P 500", "indice che raggruppa le 500 maggiori aziende quotate negli Stati Uniti"), ("Probabilità normale", "quante volte, in media dal 1990, è arrivato quel calo"), ("Semaforo del rischio di calo", "colore che riassume quanto il rischio è sopra o sotto il normale")]}
+    return {"comp": previsione_ui.html(d, tab, semaforo_rischio.variazione()),
+            "come": ("Questo pilastro risponde a una domanda: <b>quanto è probabile che l'S&amp;P 500 (le 500 maggiori aziende americane) perda almeno il 5% entro un mese, o almeno il 10% entro tre mesi?</b> "
+                     "Due modelli statistici stimano questa probabilità, e ognuna viene confrontata con quella abituale, cioè quante volte in media, dal 1990, quel calo è davvero arrivato. "
+                     "Il <b>modello base</b> usa prezzi, tassi e credito. Il <b>modello con la paura</b> considera anche quanto il mercato è nervoso oggi. "
+                     "Si fa la media dei due e dei due periodi, e si guarda quanto il valore di oggi è alto rispetto a tutti i giorni dal 1990: un punteggio di 82 vuol dire che oggi il rischio stimato è più alto dell'81% dei giorni."),
+            "glossario": [("S&P 500", "indice delle 500 maggiori aziende quotate negli Stati Uniti"), ("Probabilità abituale", "quante volte, in media dal 1990, è arrivato quel calo"),
+                          ("1×", "rischio come al solito; 2× è il doppio del solito, 0,5× la metà"), ("Indice della paura (VIX)", "misura quanto gli investitori si aspettano oscillazioni forti nel prossimo mese"),
+                          ("Semaforo", "il colore che riassume quanto il rischio è sopra o sotto il solito")]}
 
 
 def det_armor(o: dict, aix: dict | None) -> dict:
