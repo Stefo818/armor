@@ -1788,6 +1788,38 @@ def test_armor_lungo(tmp_path, monkeypatch):
     assert "passato lontano" in h and "<svg" in h and "Come si legge" in h and al.html(None) == ""
 
 
+def test_perche_si_muove():
+    from datetime import datetime, timezone
+    from armor import perche as pc
+    v = {"XLK": -0.018, "XLF": -0.004, "XLC": -0.011, "XLY": -0.009, "XLV": 0.003, "XLE": 0.007, "NVDA": -0.032, "AAPL": -0.011, "MSFT": -0.014,
+         "^GDAXI": -0.004, "^N225": -0.011, "^HSI": -0.006, "EURUSD=X": 0.002}
+    q = {"sp500": {"chg": -0.009, "open": True}, "vwce": {"chg": -0.0037}}
+    ora = datetime(2026, 11, 10, 18, 8, tzinfo=timezone.utc)
+    fr = [{"title": "Nvidia slips on chip worries", "source": "Reuters", "time": "2026-11-10T17:40:00Z", "link": "http://x", "ticker": "NVDA"}]
+    ar = [{"title": "Stocks slide as Fed warns", "source": "CNBC", "time": "2026-11-10T14:00:00Z", "kind": "macro", "themes": ["Banche centrali e tassi"], "sent": -0.7, "score": 2.3, "link": "http://y"},
+          {"title": "Vecchia notizia", "source": "X", "time": "2026-11-01T14:00:00Z", "kind": "macro", "themes": [], "sent": -0.9, "score": 9, "link": "http://z"}]
+    d = pc.costruisci(v, fr, q, ar, ora)
+    assert d["ok"] and d["sp"]["settori"][0]["n"] == "Tecnologia" and d["sp"]["su"] == 2
+    assert pc.titolo_sp(d["sp"]).startswith("Pesano Tecnologia") and "Regge" in pc.titolo_sp(d["sp"])
+    assert any(x["n"] == "Euro/dollaro" and x["contr"] < 0 for x in d["vwce"]["parti"]) and pc.titolo_vwce(d["vwce"]).startswith("Scende")
+    assert [x["tag"] for x in d["notizie"]][0] == "NVDA" and all("Vecchia" not in x["titolo"] for x in d["notizie"]) and len(d["notizie"]) == 2
+    h = pc.html(d, ora)
+    assert "Perché si muove oggi" in h and "19:08" in h and "Notizie in corso" in h and "S&amp;P 500" in h
+    flat = pc.costruisci({**v, "XLK": 0.0005}, [], {"sp500": {"chg": 0.0004}, "vwce": {"chg": 0.0}}, [], ora)
+    assert pc.titolo_sp(flat["sp"]).startswith("Giornata piatta") and pc.titolo_vwce(flat["vwce"]).startswith("Quasi fermo")
+    assert "non disponibile" in pc.html(None)
+
+
+def test_armor_lungo_pesi_ripristinati():
+    from armor import armor_lungo as al
+    idx = pd.bdate_range("2000-01-03", periods=50)
+    S = pd.DataFrame({"rv21": np.linspace(0.1, 0.9, 50), "dd252": np.linspace(0.9, 0.1, 50)}, index=idx)
+    prima = {g: al.GRUPPI[g][0] for g in al.GRUPPI}
+    al._indice_pesi(S, al.PESI_PROVA["B"]); al._indice_pesi(S, al.PESI_PROVA["C"])
+    assert {g: al.GRUPPI[g][0] for g in al.GRUPPI} == prima
+    assert sum(al.PESI_PROVA["B"].values()) == 100 and sum(al.PESI_PROVA["C"].values()) == 100 and sum(al.PESI_PROVA["A"].values()) == 78
+
+
 def test_mondo_rendimenti_eur_e_filtri():
     from armor import mondo
     idx = pd.bdate_range("2025-01-01", periods=300)

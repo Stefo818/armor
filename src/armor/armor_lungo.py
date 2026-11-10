@@ -254,3 +254,50 @@ CSS = """<style>
 .al-r{display:flex;gap:10px;align-items:flex-start;font-size:13px;margin:6px 0;line-height:1.45}.al-r i{font-style:normal;font-weight:800;flex:none;width:22px;height:22px;border-radius:50%;text-align:center;line-height:22px;color:#fff;font-size:12px}.al-ok{background:#16a34a}.al-no{background:#dc2626}
 .al-info{border:1px solid var(--bd);border-radius:12px;padding:8px 12px;margin:10px 0;font-size:13px;line-height:1.5}.al-info summary{cursor:pointer;font-weight:700}.al-info summary i{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--tx);color:var(--bg);font-style:normal;font-size:12px;margin-right:6px}.al-info p{margin:8px 0}
 </style>"""
+
+
+PESI_PROVA = {
+    "A": {"Paura e stress": 22, "Credito": 18, "Tassi": 8, "Valutazioni": 12, "Tendenza dei prezzi": 12, "Economia reale": 6},
+    "B": {"Paura e stress": 30, "Credito": 18, "Tassi": 6, "Valutazioni": 6, "Tendenza dei prezzi": 30, "Economia reale": 10},
+    "C": {"Paura e stress": 40, "Credito": 15, "Tassi": 0, "Valutazioni": 0, "Tendenza dei prezzi": 35, "Economia reale": 10},
+}
+
+
+def _indice_pesi(S: pd.DataFrame, pesi: dict) -> pd.Series:
+    saved = {g: GRUPPI[g][0] for g in GRUPPI}
+    try:
+        for g, w in pesi.items():
+            GRUPPI[g] = (w, GRUPPI[g][1])
+        return indice(S)[0]
+    finally:
+        for g, w in saved.items():
+            GRUPPI[g] = (w, GRUPPI[g][1])
+
+
+def prova_pesi(sp: pd.Series | None = None) -> dict | None:
+    """Seconda prova del protocollo: scelta tra B e C su 1950-1989, poi una sola prova su 1990-1999 e 2000-oggi contro A."""
+    try:
+        from .features import closed_sp500
+        sp = closed_sp500() if sp is None else sp
+        S = punteggi(sp)
+        idx = {k: _indice_pesi(S, w).shift(1) for k, w in PESI_PROVA.items()}
+        ev = eventi(sp.reindex(S.index))
+        per = {"1950-1989": ("1950-01-01", "1989-12-31"), "1990-1999": ("1990-01-01", "1999-12-31"), "2000-oggi": ("2000-01-01", "2100-01-01")}
+        ris = {}
+        for nome, (a, b) in per.items():
+            m = (S.index >= a) & (S.index <= b)
+            ris[nome] = {k: {e: auc(idx[k][m], ev[e][m]) for e in EVENTI} for k in idx}
+        media = lambda k: float(np.mean([v for v in ris["1950-1989"][k].values() if v is not None]))  # noqa: E731
+        scelta = "B" if media("B") >= media("C") else "C"
+        ok = True
+        for nome in ("1990-1999", "2000-oggi"):
+            r, a = ris[nome][scelta], ris[nome]["A"]
+            if (r["dd10_63"] or 0) - (a["dd10_63"] or 0) < 0.01:
+                ok = False
+            for e in ("dd5_21", "vol25_21"):
+                if (r[e] or 0) - (a[e] or 0) < -0.01:
+                    ok = False
+        return {"scelta": scelta, "candidata": ok, "ris": ris}
+    except Exception as e:  # noqa: BLE001
+        print("Prova pesi non calcolata:", str(e)[:120], flush=True)
+        return None

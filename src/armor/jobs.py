@@ -409,6 +409,11 @@ def costruisci_sito(live_first: bool = False) -> None:
     build(forecast(write=False), out=site / "index.html", lazy=True)
     if live.LIVE_FILE.exists():
         shutil.copy(live.LIVE_FILE, site / "live.json")
+    try:
+        from . import perche
+        (site / "perche.html").write_text(perche.html(perche.carica()), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print("[perche] scheda non scritta:", str(e)[:80])
     for f in (ROOT / "web").glob("*"):
         shutil.copy(f, site / f.name)
     try:
@@ -619,6 +624,9 @@ def main() -> None:
         print(autoimprove.run().tail(3).to_string(index=False))
     elif cmd == "sito":
         costruisci_sito()
+    elif cmd == "perche":   # Patch 80: «Perché si muove oggi» (settori, aziende, notizie)
+        from . import perche
+        perche.aggiorna()
     elif cmd == "live":
         from . import live
         live.run()

@@ -34,6 +34,12 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m armor live
+      - name: Perché si muove oggi (settori, aziende, notizie)
+        continue-on-error: true
+        timeout-minutes: 5
+        env:
+          PYTHONPATH: src
+        run: python -m armor perche
       - name: Costruisci il sito
         env:
           PYTHONPATH: src

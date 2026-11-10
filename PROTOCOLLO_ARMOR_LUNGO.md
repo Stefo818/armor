@@ -28,3 +28,12 @@ Mercato e dati cambiano nei decenni; i dati economici vengono rivisti (qui si us
 ## Risultato (prima esecuzione, 10/11/2026) — scritto dopo, senza cambiare le regole sopra
 Verdetto: **NON REGGE**. Soglia non superata (1950-1969: AUC 0,58 sul calo ≥10% a 3 mesi; 1970-1989: 0,66; 1990-1999: 0,65). Valore aggiunto sui soli prezzi: +0,03, +0,01, +0,02 (solo 1 periodo su 3 sopra 0,02). Tenuta dal 2000: 0,73 contro 0,73 dell'indice attuale (regola 3 rispettata).
 Lettura: dopo il 2000 l'indice ridotto vale quanto quello completo, e i soli prezzi sono poco sotto: la gran parte del potere predittivo viene dai prezzi. Prima del 2000, e soprattutto nel 1950-1969, l'accuratezza è più bassa. Nessun cambiamento all'indice ufficiale; si ripete il calcolo ogni mese con i dati nuovi.
+
+## Seconda prova: pesi più orientati ai prezzi (scritta il 10/11/2026, prima di eseguirla)
+Domanda: dare più peso ai prezzi migliora l'indice lungo? Tre serie di pesi decise ora, nessun'altra: A = attuali (Paura 22, Credito 18, Tassi 8, Valutazioni 12, Tendenza 12, Economia 6); B = Paura 30, Credito 18, Tassi 6, Valutazioni 6, Tendenza 30, Economia 10; C = Paura 40, Credito 15, Tassi 0, Valutazioni 0, Tendenza 35, Economia 10.
+- Scelta tra B e C **solo sul periodo 1950-1989** (AUC media sui tre eventi). Poi una sola prova sui periodi 1990-1999 e 2000-oggi.
+- La serie scelta diventa «candidata in ombra» solo se, rispetto ad A, migliora l'AUC sul calo ≥10% a 3 mesi di almeno 0,01 **sia** nel 1990-1999 **sia** nel 2000-oggi e non peggiora di più di 0,01 sugli altri due eventi in nessuno dei due periodi. Altrimenti restano i pesi A.
+- Anche se la candidata passa, non cambia nulla nell'indice ufficiale: serve un nuovo protocollo e la revisione ordinaria di novembre 2027.
+
+### Risultato della seconda prova (10/11/2026) — scritto dopo, senza cambiare le regole
+Scelta su 1950-1989: **B** (AUC media leggermente più alta di C). Prova su dati nuovi, calo ≥10% a 3 mesi: 1990-1999 → A 0,646, B 0,621; 2000-oggi → A 0,733, B 0,730. B non migliora A in nessuno dei due periodi (serviva +0,01 in entrambi). **Nessuna candidata: restano i pesi attuali.** Più peso ai prezzi non aiuta: la combinazione attuale è già vicina al massimo ottenibile con questi ingredienti.
