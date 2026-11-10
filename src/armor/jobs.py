@@ -237,6 +237,8 @@ def run_alerts(ctx: dict) -> None:
     try:
         from . import scadenze
         scadenze.notifica()
+        from . import armor_lungo
+        armor_lungo.aggiorna()
     except Exception as e:  # noqa: BLE001
         print("[scadenze] non controllate:", str(e)[:80])
 
@@ -520,6 +522,11 @@ def main() -> None:
         from . import opportunita
         d = opportunita.aggiorna()
         print({"scelte": len(d["ordine"]), "dati_al": d["asof"]})
+    elif cmd == "armor-lungo":   # Patch 79: prova dell'Indice Armor su 1950-oggi (regole in PROTOCOLLO_ARMOR_LUNGO.md)
+        from . import armor_lungo
+        ok = armor_lungo.aggiorna(force=True)
+        d = armor_lungo.carica() if ok else None
+        print("[armor-lungo]", "non calcolato" if not d else f"{d['verdetto']} (soglia {d['regola1']}, valore aggiunto {d['regola2']}, tenuta {d['regola3']})")
     elif cmd == "scadenza-fatta":   # python -m armor scadenza-fatta <id>: segna una verifica come fatta
         from . import scadenze
         print("Segnata come fatta." if len(sys.argv) > 2 and scadenze.segna_fatta(sys.argv[2]) else "Indicare un id valido (es. opp_v2, sem_6m, regime_6m, fondi_6m, brevetti_12m, armor_pesi, armor_evento).")

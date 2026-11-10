@@ -1764,6 +1764,30 @@ def test_scadenze(tmp_path, monkeypatch):
     assert sc._auc(np.array([1, 2, 3, 4.0]), np.array([False, False, True, True])) == 1.0 and sc._auc(np.array([1, 2.0]), np.array([True, True])) is None
 
 
+def test_armor_lungo(tmp_path, monkeypatch):
+    from armor import armor_lungo as al
+    rng = np.random.default_rng(5)
+    idx = pd.bdate_range("1945-01-03", periods=2600)
+    p = pd.Series(100 * np.exp(np.cumsum(rng.normal(0.0003, 0.01, 2600))), index=idx)
+    assert al.episodi(pd.Series([0, 1, 1, 0, 0, 1], dtype=float), gap=1) == 2 and al.episodi(pd.Series([0, 0], dtype=float)) == 0
+    sc = pd.Series(np.arange(300, dtype=float)); yy = pd.Series((np.arange(300) >= 150).astype(float))
+    assert al.auc(sc, yy) == 1.0 and al.auc(sc, yy * 0) is None
+    ev = al.eventi(p)
+    assert set(ev) == set(al.EVENTI) and ev["dd10_63"].iloc[-1] != ev["dd10_63"].iloc[-1]    # ultimi giorni: esito ignoto (NaN)
+    pun = al.punteggi(p, "1946-01-01")
+    assert "rv21" in pun and pun["rv21"].dropna().between(0, 1).all()
+    v = al.verdetto([{"nome": n, "auc": {"dd10_63": {"lungo": l, "prezzi": r, "attuale": a}}} for n, l, r, a in
+                     (("A", .70, .66, None), ("B", .70, .66, None), ("C", .65, .66, None), ("2000-oggi", .73, .70, .72))])
+    assert v["verdetto"] == "REGGE" and al.verdetto([{"nome": n, "auc": {"dd10_63": {"lungo": .55, "prezzi": .5, "attuale": .7}}} for n in ("A", "B", "C", "2000-oggi")])["verdetto"] == "NON REGGE"
+    monkeypatch.setattr(al, "FILE", tmp_path / "al.json")
+    d = {"data": "x", "oggi": 40.0, "periodi": [{"nome": n, "giorni": 100, "episodi": {"dd10_63": 3}, "auc": {"dd10_63": {"lungo": .6, "prezzi": .58, "attuale": .6 if n == "2000-oggi" else None}}}
+                                               for n in ("1950-1969", "1970-1989", "1990-1999", "2000-oggi")],
+         "serie": {"d": [f"{1950 + i}-01-01" for i in range(10)], "i": [30 + i for i in range(10)], "sp": [100 + i for i in range(10)], "dd": [0] * 5 + [-0.3] * 3 + [0] * 2}, **v}
+    al.salva(d)
+    h = al.html(al.carica())
+    assert "passato lontano" in h and "<svg" in h and "Come si legge" in h and al.html(None) == ""
+
+
 def test_mondo_rendimenti_eur_e_filtri():
     from armor import mondo
     idx = pd.bdate_range("2025-01-01", periods=300)
