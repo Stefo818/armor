@@ -17,8 +17,9 @@ import requests
 from .config import DATA
 
 DIR = DATA / "grandi_fondi"
-LISTA_13F = "https://www.sec.gov/dera/data/form-13f"
-LISTA_345 = "https://www.sec.gov/dera/data/form-345"
+LISTE_13F = ["https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets", "https://www.sec.gov/dera/data/form-13f"]
+LISTE_345 = ["https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets", "https://www.sec.gov/dera/data/form-345"]
+LISTA_13F, LISTA_345 = LISTE_13F[0], LISTE_345[0]
 BASE_13F = "https://www.sec.gov/files/structureddata/data/form-13f-data-sets/{y}q{q}_form13f.zip"
 BASE_345 = "https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/{y}q{q}_form345.zip"
 INDICE = "https://www.sec.gov/Archives/edgar/full-index/{y}/QTR{q}/form.idx"
@@ -30,8 +31,15 @@ CUSIP_INDICI = {"78462F103", "464287200", "922908363", "46090E103", "464287655",
 NOME_INDICI = re.compile(r"S&P 500 ETF|SPDR S&P 500|ISHARES CORE S&P 500|VANGUARD S&P 500|INVESCO QQQ|QQQ TRUST|RUSSELL 2000 ETF|SPDR DOW JONES|DIAMONDS", re.I)
 
 
+def pulisci_ua(v: str) -> str:
+    """Il segreto incollato può contenere a capo, spazi iniziali o lettere accentate: nelle intestazioni HTTP non sono ammessi. Si tiene solo testo semplice."""
+    t = str(v or "").encode("ascii", "ignore").decode("ascii")
+    t = "".join(c if 32 <= ord(c) < 127 else " " for c in t)
+    return " ".join(t.split())
+
+
 def ua() -> dict:
-    return {"User-Agent": os.environ.get("SEC_USER_AGENT", "").strip() or "Armor personal research (set SEC_USER_AGENT)", "Accept-Encoding": "gzip, deflate"}
+    return {"User-Agent": pulisci_ua(os.environ.get("SEC_USER_AGENT", "")) or "Armor personal research (set SEC_USER_AGENT)", "Accept-Encoding": "gzip, deflate"}
 
 
 def _get(url: str, stream: bool = False, tries: int = 3, timeout: int = 120):
@@ -43,36 +51,56 @@ def _get(url: str, stream: bool = False, tries: int = 3, timeout: int = 120):
             if r.status_code == 200:
                 return r
             err = f"HTTP {r.status_code}"
+            if r.status_code in (403, 404):   # non esiste (o non è ancora uscito): inutile riprovare
+                break
         except Exception as e:  # noqa: BLE001
             err = str(e)[:80]
         time.sleep(2 + 3 * i)
     raise RuntimeError(f"{url}: {err}")
 
 
-def trova_zip(lista: str, suffisso: str, base: str) -> list[tuple[str, str]]:
-    """[(chiave ordinabile, url)] dei pacchetti disponibili: legge la pagina elenco, altrimenti prova i nomi trimestrali noti."""
+def _finestre_13f(oggi):
+    """Nomi a intervallo di date usati dalla SEC per i 13F dal 2024: 01gen-29feb 2024, poi blocchi di 3 mesi da marzo, giugno, settembre, dicembre."""
+    out = [(pd.Timestamp(2024, 1, 1), pd.Timestamp(2024, 2, 29))]
+    d = pd.Timestamp(2024, 3, 1)
+    while d <= oggi:
+        out.append((d, d + pd.offsets.MonthEnd(3)))
+        d = d + pd.DateOffset(months=3)
+    return out
+
+
+def trova_zip(lista, suffisso: str, base: str, finestre: bool = False) -> list[tuple[str, str]]:
+    """[(chiave ordinabile, url)] dei pacchetti disponibili: legge la pagina elenco (una o più), altrimenti prova i nomi noti."""
     out = {}
-    try:
-        r = _get(lista, timeout=40)
-        for h in re.findall(r'href=["\']([^"\']+' + re.escape(suffisso) + r')["\']', r.text, re.I):
-            u = urljoin(r.url, h)
-            f = u.rsplit("/", 1)[-1].lower()
-            m = re.match(r"(\d{4})q(\d)", f)
-            if m:
-                out[f"{m.group(1)}{m.group(2)}"] = u
-            else:   # nomi a intervallo di date (dal 2024): 01jun2024-31aug2024_form13f.zip
-                m = re.search(r"-(\d{1,2})([a-z]{3})(\d{4})", f)
+    for pagina in ([lista] if isinstance(lista, str) else lista):
+        try:
+            r = _get(pagina, timeout=40)
+            for h in re.findall(r'href=["\']([^"\']+' + re.escape(suffisso) + r')["\']', r.text, re.I):
+                u = urljoin(r.url, h)
+                f = u.rsplit("/", 1)[-1].lower()
+                m = re.match(r"(\d{4})q(\d)", f)
                 if m:
-                    d = pd.to_datetime(f"{m.group(1)} {m.group(2)} {m.group(3)}")
-                    out[f"{d.year}{(d.month - 1) // 3 + 1}x{d.strftime('%m%d')}"] = u
-    except Exception as e:  # noqa: BLE001
-        print(f"[sec] elenco non letto ({str(e)[:70]}): provo i nomi trimestrali noti", flush=True)
+                    out[f"{m.group(1)}{m.group(2)}"] = u
+                else:   # nomi a intervallo di date (dal 2024): 01jun2024-31aug2024_form13f.zip
+                    m = re.search(r"-(\d{1,2})([a-z]{3})(\d{4})", f)
+                    if m:
+                        d = pd.to_datetime(f"{m.group(1)} {m.group(2)} {m.group(3)}")
+                        out[f"{d.year}{(d.month - 1) // 3 + 1}x{d.strftime('%m%d')}"] = u
+            if out:
+                break
+        except Exception as e:  # noqa: BLE001
+            print(f"[sec] elenco {pagina} non letto ({str(e)[:70]})", flush=True)
     if not out:
+        print("[sec] elenco non disponibile: provo i nomi noti", flush=True)
         oggi = pd.Timestamp.now()
-        for y in range(DAL, oggi.year + 1):
+        for y in range(DAL, min(oggi.year, 2023 if finestre else oggi.year) + 1):
             for q in range(1, 5):
                 if pd.Timestamp(y, 3 * q - 2, 1) <= oggi:
                     out[f"{y}{q}"] = base.format(y=y, q=q)
+        if finestre:
+            for a, b in _finestre_13f(oggi):
+                nome = f"{a.day:02d}{a.strftime('%b').lower()}{a.year}-{b.day:02d}{b.strftime('%b').lower()}{b.year}_form13f.zip"
+                out[f"{b.year}{(b.month - 1) // 3 + 1}x{b.strftime('%m%d')}"] = base.rsplit("/", 1)[0] + "/" + nome
     return sorted((k, u) for k, u in out.items() if int(k[:4]) >= DAL)
 
 
@@ -149,7 +177,7 @@ def aggiorna_13f(max_nuovi: int = MAX_NUOVI) -> str:
     f = DIR / "f13_depositanti.csv"
     vecchio = pd.read_csv(f, parse_dates=["periodo", "deposito"]) if f.exists() else pd.DataFrame()
     fatti = set(open(DIR / "f13_fatti.txt").read().split()) if (DIR / "f13_fatti.txt").exists() else set()
-    zip_ = trova_zip(LISTA_13F, "_form13f.zip", BASE_13F)
+    zip_ = trova_zip(LISTE_13F, "_form13f.zip", BASE_13F, finestre=True)
     ultimi = {k for k, _ in zip_[-2:]}   # gli ultimi due si riscaricano sempre (depositi tardivi)
     da_fare = [(k, u) for k, u in zip_ if k not in fatti or k in ultimi][:max_nuovi + 2]
     nuovi = []
@@ -204,7 +232,7 @@ def aggiorna_insider(max_nuovi: int = MAX_NUOVI) -> str:
     f = DIR / "insider_settimane.csv"
     vecchio = pd.read_csv(f, index_col=0, parse_dates=True) if f.exists() else pd.DataFrame(columns=["acquisti", "vendite"])
     fatti = set(open(DIR / "insider_fatti.txt").read().split()) if (DIR / "insider_fatti.txt").exists() else set()
-    zip_ = trova_zip(LISTA_345, "_form345.zip", BASE_345)
+    zip_ = trova_zip(LISTE_345, "_form345.zip", BASE_345)
     ultimi = {k for k, _ in zip_[-1:]}
     nuovi, n = [], 0
     for k, u in zip_:
@@ -286,13 +314,22 @@ def aggiorna_tutto(max_nuovi: int = MAX_NUOVI) -> None:
 
 
 def sonda() -> str:
-    """Esecuzione di prova: mostra elenco, nomi dei file e intestazioni dell'ultimo pacchetto per 13F e insider, e le prime righe di form.idx."""
-    out = []
-    for nome, lista, suff, base in (("13F", LISTA_13F, "_form13f.zip", BASE_13F), ("INSIDER", LISTA_345, "_form345.zip", BASE_345)):
+    """Esecuzione di prova: mostra elenco, nomi dei file e intestazioni dell'ultimo pacchetto disponibile per 13F e insider, e le prime righe di form.idx."""
+    out = [f"intestazione usata: {ua()['User-Agent'][:12]}... ({len(ua()['User-Agent'])} caratteri)"]
+    for nome, lista, suff, base, fin in (("13F", LISTE_13F, "_form13f.zip", BASE_13F, True), ("INSIDER", LISTE_345, "_form345.zip", BASE_345, False)):
         try:
-            zl = trova_zip(lista, suff, base)
+            zl = trova_zip(lista, suff, base, finestre=fin)
             out.append(f"== {nome}: {len(zl)} pacchetti; primo {zl[0]}; ultimo {zl[-1]}")
-            z = zipfile.ZipFile(io.BytesIO(_get(zl[-1][1], stream=True, timeout=300).content))
+            z = None
+            for k, u in reversed(zl[-6:]):
+                try:
+                    z = zipfile.ZipFile(io.BytesIO(_get(u, stream=True, timeout=300).content))
+                    out.append(f"letto il pacchetto {k}")
+                    break
+                except Exception as e:  # noqa: BLE001
+                    out.append(f"pacchetto {k} non disponibile: {str(e)[-60:]}")
+            if z is None:
+                continue
             out.append("file nel pacchetto: " + ", ".join(z.namelist()))
             for n in z.namelist():
                 if n.lower().endswith(".tsv"):
@@ -302,15 +339,21 @@ def sonda() -> str:
         except Exception as e:  # noqa: BLE001
             out.append(f"== {nome}: ERRORE {str(e)[:300]}")
     try:
-        r = _get(INDICE.format(y=pd.Timestamp.now().year - 1, q=4), stream=True, timeout=120)
-        n13 = 0
-        for i, ln in enumerate(r.iter_lines()):
-            t = ln.decode("latin-1")
-            if i < 12 or ("13D" in t and n13 < 4):
-                out.append(t[:160])
-                n13 += ("13D" in t)
-            if i > 400000:
-                break
+        for y, q in ((pd.Timestamp.now().year, 3), (pd.Timestamp.now().year - 1, 4)):
+            try:
+                r = _get(INDICE.format(y=y, q=q), stream=True, timeout=120)
+            except Exception as e:  # noqa: BLE001
+                out.append(f"form.idx {y} T{q}: {str(e)[-60:]}")
+                continue
+            n13 = 0
+            for i, ln in enumerate(r.iter_lines()):
+                t = ln.decode("latin-1")
+                if i < 12 or ("13D" in t and n13 < 4):
+                    out.append(t[:160])
+                    n13 += ("13D" in t)
+                if i > 400000:
+                    break
+            break
     except Exception as e:  # noqa: BLE001
         out.append(f"== form.idx: ERRORE {str(e)[:300]}")
     txt = "\n".join(out)

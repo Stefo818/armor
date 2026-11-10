@@ -3,7 +3,7 @@
   - curva_vix: VIX3M / VIX (sotto 1 = la paura di oggi supera quella futura); atteso: valori BASSI = più cali;
   - accelerazione_paura: variazione del VIX in 10 sedute; atteso: valori ALTI = più cali;
   - distanza_media50: distanza del prezzo dalla media a 50 sedute (deterioramento di breve); atteso: valori BASSI = più cali.
-CMF (flusso di denaro) non è provato: richiede i volumi dell'S&P 500, che l'app non scarica.
+  - cmf: flusso di denaro di Chaikin a 21 sedute (serve il volume dell'S&P 500, scaricato da ^GSPC); atteso: valori BASSI = più cali.
 Con 3 indicatori e 2 direzioni (6 test) un caso fortunato è possibile: un indicatore «dimostrato» passa prima a 12 mesi di prova in ombra."""
 import json
 
@@ -18,15 +18,29 @@ CAND = {
     "curva_vix": ("Curva del VIX (paura a 3 mesi su paura a 1 mese)", "basso"),
     "accelerazione_paura": ("Accelerazione della paura (VIX rispetto a 10 sedute fa)", "alto"),
     "distanza_media50": ("Distanza del prezzo dalla media a 50 sedute", "basso"),
+    "cmf": ("Flusso di denaro (CMF a 21 sedute: chiude vicino ai massimi con volumi alti = denaro che entra)", "basso"),
 }
 
 
-def serie(p: pd.Series, vix: pd.Series, vix3m: pd.Series) -> dict[str, pd.Series]:
+def cmf(p: pd.Series, alto: pd.Series, basso: pd.Series, vol: pd.Series, n: int = 21) -> pd.Series:
+    """Chaikin Money Flow: somma del (posizione della chiusura nel range del giorno, da -1 a +1) per il volume, divisa per i volumi."""
+    d = pd.DataFrame({"c": p, "h": alto, "l": basso, "v": vol}).dropna()
+    rng = (d["h"] - d["l"]).replace(0, np.nan)
+    mfm = (((d["c"] - d["l"]) - (d["h"] - d["c"])) / rng).clip(-1, 1)
+    return ((mfm * d["v"]).rolling(n).sum() / d["v"].rolling(n).sum()).dropna()
+
+
+def serie(p: pd.Series, vix: pd.Series, vix3m: pd.Series, ohlcv: tuple | None = None) -> dict[str, pd.Series]:
     v = vix.reindex(p.index, method="ffill")
     v3 = vix3m.reindex(p.index, method="ffill")
-    return {"curva_vix": (v3 / v).where(v3.notna() & v.notna()).dropna(),
-            "accelerazione_paura": (v / v.shift(10) - 1).dropna(),
-            "distanza_media50": (p / p.rolling(50).mean() - 1).dropna()}
+    out = {"curva_vix": (v3 / v).where(v3.notna() & v.notna()).dropna(),
+           "accelerazione_paura": (v / v.shift(10) - 1).dropna(),
+           "distanza_media50": (p / p.rolling(50).mean() - 1).dropna()}
+    if ohlcv is not None:
+        c = cmf(p, *ohlcv)
+        if len(c) > 600:
+            out["cmf"] = c
+    return out
 
 
 def run(p: pd.Series | None = None) -> dict:
@@ -34,7 +48,12 @@ def run(p: pd.Series | None = None) -> dict:
     from .features import closed_sp500
     p = closed_sp500() if p is None else p
     out = {"data": str(p.index[-1].date()), "indicatori": {}}
-    for k, s in serie(p, store.load("vix"), store.load("vix3m")).items():
+    try:   # il volume arriva dal download di ^GSPC (sp_vol); senza, il CMF non si calcola
+        oh = tuple(store.load(k) for k in ("sp_high", "sp_low", "sp_vol"))
+        oh = oh if all(len(x) > 1000 for x in oh) else None
+    except Exception:  # noqa: BLE001
+        oh = None
+    for k, s in serie(p, store.load("vix"), store.load("vix3m"), oh).items():
         nome, atteso = CAND[k]
         pct = g.percentile_mobile(s, 1260, 504)
         pg = pct.reindex(p.index)   # dati di mercato di fine giornata: usati dalla seduta successiva
@@ -66,5 +85,5 @@ def html() -> str:
         verd = "Sì, in entrambe le metà della storia" if v.startswith("dimostrato") else ("Non dimostrato" if v == "nessun segnale dimostrato" else "Dati insufficienti")
         pct = x.get("percentile")
         out.append(f"<tr><td>{e(x['nome'])}</td><td>{'n.d.' if pct is None else f'{pct:.0f}° percentile'} ({e(x['stato'])})</td><td>{e(verd)}</td></tr>")
-    out.append("</table></div><p class='mu'>Il flusso di denaro (CMF) non è provato: servirebbero i volumi dell'S&amp;P 500, che l'app non scarica.</p>")
+    out.append("</table></div><p class='mu'>Il flusso di denaro (CMF) compare qui appena è stato scaricato il volume dell'S&amp;P 500 (primo «Aggiornamento giornaliero» dopo questa versione).</p>")
     return "".join(out)

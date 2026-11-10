@@ -147,11 +147,11 @@ def fetch_yf(sid: str, start: str | None) -> pd.Series:
     raise RuntimeError(last or "errore")
 
 
-OHLC_IDS = {"sp_open": "Open", "sp_high": "High", "sp_low": "Low"}   # ^GSPC dal 1990 (PIANO_ARMOR3 Fase 6a: stimatore Yang-Zhang)
+OHLC_IDS = {"sp_open": "Open", "sp_high": "High", "sp_low": "Low", "sp_vol": "Volume"}   # ^GSPC dal 1990 (PIANO_ARMOR3 Fase 6a: stimatore Yang-Zhang)
 
 
 def fetch_sp_ohlc(start: str = "1990-01-01") -> dict[str, pd.Series]:
-    """Apertura, massimo e minimo di ^GSPC (la chiusura è già nella serie sp500)."""
+    """Apertura, massimo, minimo e volume di ^GSPC (la chiusura è già nella serie sp500). Il volume serve al flusso di denaro (CMF)."""
     import yfinance as yf
 
     last = None

@@ -2260,7 +2260,7 @@ def test_candidati_e_semaforo_mercati():
     p = pd.Series(100 * np.exp(np.cumsum(rng.normal(0.0003, 0.01, len(idx)))), index=idx)
     v = pd.Series(20 + rng.normal(0, 2, len(idx)), index=idx)
     s = candidati.serie(p, v, v * 1.1)
-    assert set(s) == set(candidati.CAND) and abs(s["curva_vix"].iloc[-1] - 1.1) < 1e-9
+    assert set(s) == set(candidati.CAND) - {"cmf"} and abs(s["curva_vix"].iloc[-1] - 1.1) < 1e-9
     # tabella dei colori: un modello che «conosce» il futuro deve dare colori in ordine
     from armor import modeleval
     dates = idx[::10][100:]
@@ -2295,3 +2295,23 @@ def test_super_armor_index():
     st = pd.DataFrame({"sai": [30.0, 40.0]}, index=pd.to_datetime(["2026-10-01", "2026-11-05"]))
     cf = s.confronti({"data": "2026-11-06", "sai": 50.0}, st)
     assert cf["ieri"]["delta"] == 10.0 and cf["mese"]["sai"] == 30.0
+
+
+def test_sec_intestazione_pulita_e_finestre_13f_e_cmf():
+    import numpy as np, pandas as pd
+    from armor import sec_dati as s, candidati
+    assert s.pulisci_ua(" Mario  Rossi\n\t mario@email.it\n") == "Mario Rossi mario@email.it"
+    assert s.pulisci_ua("Perché è così") == "Perch cos"          # niente lettere accentate nelle intestazioni
+    assert s.pulisci_ua("") == "" and s.pulisci_ua(None) == ""
+    f = s._finestre_13f(pd.Timestamp("2025-12-15"))
+    assert f[0][1] == pd.Timestamp("2024-02-29") and f[1] == (pd.Timestamp("2024-03-01"), pd.Timestamp("2024-05-31"))
+    assert f[-1][0] == pd.Timestamp("2025-12-01")
+    idx = pd.bdate_range("2020-01-01", periods=800)
+    rng = np.random.default_rng(3)
+    c = pd.Series(100 + np.cumsum(rng.normal(0, 1, len(idx))), index=idx)
+    h, lo, v = c + 1, c - 1, pd.Series(1e6, index=idx)
+    pieno = candidati.cmf(c, c + 0.01, c - 1, v)     # chiude sempre al massimo: denaro che entra
+    assert pieno.dropna().min() > 0.9
+    vuoto = candidati.cmf(c, c + 1, c - 0.01, v)     # chiude sempre al minimo: denaro che esce
+    assert vuoto.dropna().max() < -0.9
+    assert "cmf" in candidati.serie(c, pd.Series(20.0, index=idx), pd.Series(22.0, index=idx), (h, lo, v))

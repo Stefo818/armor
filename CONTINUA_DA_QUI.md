@@ -663,3 +663,8 @@ Marchio come icona (manifest, apple-touch-icon, `?v=2` per rompere la cache).
 ## Patch 64 (Super Armor Index in «Oggi»)
 `super_armor.py`: numero 1-100 (100 = mercato pericoloso) da 5 pilastri con pesi fissi: previsione 30 · Indice Armor 25 · economia reale 25 (8 serie con ritardi di pubblicazione) · paura e opzioni 20 · grandi fondi 0 (10 se superano la prova). Fasce 25/40/55/70. Blocco compatto in cima a Oggi (gauge, 5 anelli, frase che si espande, storico con ieri/settimana/mese e frecce, tabella di affidabilità). Storia ricostruita dal 2000 in `data/super_armor_storia.csv` (poi registrata ogni giorno da `jobs.tutto`), `data/super_armor_prev_storia.csv` (rapporti dei modelli dal 1990), prova in `data/super_armor_prova.json` (rifatta col comando `taratura`).
 Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% dei casi, dopo «Sano» 9%); capacità di distinguere ≈0,69-0,70, come il miglior singolo pilastro (Indice Armor 0,70-0,72), non migliore. Economia reale: utile per la salute di fondo, quasi nulla per i cali di breve dal 2013.
+
+## Patch 65 (correzioni SEC e CMF)
+- `sec_dati.pulisci_ua`: il segreto SEC_USER_AGENT incollato con a capo/accenti rompeva le richieste («Invalid leading whitespace»); ora si pulisce da solo. 404/403 non si riprovano; elenco pagine SEC con 2 indirizzi e, se manca, nomi noti (trimestrali fino al 2023, a intervallo di date dal 2024); sonda prova i 6 pacchetti più recenti.
+- Workflow `grandi_fondi.yml`: 6 giri da 10 pacchetti per fonte (salva dopo ogni giro) con limite 150 minuti sul passo, per la storia completa in una sola esecuzione.
+- `sources.OHLC_IDS` include `sp_vol` (volume ^GSPC), `candidati.cmf` (flusso di denaro di Chaikin a 21 sedute).
