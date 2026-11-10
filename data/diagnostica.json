@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-10T13:43:45Z",
+ "data_utc": "2026-11-10T14:30:30Z",
  "oggi": "2026-11-10",
  "ultima_previsione": "2026-11-09",
  "giorni_da_ultima": 1,
@@ -239,8 +239,8 @@
   {
    "nome": "cpi",
    "chiave": false,
-   "ultima_data": "2026-09-01",
-   "giorni_ritardo": 70,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 40,
    "stato": "ok"
   },
   {
@@ -260,8 +260,8 @@
   {
    "nome": "cpi_yoy",
    "chiave": false,
-   "ultima_data": "2026-09-01",
-   "giorni_ritardo": 70,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 40,
    "stato": "ok"
   },
   {
@@ -393,8 +393,8 @@
   {
    "nome": "epu",
    "chiave": false,
-   "ultima_data": "2026-11-08",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -561,8 +561,8 @@
   {
    "nome": "infl_acc",
    "chiave": false,
-   "ultima_data": "2026-09-01",
-   "giorni_ritardo": 70,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 40,
    "stato": "ok"
   },
   {
@@ -1078,6 +1078,13 @@
   },
   {
    "nome": "sp_open",
+   "chiave": false,
+   "ultima_data": "2026-11-09",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "sp_vol",
    "chiave": false,
    "ultima_data": "2026-11-09",
    "giorni_ritardo": 1,
