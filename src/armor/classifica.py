@@ -166,10 +166,12 @@ def dal_vivo(sp: pd.Series | None = None) -> dict:
     return {m: {"n": e["n"], "bss": (1 - e["err"] / e["err_b"]) if e["err_b"] > 0 else None} for m, e in res.items()}
 
 
-def _stato(m: str, in_uso: str = "A1") -> str:
+def _stato(m: str, in_uso: str = "FHS+VIX") -> str:
     if m == in_uso:
-        return "in uso"
-    if m in ("FHS+VIX", "V1T1"):
+        return "riferimento"
+    if m == "A1":
+        return "seconda opinione"
+    if m == "V1T1":
         return "sfidante"
     if m in ("A1 + Platt", "A1 + isotonica", "FHS+VIX + Platt", "FHS+VIX + isotonica", "Combinato-Tarato", "Media A1 e FHS+VIX"):
         return "in prova"
@@ -266,5 +268,5 @@ def html() -> str:
     note = ("<div class='explain'><p><b>Come leggere il voto.</b> 50 vuol dire «come usare la frequenza storica», senza alcuna abilità. Sopra 50 il modello ha sbagliato meno, sotto 50 più. "
             "Si basa su quanto l'errore sulle probabilità di calo è più piccolo di quello della frequenza storica (media sui 4 orizzonti, metà sull'intera storia e metà dal 2013). "
             "Man mano che le previsioni reali scadono, il loro risultato pesa di più. I margini sono larghi: due modelli a pochi punti di distanza non sono distinguibili. "
-            "<b>La classifica non cambia da sola il modello in uso</b>: serve la regola scritta in PROTOCOLLO_TARATURA.md. I modelli «tarati» non l'hanno superata, quindi i numeri restano non corretti.</p></div>")
+            "<b>La classifica non cambia da sola il modello di riferimento (FHS+VIX)</b>: serve la regola scritta in PROTOCOLLO_MODELLI.md (revisione ogni novembre). I modelli «tarati» non l'hanno superata, quindi i numeri restano non corretti.</p></div>")
     return note + "".join(out)

@@ -220,6 +220,8 @@ def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=pri
         f = ftgt(preds["FHS"])
         f = f[f.thr.isin([PRIMARY[h] for h in HORIZONS]) | f.thr.isin([5, 10])]
         f.assign(date=f["date"].dt.strftime("%Y-%m-%d")).to_csv(FHS_CSV, index=False, float_format="%.4f")
+        from . import modelli_finestre   # vincitori per settimana/mese/trimestre/semestre (pagina Modelli)
+        modelli_finestre.salva(modelli_finestre.calcola(p, preds))
     except Exception as e:  # noqa: BLE001
         log("[valuta] salvataggio non riuscito: " + str(e)[:80])
     return res

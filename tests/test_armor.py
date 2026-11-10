@@ -1792,22 +1792,60 @@ def test_perche_si_muove():
     from datetime import datetime, timezone
     from armor import perche as pc
     v = {"XLK": -0.018, "XLF": -0.004, "XLC": -0.011, "XLY": -0.009, "XLV": 0.003, "XLE": 0.007, "NVDA": -0.032, "AAPL": -0.011, "MSFT": -0.014,
+         "IXN": -0.016, "IXG": 0.001, "IXC": 0.006, "TSM": -0.02,
          "^GDAXI": -0.004, "^N225": -0.011, "^HSI": -0.006, "EURUSD=X": 0.002}
     q = {"sp500": {"chg": -0.009, "open": True}, "vwce": {"chg": -0.0037}}
     ora = datetime(2026, 11, 10, 18, 8, tzinfo=timezone.utc)
-    fr = [{"title": "Nvidia slips on chip worries", "source": "Reuters", "time": "2026-11-10T17:40:00Z", "link": "http://x", "ticker": "NVDA"}]
+    fr = {"sp": [{"title": "Nvidia slips on chip worries", "source": "Reuters", "time": "2026-11-10T17:40:00Z", "link": "http://x", "ticker": "NVDA"}], "vw": []}
     ar = [{"title": "Stocks slide as Fed warns", "source": "CNBC", "time": "2026-11-10T14:00:00Z", "kind": "macro", "themes": ["Banche centrali e tassi"], "sent": -0.7, "score": 2.3, "link": "http://y"},
           {"title": "Vecchia notizia", "source": "X", "time": "2026-11-01T14:00:00Z", "kind": "macro", "themes": [], "sent": -0.9, "score": 9, "link": "http://z"}]
     d = pc.costruisci(v, fr, q, ar, ora)
     assert d["ok"] and d["sp"]["settori"][0]["n"] == "Tecnologia" and d["sp"]["su"] == 2
     assert pc.titolo_sp(d["sp"]).startswith("Pesano Tecnologia") and "Regge" in pc.titolo_sp(d["sp"])
-    assert any(x["n"] == "Euro/dollaro" and x["contr"] < 0 for x in d["vwce"]["parti"]) and pc.titolo_vwce(d["vwce"]).startswith("Scende")
-    assert [x["tag"] for x in d["notizie"]][0] == "NVDA" and all("Vecchia" not in x["titolo"] for x in d["notizie"]) and len(d["notizie"]) == 2
+    # per entrambi gli indici: settori, aree del mondo, aziende e notizie
+    for k in ("sp", "vwce"):
+        assert d[k]["settori"] and d[k]["aree"] and d[k]["aziende"] and "notizie" in d[k]
+    assert any(x["n"] == "Euro/dollaro" and x["contr"] < 0 for x in d["vwce"]["aree"]) and pc.titolo_vwce(d["vwce"]).startswith("Scende")
+    assert all(x["n"] != "USA" for x in d["sp"]["aree"])
+    assert d["sp"]["notizie"][0]["tag"] == "NVDA" and all("Vecchia" not in x["titolo"] for x in d["sp"]["notizie"])
     h = pc.html(d, ora)
-    assert "Perché si muove oggi" in h and "19:08" in h and "Notizie in corso" in h and "S&amp;P 500" in h
-    flat = pc.costruisci({**v, "XLK": 0.0005}, [], {"sp500": {"chg": 0.0004}, "vwce": {"chg": 0.0}}, [], ora)
+    assert "Perché si muove oggi" in h and "19:08" in h and "Notizie in corso" in h and "S&amp;P 500" in h and "VWCE" in h
+    assert h.count("class='pc-panel'") == 2 and "data-t='vw'" in h and "Aree del mondo" in h
+    flat = pc.costruisci({**v, "XLK": 0.0005}, {"sp": [], "vw": []}, {"sp500": {"chg": 0.0004}, "vwce": {"chg": 0.0}}, [], ora)
     assert pc.titolo_sp(flat["sp"]).startswith("Giornata piatta") and pc.titolo_vwce(flat["vwce"]).startswith("Quasi fermo")
     assert "non disponibile" in pc.html(None)
+
+
+def test_modelli_pagina_e_regola_revisione():
+    from armor import modelli_ui as mu
+    from armor import modelli_finestre as mf
+    h = mu.html()
+    assert "FHS+VIX" in h and "Regola decisa in anticipo" in h and "Affidabilità" in h and "id='mdroot'" in h and "Come è calcolato ogni modello" in h
+    assert mu.etichetta({"lo": 0.02, "b3": 0.05})[0] == "Buona" and mu.etichetta({"lo": 0.01, "b3": 0.02})[0] == "Modesta" and mu.etichetta({"lo": -0.01, "b3": 0.05})[0] == "Non dimostrata"
+    # regola annuale: lo sfidante deve stare sopra a OGNI fine mese
+    mesi = pd.period_range("2026-01", periods=12, freq="M")
+    righe = []
+    for i, m in enumerate(mesi):
+        dt = str(m.end_time.date())
+        righe += [{"data": dt, "modello": "FHS+VIX", "voto": 60}, {"data": dt, "modello": "A1", "voto": 70 if i != 5 else 59}, {"data": dt, "modello": "X", "voto": 65}]
+    r = mu.revisione(pd.DataFrame(righe))
+    assert r["mesi"] == 12 and r["sfidanti"]["A1"]["sopra"] == 11 and r["cambia"] == "X"
+    assert mu.revisione(pd.DataFrame(righe[:12]))["cambia"] is None and mu.revisione(None)["cambia"] is None
+    # finestre: vincitori con pareggio entro l'1%
+    idx = pd.bdate_range("2020-01-01", periods=40)
+    e = pd.DataFrame({"Normale": 0.10, "A1": 0.0805, "FHS": 0.08, "FHS+VIX": 0.07}, index=idx)
+    assert (mf.vincitori(e, "mese")["vince"] == "FHS+VIX").all()
+    e["FHS+VIX"] = 0.0801
+    assert (mf.vincitori(e, "mese")["vince"] == "Pari").all()
+
+
+def test_scadenza_modelli_annuale():
+    from datetime import date
+    from armor import scadenze
+    el = {x["id"]: x for x in scadenze.elenco(date(2026, 11, 10), stato={}, live={"giorni": 0, "eventi": 0, "auc": None})}
+    assert el["modelli_annuale"]["scadenza"] == date(2027, 11, 10) and el["modelli_annuale"]["stato"] == "raccolta"
+    el2 = {x["id"]: x for x in scadenze.elenco(date(2027, 11, 5), stato={}, live={"giorni": 0, "eventi": 0, "auc": None})}
+    assert el2["modelli_annuale"]["stato"] == "in_arrivo"
 
 
 def test_armor_lungo_pesi_ripristinati():
@@ -2115,7 +2153,7 @@ def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
 
 def test_navigazione_copre_tutte_le_pagine():
     from armor import navigazione
-    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "fondi", "valutazioni", "aziende", "macro", "grafici", "previsioni", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi", "verifiche"]
+    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "fondi", "valutazioni", "aziende", "macro", "grafici", "previsioni", "modelli", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi", "verifiche"]
     coperte = [p for _g, _l, ps, _i in navigazione.GRUPPI for p in ps]
     assert set(coperte) == set(pagine)
     assert [p for p in set(coperte) if coperte.count(p) > 1] == ["notizie"] or sorted(p for p in set(coperte) if coperte.count(p) > 1) == ["calendario", "notizie"]
@@ -2720,3 +2758,9 @@ def test_previsione_ui_spiega_in_semplice():
                         "a1_prima": 0.8, "a1": 0.7, "fhs_prima": 1.58, "fhs": 1.4})
     assert "Rischio di un calo di Borsa oggi" in h and "sceso del 12%" in h and "OGGI" in h and "16% – 28%" in h
     assert "non ancora disponibile" in pu.html(o, t, None) and "compare al prossimo" in pu.html(None, None)
+
+
+def test_guida_indici():
+    from armor import guida_indici as gi
+    h = gi.html()
+    assert "Nuovo qui?" in h and "Indice Armor" in h and "Super Armor Index" in h and "30%" in h and "22%" in h and "non sono consigli" in h.lower()

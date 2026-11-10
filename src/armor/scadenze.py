@@ -126,6 +126,11 @@ def elenco(oggi: date | None = None, sp: pd.Series | None = None, stato: dict | 
     add("armor_pesi", "Indice Armor: revisione dei pesi", PROT, PROT + timedelta(days=365),
         "Se i pesi delle 8 famiglie si possono migliorare con i dati nuovi.",
         "PROTOCOLLO_INDICE_ARMOR.md: si cambiano solo se nel periodo dal vivo c'è stato almeno un calo del 10% e la prova su dati separati migliora di 0,02. Altrimenti rinvio di 6 mesi.", ex)
+    # Modelli: revisione annuale del riferimento (PROTOCOLLO_MODELLI.md)
+    add("modelli_annuale", "Modelli: revisione annuale del riferimento", date(2026, 11, 10), date(2027, 11, 10),
+        "Se un altro modello merita di sostituire FHS+VIX come riferimento, e come migliorare i modelli con un anno di dati nuovi.",
+        "PROTOCOLLO_MODELLI.md: il riferimento cambia solo se un altro modello ha il voto cumulativo più alto del riferimento a OGNI fine mese dell'ultimo anno (12 controlli). Altrimenti resta FHS+VIX. Ripetuta ogni novembre.",
+        "Lo stato dei 12 controlli mensili è nella pagina Modelli.")
     # Evento: primo calo ≥10%
     calo = st.get("calo")
     if calo:
