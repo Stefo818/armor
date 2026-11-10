@@ -2419,6 +2419,19 @@ def test_variazione_rapporto(tmp_path, monkeypatch):
     f.write_text("data,grezzo,mostrato,r_a1,r_fhs\n2026-11-05,Giallo,Giallo,1.0,1.0\n2026-11-06,Giallo,Giallo,1.2,1.4\n", encoding="utf-8")
     v = sr.variazione()
     assert abs(v["d_medio"] - 0.3) < 1e-9 and "in aumento" in sr.variazione_html()
+    # con i valori di oggi (non arrotondati) si confronta con l'ultimo giorno precedente
+    v2 = sr.variazione({"data": "2026-11-07", "r_a1": 1.5, "r_fhs": 1.1})
+    assert v2["da"] == "2026-11-06" and abs(v2["medio_prima"] - 1.3) < 1e-9 and abs(v2["medio"] - 1.3) < 1e-9
+    assert sr.variazione({"data": "2026-11-05", "r_a1": 1.0, "r_fhs": 1.0}) is None
+
+
+def test_previsione_ui_chiara():
+    from armor import previsione_ui as pu
+    o = {"r_a1": 0.7, "r_fhs": 1.4, "grezzo": "Grigio", "mostrato": "Grigio", "data": "2026-11-07",
+         "p": {"1m_5": {"A1": 0.17, "FHS+VIX": 0.31, "normale": 0.19}, "3m_10": {"A1": 0.08, "FHS+VIX": 0.24, "normale": 0.15}}}
+    v = {"da": "2026-11-06", "a": "2026-11-07", "medio": 1.05, "medio_prima": 1.18, "d_medio": -0.13, "p_medio": -11.0, "a1_prima": 0.8, "a1": 0.7, "fhs_prima": 1.56, "fhs": 1.4}
+    h = pu.html(o, None, v)
+    assert "Media dei due" in h and "1,18× → <b>1,05×" in h and "GJR-GARCH" in h and "regressione logistica" in h and "17% – 31%" in h
 
 
 def test_eventi_esiti(tmp_path, monkeypatch):
@@ -2596,6 +2609,7 @@ def test_previsione_ui_spiega_in_semplice():
     o = {"r_a1": 0.7, "r_fhs": 1.4, "grezzo": "Grigio", "mostrato": "Grigio",
          "p": {"1m_5": {"A1": 0.16, "FHS+VIX": 0.28, "normale": 0.19}, "3m_10": {"A1": 0.07, "FHS+VIX": 0.21, "normale": 0.15}}}
     t = {"da": "1990-01-01", "righe": [{"colore": c, "n": 500, "quota": 0.2, "1m_5": {"freq": f, "freq_tutte": 0.17}, "3m_10": {"freq": f, "freq_tutte": 0.14}} for c, f in (("Verde", .1), ("Rosso", .4), ("Grigio", .15))]}
-    h = pu.html(o, t, {"da": "2026-11-06", "a": "2026-11-09", "medio": 1.05, "d_medio": -0.14, "p_medio": -12.0})
-    assert "Quanto è probabile un calo di Borsa" in h and "sceso del 12%" in h and "OGGI" in h and "tra il <b>16%</b> e il <b>28%</b>" in h
+    h = pu.html(o, t, {"da": "2026-11-06", "a": "2026-11-09", "medio": 1.05, "medio_prima": 1.19, "d_medio": -0.14, "p_medio": -12.0,
+                        "a1_prima": 0.8, "a1": 0.7, "fhs_prima": 1.58, "fhs": 1.4})
+    assert "Rischio di un calo di Borsa oggi" in h and "sceso del 12%" in h and "OGGI" in h and "16% – 28%" in h
     assert "non ancora disponibile" in pu.html(o, t, None) and "compare al prossimo" in pu.html(None, None)

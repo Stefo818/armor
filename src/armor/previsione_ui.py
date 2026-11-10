@@ -113,34 +113,59 @@ def html(o: dict | None, t: dict | None, variazione: dict | None = None) -> str:
     disaccordo = o.get("grezzo") == "Grigio"
     # 1) la risposta subito
     if x:
-        testa = (f"<div class='pv-top' style='border-left-color:{COL[mostrato]}'><div class='pv-q'>Quanto è probabile un calo di Borsa?</div>"
-                 f"<div class='pv-a'>Oggi i due modelli stimano tra il <b>{lo * 100:.0f}%</b> e il <b>{hi * 100:.0f}%</b> di probabilità che l'S&amp;P 500 (le 500 maggiori aziende americane) "
-                 f"perda almeno il 5% entro un mese. <b>Di solito è il {nor * 100:.0f}%.</b></div>")
-        testa += (f"<div class='pv-v'>{('Uno dei due modelli vede più calma, l’altro più tensione: per questo il semaforo è <b>Grigio</b> e il numero va letto con cautela.' if disaccordo else 'I due modelli sono abbastanza d’accordo: oggi il semaforo è <b>' + E(mostrato) + '</b>.')}</div></div>")
+        titolo = {"Verde": "più basso del solito", "Giallo": "nella norma", "Arancione": "più alto del solito", "Rosso": "molto più alto del solito",
+                  "Grigio": "incerto: i due modelli non sono d'accordo"}[mostrato]
+        sub = ("Uno dei due modelli vede più calma, l’altro più tensione: il numero va letto con cautela." if disaccordo
+               else "I due modelli sono abbastanza d’accordo.")
+        testa = (f"<div class='pv-top' style='border-color:{COL[mostrato]}'><div class='pv-q'>Rischio di un calo di Borsa oggi</div>"
+                 f"<div class='pv-hl'><i style='background:{COL[mostrato]}'></i><span>{E(titolo.capitalize())}</span></div>"
+                 f"<div class='pv-tiles'><div><small>Stima dei due modelli</small><b>{lo * 100:.0f}% – {hi * 100:.0f}%</b></div>"
+                 f"<div><small>Di solito</small><b>{nor * 100:.0f}%</b></div></div>"
+                 f"<div class='pv-a'>È la probabilità che l'S&amp;P 500 (le 500 maggiori aziende americane) perda <b>almeno il 5% entro 1 mese</b>.</div>"
+                 f"<div class='pv-v'>{sub} Semaforo: <b>{E(mostrato)}</b>.</div></div>")
     else:
         testa = ""
-    # 2) variazione
-    var = ""
-    if variazione:
-        sale = variazione["d_medio"] > 0.005
-        scende = variazione["d_medio"] < -0.005
-        prima = variazione["medio"] - variazione["d_medio"]
+    # 2) variazione: ogni modello e la media
+    def riga_var(nome, col, prima, ora, media=False):
+        d = ora - prima
+        sale, scende = d > 0.005, d < -0.005
+        simb = "▲" if sale else "▼" if scende else "="
+        cf = "hsl(0,75%,55%)" if sale else "hsl(125,60%,45%)" if scende else "var(--mu)"
+        return (f"<div class='pv-vr{' pv-vm' if media else ''}'><span class='pv-vn'><i style='background:{col}'></i>{nome}</span>"
+                f"<span class='pv-vv'>{_n(prima, 2)}× → <b>{_n(ora, 2)}×</b></span><span class='pv-vs' style='color:{cf}'>{simb}</span></div>")
+    if variazione and all(k in variazione for k in ("a1_prima", "a1", "fhs_prima", "fhs", "medio_prima", "medio", "d_medio", "da")):
         pm = variazione.get("p_medio")
-        quanto = f" del {abs(pm):.0f}%".replace(".", ",") if pm is not None and (sale or scende) else ""
-        colf = "hsl(0,75%,55%)" if sale else "hsl(125,60%,45%)" if scende else "var(--mu)"
-        verbo = "salito" if sale else "sceso" if scende else "invariato"
-        simbolo = "▲" if sale else "▼" if scende else "="
-        var = (f"<div class='pv-var'><span class='pv-ar' style='color:{colf}'>{simbolo}</span>"
-               f"<div><b>Rispetto a ieri ({variazione['da'][8:]}/{variazione['da'][5:7]}):</b> il rischio stimato è {verbo}{quanto}"
-               f" (da {_n(prima, 2)}× a {_n(variazione['medio'], 2)}× il solito).</div></div>")
+        sale, scende = variazione["d_medio"] > 0.005, variazione["d_medio"] < -0.005
+        verbo = "salito" if sale else "sceso" if scende else "rimasto uguale"
+        quanto = f" del {abs(pm):.0f}%" if pm is not None and (sale or scende) else ""
+        giorno = f"{variazione['da'][8:]}/{variazione['da'][5:7]}"
+        var = ("<h4 class='pv-h4'>Cosa è cambiato rispetto a ieri</h4><div class='pv-varb'>"
+               f"<div class='pv-vh'><span></span><span>{giorno} → oggi</span><span></span></div>"
+               + riga_var("Modello base", BASE_C, variazione["a1_prima"], variazione["a1"])
+               + riga_var("Modello con la paura", PAURA_C, variazione["fhs_prima"], variazione["fhs"])
+               + riga_var("Media dei due", "var(--tx)", variazione["medio_prima"], variazione["medio"], True) + "</div>"
+               f"<p class='pv-t2'>Ogni numero dice <b>quante volte il rischio di calo è più alto del solito</b> (1× = normale). "
+               f"La <b>media dei due modelli</b> è il numero che decide il colore del semaforo: rispetto all'ultimo giorno registrato ({giorno}) è {verbo}{quanto}.</p>")
     else:
-        var = "<div class='pv-var'><span class='pv-ar'>·</span><div><b>Rispetto a ieri:</b> non ancora disponibile. Il confronto compare dal secondo giorno registrato.</div></div>"
-    # 3) le due stime
+        var = "<p class='pv-t2'><b>Rispetto a ieri:</b> non ancora disponibile. Il confronto compare dal secondo giorno registrato.</p>"
+    # 3) le due stime + info
+    info = ("<details class='pv-info'><summary><i>i</i> Come funzionano i due modelli, nel dettaglio</summary><div>"
+            "<p><b>Il numero «×».</b> Ogni modello stima la probabilità di due cali: almeno −5% entro 1 mese e almeno −10% entro 3 mesi. Ogni stima si divide per la probabilità «normale» "
+            "(quante volte, in passato, quel calo è davvero arrivato, contando solo i casi già conclusi a quella data). Si fa la media dei due periodi: ecco il «×» del modello. "
+            "Poi si fa la media dei due modelli: quella decide il colore.</p>"
+            f"<p><b><i style='background:{BASE_C}' class='pv-d'></i>Modello base</b> (nome tecnico: A1, regressione logistica). Una formula statistica imparata dalla storia dell'S&amp;P 500 dal 1928. "
+            "Guarda 8 misure ricavate solo dal prezzo: l'agitazione del mercato nell'ultimo mese e negli ultimi 3 mesi (e il loro rapporto), quanto il prezzo è sotto il massimo dell'ultimo anno, "
+            "quanto è sopra o sotto la media degli ultimi 200 giorni, il rapporto tra le medie a 50 e 200 giorni, l'andamento degli ultimi 3 mesi e il peggior giorno dell'ultimo mese. "
+            "Ogni giorno viene riaddestrato usando solo ciò che si sapeva già quel giorno. Non conosce il VIX.</p>"
+            f"<p><b><i style='background:{PAURA_C}' class='pv-d'></i>Modello con la paura</b> (nome tecnico: FHS+VIX, simulazione storica filtrata). Stima quanto il mercato oscilla con un modello di volatilità (GJR-GARCH, dati dal 1950), "
+            "poi porta la stima di oggi verso quella dell'indice VIX (la «paura» che i professionisti pagano per assicurarsi, ridotta all'80% perché di solito esagera). "
+            "Infine simula 5.000 possibili futuri pescando a caso tra gli scossoni veri del passato, e conta in quanti il mercato scende del 5% in 1 mese o del 10% in 3 mesi.</p>"
+            "<p><b>Perché due.</b> Il primo impara dai prezzi passati, il secondo sente il nervosismo di oggi. Se concordano il segnale è più affidabile; se no il semaforo diventa Grigio.</p></div></details>")
     carte = ("<h4 class='pv-h4'>Le due stime, in parole semplici</h4><div class='pv-cards'>"
-             + carta("Modello base", "Guarda l'andamento dei prezzi, dei tassi e del credito. Non sa quanto il mercato è nervoso oggi.", ra, BASE_C, p, "A1")
+             + carta("Modello base", "Guarda solo l'andamento del prezzo dell'S&P 500 negli ultimi mesi e anni. Non conosce il VIX.", ra, BASE_C, p, "A1")
              + carta("Modello con la paura", "Guarda anche quanto il mercato è agitato oggi (l'indice della paura, il VIX) e simula migliaia di possibili futuri.", rf, PAURA_C, p, "FHS+VIX") + "</div>"
-             "<p class='pv-t2'><b>Come leggere «0,7×» e «1,4×».</b> Il numero dice quante volte più (o meno) probabile è un calo rispetto al solito. "
-             "<b>1× = come sempre.</b> 0,7× = il 30% in meno del solito. 1,4× = il 40% in più. 2× = il doppio. È la media dei due periodi qui sotto.</p>")
+             "<p class='pv-t2'><b>Come leggere il «×».</b> 1× = rischio come sempre. 0,7× = il 30% in meno del solito. 1,4× = il 40% in più. 2× = il doppio. "
+             "È la media dei due periodi (1 mese e 3 mesi).</p>" + info)
     # 4) scala
     sc = "<h4 class='pv-h4'>Dove cadono oggi i due modelli</h4>" + "".join(scala(p, k, t_) for k, t_ in ORIZZONTI) + \
         "<p class='pv-t2'><b>B</b> = modello base, <b>P</b> = modello con la paura. Più il pallino è a destra, più il modello vede un calo probabile rispetto al solito; il centro è il livello abituale.</p>"
@@ -153,9 +178,16 @@ def html(o: dict | None, t: dict | None, variazione: dict | None = None) -> str:
 
 
 CSS = """<style>
-.pv-top{border:1px solid var(--bd);border-left:6px solid var(--mu);border-radius:16px;padding:14px 16px;margin:6px 0 10px;background:var(--card)}
+.pv-top{border:2px solid var(--mu);border-radius:18px;padding:16px 18px;margin:6px 0 12px;background:var(--card)}
+.pv-hl{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800;line-height:1.2;margin:8px 0 10px}.pv-hl i{width:20px;height:20px;border-radius:50%;flex:none}
+.pv-tiles{display:grid;grid-template-columns:1.4fr 1fr;gap:10px;margin:6px 0}.pv-tiles div{background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:8px 12px}
+.pv-tiles small{display:block;font-size:11.5px;color:var(--mu)}.pv-tiles b{font-size:26px;font-weight:800}
+.pv-varb{border:1px solid var(--bd);border-radius:14px;padding:6px 12px;background:var(--card)}.pv-vh,.pv-vr{display:grid;grid-template-columns:1.5fr 1.3fr 24px;gap:6px;align-items:center;padding:6px 0;font-size:13.5px}
+.pv-vh{font-size:11.5px;color:var(--mu)}.pv-vr+.pv-vr{border-top:1px solid var(--bd)}.pv-vm{font-weight:700}.pv-vn i,.pv-d{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}.pv-vs{font-size:18px;font-weight:800;text-align:center}
+.pv-info{border:1px solid var(--bd);border-radius:12px;padding:8px 12px;margin:10px 0;background:var(--card);font-size:13px;line-height:1.5}.pv-info summary{cursor:pointer;font-weight:700}
+.pv-info summary i{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--tx);color:var(--bg);font-style:normal;font-size:12px;margin-right:6px}.pv-info p{margin:8px 0}
 .pv-q{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);font-weight:700}.pv-a{font-size:17px;line-height:1.4;margin:6px 0}.pv-v{font-size:14px;color:var(--mu)}.pv-v b{color:var(--tx)}
-.pv-var{display:flex;gap:10px;align-items:center;border:1px dashed var(--bd);border-radius:12px;padding:8px 12px;font-size:13.5px;margin:8px 0}.pv-ar{font-size:22px;font-weight:800;min-width:24px;text-align:center}
+.pv-varx{display:flex;gap:10px;align-items:center;border:1px dashed var(--bd);border-radius:12px;padding:8px 12px;font-size:13.5px;margin:8px 0}.pv-ar{font-size:22px;font-weight:800;min-width:24px;text-align:center}
 .pv-h4{margin:22px 0 6px;font-size:16px}.pv-t2{font-size:13px;line-height:1.5;color:var(--mu);margin:6px 0}.pv-t2 b{color:var(--tx)}
 .pv-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:520px){.pv-cards{grid-template-columns:1fr}}
 .pv-card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.pv-cn{font-weight:800;font-size:15px}.pv-cs{font-size:12px;color:var(--mu);margin:3px 0 8px;line-height:1.4}

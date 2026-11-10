@@ -53,10 +53,10 @@ def det_previsione(o: dict) -> dict:
     from . import previsione_ui, semaforo_rischio
     d = _leggi("semaforo_rischio_oggi.json") or {}
     tab = _leggi("semaforo_rischio_tabella.json") or {}
-    return {"comp": previsione_ui.html(d, tab, semaforo_rischio.variazione()),
+    return {"comp": previsione_ui.html(d, tab, semaforo_rischio.variazione(d)),
             "come": ("Questo pilastro risponde a una domanda: <b>quanto è probabile che l'S&amp;P 500 (le 500 maggiori aziende americane) perda almeno il 5% entro un mese, o almeno il 10% entro tre mesi?</b> "
                      "Due modelli statistici stimano questa probabilità, e ognuna viene confrontata con quella abituale, cioè quante volte in media, dal 1990, quel calo è davvero arrivato. "
-                     "Il <b>modello base</b> usa prezzi, tassi e credito. Il <b>modello con la paura</b> considera anche quanto il mercato è nervoso oggi. "
+                     "Il <b>modello base</b> guarda solo l'andamento del prezzo dell'S&amp;P 500 (quanto è sceso dai massimi, quanto è agitato, la tendenza). Il <b>modello con la paura</b> considera anche quanto il mercato è nervoso oggi (l'indice VIX). "
                      "Si fa la media dei due e dei due periodi, e si guarda quanto il valore di oggi è alto rispetto a tutti i giorni dal 1990: un punteggio di 82 vuol dire che oggi il rischio stimato è più alto dell'81% dei giorni."),
             "glossario": [("S&P 500", "indice delle 500 maggiori aziende quotate negli Stati Uniti"), ("Probabilità abituale", "quante volte, in media dal 1990, è arrivato quel calo"),
                           ("1×", "rischio come al solito; 2× è il doppio del solito, 0,5× la metà"), ("Indice della paura (VIX)", "misura quanto gli investitori si aspettano oscillazioni forti nel prossimo mese"),

@@ -204,16 +204,25 @@ def aggiorna(pred: dict, data: str) -> dict | None:
     return r
 
 
-def variazione() -> dict | None:
-    """Di quanto è cambiato il rapporto (rischio stimato / rischio normale) rispetto al giorno registrato prima. None finché non ci sono due giorni."""
+def variazione(oggi: dict | None = None) -> dict | None:
+    """Confronto tra il rapporto di oggi (rischio stimato / rischio normale) e quello del giorno registrato prima.
+    `oggi` = semaforo_rischio_oggi.json (valori non arrotondati); senza, si usano le ultime due righe dello storico. None se manca un giorno prima."""
     try:
         d = pd.read_csv(STATO).drop_duplicates("data", keep="last").sort_values("data")
-        if len(d) < 2:
-            return None
-        a, b = d.iloc[-2], d.iloc[-1]
+        if oggi and oggi.get("r_a1") is not None and oggi.get("r_fhs") is not None and oggi.get("data"):
+            d = d[d["data"].astype(str) < str(oggi["data"])]
+            if d.empty:
+                return None
+            a = d.iloc[-1]
+            b = {"data": str(oggi["data"]), "r_a1": float(oggi["r_a1"]), "r_fhs": float(oggi["r_fhs"])}
+        else:
+            if len(d) < 2:
+                return None
+            a, b = d.iloc[-2], d.iloc[-1]
         m1, m0 = (b["r_a1"] + b["r_fhs"]) / 2, (a["r_a1"] + a["r_fhs"]) / 2
         return {"da": str(a["data"]), "a": str(b["data"]), "medio": float(m1), "d_medio": float(m1 - m0), "p_medio": float((m1 / m0 - 1) * 100) if m0 else None,
-                "d_a1": float(b["r_a1"] - a["r_a1"]), "d_fhs": float(b["r_fhs"] - a["r_fhs"])}
+                "d_a1": float(b["r_a1"] - a["r_a1"]), "d_fhs": float(b["r_fhs"] - a["r_fhs"]),
+                "a1_prima": float(a["r_a1"]), "a1": float(b["r_a1"]), "fhs_prima": float(a["r_fhs"]), "fhs": float(b["r_fhs"]), "medio_prima": float(m0)}
     except Exception:  # noqa: BLE001
         return None
 
@@ -244,7 +253,7 @@ def html() -> str:
     css = {"Verde": "ok", "Giallo": "wa", "Arancione": "or", "Rosso": "ba", "Grigio": "nd"}
     from . import previsione_ui
     out = ["<div class='explain'><p><b>Che cos'è.</b> Il semaforo risponde a una domanda: oggi è più o meno probabile del solito un calo importante della Borsa americana? "
-           "Due modelli stimano la probabilità e il colore riassume la loro media. Non è un segnale per comprare o vendere.</p></div>", previsione_ui.html(o, t, variazione())]
+           "Due modelli stimano la probabilità e il colore riassume la loro media. Non è un segnale per comprare o vendere.</p></div>", previsione_ui.html(o, t, variazione(o))]
     try:
         from . import semaforo_mercati
         out.append(semaforo_mercati.html())
