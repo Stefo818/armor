@@ -125,9 +125,9 @@ def html(d: dict | None) -> str:
                   f"<div class='an-out'><div>Dopo 1 mese<br>{_esito(x['r1'])}</div><div>Dopo 3 mesi<br>{_esito(x['r3'])}</div><div>Dopo 6 mesi<br>{_esito(x['r6'])}</div>"
                   f"<div>Peggior calo<br><b style='color:#dc2626'>{_pc(x['dd6'])}</b></div></div></div>")
     pallini = "".join(f"<i style='background:{'#dc2626' if x['dd6'] <= -0.10 else '#16a34a'}'></i>" for x in d["analoghi"])
-    lettura = (f"<div class='an-ver'><div class='an-dots'>{pallini}</div><div><b>In {ag['dd10']} periodi simili su {ag['n']}</b> l'S&amp;P 500 ha perso almeno il 10% nei 6 mesi dopo "
-               f"(su un giorno qualsiasi succede il {_pc(base['dd10'])} delle volte). Alla fine dei 6 mesi era sceso in {ag['neg']} casi su {ag['n']}; risultato mediano {_pc(ag['r6_med'], True)} "
-               f"(giorno qualsiasi: {_pc(base['r6_med'], True)}).</div></div>")
+    lettura = (f"<div class='an-ver'><div class='an-dots'>{pallini}</div><div><b>In {ag['dd10']} {'periodo simile' if ag['dd10'] == 1 else 'periodi simili'} su {ag['n']}</b> l'S&amp;P 500 ha perso almeno il 10% nei 6 mesi dopo "
+               f"(media storica su tutti i giorni dal 2000: {_pc(base['dd10'])} delle volte). Alla fine dei 6 mesi era sceso in {ag['neg']} {'caso' if ag['neg'] == 1 else 'casi'} su {ag['n']}; risultato mediano {_pc(ag['r6_med'], True)} "
+               f"(mediana storica su tutti i giorni: {_pc(base['r6_med'], True)}).</div></div>")
     sezione2 = ("<h4 class='an-h'>Quando la tensione era così, in passato</h4>"
                 "<p class='an-t'>Abbiamo cercato nella storia i giorni in cui le <b>quattro medie</b> erano più simili a quelle di oggi, scegliendo periodi distinti (almeno 3 mesi uno dall'altro). "
                 "Ecco cosa ha fatto l'S&amp;P 500 dopo. Il grafico: linea grigia = i 3 mesi prima, linea verde o rossa = i 6 mesi dopo (verde = chiuso in positivo, rosso = in negativo); la linea tratteggiata è il livello del giorno analogo.</p>"
@@ -139,7 +139,7 @@ def html(d: dict | None) -> str:
             "misurata in «quanto è normale che varî»). Più la distanza è piccola, più il giorno è simile.</p>"
             "<p><b>3.</b> Si tengono i 6 giorni più simili che distano tra loro almeno 63 sedute, così non sono lo stesso episodio contato più volte. "
             "Si escludono gli ultimi 6 mesi, perché di quei giorni non si sa ancora cosa è successo dopo.</p>"
-            "<p><b>4.</b> Per ciascuno si misura cosa ha fatto l'S&amp;P 500 dopo 1, 3 e 6 mesi e il peggior calo dei 6 mesi, poi si confronta con un giorno qualsiasi.</p></div></details>")
+            "<p><b>4.</b> Per ciascuno si misura cosa ha fatto l'S&amp;P 500 dopo 1, 3 e 6 mesi e il peggior calo dei 6 mesi, poi si confronta con la media storica di tutti i giorni dal 2000.</p></div></details>")
     return CSS + sezione1 + sezione2 + info
 
 

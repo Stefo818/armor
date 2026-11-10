@@ -1710,7 +1710,7 @@ def test_regime_frase_e_box():
     o = {"data": "2026-11-06", "A": 50.3, "min20": 39.0, "ma60": 44.0, "Pn": 0.7, "dd": -0.02, "stato": "formazione", "sopra45": 12, "sopra40": 20, "v": {k: False for k in t.VARIANTI}}
     r = {"stati": {"tutto": {"formazione": {"n": 500, "a": 0.55, "b": 0.3}, "tutti": {"a": 0.32, "b": 0.28}}, "2013_oggi": {}}, "adozione": {"adottata": False}}
     h = t.box_oggi(o, r)
-    assert "Tensione in formazione" in h and "non ancora confermata su dati nuovi" in h and "12" in h and "55%" in h and "Indice Armor oggi" in h and "Come si legge" in h
+    assert "Tensione in formazione" in h and "non ancora confermata su dati nuovi" in h and "12" in h and ">55<" in h and "Quanto è alta la tensione oggi" in h and "Come si legge" in h and "rg-dots" in h and "rg-gauge" in h
 
 
 def test_regime_analoghi():
@@ -1725,7 +1725,7 @@ def test_regime_analoghi():
     assert max(pos) <= 1499 - 126                      # nessun periodo senza esito noto
     assert all(abs(i - j) >= 63 for k, i in enumerate(pos) for j in pos[k + 1:])
     h = ra.html(d)
-    assert "Ultimi 7 giorni" in h and "periodi simili su" in h and "<svg" in h and "Come funziona il confronto" in h
+    assert "Ultimi 7 giorni" in h and "simil" in h and "<svg" in h and "Come funziona il confronto" in h
     assert ra.calcola(a.iloc[:100], p.iloc[:100]) is None and "compare quando" in ra.html(None)
     o = {"data": "x", "A": 44.0, "min20": 38.0, "Pn": 0.4, "stato": "normale", "sopra45": 0}
     assert "Periodi" not in t.box_oggi(o, None, None) and "Ultimi 7 giorni" in t.box_oggi(o, None, d) and "consecutive" in t.box_oggi(o, None, d)

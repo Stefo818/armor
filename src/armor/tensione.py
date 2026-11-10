@@ -433,7 +433,8 @@ def oggi(a: pd.Series | None = None, p: pd.Series | None = None) -> dict | None:
         r = f.iloc[-1]
         return {"data": str(f.index[-1].date()), "A": float(r["A"]), "min20": float(r["min20"]), "ma60": float(r["ma60"]), "Pn": None if pd.isna(r["Pn"]) else float(r["Pn"]),
                 "dd": None if pd.isna(r["dd"]) else float(r["dd"]), "stato": str(st.iloc[-1]), "sopra45": sedute_sopra(f["A"]),
-                "sopra40": sedute_sopra(f["A"], 40.0), "v": {k: bool(r[k]) for k in VARIANTI}}
+                "sopra40": sedute_sopra(f["A"], 40.0), "v": {k: bool(r[k]) for k in VARIANTI},
+                "ult20": [round(float(x), 1) for x in f["A"].dropna().tail(20).values]}
     except Exception as e:  # noqa: BLE001
         print("Regime di tensione non calcolato:", str(e)[:100], flush=True)
         return None
@@ -499,29 +500,72 @@ def frase(stato: str, r: dict | None) -> str:
     return s
 
 
+def _pallini(n: float, col: str) -> str:
+    """100 pallini (10 per riga): quelli colorati sono le volte, su 100, in cui l'evento è successo."""
+    k = int(round(min(max(n, 0), 1) * 100))
+    return "<div class='rg-dots' aria-hidden='true'>" + "".join(f"<i style='background:{col}'></i>" if i < k else "<i></i>" for i in range(100)) + "</div>"
+
+
 def _barre_storiche(stato: str, r: dict | None) -> str:
-    """Due confronti a barre: nei 6 mesi dopo giorni di questo stato vs dopo un giorno qualsiasi."""
+    """Per ogni evento, 100 pallini «dopo giorni come oggi» contro 100 della media storica."""
     if not r:
         return "<p class='rg-t'>Frequenze storiche non ancora calcolate (esperimento da eseguire).</p>"
     t, t13 = r["stati"]["tutto"], r["stati"]["2013_oggi"]
     g, g13, base = t.get(stato), t13.get(stato), t["tutti"]
+
     if not g or not g["n"]:
         return "<p class='rg-t'>Troppi pochi casi storici in questo stato per dare una frequenza.</p>"
-    mx = max(g["a"] or 0, base["a"] or 0, g["b"] or 0, base["b"] or 0, 0.01)
 
-    def coppia(titolo, k):
-        a, b = g[k], base[k]
-        return (f"<div class='rg-c'><div class='rg-ct'>{titolo}</div>"
-                f"<div class='rg-bl'><span>Dopo giorni come oggi</span><b>{_pc(a)}</b></div><div class='rg-bar'><i style='width:{a / mx * 100:.0f}%;background:var(--rgc)'></i></div>"
-                f"<div class='rg-bl'><span>Dopo un giorno qualsiasi</span><b>{_pc(b)}</b></div><div class='rg-bar'><i style='width:{b / mx * 100:.0f}%;background:var(--mu)'></i></div></div>")
-    out = (coppia("Su 100 volte, in quante l'S&amp;P 500 ha toccato un <b>nuovo minimo</b> entro 6 mesi?", "a")
-           + coppia("Su 100 volte, in quante ha perso <b>almeno il 10%</b> entro 6 mesi?", "b"))
+    def coppia(titolo, k, nome):
+        a, b = g[k] or 0, base[k] or 0
+        d = (a - b) * 100
+        if d >= 3:
+            ver, vc = f"Più spesso della media storica (+{d:.0f} punti)", "#dc2626"
+        elif d <= -3:
+            ver, vc = f"Meno spesso della media storica ({d:.0f} punti)".replace("-", "−"), "#16a34a"
+        else:
+            ver, vc = "In linea con la media storica", "#64748b"
+        return (f"<div class='rg-c'><div class='rg-ct'>{titolo}</div><div class='rg-two'>"
+                f"<div><div class='rg-dl'>Dopo giorni come oggi</div>{_pallini(a, 'var(--rgc)')}<div class='rg-nn' style='color:var(--rgc)'>{a * 100:.0f}<small> su 100</small></div></div>"
+                f"<div><div class='rg-dl'>Media storica <small>(tutti i giorni dal 2000)</small></div>{_pallini(b, 'var(--mu)')}<div class='rg-nn'>{b * 100:.0f}<small> su 100</small></div></div></div>"
+                f"<div class='rg-ver' style='background:{vc}1f;border-color:{vc};color:{vc}'>{ver}</div></div>")
+    out = (coppia("Nei 6 mesi dopo, l'S&amp;P 500 ha toccato un <b>nuovo minimo</b>?", "a", "minimo")
+           + coppia("Nei 6 mesi dopo, ha perso <b>almeno il 10%</b>?", "b", "calo"))
+    out += "<div class='rg-keyp'><i style='background:var(--rgc)'></i> = volte in cui è successo, su 100 casi · <i></i> = non è successo</div>"
     if g13 and g13["n"] >= 40:
         out += f"<p class='rg-t'>Guardando solo dal 2013 (periodo più recente, {g13['n']} giorni): nuovo minimo nel <b>{_pc(g13['a'])}</b> dei casi.</p>"
     ad = r.get("adozione", {})
-    out += ("<p class='rg-t'><b>Affidabilità:</b> verificato su dati che il modello non aveva visto.</p>" if ad.get("adottata") else
-            "<p class='rg-t'><b>Affidabilità:</b> è una regolarità osservata nel passato, <b>non ancora confermata su dati nuovi</b>. Usala come indizio, non come previsione.</p>")
+    out += ("<div class='rg-aff ok'><b>Affidabilità:</b> verificato su dati che il modello non aveva visto.</div>" if ad.get("adottata") else
+            "<div class='rg-aff'><b>Affidabilità:</b> è una regolarità osservata nel passato, <b>non ancora confermata su dati nuovi</b>. Usala come indizio, non come previsione.</div>")
     return out
+
+
+def _arco(v0: float, v1: float, r: float = 78, cx: float = 100, cy: float = 92) -> str:
+    import math
+    p = lambda v: (cx - r * math.cos(math.pi * v / 100), cy - r * math.sin(math.pi * v / 100))
+    (x0, y0), (x1, y1) = p(v0), p(v1)
+    return f"M{x0:.1f} {y0:.1f}A{r} {r} 0 0 1 {x1:.1f} {y1:.1f}"
+
+
+def _contachilometri(a: float, col: str) -> str:
+    import math
+    v = min(max(a, 0), 100)
+    nx, ny = 100 - 62 * math.cos(math.pi * v / 100), 92 - 62 * math.sin(math.pi * v / 100)
+    seg = "".join(f"<path d='{_arco(x, y)}' stroke='{c}' stroke-width='16' fill='none' opacity='.85'/>" for x, y, c in ((0, 35, "#16a34a"), (35.6, 44.4, "#64748b"), (45, 100, "#d97706")))
+    return (f"<svg viewBox='0 0 200 118' class='rg-gauge' role='img' aria-label='Indice Armor {a:.0f} su 100'>{seg}<line x1='100' y1='92' x2='{nx:.1f}' y2='{ny:.1f}' stroke='var(--tx)' stroke-width='3' stroke-linecap='round'/>"
+            f"<circle cx='100' cy='92' r='6' fill='var(--tx)'/><text x='100' y='116' text-anchor='middle' font-size='26' font-weight='800' fill='{col}'>{a:.0f}</text>"
+            "<text x='18' y='108' font-size='9' fill='currentColor' opacity='.7'>0</text><text x='176' y='108' font-size='9' fill='currentColor' opacity='.7'>100</text></svg>")
+
+
+def _venti(o: dict, col: str) -> str:
+    """Le ultime 20 sedute: una barra per seduta; l'allerta scatta solo se TUTTE superano la linea a 45."""
+    u = o.get("ult20")
+    if not u:
+        return ""
+    bar = "".join(f"<i style='height:{max(v, 3):.0f}%;background:{'#d97706' if v >= T_ATT else ('#16a34a' if v < 35 else '#64748b')}' title='{v:.0f}'></i>" for v in u)
+    sopra = sum(1 for v in u if v >= T_ATT)
+    return (f"<div class='rg-20'><div class='rg-20b'>{bar}<u style='bottom:{T_ATT:.0f}%'><b>45</b></u></div></div>"
+            f"<div class='rg-20l'><span>20 sedute fa</span><span><b>{sopra} su {len(u)}</b> sopra la linea</span><span>oggi</span></div>")
 
 
 def box_oggi(o: dict | None, r: dict | None = None, an: dict | None = None) -> str:
@@ -535,38 +579,43 @@ def box_oggi(o: dict | None, r: dict | None = None, an: dict | None = None) -> s
     st = o["stato"]
     col = COL_STATO[st]
     a, m20, pn = o["A"], o["min20"], o["Pn"]
-    # scala 0-100 dell'Indice Armor con tre zone e due segnaposto
-    scala = ("<div class='rg-sc'><i style='left:0;width:35%;background:#16a34a'></i><i style='left:35%;width:10%;background:#64748b'></i><i style='left:45%;width:55%;background:#d97706'></i>"
-             f"<b class='rg-m' style='left:{min(max(a, 1), 99):.1f}%;background:var(--tx)' title='Oggi'>{a:.0f}</b>"
-             f"<em class='rg-m2' style='left:{min(max(m20, 1), 99):.1f}%' title='Minimo a 20 sedute'></em></div>"
-             "<div class='rg-zl'><span style='width:35%'>calma</span><span style='width:10%'></span><span style='width:55%'>tensione (da 45)</span></div>")
+    ordine = ["calma", "normale", "formazione", "persistente", "persistente_calo"]
+    brevi = {"calma": ("Calma", "indice sotto 35"), "normale": ("Normale", "tra 35 e 45"), "formazione": ("In formazione", "sopra 45 da poco"), "persistente": ("Persistente", "sopra 45 per 20+ sedute"), "persistente_calo": ("Persistente e in calo", "come prima, S&P −5%")}
+    scala = "".join(f"<div class='rg-stp{' on' if k == st else ''}' style='--c:{COL_STATO[k]}'><i></i><b>{brevi[k][0]}</b><small>{brevi[k][1]}</small></div>" for k in ordine)
+    titolo = {"calma": "Il mercato è tranquillo", "normale": "Nessun segnale di tensione prolungata", "formazione": "Una tensione potrebbe formarsi",
+              "persistente": "La tensione dura da settimane", "persistente_calo": "Tensione che dura e mercato già in calo"}[st]
     if o["sopra45"]:
         cont = (f"L'indice è sopra 45 da <b>{o['sopra45']}</b> sedute di Borsa consecutive. L'allerta «persistente» scatta quando <b>anche il giorno più tranquillo delle ultime 20 sedute consecutive</b> è sopra 45 "
                 f"(oggi quel minimo è <b>{m20:.0f}</b>).")
     else:
-        cont = (f"L'indice oggi vale <b>{a:.0f}</b>. L'allerta «persistente» scatta solo se <b>anche il giorno più tranquillo delle ultime 20 sedute di Borsa consecutive</b> resta sopra 45: "
-                f"oggi quel minimo è <b>{m20:.0f}</b> (il trattino sulla scala).")
-    barra = ""
+        cont = (f"L'allerta «persistente» scatta solo se <b>anche il giorno più tranquillo delle ultime 20 sedute di Borsa consecutive</b> resta sopra 45: oggi quel minimo è <b>{m20:.0f}</b>.")
+    venti = _venti(o, col)
+    if not venti:
+        venti = (f"<div class='rg-20l'><span>giorno più tranquillo delle ultime 20 sedute: <b>{m20:.0f}</b></span></div>")
+    serb = ""
     if pn is not None:
-        barra = ("<div class='rg-p'><div class='rg-pt'>Da quanto tempo la tensione dura <span>(pressione accumulata)</span></div>"
-                 f"<div class='rtb'><i style='width:{pn * 100:.0f}%;background:{col}'></i><span style='left:80%'></span></div>"
-                 f"<div class='rg-pl'><span>0 = mai alta di recente</span><b>{pn * 100:.0f}/100</b><span>100 = massimo storico</span></div>"
-                 "<div class='rg-t'>La linea verticale a 80 è la soglia di allerta. Conta quanto l'indice è stato alto di recente: i giorni vecchi pesano sempre meno.</div></div>")
+        zona = "bassa" if pn < 0.5 else ("media" if pn < 0.8 else "alta")
+        serb = ("<div class='rg-step'><i class='rg-n'>3</i><div><b>Da quanto tempo dura?</b><span>La «pressione accumulata»: somma quanto l'indice è stato alto di recente. I giorni vecchi pesano sempre meno.</span></div></div>"
+                f"<div class='rg-tank'><div class='rg-tz'><i style='width:50%'></i><i style='width:30%'></i><i style='width:20%'></i></div><div class='rg-tf' style='left:{pn * 100:.0f}%'><b style='background:{col}'>{pn * 100:.0f}</b></div></div>"
+                "<div class='rg-tl'><span style='width:50%'>bassa</span><span style='width:30%'>media</span><span style='width:20%'>alta · allerta da 80</span></div>"
+                f"<div class='rg-t'>Oggi la pressione è <b>{zona}</b> ({pn * 100:.0f} su 100; 100 = il massimo mai visto).</div>")
     info = ("<details class='rg-info'><summary><i>i</i> Come si legge questo riquadro</summary><div>"
-            "<p><b>Indice Armor.</b> Il numero da 0 a 100 con cui Armor misura la tensione del mercato oggi: più è alto, più il mercato è sotto stress.</p>"
+            "<p><b>Seduta</b> = un giorno di Borsa aperta. Quando si parla di giorni «di fila» o «consecutivi» si contano solo sedute una dopo l'altra, senza interruzioni.</p>"
+            "<p><b>Indice Armor</b> = il numero da 0 a 100 con cui Armor misura la tensione del mercato oggi: più è alto, più il mercato è sotto stress.</p>"
             "<p><b>I cinque stati.</b> Calma: indice sotto 35. Normale: tra 35 e 45, senza segnali. Tensione in formazione: indice sopra 45 da poco. "
             "Tensione persistente: sopra 45 senza mai scendere per almeno 20 sedute. Persistente con mercato in calo: come prima, ma l'S&amp;P 500 è già almeno il 5% sotto il suo massimo.</p>"
-            "<p><b>Pressione accumulata.</b> Somma di quanto l'indice è stato sopra 40 nei giorni passati, con peso che si dimezza ogni ~23 sedute, trasformata in una scala 0–100 rispetto a tutta la storia.</p>"
-            "<p><b>Sedute consecutive.</b> Una «seduta» è un giorno di Borsa aperta. Quando si parla di giorni «di fila» o «consecutivi» si contano solo sedute una dopo l'altra, senza interruzioni.</p>"
-            "<p><b>Le barre.</b> Guardano ogni giorno passato in cui il mercato era nello stesso stato di oggi e contano cosa è successo nei 6 mesi dopo, confrontandolo con un giorno qualsiasi.</p></div></details>")
-    titolo = {"calma": "Il mercato è tranquillo", "normale": "Nessun segnale di tensione prolungata", "formazione": "Una tensione potrebbe formarsi",
-              "persistente": "La tensione dura da settimane", "persistente_calo": "Tensione che dura e mercato già in calo"}[st]
+            "<p><b>Pressione accumulata</b> = somma di quanto l'indice è stato sopra 40 nei giorni passati, con peso che si dimezza ogni ~23 sedute, trasformata in una scala 0–100 rispetto a tutta la storia.</p>"
+            "<p><b>I pallini</b> = guardiamo ogni giorno passato (dal 2000) in cui il mercato era nello stesso stato di oggi e contiamo cosa è successo nei 6 mesi dopo, confrontandolo con la <b>media storica</b>: la quota di casi in cui è successa la stessa cosa guardando <b>tutti</b> i giorni dal 2000, qualunque fosse lo stato.</p></div></details>")
+    passato = (f"<div class='rg-step'><i class='rg-n'>4</i><div><b>E in passato, nello stesso stato?</b><span>Tutti i giorni dal 2000 in cui lo stato era «{NOMI_STATO[st]}» (anche non di fila), e cosa è successo nei 6 mesi dopo ciascuno.</span></div></div>"
+               f"{_barre_storiche(st, r)}")
     return (f"<section class='card rt rg' style='--rgc:{col};border-left:5px solid {col}'><div class='rg-q'>Regime di tensione · <a href='#regime' data-go='regime'>Dettagli ›</a></div>"
-            f"<div class='rg-hl'><i style='background:{col}'></i><span>{NOMI_STATO[st]}</span></div><div class='rg-sub'>{titolo}.</div>"
-            f"<div class='rg-pt'>Indice Armor oggi (0–100)</div>{scala}<div class='rg-t'>{cont}</div>{barra}"
-            f"<h4 class='rg-h'>E in passato, nello stesso regime?</h4>"
-            f"<p class='rg-t'>Qui si contano <b>tutti i giorni dal 2000</b> in cui il regime era «{NOMI_STATO[st]}» (anche non di fila) e si guarda cosa è successo nei 6 mesi dopo ciascuno.</p>"
-            f"{_barre_storiche(st, r)}{regime_analoghi.html(an) if an is not None else ''}{info}</section>")
+            f"<div class='rg-hero'><div class='rg-hl'><i style='background:{col}'></i><span>{NOMI_STATO[st]}</span></div><div class='rg-sub'>{titolo}.</div>"
+            "<div class='rg-what'>Il «regime» dice se la tensione del mercato è <b>passeggera</b> o <b>dura da tempo</b>: quando dura, in passato i cali grandi sono stati più frequenti.</div></div>"
+            f"<div class='rg-stairs' role='list' aria-label='I cinque stati possibili'>{scala}</div>"
+            "<div class='rg-step'><i class='rg-n'>1</i><div><b>Quanto è alta la tensione oggi?</b><span>L'Indice Armor da 0 a 100: verde = calma, grigio = normale, arancione = tensione (da 45).</span></div></div>"
+            f"<div class='rg-gw'>{_contachilometri(a, col)}</div>"
+            "<div class='rg-step'><i class='rg-n'>2</i><div><b>È alta da abbastanza tempo?</b><span>Ogni barra è una seduta di Borsa. L'allerta scatta solo se tutte le ultime 20 superano la linea a 45.</span></div></div>"
+            f"{venti}<div class='rg-t'>{cont}</div>{serb}{passato}{regime_analoghi.html(an) if an is not None else ''}{info}</section>")
 
 
 CSS = ("<style>"
@@ -582,7 +631,26 @@ CSS = ("<style>"
        ".rtb{height:10px;border-radius:6px;background:var(--bd);position:relative;margin:8px 0 2px;overflow:hidden}.rtb i{display:block;height:100%}"
        ".rtb span{position:absolute;top:0;bottom:0;width:2px;background:var(--tx);opacity:.55}.rt .rth{margin-bottom:4px}"
        ".rtg{width:100%;height:300px;display:block}.rtl{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin:4px 0}.rtl i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}"
-       ".rtt td.g,.rtt th.g{text-align:center}.rtneg{color:#dc2626}.rtpos{color:#16a34a}</style>")
+       ".rtt td.g,.rtt th.g{text-align:center}.rtneg{color:#dc2626}.rtpos{color:#16a34a}"
+       ".rg-hero{margin:4px 0 10px}.rg-what{margin-top:6px;font-size:13px;line-height:1.5;background:var(--bg);border-radius:10px;padding:7px 11px}"
+       ".rg-stairs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:8px 0 14px}.rg-stp{position:relative;text-align:center;padding:8px 2px 6px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);opacity:.55}"
+       ".rg-stp i{display:block;width:12px;height:12px;border-radius:50%;background:var(--c);margin:0 auto 4px}.rg-stp b{display:block;font-size:11.5px;line-height:1.15}.rg-stp small{display:block;font-size:9.5px;color:var(--mu);line-height:1.2;margin-top:2px}"
+       ".rg-stp.on{opacity:1;border:2px solid var(--c);box-shadow:0 4px 14px color-mix(in srgb,var(--c) 30%,transparent);transform:translateY(-3px)}.rg-stp.on i{width:16px;height:16px}"
+       "@media(max-width:520px){.rg-stp small{display:none}.rg-stp b{font-size:10px}}"
+       ".rg-step{display:flex;gap:10px;align-items:flex-start;margin:16px 0 6px}.rg-step b{display:block;font-size:14.5px}.rg-step span{display:block;font-size:12.5px;color:var(--mu);line-height:1.45;margin-top:1px}"
+       ".rg-n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--tx);color:var(--bg);font-style:normal;font-weight:800;font-size:13px;text-align:center;line-height:24px}"
+       ".rg-gw{max-width:330px;margin:0 auto}.rg-gauge{width:100%;height:auto;display:block;color:var(--tx)}"
+       ".rg-20{margin:6px 0 2px}.rg-20b{position:relative;display:flex;align-items:flex-end;gap:3px;height:92px;background:var(--bg);border-radius:10px;padding:4px 6px;border:1px solid var(--bd)}.rg-20b i{flex:1;border-radius:3px 3px 0 0;min-height:3px}"
+       ".rg-20b u{position:absolute;left:0;right:0;border-top:2px dashed var(--tx);opacity:.7;text-decoration:none}.rg-20b u b{position:absolute;right:4px;top:-17px;font-size:10.5px;background:var(--card);padding:0 4px;border-radius:5px}"
+       ".rg-20l{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-top:3px}.rg-20l b{color:var(--tx)}"
+       ".rg-tank{position:relative;margin:14px 0 3px}.rg-tz{display:flex;height:14px;border-radius:99px;overflow:hidden}.rg-tz i:nth-child(1){background:#16a34a55}.rg-tz i:nth-child(2){background:#d9770655}.rg-tz i:nth-child(3){background:#dc262677}"
+       ".rg-tf{position:absolute;top:-5px;transform:translateX(-50%)}.rg-tf b{display:block;min-width:24px;height:24px;line-height:24px;text-align:center;color:#fff;border-radius:99px;font-size:11.5px;border:2px solid var(--card)}"
+       ".rg-tl{display:flex;font-size:10px;color:var(--mu)}.rg-tl span{display:block}"
+       ".rg-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.rg-dl{font-size:11.5px;font-weight:700;margin-bottom:5px}.rg-dl small{font-weight:400;color:var(--mu)}.rg-dots{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:150px}"
+       ".rg-dots i{aspect-ratio:1;border-radius:50%;background:var(--bd)}.rg-nn{font-size:30px;font-weight:800;line-height:1.1;margin-top:6px}.rg-nn small{font-size:12px;font-weight:600;color:var(--mu)}"
+       ".rg-ver{margin-top:8px;border:1px solid;border-radius:99px;padding:4px 12px;font-size:12px;font-weight:700;text-align:center}"
+       ".rg-keyp{font-size:11px;color:var(--mu);margin:2px 0 8px}.rg-keyp i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--bd);vertical-align:-1px}"
+       ".rg-aff{font-size:12.5px;line-height:1.45;border-left:4px solid #d97706;background:var(--bg);border-radius:0 10px 10px 0;padding:7px 11px;margin:8px 0}.rg-aff.ok{border-color:#16a34a}</style>")
 
 
 def grafico_dati(a: pd.Series | None = None, p: pd.Series | None = None) -> dict | None:
@@ -671,7 +739,7 @@ def _km_svg(km: dict) -> str:
                  f"<text x='2' y='{12 + (Hh - 8 - Bt) * (1 - t / mx):.0f}' font-size='10' fill='currentColor'>{int(t * 100)}%</text>" for t in (0.2, 0.4, 0.6, 0.8) if t <= mx)
     return (f"<svg viewBox='0 0 {W} {Hh}' style='width:100%;max-width:560px;color:var(--tx)'>{gy}{ax}<polyline fill='none' stroke='#dc2626' stroke-width='2.2' points='{pts(v1)}'/>"
             f"<polyline fill='none' stroke='#64748b' stroke-width='2' stroke-dasharray='5 4' points='{pts(b)}'/></svg>"
-            f"<div class='rtl'><span><i style='background:#dc2626'></i>Dopo l'inizio di un episodio ({km['n']} episodi)</span><span><i style='background:#64748b'></i>Un giorno qualsiasi</span></div>")
+            f"<div class='rtl'><span><i style='background:#dc2626'></i>Dopo l'inizio di un episodio ({km['n']} episodi)</span><span><i style='background:#64748b'></i>Media storica (tutti i giorni)</span></div>")
 
 
 PAC_TXT = ("<p><b>Cosa può significare per chi fa il PAC</b> (non è consulenza finanziaria). Quando la tensione è persistente e il mercato è già in calo, nei dati storici i ribassi sono stati più spesso graduali e i prezzi più bassi sono arrivati mesi dopo. "
