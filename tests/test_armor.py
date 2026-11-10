@@ -1710,7 +1710,7 @@ def test_regime_frase_e_box():
     o = {"data": "2026-11-06", "A": 50.3, "min20": 39.0, "ma60": 44.0, "Pn": 0.7, "dd": -0.02, "stato": "formazione", "sopra45": 12, "sopra40": 20, "v": {k: False for k in t.VARIANTI}}
     r = {"stati": {"tutto": {"formazione": {"n": 500, "a": 0.55, "b": 0.3}, "tutti": {"a": 0.32, "b": 0.28}}, "2013_oggi": {}}, "adozione": {"adottata": False}}
     h = t.box_oggi(o, r)
-    assert "Tensione in formazione" in h and "Non verificato fuori campione" in h and "12" in h and "55%" in h
+    assert "Tensione in formazione" in h and "non ancora confermata su dati nuovi" in h and "12" in h and "55%" in h and "Indice Armor oggi" in h and "Come si legge" in h
 
 
 def test_mondo_rendimenti_eur_e_filtri():

@@ -499,6 +499,31 @@ def frase(stato: str, r: dict | None) -> str:
     return s
 
 
+def _barre_storiche(stato: str, r: dict | None) -> str:
+    """Due confronti a barre: nei 6 mesi dopo giorni di questo stato vs dopo un giorno qualsiasi."""
+    if not r:
+        return "<p class='rg-t'>Frequenze storiche non ancora calcolate (esperimento da eseguire).</p>"
+    t, t13 = r["stati"]["tutto"], r["stati"]["2013_oggi"]
+    g, g13, base = t.get(stato), t13.get(stato), t["tutti"]
+    if not g or not g["n"]:
+        return "<p class='rg-t'>Troppi pochi casi storici in questo stato per dare una frequenza.</p>"
+    mx = max(g["a"] or 0, base["a"] or 0, g["b"] or 0, base["b"] or 0, 0.01)
+
+    def coppia(titolo, k):
+        a, b = g[k], base[k]
+        return (f"<div class='rg-c'><div class='rg-ct'>{titolo}</div>"
+                f"<div class='rg-bl'><span>Dopo giorni come oggi</span><b>{_pc(a)}</b></div><div class='rg-bar'><i style='width:{a / mx * 100:.0f}%;background:var(--rgc)'></i></div>"
+                f"<div class='rg-bl'><span>Dopo un giorno qualsiasi</span><b>{_pc(b)}</b></div><div class='rg-bar'><i style='width:{b / mx * 100:.0f}%;background:var(--mu)'></i></div></div>")
+    out = (coppia("Su 100 volte, in quante l'S&amp;P 500 ha toccato un <b>nuovo minimo</b> entro 6 mesi?", "a")
+           + coppia("Su 100 volte, in quante ha perso <b>almeno il 10%</b> entro 6 mesi?", "b"))
+    if g13 and g13["n"] >= 40:
+        out += f"<p class='rg-t'>Guardando solo dal 2013 (periodo più recente, {g13['n']} giorni): nuovo minimo nel <b>{_pc(g13['a'])}</b> dei casi.</p>"
+    ad = r.get("adozione", {})
+    out += ("<p class='rg-t'><b>Affidabilità:</b> verificato su dati che il modello non aveva visto.</p>" if ad.get("adottata") else
+            "<p class='rg-t'><b>Affidabilità:</b> è una regolarità osservata nel passato, <b>non ancora confermata su dati nuovi</b>. Usala come indizio, non come previsione.</p>")
+    return out
+
+
 def box_oggi(o: dict | None, r: dict | None = None) -> str:
     if r is None and FILE.exists():
         try:
@@ -509,18 +534,49 @@ def box_oggi(o: dict | None, r: dict | None = None) -> str:
         return ""
     st = o["stato"]
     col = COL_STATO[st]
-    pn = o["Pn"]
+    a, m20, pn = o["A"], o["min20"], o["Pn"]
+    # scala 0-100 dell'Indice Armor con tre zone e due segnaposto
+    scala = ("<div class='rg-sc'><i style='left:0;width:35%;background:#16a34a'></i><i style='left:35%;width:10%;background:#64748b'></i><i style='left:45%;width:55%;background:#d97706'></i>"
+             f"<b class='rg-m' style='left:{min(max(a, 1), 99):.1f}%;background:var(--tx)' title='Oggi'>{a:.0f}</b>"
+             f"<em class='rg-m2' style='left:{min(max(m20, 1), 99):.1f}%' title='Minimo a 20 sedute'></em></div>"
+             "<div class='rg-zl'><span style='width:35%'>calma</span><span style='width:10%'></span><span style='width:55%'>tensione (da 45)</span></div>")
+    if o["sopra45"]:
+        cont = (f"L'indice è sopra 45 da <b>{o['sopra45']}</b> sedute di fila. L'allerta «persistente» scatta quando <b>anche il giorno più tranquillo delle ultime 20 sedute</b> è sopra 45 "
+                f"(oggi quel minimo è <b>{m20:.0f}</b>).")
+    else:
+        cont = (f"L'indice oggi vale <b>{a:.0f}</b>. L'allerta «persistente» scatta solo se <b>anche il giorno più tranquillo delle ultime 20 sedute</b> resta sopra 45: "
+                f"oggi quel minimo è <b>{m20:.0f}</b> (il trattino sulla scala).")
     barra = ""
     if pn is not None:
-        barra = (f"<div class='rtb'><i style='width:{pn * 100:.0f}%;background:{col}'></i><span style='left:80%'></span></div>"
-                 f"<div class='mu' style='font-size:12px'>Pressione accumulata: {pn * 100:.0f}/100 (soglia di allerta 80)</div>")
-    cont = f"Da <b>{o['sopra45']}</b> sedute sopra 45" if o["sopra45"] else f"Sotto 45 (ultimo massimo recente: minimo a 20 sedute {o['min20']:.0f})"
-    return (f"<section class='card rt' style='border-left:5px solid {col}'><div class='rth'><b style='color:{col}'>Regime: {NOMI_STATO[st]}</b>"
-            f"<span class='mu'> · {cont} · <a href='#regime' data-go='regime'>Dettagli ›</a></span></div>"
-            f"<div class='mu'>{STATO_DESC[st]}</div>{barra}<div class='mu' style='margin-top:6px'>{_h.escape(frase(st, r))}</div></section>")
+        barra = ("<div class='rg-p'><div class='rg-pt'>Da quanto tempo la tensione dura <span>(pressione accumulata)</span></div>"
+                 f"<div class='rtb'><i style='width:{pn * 100:.0f}%;background:{col}'></i><span style='left:80%'></span></div>"
+                 f"<div class='rg-pl'><span>0 = mai alta di recente</span><b>{pn * 100:.0f}/100</b><span>100 = massimo storico</span></div>"
+                 "<div class='rg-t'>La linea verticale a 80 è la soglia di allerta. Conta quanto l'indice è stato alto di recente: i giorni vecchi pesano sempre meno.</div></div>")
+    info = ("<details class='rg-info'><summary><i>i</i> Come si legge questo riquadro</summary><div>"
+            "<p><b>Indice Armor.</b> Il numero da 0 a 100 con cui Armor misura la tensione del mercato oggi: più è alto, più il mercato è sotto stress.</p>"
+            "<p><b>I cinque stati.</b> Calma: indice sotto 35. Normale: tra 35 e 45, senza segnali. Tensione in formazione: indice sopra 45 da poco. "
+            "Tensione persistente: sopra 45 senza mai scendere per almeno 20 sedute. Persistente con mercato in calo: come prima, ma l'S&amp;P 500 è già almeno il 5% sotto il suo massimo.</p>"
+            "<p><b>Pressione accumulata.</b> Somma di quanto l'indice è stato sopra 40 nei giorni passati, con peso che si dimezza ogni ~23 sedute, trasformata in una scala 0–100 rispetto a tutta la storia.</p>"
+            "<p><b>Le barre.</b> Guardano ogni giorno passato in cui il mercato era nello stesso stato di oggi e contano cosa è successo nei 6 mesi dopo, confrontandolo con un giorno qualsiasi.</p></div></details>")
+    titolo = {"calma": "Il mercato è tranquillo", "normale": "Nessun segnale di tensione prolungata", "formazione": "Una tensione potrebbe formarsi",
+              "persistente": "La tensione dura da settimane", "persistente_calo": "Tensione che dura e mercato già in calo"}[st]
+    return (f"<section class='card rt rg' style='--rgc:{col};border-left:5px solid {col}'><div class='rg-q'>Regime di tensione · <a href='#regime' data-go='regime'>Dettagli ›</a></div>"
+            f"<div class='rg-hl'><i style='background:{col}'></i><span>{NOMI_STATO[st]}</span></div><div class='rg-sub'>{titolo}.</div>"
+            f"<div class='rg-pt'>Indice Armor oggi (0–100)</div>{scala}<div class='rg-t'>{cont}</div>{barra}"
+            f"<h4 class='rg-h'>E in passato, dopo giorni come oggi?</h4>{_barre_storiche(st, r)}{info}</section>")
 
 
-CSS = ("<style>.rtb{height:10px;border-radius:6px;background:var(--bd);position:relative;margin:8px 0 2px;overflow:hidden}.rtb i{display:block;height:100%}"
+CSS = ("<style>"
+       ".rg-q{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);font-weight:700}.rg-hl{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800;margin:6px 0 2px}.rg-hl i{width:18px;height:18px;border-radius:50%}"
+       ".rg-sub{font-size:14px;color:var(--mu);margin-bottom:10px}.rg-pt{font-size:13px;font-weight:700;margin:10px 0 4px}.rg-pt span{font-weight:400;color:var(--mu)}.rg-t{font-size:12.5px;line-height:1.5;color:var(--mu);margin:6px 0}.rg-t b{color:var(--tx)}"
+       ".rg-sc{position:relative;height:14px;border-radius:99px;background:var(--bd);margin:14px 0 4px}.rg-sc i{position:absolute;top:0;height:100%;opacity:.5}.rg-sc i:first-child{border-radius:99px 0 0 99px}.rg-sc i:nth-of-type(3){border-radius:0 99px 99px 0}"
+       ".rg-m{position:absolute;top:-4px;min-width:22px;height:22px;margin-left:-11px;border-radius:50%;color:var(--bg);font-size:11px;line-height:22px;text-align:center;border:2px solid var(--card);box-sizing:content-box;z-index:2;padding:0 1px}"
+       ".rg-m2{position:absolute;top:-6px;width:3px;height:26px;margin-left:-1px;background:var(--tx);opacity:.6;z-index:1}.rg-zl{display:flex;font-size:10.5px;color:var(--mu)}"
+       ".rg-pl{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-top:3px}.rg-pl b{color:var(--tx);font-size:13px}.rg-h{margin:16px 0 6px;font-size:15px}"
+       ".rg-c{background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:8px 12px;margin:8px 0}.rg-ct{font-size:13px;margin-bottom:6px}.rg-bl{display:flex;justify-content:space-between;font-size:12.5px;margin-top:4px}.rg-bl b{font-size:14px}"
+       ".rg-bar{height:9px;border-radius:99px;background:var(--bd);margin-top:3px;overflow:hidden}.rg-bar i{display:block;height:100%;border-radius:99px}"
+       ".rg-info{border:1px solid var(--bd);border-radius:12px;padding:8px 12px;margin:10px 0 0;font-size:13px;line-height:1.5}.rg-info summary{cursor:pointer;font-weight:700}.rg-info summary i{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--tx);color:var(--bg);font-style:normal;font-size:12px;margin-right:6px}.rg-info p{margin:8px 0}"
+       ".rtb{height:10px;border-radius:6px;background:var(--bd);position:relative;margin:8px 0 2px;overflow:hidden}.rtb i{display:block;height:100%}"
        ".rtb span{position:absolute;top:0;bottom:0;width:2px;background:var(--tx);opacity:.55}.rt .rth{margin-bottom:4px}"
        ".rtg{width:100%;height:300px;display:block}.rtl{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin:4px 0}.rtl i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}"
        ".rtt td.g,.rtt th.g{text-align:center}.rtneg{color:#dc2626}.rtpos{color:#16a34a}</style>")
