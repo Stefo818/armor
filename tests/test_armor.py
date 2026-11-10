@@ -2315,3 +2315,15 @@ def test_sec_intestazione_pulita_e_finestre_13f_e_cmf():
     vuoto = candidati.cmf(c, c + 1, c - 0.01, v)     # chiude sempre al minimo: denaro che esce
     assert vuoto.dropna().max() < -0.9
     assert "cmf" in candidati.serie(c, pd.Series(20.0, index=idx), pd.Series(22.0, index=idx), (h, lo, v))
+
+
+def test_super_armor_ui_episodi_e_barra():
+    import numpy as np
+    import pandas as pd
+    from armor import super_armor_ui as u
+    idx = pd.bdate_range("2000-01-03", periods=800)
+    p = pd.Series(100 * np.exp(np.cumsum(np.random.default_rng(1).normal(0, 0.01, 800))), index=idx)
+    st = pd.DataFrame({"sai": np.r_[np.full(400, 50.0), np.full(400, 20.0)]}, index=idx)
+    ep = u.episodi(p, st, 50.0)
+    assert ep["n"] >= 1 and 0 <= ep["quota5"] <= 1
+    assert "width:100%" in u.barra(1.5) and "width:2%" in u.barra(0)

@@ -800,7 +800,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                  ("skew", "SKEW"), ("nfci", "Condizioni finanziarie")]
     chip_opts = [(k, l) for k, l in chip_defs if k in chartdata and (chartdata[k]["d"] or chartdata[k].get("i"))]
     # ---- nuovi moduli (ognuno protetto: se uno fallisce, la pagina resta)
-    from . import allarmi, bilancio, decennio, insight, mercati, news as newsmod, posizionamento, regime as regmod, semafori, super_armor
+    from . import allarmi, bilancio, decennio, insight, mercati, news as newsmod, posizionamento, regime as regmod, semafori, super_armor, super_armor_ui
     sem = semafori.compute(p, livemod.load())
     from . import armor_index
     aix = armor_index.compute(sp)
@@ -1029,7 +1029,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     reg_box = _safe(lambda: tensione.CSS + tensione.box_oggi(reg_o), "Regime di tensione") if reg_o else ""
     p_regime = _safe(lambda: tensione.pagina(reg_o, None, tensione.grafico_dati()), "Pagina regime")
     p_oggi = (f"<a id='oggi'></a>{topbtns}"
-              f"{_safe(lambda: super_armor.html(aix, p), 'Super Armor Index')}"
+              f"{_safe(lambda: super_armor_ui.html(aix, p), 'Super Armor Index')}"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
               f"{sem_new}{reg_box}"

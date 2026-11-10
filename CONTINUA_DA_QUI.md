@@ -668,3 +668,10 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - `sec_dati.pulisci_ua`: il segreto SEC_USER_AGENT incollato con a capo/accenti rompeva le richieste («Invalid leading whitespace»); ora si pulisce da solo. 404/403 non si riprovano; elenco pagine SEC con 2 indirizzi e, se manca, nomi noti (trimestrali fino al 2023, a intervallo di date dal 2024); sonda prova i 6 pacchetti più recenti.
 - Workflow `grandi_fondi.yml`: 6 giri da 10 pacchetti per fonte (salva dopo ogni giro) con limite 150 minuti sul passo, per la storia completa in una sola esecuzione.
 - `sources.OHLC_IDS` include `sp_vol` (volume ^GSPC), `candidati.cmf` (flusso di denaro di Chaikin a 21 sedute).
+
+## Patch 66 - Super Armor Index: nuova grafica
+- `src/armor/super_armor_ui.py` sostituisce `super_armor.html` in `report.py` (il calcolo resta in `super_armor.py`).
+- Tocco sul blocco: scheda con tre linguette (Sintesi, Storico, Come funziona). Tocco su un pilastro (riquadri o righe): scheda di dettaglio con analisi, elementi, metodo, glossario, mini-storico.
+- Sintesi: spiegazione di Mercato (giorni e settimane) contro Economia (mesi) con scala e lettura combinata.
+- Storico: periodi 1M-Tutto, cursore con data/valore/fascia, linee dei pilastri attivabili, S&P 500 sotto il massimo, statistiche, tempo per fascia, episodi simili, affidabilità.
+- sw.js: armor-v65.
