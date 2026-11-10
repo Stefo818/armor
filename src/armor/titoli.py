@@ -235,6 +235,7 @@ def top_json(m: pd.DataFrame, close: pd.DataFrame, nomi: dict, settori: dict | N
                       "k": [round(float(x), 4 if x < 10 else 2) for x in close[t].dropna().iloc[-30:].values], "cap": inf.get("cap"),
                       "x3": None if "r3g" not in m or pd.isna(m.at[t, "r3g"]) else round(float(m.at[t, "r3g"]), 5),
                       "beta": None if "beta" not in m or pd.isna(m.at[t, "beta"]) else round(float(m.at[t, "beta"]), 2),
+                      "vr": None if "volrel" not in m or pd.isna(m.at[t, "volrel"]) else round(float(m.at[t, "volrel"]), 2),
                       "k6": [round(float(x), 4 if x < 10 else 2) for x in close[t].dropna().iloc[-126::2].values], "paese": inf.get("p"), "ind": inf.get("i")})
     return {"asof": str(close.dropna(how="all").index[-1].date()), "universo": int(len(m)), "items": items}
 

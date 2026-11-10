@@ -8,7 +8,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from . import saldi
+from . import brevetti, saldi
 from . import titoli_eventi as ev
 from .config import DATA, ROOT
 
@@ -29,6 +29,7 @@ VERSO = {"rev30": True, "rev90": True, "revsg": True, "mom": True, "dd52": True,
 FATTORI = {"revisioni": ("rev30", "rev90", "revsg"), "momentum": ("mom", "dd52"), "crescita": ("crescita", "qoq", "regola40"), "qualita": ("gross", "roe", "accruals", "fscore"),
            "sorpresa": ("sue",), "contratti": ("rpo_anni", "rpo_cap", "n101", "ctr"), "catalizzatori": ("cataliz", "tema"), "valutazione": ("psg",)}
 PDUFA = ev.PDUFA
+BREVETTI: dict = {}   # ticker → brevetti ultimi 12 mesi (data/brevetti.json), caricato da aggiorna()
 
 
 # ---------------------------------------------------------------- protocollo
@@ -164,6 +165,9 @@ def motivi(c: dict, s: dict, nome_tema: str | None) -> list[str]:
         add("sorpresa", "ultima trimestrale sopra le attese")
     if ind.get("insider_acq_90g"):
         add("qualita", "acquisti di azioni da parte dei dirigenti negli ultimi 90 giorni")
+    fr = brevetti.frase(ind.get("brevetti"), ind.get("rd_cap"))
+    if fr and (ind["brevetti"].get("crescita") or 0) >= 0.3:
+        cand.append((65, fr))
     cand.sort(key=lambda x: -x[0])
     return [t for _, t in cand[:3]]
 
@@ -196,6 +200,11 @@ def report(t: dict, c: dict, s: dict, mot: list[str]) -> dict:
     top = sorted([(x, NOMI[k]) for k, x in s["comp"].items() if x is not None], reverse=True)[:3]
     if top:
         perche.append("I fattori dove è più forte: " + ", ".join(f"{n} ({x}/100)" for x, n in top) + ".")
+    fr = brevetti.frase(ind.get("brevetti"), ind.get("rd_cap"))
+    if fr:
+        perche.append("Innovazione: " + fr + ".")
+    elif ind.get("rd_cap"):
+        perche.append(f"Spende in ricerca e sviluppo il {ind['rd_cap'] * 100:.1f}% del proprio valore di Borsa all'anno.".replace(".", ","))
     if ind.get("ricavi_q_1a"):
         perche.append(f"Fatturato dell'ultimo trimestre {ind['ricavi_q_1a']['f']} {saldi._pc(abs(ind['ricavi_q_1a']['var']), 1)} sull'anno prima.")
     storto = []
@@ -241,7 +250,7 @@ def costruisci(cand: dict, prezzi: dict, vol: dict, temi: list[dict], oggi: str,
         dett[t] = {"report": rp, "cataliz": catalizzatori(c, oggi, (studi or {}).get(t)),
                    "notizie": [{"d": e["data"], "t": e["titolo"], "l": e.get("link"), "f": e.get("fonte"), "e": e["etichetta"]} for e in c.get("eventi", []) if (e.get("opp") or 0) != 0][:5],
                    "ind": {k: ind.get(k) for k in ("ps", "pe", "ps_f", "pe_f", "ev_ebitda", "cap_rpo", "rpo_anni", "margine_lordo", "margine_fcf", "roe", "current_ratio", "debito_netto_ebitda",
-                                                   "diluizione", "rev_eps_30", "rev_eps_90", "short_float", "insider_acq_90g", "crescita_ricavi")}
+                                                   "diluizione", "rev_eps_30", "rev_eps_90", "short_float", "insider_acq_90g", "crescita_ricavi", "rd_cap", "rd_ricavi", "rd_crescita", "brevetti")}
                    | {"piotroski": (ind.get("piotroski") or {}).get("score"), "altman": (ind.get("altman") or {}).get("z"), "tema": c.get("nome_tema")}}
     return {"asof": oggi, "settimana": settimana, "ordine": ordine, "titoli": righe, "dett": dett, "temi": temi, "pesi": {NOMI[k]: v for k, v in PESI.items()},
             "centro_annuo": CENTRO_ANNUO, "centri_reali": centri, "protocollo": protocollo_hash()}
@@ -376,12 +385,14 @@ def _selezione(cc, m, tk, ind, ev8k, nz, forza, temi, mm, vt, oggi, sab, centri,
             continue
         rs = ev_.riassumi(nz.get(t, []), i.get("ricavi_ttm"))
         gravi = [e for e in ev8k.get(t, []) if e["item"] in ("1.03", "3.01", "4.02")]
+        dil_cassa = any(e["item"] == "DIL" for e in ev8k.get(t, [])) and i.get("mesi_cassa") is not None and i["mesi_cassa"] < 12   # aumento di capitale in arrivo con poca cassa
         tm = [x for x in ev_.temi_di(i.get("descrizione") or "") if forza.get(x) is not None]
         nome_tema = max(tm, key=lambda x: forza[x]) if tm else None
         i = dict(i)
+        i["brevetti"] = BREVETTI.get(t)
         i["rischio_binario"] = ev_.rischio_binario(i.get("industria"), i.get("ricavi_ttm"), None)
         cand[t] = {"ind": i, "voci": voci(i, m.loc[t].to_dict(), rs["eventi"], ev8k.get(t, []), forza.get(nome_tema) if nome_tema else None), "area": saldi.area_di(t, i.get("paese")),
-                   "settore": i.get("settore"), "eventi": rs["eventi"], "notizie": nz.get(t, []), "nome_tema": nome_tema, "esclusa": rs["escludi"] or bool(gravi)}
+                   "settore": i.get("settore"), "eventi": rs["eventi"], "notizie": nz.get(t, []), "nome_tema": nome_tema, "esclusa": rs["escludi"] or bool(gravi) or dil_cassa}
         s = cc[t].dropna()
         prezzi[t] = {"p": round(float(s.iloc[-1]), 2), "v": i.get("valuta") or "USD", "k": [round(float(x), 4 if x < 10 else 2) for x in s.iloc[-126::2].values]}
         prezzi[t].update(_rend(s))
@@ -415,7 +426,9 @@ def aggiorna(log=print) -> dict:
     log(f"[opp] preselezionati {len(tk)} titoli su {len(m)} (+ settimana scorsa: {len(union) - len(tk)} in più)")
     top = json.loads((DATA / "titoli_top.json").read_text(encoding="utf-8")) if (DATA / "titoli_top.json").exists() else {"items": []}
     nomi = {i["t"]: i["n"] for i in top["items"]}
-    ind, ev8k, nz = saldi.arricchisci(union, nomi, log, giorni_8k=90)
+    BREVETTI.clear()
+    BREVETTI.update(brevetti.carica())
+    ind, ev8k, nz = saldi.arricchisci(union, nomi, log, giorni_8k=90, comunicati_max=1)
     mm = json.loads((DATA / "mercati_mondo.json").read_text(encoding="utf-8")) if (DATA / "mercati_mondo.json").exists() else {"items": []}
     ret_etf = {}
     for x in ["VT"] + [v[1] for v in ev.TEMI.values()]:

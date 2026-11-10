@@ -90,8 +90,11 @@ def calo_score(causa: dict, eventi: list[dict], periodo: str) -> float | None:
         return None
     if causa["tipo"] == "settore":
         s = 80.0
-    elif causa["tipo"] == "ignota":
-        s = 70.0
+    elif causa["tipo"] == "opaca":   # Patch 68: crollo specifico, volumi alti, nessuna causa visibile
+        s = 35.0
+    elif causa["tipo"] == "ignota":   # Patch 68: il beneficio del dubbio dipende da quanto il calo è specifico del titolo
+        q = causa.get("quota")
+        s = 62.0 if q is None else (60.0 if q >= 0.6 else 70.0)
     else:
         negativi = [CALO_EVENTO[e["evento"]] for e in eventi if e["evento"] in CALO_EVENTO and (e.get("saldi") or 0) != "escludi" and isinstance(e.get("saldi"), int) and e["saldi"] < 0]
         s = float(min(negativi)) if negativi else 55.0
@@ -126,6 +129,8 @@ def tetti(ind: dict, eventi: list[dict], eventi_8k: list[dict]) -> list[str]:
         m.append("rapporto di uno short seller con accuse di frode")
     if ind.get("mesi_cassa") is not None and ind["mesi_cassa"] < 6:
         m.append(f"cassa per meno di 6 mesi ({ind['mesi_cassa']:.0f})")
+    if any(e.get("item") == "DIL" for e in eventi_8k or []) and ind.get("mesi_cassa") is not None and ind["mesi_cassa"] < 12:
+        m.append(f"nuove azioni in preparazione (S-3 o 424B5) con cassa per soli {ind['mesi_cassa']:.0f} mesi")
     return m
 
 
@@ -233,13 +238,17 @@ def report(t: dict, ind: dict, causa: dict, eventi: list[dict], periodo: str, no
     an = ind.get("analisti") or {}
     if an.get("target") and t.get("prezzo") and an["target"] / t["prezzo"] - 1 > 0.2 and (an.get("n") or 0) >= 5:
         fav.append(f"Il prezzo obiettivo medio degli analisti ({int(an['n'])} stime) è del {_pc(an['target'] / t['prezzo'] - 1)} sopra il prezzo attuale.")
-    if causa and causa["tipo"] in ("settore", "ignota"):
+    if causa and causa["tipo"] in ("settore", "ignota") and (causa.get("quota") is None or causa["quota"] < 0.6):
         fav.append("Il calo non è legato a notizie negative dell'azienda: storicamente i cali senza notizie si riassorbono più spesso di quelli con notizie.")
     if not fav:
         fav.append("Non emergono punti nettamente favorevoli dai dati disponibili.")
     risc = []
     if tetti_:
         risc.append("Punteggio limitato a 15/100 per: " + "; ".join(tetti_) + ".")
+    if causa and causa["tipo"] == "opaca":
+        risc.append(causa["testo"])
+    if any(e.get("item") == "DIL" for e in (t.get("eventi_8k") or [])):
+        risc.append("Negli ultimi 90 giorni ha depositato alla SEC moduli per emettere nuove azioni (S-3 o 424B5): un aumento di capitale a sconto può far scendere il titolo.")
     if causa and causa["tipo"] == "azienda":
         risc.append("Dopo risultati deludenti o previsioni tagliate il calo tende a proseguire per settimane (deriva post-annuncio).")
     if ind.get("altman") and ind["altman"]["zona"] == "critica":
@@ -307,7 +316,7 @@ def costruisci(top: dict, fond: dict, notizie: dict, etf: list[dict] | None, ret
         etfs = ETF_SETTORE.get(sett or "")
         rp = ritorno(i, periodo_di[t])
         r_sett = (ret_settori.get(etfs) or {}).get(periodo_di[t]) if etfs else None
-        causa = ev.causa_calo(rp, r_sett, i.get("beta") or 1.0, rs["eventi"]) if rp is not None else None
+        causa = ev.causa_calo(rp, r_sett, i.get("beta") or 1.0, rs["eventi"], i.get("vr")) if rp is not None else None
         ind = dict(ind)
         ind["rischio_binario"] = ev.rischio_binario(ind.get("industria"), ric, None)
         cand[t] = {"ind": ind, "causa": causa, "eventi": rs["eventi"], "eventi_8k": eventi_8k.get(t, []), "prezzo": i["p"], "settore": sett}
@@ -325,7 +334,7 @@ def costruisci(top: dict, fond: dict, notizie: dict, etf: list[dict] | None, ret
             vv = [cand[g]["ind"].get(k) for g in ticker if cand[g]["settore"] == sett and cand[g]["ind"].get(k)]
             mediane[k] = float(np.median(vv)) if len(vv) >= 4 else None
         p0 = periodo_di[t]
-        rep = report({"prezzo": i["p"]}, ind, c["causa"], c["eventi"], p0, dict(PERIODI)[p0], ritorno(i, p0),
+        rep = report({"prezzo": i["p"], "eventi_8k": c.get("eventi_8k", [])}, ind, c["causa"], c["eventi"], p0, dict(PERIODI)[p0], ritorno(i, p0),
                      (ret_settori.get(ETF_SETTORE.get(sett or "")) or {}).get(p0) if sett else None, s.get("tetti", []), mediane,
                      {p: ritorno(i, p) for p, _ in PERIODI})
         rg = {p: ritorno(i, p) for p, _ in PERIODI}
@@ -334,7 +343,8 @@ def costruisci(top: dict, fond: dict, notizie: dict, etf: list[dict] | None, ret
                     "r": rg, "ric": None if not ind.get("ricavi_q_1a") else {"f": ind["ricavi_q_1a"]["f"], "v": ind["ricavi_q_1a"]["var"]},
                     "ps": ind.get("ps"), "pe": ind.get("pe"), "ps_f": ind.get("ps_f"), "leva": ind.get("debito_netto_ebitda"), "cassa": ind.get("mesi_cassa"),
                     "fs": (ind.get("piotroski") or {}).get("score"), "causa": (c["causa"] or {}).get("tipo", "ignota"), "causa_t": (c["eventi"][0]["etichetta"] if c["eventi"] and (c["causa"] or {}).get("tipo") == "azienda" else
-                                                                                                                                  "Calo di settore o di mercato" if (c["causa"] or {}).get("tipo") == "settore" else "Nessuna notizia"),
+                                                                                                                                  "Calo di settore o di mercato" if (c["causa"] or {}).get("tipo") == "settore" else
+                                                                                                                                  "Calo specifico senza causa visibile (volumi alti)" if (c["causa"] or {}).get("tipo") == "opaca" else "Nessuna notizia"),
                     "s": s.get("score"), "comp": s.get("comp"), "usati": s.get("usati"), "tetti": s.get("tetti", []), "k": i.get("k6") or i.get("k")}
         dett[t] = {"ind": {k: ind.get(k) for k in ("ricavi_q", "ricavi_ttm", "ps", "pe", "ps_f", "pe_f", "ev_ebitda", "cap_rpo", "rpo_anni", "copertura_interessi", "debito_netto_ebitda",
                                                     "current_ratio", "margine_lordo", "margine_fcf", "roe", "mesi_cassa", "diluizione", "accruals", "short_float", "insider_acq_90g")}
@@ -465,7 +475,7 @@ def storico_selezioni(close: pd.DataFrame, nomi: dict, ultimi: int = 20) -> dict
 
 
 # ---------------------------------------------------------------- lavoro serale
-def arricchisci(tk: list[str], nomi: dict, log=print, giorni_8k: int = 30) -> tuple[dict, dict, dict]:
+def arricchisci(tk: list[str], nomi: dict, log=print, giorni_8k: int = 30, comunicati_max: int = 2) -> tuple[dict, dict, dict]:
     """Per un elenco di titoli: indicatori (yfinance con cache 7 giorni + SEC RPO), 8-K recenti e notizie (Google News). Restituisce (ind, ev8k, notizie)."""
     import concurrent.futures as cf
 
@@ -482,29 +492,44 @@ def arricchisci(tk: list[str], nomi: dict, log=print, giorni_8k: int = 30) -> tu
         cik = tf.cik_map()
     except Exception as e:  # noqa: BLE001
         log("[sec] non disponibile: " + str(e)[:80])
-    ind, ev8k = {}, {}
+    def _facts(c):
+        f_ = tf.sec_json(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{c}.json") or {}
+        return tf.rpo_da_facts(f_), tf.rd_da_facts(f_)
+    ind, ev8k, comunicati = {}, {}, {}
     for t in tk:
         d = fond.get(t)
         if not d:
             continue
-        rpo = None
+        rpo = rd = None
         c = cik.get(t.upper())
         if c:
             try:
-                rpo = tf.rpo_da_facts(tf.sec_json(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{c}.json") or {})
-                ev8k[t] = tf.eventi_8k(tf.sec_json(f"https://data.sec.gov/submissions/CIK{c}.json") or {}, giorni_8k)
-            except Exception:  # noqa: BLE001
-                pass
-        ind[t] = tf.indicatori(d, rpo)
+                rpo, rd = _facts(c)
+                sub_ = tf.sec_json(f"https://data.sec.gov/submissions/CIK{c}.json") or {}
+                ev8k[t] = tf.eventi_8k(sub_, giorni_8k) + tf.moduli_diluizione(sub_, 90)
+                if comunicati_max > 0:   # testo del comunicato allegato agli 8-K recenti (Exhibit 99.1): dice il motivo reale dietro un item generico
+                    comunicati[t] = []
+                    visti = set()
+                    for e in sorted(ev8k[t], key=lambda x: x["data"], reverse=True):
+                        if e["item"] in tf.ITEM_COMUNICATO and e["acc"] not in visti and len(visti) < comunicati_max:
+                            visti.add(e["acc"])
+                            txt = tf.comunicato_8k(c, e["acc"])
+                            if txt:
+                                comunicati[t].append(tf.notizia_da_comunicato(txt, e["data"], f"https://www.sec.gov/Archives/edgar/data/{int(c)}/{e['acc'].replace('-', '')}/"))
+            except Exception as e:  # noqa: BLE001
+                log(f"[sec] {t}: {str(e)[:70]}")
+        ind[t] = tf.indicatori(d, rpo, rd)
 
     def notizie_di(t):
         try:
             import requests
+            from urllib.parse import quote
             nome = (ind.get(t) or {}).get("nome") or nomi.get(t, t)
-            xml = requests.get(news.GOOGLE.format(q=f'"{nome}"+stock'), timeout=30, headers=news.UA).text
-            return t, news.parse_rss(xml)[:20]
+            q = f'("{nome}" OR "{t.split(".")[0]}") (stock OR shares OR earnings OR revenue OR FDA OR patent)'
+            xml = requests.get(news.GOOGLE.format(q=quote(q)), timeout=30, headers=news.UA).text
+            return t, ev.filtra_omonimi(news.parse_rss(xml), nome, t)[:20] + comunicati.get(t, [])
         except Exception:  # noqa: BLE001
-            return t, []
+            return t, comunicati.get(t, [])
     nz = {}
     with cf.ThreadPoolExecutor(4) as ex:
         for t, n_ in ex.map(notizie_di, tk):

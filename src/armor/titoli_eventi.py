@@ -77,17 +77,22 @@ def riassumi(notizie: list[dict], ricavi_annui: float | None = None) -> dict:
     return {"eventi": ev[:8], "escludi": any(e["saldi"] == "escludi" for e in ev), "n_spam": sum(1 for n in notizie if (classifica(n.get("title", "")) or {}).get("spam"))}
 
 
-def causa_calo(r_titolo: float | None, r_settore: float | None, beta: float, eventi: list[dict]) -> dict:
-    """Perché è sceso? Rendimento in eccesso = titolo − β·settore. Se il settore spiega la maggior parte del calo → «settore/mercato»."""
+def causa_calo(r_titolo: float | None, r_settore: float | None, beta: float, eventi: list[dict], volrel: float | None = None) -> dict:
+    """Perché è sceso? Rendimento in eccesso = titolo − β·settore. Se il settore spiega la maggior parte del calo → «settore/mercato».
+    Patch 68: se il calo è quasi tutto specifico del titolo (eccesso ≥ 60% del calo), i volumi sono almeno il doppio del normale e nessuna notizia lo spiega,
+    la causa è «opaca»: non si dà il beneficio del dubbio, perché i feed leggono solo titoli in inglese e possono aver perso la notizia."""
     if r_titolo is None:
         return {"tipo": "ignota", "testo": "Dati insufficienti."}
     ecc = None if r_settore is None else r_titolo - beta * r_settore
+    quota = None if ecc is None or not r_titolo else abs(ecc) / abs(r_titolo)
     neg = [e for e in eventi if e.get("saldi") not in (None, "escludi", 0) and e["saldi"] < 0]
     if ecc is not None and r_titolo < 0 and abs(ecc) < 0.3 * abs(r_titolo):
-        return {"tipo": "settore", "ecc": ecc, "testo": "Il calo segue quello del settore o del mercato: non c'è una causa legata solo all'azienda."}
+        return {"tipo": "settore", "ecc": ecc, "quota": quota, "testo": "Il calo segue quello del settore o del mercato: non c'è una causa legata solo all'azienda."}
     if neg:
-        return {"tipo": "azienda", "ecc": ecc, "testo": neg[0]["etichetta"] + (f" ({neg[0]['data'][8:]}/{neg[0]['data'][5:7]})" if neg[0].get("data") else "") + "."}
-    return {"tipo": "ignota", "ecc": ecc, "testo": "Causa non identificata dalle notizie disponibili."}
+        return {"tipo": "azienda", "ecc": ecc, "quota": quota, "testo": neg[0]["etichetta"] + (f" ({neg[0]['data'][8:]}/{neg[0]['data'][5:7]})" if neg[0].get("data") else "") + "."}
+    if quota is not None and quota >= 0.6 and volrel is not None and volrel >= 2:
+        return {"tipo": "opaca", "ecc": ecc, "quota": quota, "testo": "Calo specifico dell'azienda con volumi molto alti e nessuna causa visibile nelle notizie: prudenza, potrebbe esserci una notizia non letta."}
+    return {"tipo": "ignota", "ecc": ecc, "quota": quota, "testo": "Causa non identificata dalle notizie disponibili."}
 
 
 # ---------------------------------------------------------------- temi tecnologici (45.7)
@@ -185,3 +190,44 @@ def rischio_binario(industria: str | None, ricavi_ttm: float | None, n_candidati
     if (ricavi_ttm or 0) < 5e6 and (n_candidati_fase23 is None or n_candidati_fase23 <= 1):
         return {"testo": "Rischio binario: ricavi quasi nulli e al massimo un prodotto in fase avanzata. L'esito di un solo studio può dimezzare o raddoppiare il prezzo."}
     return None
+
+
+# ---------------------------------------------------------------- nomi di azienda (Patch 68)
+SUFFISSI = {"inc", "incorporated", "corp", "corporation", "co", "company", "ltd", "limited", "llc", "lp", "llp", "plc", "sa", "ag", "nv", "se", "spa", "sab", "cv", "the",
+            "holdings", "holding", "group", "de", "cl", "class", "ordinary", "shares", "common", "stock", "adr", "ads"}
+
+
+def normalizza_nome(nome: str | None) -> str:
+    """«Apple Inc.» → «apple»; «Taiwan Semiconductor Manufacturing Co., Ltd.» → «taiwan semiconductor manufacturing». Minuscolo, senza punteggiatura né forme societarie finali."""
+    import re
+    t = re.sub(r"[^a-z0-9 ]", " ", (nome or "").lower().replace("&", " and "))
+    parole = t.split()
+    while parole and parole[-1] in SUFFISSI:
+        parole.pop()
+    while parole and parole[0] == "the":
+        parole.pop(0)
+    return " ".join(parole)
+
+
+def filtra_omonimi(notizie: list[dict], nome: str | None, ticker: str) -> list[dict]:
+    """Tiene solo le notizie che nominano davvero l'azienda: il nome normalizzato per intero, oppure il ticker (almeno 3 lettere, in maiuscolo, o tra parentesi dopo la borsa).
+    Evita che «Gap», «Target» o «Block» attirino notizie di altro."""
+    import re
+    core = normalizza_nome(nome)
+    tk = ticker.split(".")[0].upper().replace("-", ".")
+    out = []
+    for n in notizie:
+        testo = (n.get("title") or "") + " " + (n.get("summary") or "")
+        low = " " + normalizza_nome_testo(testo) + " "
+        if core and (" " + core + " ") in low and (" " in core or re.search(rf"\b{re.escape(core.capitalize())}\b|\b{re.escape(core.upper())}\b", testo)):
+            out.append(n)   # nome di una sola parola (Gap, Target, Block): deve comparire con l'iniziale maiuscola, non come parola comune
+        elif len(tk) >= 3 and re.search(rf"(?<![A-Za-z]){re.escape(tk)}(?![A-Za-z])", testo):
+            out.append(n)
+        elif re.search(rf"(?:NASDAQ|NYSE|AMEX|NYSE American)\s*:\s*{re.escape(tk)}\b", testo):
+            out.append(n)
+    return out
+
+
+def normalizza_nome_testo(testo: str) -> str:
+    import re
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]", " ", testo.lower().replace("&", " and "))).strip()

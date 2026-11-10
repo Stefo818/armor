@@ -28,3 +28,9 @@ Le fasce **non** incorporano il punteggio finché non c'è evidenza reale: oggi 
 
 ## Verifica
 Ogni sabato si salvano le 30 scelte (prezzo, punteggio, fasce a 1 e 3 mesi). La pagina confronta il risultato reale con la fascia (verde se pari o sopra la mediana, rosso se sotto), il rendimento medio contro MSCI World (VT) e S&P 500 (SPY), la quota di titoli che battono VT e la quota di risultati dentro la fascia 10-90 (attesa vicino all'80%). Lo storico si mostra anche se negativo. Il test storico con bilanci SEC (2012-oggi) non è ancora stato eseguito.
+
+## Modifica del 10 novembre 2026 (Patch 68) - scritta prima di vedere i risultati
+- **Esclusione.** Un titolo con moduli S-3/424B5/S-1 negli ultimi 90 giorni e cassa per meno di 12 mesi è escluso (aumento di capitale in arrivo).
+- **Comunicati e ricerca notizie.** Come in Saldi: si legge il comunicato allegato agli 8-K (al massimo 1 per società) e si scartano le notizie su omonimi.
+- **Brevetti e ricerca e sviluppo (solo informativi, peso 0).** Si mostrano brevetti concessi negli ultimi 12 mesi (file gratuiti PatentsView, abbinati ai simboli tramite l'elenco ufficiale SEC e alias, vedi `brevetti.py`) e spesa in ricerca e sviluppo sul valore di Borsa (XBRL SEC). Entrano nei punteggi solo dopo il confronto con i pesi attuali previsto dalla Patch 69.
+- I pesi degli otto fattori non cambiano in questa patch.

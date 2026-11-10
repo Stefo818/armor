@@ -196,6 +196,89 @@ def eventi_8k(submissions: dict, giorni: int = 30, oggi: str | None = None) -> l
     return out
 
 
+FORME_DILUIZIONE = ("S-3", "S-3ASR", "F-3", "F-3ASR", "424B5", "424B4", "S-1")
+
+
+def moduli_diluizione(submissions: dict, giorni: int = 90, oggi: str | None = None) -> list[dict]:
+    """Moduli con cui un'azienda si prepara a emettere nuove azioni (registrazione a scaffale S-3, supplemento 424B5, S-1), nei `giorni` indicati.
+    Restituisce voci nello stesso formato degli 8-K con item «DIL», così Saldi e Opportunità le trattano insieme."""
+    try:
+        r = submissions["filings"]["recent"]
+        forme, date, acc = r["form"], r["filingDate"], r.get("accessionNumber", [""] * len(r["form"]))
+    except (KeyError, TypeError):
+        return []
+    oggi_d = np.datetime64(oggi) if oggi else np.datetime64("today")
+    out = []
+    for f, d, a in zip(forme, date, acc):
+        if f in FORME_DILUIZIONE and 0 <= (oggi_d - np.datetime64(d)).astype(int) <= giorni:
+            out.append({"data": d, "item": "DIL", "evento": f"deposito {f} (nuove azioni)", "tono": "neg", "acc": a, "form": f})
+    return out
+
+
+def rd_da_facts(facts: dict, asof: str | None = None) -> dict | None:
+    """Spesa annua in ricerca e sviluppo (ResearchAndDevelopmentExpense, bilancio annuale 10-K) con data di deposito ≤ asof, e quella dell'anno prima."""
+    try:
+        units = facts["facts"]["us-gaap"]["ResearchAndDevelopmentExpense"]["units"]["USD"]
+    except (KeyError, TypeError):
+        return None
+    righe = []
+    for r in units:
+        try:
+            durata = (np.datetime64(r["end"]) - np.datetime64(r["start"])).astype(int)
+        except (KeyError, ValueError):
+            continue
+        if r.get("form") in ("10-K", "10-K/A") and 350 <= durata <= 380 and (asof is None or r.get("filed", "9999") <= asof):
+            righe.append(r)
+    if not righe:
+        return None
+    righe.sort(key=lambda r: (r["end"], r.get("filed", "")))
+    u = righe[-1]
+    prec = [r for r in righe if 330 <= (np.datetime64(u["end"]) - np.datetime64(r["end"])).astype(int) <= 400]
+    return {"rd": float(u["val"]), "fine": u["end"], "deposito": u.get("filed"), "rd_1a": float(prec[-1]["val"]) if prec else None}
+
+
+def trova_ex99(indice: dict) -> str | None:
+    """Dal file index.json di un deposito, il nome del comunicato stampa (Exhibit 99.1): ex99-1.htm, ex-99_1.htm, exhibit991.htm…"""
+    import re
+    try:
+        nomi = [x["name"] for x in indice["directory"]["item"]]
+    except (KeyError, TypeError):
+        return None
+    cand = [n for n in nomi if re.search(r"ex[-_]?99[-_.]?0?1|exhibit[-_]?99[-_.]?0?1|ex99", n, re.I) and n.lower().endswith((".htm", ".html", ".txt"))]
+    return sorted(cand, key=len)[0] if cand else None
+
+
+def testo_pulito(grezzo: str, massimo: int = 4000) -> str:
+    """Testo leggibile dell'inizio di un comunicato: via tag, script, spazi doppi e le formule di rito."""
+    import html as _html
+    import re
+    t = re.sub(r"(?is)<(script|style).*?</\1>", " ", grezzo or "")
+    t = _html.unescape(re.sub(r"<[^>]+>", " ", t))
+    t = re.sub(r"\s+", " ", t).strip()
+    t = re.sub(r"(?i)^(exhibit 99\.1\s*)?(for immediate release|news release|press release)\s*[:\-]?\s*", "", t)
+    return t[:massimo]
+
+
+def comunicato_8k(cik: str, acc: str, get_json=None, get_testo=None) -> str | None:
+    """Testo (primi 4.000 caratteri) del comunicato allegato a un 8-K. `acc` come in EDGAR (0001234567-26-000123)."""
+    base = f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc.replace('-', '')}/"
+    gj = get_json or sec_json
+    gt = get_testo or sec_testo
+    nome = trova_ex99(gj(base + "index.json") or {})
+    if not nome:
+        return None
+    raw = gt(base + nome)
+    return testo_pulito(raw) if raw else None
+
+
+def notizia_da_comunicato(testo: str, data: str, link: str) -> dict:
+    """Il comunicato come se fosse una notizia: titolo = primi 400 caratteri (titolo e sottotitolo), riassunto = il resto fino a 4.000 (per gli importi)."""
+    return {"title": testo[:400], "summary": testo[400:4000], "time": data + "T00:00:00Z", "source": "SEC 8-K (comunicato)", "link": link}
+
+
+ITEM_COMUNICATO = ("1.01", "2.02", "7.01", "8.01", "5.02", "2.05", "2.06")
+
+
 def _sec_headers() -> dict | None:
     ua = os.environ.get("SEC_USER_AGENT", "").strip()
     return {"User-Agent": ua, "Accept-Encoding": "gzip, deflate"} if ua else None
@@ -212,6 +295,17 @@ def cik_map() -> dict:
     return {v["ticker"].upper(): f"{int(v['cik_str']):010d}" for v in r.json().values()}
 
 
+def titoli_sec() -> list[tuple[str, str, str]]:
+    """Elenco ufficiale SEC delle società quotate: (ticker, CIK a 10 cifre, nome). Serve ad abbinare i titolari dei brevetti ai simboli di Borsa."""
+    h = _sec_headers()
+    if not h:
+        return []
+    import requests
+    r = requests.get("https://www.sec.gov/files/company_tickers.json", headers=h, timeout=40)
+    r.raise_for_status()
+    return [(v["ticker"].upper(), f"{int(v['cik_str']):010d}", v["title"]) for v in r.json().values()]
+
+
 def sec_json(url: str):
     h = _sec_headers()
     if not h:
@@ -220,6 +314,16 @@ def sec_json(url: str):
     time.sleep(0.12)   # massimo 10 richieste al secondo
     r = requests.get(url, headers=h, timeout=40)
     return r.json() if r.status_code == 200 else None
+
+
+def sec_testo(url: str) -> str | None:
+    h = _sec_headers()
+    if not h:
+        return None
+    import requests
+    time.sleep(0.12)
+    r = requests.get(url, headers=h, timeout=40)
+    return r.text[:200000] if r.status_code == 200 else None
 
 
 # ---------------------------------------------------------------- yfinance (tutti i mercati)
@@ -323,7 +427,7 @@ def da_yf(ticker: str) -> dict | None:
     return d
 
 
-def indicatori(d: dict, rpo: dict | None = None) -> dict:
+def indicatori(d: dict, rpo: dict | None = None, rd: dict | None = None) -> dict:
     """Tutti gli indicatori del titolo a partire da `da_yf` (e, per gli USA, dall'RPO SEC)."""
     info, q = d.get("info", {}), d.get("q", [])
     cap = _n(info.get("marketCap"))
@@ -353,6 +457,8 @@ def indicatori(d: dict, rpo: dict | None = None) -> dict:
         "current_ratio": _n(info.get("currentRatio")), "margine_lordo": _n(info.get("grossMargins")), "margine_fcf": _div(info.get("freeCashflow"), ttm),
         "roe": _n(info.get("returnOnEquity")), "mesi_cassa": mesi_cassa(cassa, fcf_q), "diluizione": diluizione(a0.get("shares"), a1.get("shares")),
         "accruals": accruals(a0.get("ni"), a0.get("cfo"), _n(a0.get("assets"))), "rpo": rpo, "banca": banca,
+        "rd": rd, "rd_cap": _div(rd["rd"], cap) if rd else None, "rd_ricavi": _div(rd["rd"], ttm) if rd else None,
+        "rd_crescita": (_div(rd["rd"], rd["rd_1a"]) - 1) if rd and rd.get("rd_1a") else None,
         "analisti": {"raccomandazione": _n(info.get("recommendationMean")), "target": _n(info.get("targetMeanPrice")), "target_min": _n(info.get("targetLowPrice")),
                      "target_max": _n(info.get("targetHighPrice")), "n": _n(info.get("numberOfAnalystOpinions"))},
         "short_float": _n(info.get("shortPercentOfFloat")), "insider_acq_90g": d.get("insider_acq_90g"),

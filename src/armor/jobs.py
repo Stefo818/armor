@@ -529,6 +529,12 @@ def main() -> None:
         from . import vrp
         r = vrp.run()
         print({m: x["promettente"] for m, x in r["promettenti"].items()})
+    elif cmd == "brevetti-sonda":   # prova di accesso ai file dei brevetti (PatentsView) e dell'elenco SEC; mostra gli abbinamenti nome → simbolo
+        from . import brevetti
+        print(brevetti.sonda())
+    elif cmd == "brevetti-aggiorna":   # scarica i brevetti concessi, li abbina alle società quotate → data/brevetti.json
+        from . import brevetti
+        brevetti.aggiorna()
     elif cmd == "sec-sonda":   # prova di accesso ai dati SEC: elenco, nomi dei file, intestazioni
         from . import sec_dati
         print(sec_dati.sonda())

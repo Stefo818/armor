@@ -1,0 +1,38 @@
+name: Brevetti per azienda
+on:
+  schedule:
+    - cron: '0 22 * * 5'   # venerdì sera (ora UTC), prima della selezione del sabato
+  workflow_dispatch:
+    inputs:
+      solo_sonda:
+        description: 'Solo prova di accesso (non scarica i file grandi)'
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
+jobs:
+  brevetti:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONUNBUFFERED: '1'
+      SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Prova di accesso ai file dei brevetti e agli abbinamenti
+        continue-on-error: true
+        run: python -m armor brevetti-sonda
+      - name: Scarica i brevetti e li abbina alle società quotate
+        if: ${{ !inputs.solo_sonda }}
+        continue-on-error: true
+        run: python -m armor brevetti-aggiorna
+      - name: Salva i dati nel repository
+        run: bash scripts/salva.sh "Brevetti per azienda" data/brevetti.json data/brevetti_non_abbinati.csv

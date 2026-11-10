@@ -24,3 +24,10 @@ Basi documentate: inversione di breve periodo (Jegadeesh 1990, Lehmann 1990; Cha
 
 ## Verifica continua
 Ogni giorno si registrano i 30 titoli più calati per periodo con punteggio e componenti. Dopo 21 e 63 sedute si calcolano rendimento a 1 e 3 mesi e confronto con S&P 500 (SPY), per fascia di punteggio (1-20 … 81-100). Il test storico con dati SEC per data di deposito (dal 2012) **non è ancora stato eseguito**; quando lo sarà dirà che è ottimista (solo titoli ancora quotati).
+
+## Modifica del 10 novembre 2026 (Patch 68) - scritta prima di vedere i risultati
+- **Natura del calo.** Il voto «nessuna notizia» non è più sempre 70. Se il calo è quasi tutto specifico del titolo (rendimento in eccesso sul settore ≥ 60% del calo) il voto è 60; se in più i volumi sono almeno 2 volte il normale (volume dei 5 giorni su quello dei 60) la causa è «opaca» e il voto è 35. Se non ci sono dati sul settore il voto è 62. Settore e mercato restano a 80; l'effetto si dimezza sempre sui periodi di 3 e 6 mesi. Motivo: i feed leggono solo titoli in inglese e una notizia mancata non è una prova di assenza di notizie.
+- **Aumento di capitale in arrivo.** Moduli S-3, S-3ASR, F-3, F-3ASR, 424B5, 424B4 o S-1 negli ultimi 90 giorni insieme a cassa per meno di 12 mesi portano il punteggio a un tetto di 15.
+- **Comunicati.** Per gli 8-K degli ultimi 30 giorni con item 1.01, 2.02, 2.05, 2.06, 5.02, 7.01 o 8.01 (al massimo 2 per società) si legge il comunicato allegato (Exhibit 99.1) e lo si classifica come una notizia.
+- **Ricerca notizie.** La ricerca usa nome o simbolo più parole di contesto e scarta le notizie che non nominano davvero l'azienda.
+- I pesi dei cinque componenti non cambiano.
