@@ -1,5 +1,5 @@
 {
- "generato": "2026-11-09T16:57Z",
+ "generato": "2026-11-10T04:44Z",
  "ok": true,
  "n_controlli": 15,
  "n_falliti": 0,
@@ -49,7 +49,7 @@
   {
    "controllo": "Date allineate",
    "ok": true,
-   "dettaglio": "VIX 06/11, S&P 500 06/11, VWCE (L&S) 06/11",
+   "dettaglio": "VIX 09/11, S&P 500 09/11, VWCE (L&S) 09/11",
    "grave": true
   },
   {
@@ -61,7 +61,7 @@
   {
    "controllo": "VIX: valori validi",
    "ok": true,
-   "dettaglio": "9283 righe",
+   "dettaglio": "9284 righe",
    "grave": true
   },
   {
@@ -73,7 +73,7 @@
   {
    "controllo": "S&P 500: valori validi",
    "ok": true,
-   "dettaglio": "24831 righe",
+   "dettaglio": "24832 righe",
    "grave": true
   },
   {
@@ -85,7 +85,7 @@
   {
    "controllo": "VWCE (L&S): valori validi",
    "ok": true,
-   "dettaglio": "1703 righe",
+   "dettaglio": "1704 righe",
    "grave": true
   },
   {
