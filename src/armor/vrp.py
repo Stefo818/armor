@@ -85,6 +85,30 @@ def previsioni_varianza(t: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def har_ultima(p: pd.Series, t) -> tuple[float | None, str | None]:
+    """Previsione di oggi (varianza annua %², 21 sedute) del modello HAR con VIX (HAR-X), con i soli esiti già noti. (valore, data dell'ultimo dato) o (None, None)."""
+    o, h, lo = store.load("sp_open"), store.load("sp_high"), store.load("sp_low")
+    if min(len(o), len(h), len(lo)) < 1000:
+        return None, None
+    pp = p[p.index <= pd.Timestamp(t)]
+    tb = tabella(componenti(o, h, lo, pp), store.load("vix"))
+    X = tb[["rv_d", "rv_w", "rv_m", "vix2"]].values
+    ok = np.isfinite(X).all(axis=1)
+    if not ok.any():
+        return None, None
+    i = int(np.where(ok)[0][-1])
+    if (pd.Timestamp(t) - tb.index[i]).days > 7:
+        return None, None
+    j = i - 21
+    tr = tb.iloc[: j + 1]
+    m = ok[: j + 1] & np.isfinite(tr["y"].values)
+    if m.sum() < MIN_OSS:
+        return None, None
+    A = tr.loc[m, ["rv_d", "rv_w", "rv_m", "vix2"]].values
+    b = _ols(np.column_stack([np.ones(len(A)), A]), tr.loc[m, "y"].values)
+    return max(float(np.r_[1, X[i]] @ b), FLOOR_VAR), str(tb.index[i].date())
+
+
 def s0_da_bersaglio(st: dict, var_annua: float) -> float:
     """Varianza iniziale del GARCH tale che la media attesa dei primi 21 giorni coincida con la previsione (annua, %²)."""
     rho, lr = st["rho"], st["s2_lr"]

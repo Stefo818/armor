@@ -39,7 +39,7 @@ def parse_cot(text: str) -> pd.DataFrame:
 def fetch_cot() -> dict[str, pd.Series]:
     frames = []
     have = store.load("cot_lev_net")
-    years = [datetime.now().year] if len(have) > 100 else [datetime.now().year - 2, datetime.now().year - 1, datetime.now().year]
+    years = [datetime.now().year] if len(have) > 400 else list(range(2006, datetime.now().year + 1))   # storia completa (dal 2006) finché non c'è, poi basta l'anno corrente
     for y in years:   # storia annuale (solo al primo avvio, poi basta la settimana corrente)
         try:
             z = zipfile.ZipFile(io.BytesIO(requests.get(HIST.format(y=y), headers=UA, timeout=60).content))

@@ -2147,3 +2147,151 @@ def test_storia_indice_e_selettore_strumenti():
     assert "VWCE (il tuo fondo)" in h and "data-a" in h
     m = previsioni_hub.matrice(None)
     assert "data-pmw" in m or "Nessun modello" in m
+
+
+def test_classifica_voto_e_nomi():
+    from armor import classifica as c
+    assert c._voto(0) == 50 and c._voto(1) == 100 and c._voto(-1) == 1
+    ph = {"10g": {"bss": 0.05, "lo": 0.0, "hi": 0.1, "rec": 0.05, "n": 100}, "1m": {"bss": 0.0, "lo": -0.05, "hi": 0.05, "rec": 0.0, "n": 100}}
+    vp, lo, hi, vh = c.voto_passato(ph)
+    assert 50 < vp < 70 and lo < vp < hi and set(vh) == {"10g", "1m"}
+    assert c.voto_passato({}) is None
+    righe = c.calcola()
+    assert righe and righe[0]["posto"] == 1 and all(1 <= r["voto"] <= 100 for r in righe)
+    assert [r["voto"] for r in righe] == sorted((r["voto"] for r in righe), reverse=True)
+    assert "50" in c.html()
+
+
+def test_taratura_helpers_e_har():
+    from armor import taratura, previsioni_hub
+    assert callable(taratura.tarare) and callable(taratura.valuta)
+    assert "HAR" in previsioni_hub.nome_sim("V1T1_HAR")
+
+
+def test_semaforo_rischio_colori_e_isteresi():
+    from armor import semaforo_rischio as s
+    assert s.colore(0.5, 0.6) == "Verde" and s.colore(1.0, 1.1) == "Giallo" and s.colore(1.5, 1.6) == "Arancione" and s.colore(2.2, 2.4) == "Rosso"
+    assert s.colore(0.7, 1.6) == "Grigio" and s.colore(0.5, 3.0) == "Grigio"   # precedenza: il disaccordo batte il resto
+    assert s.mostrato(["Verde"], None) == "Verde"
+    assert s.mostrato(["Verde", "Giallo"], "Verde") == "Verde"            # una seduta sola non basta
+    assert s.mostrato(["Verde", "Giallo", "Giallo", "Giallo"], "Verde") == "Giallo"
+    assert s.mostrato(["Verde", "Verde", "Rosso"], "Verde") == "Rosso"    # rosso e grigio subito
+    pred = {hz: {"p": {thr: 0.2}, "base": {thr: 0.1}, "sfidante": {"p": {thr: 0.2}}} for hz, thr in s.BERSAGLI}
+    o = s.oggi_da_pred(pred)
+    assert o and abs(o["r_a1"] - 2.0) < 1e-9 and o["grezzo"] == "Rosso"
+    assert s.oggi_da_pred({}) is None
+
+
+def test_grandi_fondi_percentile_e_prova():
+    import numpy as np, pandas as pd
+    from armor import grandi_fondi as g
+    s = pd.Series(np.arange(300, dtype=float), index=pd.date_range("2010-01-01", periods=300, freq="W"))
+    pc = g.percentile_mobile(s, finestra=260, min_obs=104)
+    assert pc.iloc[:103].isna().all() and pc.iloc[-1] > 99          # sempre al massimo: nessun dato futuro
+    s2 = s.copy(); s2.iloc[-1] = -5
+    assert np.allclose(g.percentile_mobile(s2).iloc[:-1].dropna(), pc.iloc[:-1].dropna())   # il futuro non cambia il passato
+    assert g.stato(85) == "alto" and g.stato(10) == "basso" and g.stato(50) == "normale" and g.stato(None) == "n.d."
+    rng = np.random.default_rng(0)
+    idx = pd.bdate_range("1995-01-02", periods=7000)
+    p = pd.Series(100 * np.exp(np.cumsum(rng.normal(0.0003, 0.01, len(idx)))), index=idx)
+    pct = pd.Series(rng.uniform(0, 100, len(idx)), index=idx)
+    r = g.prova(p, pct)
+    assert r["verdetto"] == "nessun segnale dimostrato"            # rumore puro: nessun segnale
+    from armor import modeleval
+    y = modeleval.outcome(p, idx, "1m", "down", 5).fillna(0).values
+    pct2 = pd.Series(np.where(y > 0, 90.0, 50.0) + rng.normal(0, 1, len(idx)), index=idx)   # segnale che «conosce» il futuro
+    assert g.prova(p, pct2)["verdetto"].startswith("dimostrato")
+
+
+def _zip_tsv(files: dict) -> bytes:
+    import io, zipfile
+    b = io.BytesIO()
+    with zipfile.ZipFile(b, "w") as z:
+        for n, t in files.items():
+            z.writestr(n, t)
+    return b.getvalue()
+
+
+def test_sec_13f_insider_13d_con_file_finti():
+    import io, zipfile
+    import pandas as pd
+    from armor import sec_dati as s
+    sub = "ACCESSION_NUMBER\tFILING_DATE\tSUBMISSIONTYPE\tCIK\tPERIODOFREPORT\nA1\t10-NOV-2023\t13F-HR\t111\t30-SEP-2023\nA2\t11-NOV-2023\t13F-HR/A\t222\t30-SEP-2023\nA3\t12-NOV-2023\t13F-HR\t333\t30-SEP-2023\n"
+    cov = "ACCESSION_NUMBER\tFILINGMANAGER_NAME\nA1\tFondo Uno\nA3\tFondo Tre\n"
+    inf = ("ACCESSION_NUMBER\tNAMEOFISSUER\tCUSIP\tVALUE\tSSHPRNAMTTYPE\tPUTCALL\n"
+           "A1\tAPPLE INC\t037833100\t900\tSH\t\nA1\tSPDR S&P 500 ETF TR\t78462F103\t100\tSH\tPut\nA1\tSPDR S&P 500 ETF TR\t78462F103\t50\tSH\t\n"
+           "A2\tAPPLE INC\t037833100\t5\tSH\t\nA3\tAPPLE INC\t037833100\t10\tSH\t\n")
+    z = zipfile.ZipFile(io.BytesIO(_zip_tsv({"SUBMISSION.tsv": sub, "COVERPAGE.tsv": cov, "INFOTABLE.tsv": inf})))
+    a = s.aggrega_13f(z).set_index("cik")
+    assert set(a.index) == {"111", "333"}                      # l'emendamento 13F-HR/A è escluso
+    assert a.loc["111", "tot"] == 1050 and a.loc["111", "put_idx"] == 100 and a.loc["111", "sh_idx"] == 50 and a.loc["111", "nome"] == "Fondo Uno"
+    # pannello ex ante: il trimestre precedente fissa chi conta
+    righe = []
+    for per, put in (("2023-06-30", 0), ("2023-09-30", 10)):
+        for c in range(100):
+            righe.append({"cik": str(c), "nome": f"f{c}", "periodo": per, "deposito": per, "tot": 1000.0 - c, "put_idx": put * (c < 50), "call_idx": 0, "sh_idx": 0, "n": 1})
+    sg = s.serie_13f(pd.DataFrame(righe))
+    assert len(sg) == 1 and sg["n_depositanti"].iloc[0] == 50 and sg["protezione"].iloc[0] > 0
+    # colonne diverse dalle attese: errore chiaro, non numeri sbagliati
+    bad = zipfile.ZipFile(io.BytesIO(_zip_tsv({"SUBMISSION.tsv": "X\tY\n1\t2\n", "INFOTABLE.tsv": "X\n1\n"})))
+    try:
+        s.aggrega_13f(bad)
+        assert False
+    except KeyError as e:
+        assert "colonne attese" in str(e)
+    s4 = "ACCESSION_NUMBER\tFILING_DATE\tDOCUMENT_TYPE\nB1\t08-NOV-2023\t4\nB2\t09-NOV-2023\t4\nB3\t09-NOV-2023\t3\n"
+    tr = "ACCESSION_NUMBER\tTRANS_CODE\tTRANS_SHARES\tTRANS_PRICEPERSHARE\nB1\tP\t100\t10\nB2\tS\t50\t20\nB3\tP\t999\t99\nB2\tA\t5\t5\n"
+    w = s.aggrega_345(zipfile.ZipFile(io.BytesIO(_zip_tsv({"SUBMISSION.tsv": s4, "NONDERIV_TRANS.tsv": tr}))))
+    assert w["acquisti"].sum() == 1000 and w["vendite"].sum() == 1000      # solo Form 4, solo codici P e S
+    idx = ["Form Type  Company Name  CIK  Date Filed  File Name",
+           "SC 13D                                                        ACME CORP                         12345   2023-11-08  edgar/data/12345/0001.txt",
+           "SC 13D/A                                                      ACME CORP                         12345   2023-11-09  edgar/data/12345/0002.txt",
+           "SCHEDULE 13D                                                  BETA INC                          777     2024-11-12  edgar/data/777/0003.txt",
+           "10-K                                                          ACME CORP                         12345   2023-11-08  edgar/data/12345/0004.txt"]
+    c = s.conta_13d(idx)
+    assert c.sum() == 2                                                    # gli emendamenti e gli altri moduli non contano
+
+
+def test_candidati_e_semaforo_mercati():
+    import numpy as np, pandas as pd
+    from armor import candidati, semaforo_mercati as sm
+    rng = np.random.default_rng(1)
+    idx = pd.bdate_range("2000-01-03", periods=3000)
+    p = pd.Series(100 * np.exp(np.cumsum(rng.normal(0.0003, 0.01, len(idx)))), index=idx)
+    v = pd.Series(20 + rng.normal(0, 2, len(idx)), index=idx)
+    s = candidati.serie(p, v, v * 1.1)
+    assert set(s) == set(candidati.CAND) and abs(s["curva_vix"].iloc[-1] - 1.1) < 1e-9
+    # tabella dei colori: un modello che «conosce» il futuro deve dare colori in ordine
+    from armor import modeleval
+    dates = idx[::10][100:]
+    y = modeleval.outcome(p, dates, "1m", "down", 5).fillna(0)
+    y3 = modeleval.outcome(p, dates, "3m", "down", 10).fillna(0)
+    base1 = modeleval.purged_base(p, dates, "1m", "down", 5)
+    base3 = modeleval.purged_base(p, dates, "3m", "down", 10)
+    pr = pd.concat([pd.DataFrame({"date": dates, "hz": "1m", "kind": "down", "thr": 5, "p": (base1 * (0.5 + 3 * y.values)).clip(0, 1).values}),
+                    pd.DataFrame({"date": dates, "hz": "3m", "kind": "down", "thr": 10, "p": (base3 * (0.5 + 3 * y3.values)).clip(0, 1).values})])
+    t = sm.tabella(p, pr)
+    assert t["n"] > 150 and t["alto_vs_basso"]["1m_5"] > 0.3   # il colore più alto è seguito molto più spesso da un calo
+
+
+def test_super_armor_index():
+    import numpy as np, pandas as pd
+    from armor import super_armor as s
+    assert [s.fascia(x) for x in (1, 24.9, 25, 40, 55, 70, 100)] == [0, 0, 1, 2, 3, 4, 4]
+    assert s.freccia(3)[0] == "▲" and s.freccia(-3)[0] == "▼" and s.freccia(0.5)[0] == "▬"      # salire = peggiorare
+    idx = pd.date_range("2020-01-01", periods=3)
+    P = pd.DataFrame({"previsione": [80.0, 80, np.nan], "armor": [40.0, 40, 40], "vix": [20.0, 20, 20], "economia": [10.0, 10, 10]}, index=idx)
+    c = s.combina(P)
+    assert abs(c.iloc[0] - (0.3 * 80 + 0.25 * 40 + 0.2 * 20 + 0.25 * 10)) < 1e-9                    # pesi fissi
+    assert abs(c.iloc[2] - (0.25 * 40 + 0.2 * 20 + 0.25 * 10) / 0.7) < 1e-9                         # pilastro mancante: pesi ridistribuiti
+    assert s.combina(P.iloc[:, :2]).isna().all()                                                     # servono almeno 3 pilastri
+    w = s.pesi_effettivi({"previsione": {"score": 50}, "armor": {"score": 50}, "vix": {"score": 50}, "economia": {"score": 50}, "fondi": {"score": 60, "dim": []}})
+    assert "fondi" not in w and abs(sum(w.values()) - 1) < 1e-9                                      # grandi fondi pesa 0 finché non dimostrato
+    w2 = s.pesi_effettivi({"previsione": {"score": 50}, "armor": {"score": 50}, "vix": {"score": 50}, "economia": {"score": 50}, "fondi": {"score": 60, "dim": ["x"]}})
+    assert w2["fondi"] > 0
+    oggi = {"sai": 58.0, "concordanza": "concordi", "data": "2026-11-06"}
+    assert "incertezza" in s.titolo(oggi, {"mese": {"delta": 1}, "settimana": {"delta": 1}}) or "teso" in s.titolo(oggi, {}).lower()
+    assert "non sono d'accordo" in s.titolo({**oggi, "concordanza": "discordi"}, {})
+    st = pd.DataFrame({"sai": [30.0, 40.0]}, index=pd.to_datetime(["2026-10-01", "2026-11-05"]))
+    cf = s.confronti({"data": "2026-11-06", "sai": 50.0}, st)
+    assert cf["ieri"]["delta"] == 10.0 and cf["mese"]["sai"] == 30.0

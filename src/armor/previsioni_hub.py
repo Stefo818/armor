@@ -41,6 +41,8 @@ def direzione(p_up: float, base_up: float | None) -> tuple[str, str]:
 
 def nome_sim(v: str) -> str:
     """Nome comprensibile delle varianti di simulazione (V0/V1/V2 = come si stima la nervosità di partenza)."""
+    if "HAR" in str(v):
+        return f"Simulazione con previsione di volatilità HAR ({v})"
     base = {"V0": "Simulazione base", "V1": "Simulazione che tiene conto dell'indice della paura (VIX)", "V2": "Simulazione che confronta paura a breve e a lungo termine"}.get(str(v)[:2], f"Simulazione {v}")
     return f"{base} ({v})"
 
@@ -315,6 +317,7 @@ CSS = """<style>
 .pvpg{display:grid;gap:10px;margin:8px 0 14px}.pvpr{border:1px solid var(--bd);border-radius:14px;padding:10px 12px;background:var(--card)}.pvpn{display:flex;justify-content:space-between;font-size:13.5px}.pvsb{display:flex;height:16px;border-radius:99px;overflow:hidden;margin:6px 0}.pvsb i{display:block;min-width:0}.pvpl{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11.5px;color:var(--mu)}
 
 .pmg{display:grid;grid-template-columns:minmax(150px,1.5fr) repeat(6,minmax(84px,1fr));gap:5px;min-width:700px;align-items:stretch}.pmh{font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;padding:4px 2px}.pmh.c{text-align:center}
+.cls{display:flex;flex-direction:column;gap:6px;margin:8px 0}.clr{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:8px 10px}.clp{font-weight:800;font-size:15px;min-width:24px;text-align:center;color:var(--mu)}.clm{flex:1;display:flex;flex-direction:column;gap:3px;font-size:13px}.clm small{font-size:11px;color:var(--mu)}.clch{display:flex;gap:4px;flex-wrap:wrap}.clc{font-size:10.5px;font-weight:700;background:var(--bg);border-radius:8px;padding:1px 6px}.clv{border-radius:12px;padding:6px 10px;text-align:center;min-width:54px;border:1px solid transparent}.clv b{font-size:20px;display:block}.clv small{font-size:10px}.clv.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}.clv.wa{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}.clv.ba{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
 .pmn{font-size:12.5px;font-weight:700;padding:8px 6px;border-radius:12px;background:var(--card);border:1px solid var(--bd);display:flex;flex-direction:column;justify-content:center;gap:3px}.pmn.pms{background:var(--bg)}
 .pmc{border-radius:12px;padding:8px 4px;text-align:center;font-size:12px;display:flex;flex-direction:column;justify-content:center;gap:2px;border:1px solid transparent}.pmc small{font-size:10.5px;opacity:.85;font-weight:600}
 .pmc.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}.pmc.wa{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}.pmc.or{background:rgba(249,115,22,.16);color:#f97316;border-color:#f97316}.pmc.ba{background:var(--badbg);color:var(--bad);border-color:var(--bad)}.pmc.nd{color:var(--mu);background:transparent}
@@ -387,8 +390,24 @@ def recenti(n: int = 16) -> str:
             "<p class='mu'>Colore dello scostamento: verde = vicino al previsto, rosso = lontano.</p>")
 
 
+def _classifica() -> str:
+    try:
+        from . import classifica
+        return classifica.html()
+    except Exception as ex:  # noqa: BLE001
+        return "<p class='mu'>Classifica non disponibile: " + _h.escape(str(ex)[:80]) + "</p>"
+
+
+def _semaforo() -> str:
+    try:
+        from . import semaforo_rischio
+        return semaforo_rischio.html()
+    except Exception as ex:  # noqa: BLE001
+        return "<p class='mu'>Semaforo non disponibile: " + _h.escape(str(ex)[:80]) + "</p>"
+
+
 def html(pred: dict | None = None) -> str:
     righe = storico_dati()
     return (CSS + "<div class='pvw'><h2>Previsioni: cosa dicono i modelli</h2><div class='explain'><p><b>In breve.</b> Per ogni periodo, la probabilità di chiudere in rialzo, la fascia dei rendimenti possibili e il confronto con quello che succede normalmente. "
             "Sotto trovi tutti i modelli affiancati e la tabella completa delle previsioni passate contro il risultato reale. Sono probabilità, non promesse.</p></div>"
-            + carte() + "<h3>Tutti i modelli, in uso e in ombra</h3>" + modelli(pred) + "<h3>Previsioni passate e risultato reale</h3>" + storico_html(righe) + "</div>")
+            + carte() + "<h3>Semaforo del rischio di calo</h3>" + _semaforo() + "<h3>Classifica dei modelli (voto da 1 a 100, aggiornata ogni giorno)</h3>" + _classifica() + "<h3>Tutti i modelli, in uso e in ombra</h3>" + modelli(pred) + "<h3>Previsioni passate e risultato reale</h3>" + storico_html(righe) + "</div>")

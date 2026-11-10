@@ -77,6 +77,7 @@ FRED = {
     "equity_value": "NCBEILQ027S", "gdp": "GDP",
     "umcsent": "UMCSENT", "philly": "GACDFSA066MSFRBPHI", "empire": "GACDISA066MSFRBNY", "dgorder": "DGORDER", "neworder": "NEWORDER",
     "indpro": "INDPRO", "payems": "PAYEMS", "retail": "RSAFS",
+    "mmf_assets": "WRMFNS",   # attività dei fondi monetari USA (Grandi fondi, peso zero)
     "dexuseu": "DEXUSEU",   # dollari per euro (PIANO_ARMOR3 Fase 3: VWCE in euro)
     "walcl": "WALCL", "wresbal": "WRESBAL", "rrp": "RRPONTSYD", "tga": "WTREGEN",
 }

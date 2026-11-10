@@ -448,6 +448,19 @@ def oggi(p: pd.Series, t, varianti: list[str] | None = None, n_paths: int = N_LI
             continue
         res["_vol"] = curva_vol(st, varianza_iniziale(st, v, a, b, rap)[0])[::7]
         out["varianti"][v] = res
+    try:   # variante in ombra V1T1_HAR (Patch 60a): varianza di partenza dal modello HAR con VIX; solo se ci sono apertura, massimo e minimo dell'indice
+        from . import vrp
+        va, dh = vrp.har_ultima(p, t)
+        if va is not None and a is not None:
+            s0 = vrp.s0_da_bersaglio(st, va)
+            res = riassumi(simula(st, s0, "T1", n_paths, seed, None), None, True)
+            res["_diag"] = {"persistenza": st["rho"], "emivita": st["emivita"], "vol_lungo": float(np.sqrt(st["s2_lr"] * 252)), "vol_partenza": float(np.sqrt(s0 * 252)),
+                            "vol_garch_oggi": float(np.sqrt(st["s2_next"] * 252)), "n_percorsi": n_paths, "variante": "V1T1_HAR", "har_ultimo_dato": dh,
+                            "var_har_annua": float(va), "vix_oggi": float(a)}
+            res["_vol"] = curva_vol(st, s0)[::7]
+            out["varianti"]["V1T1_HAR"] = res
+    except Exception as e:  # noqa: BLE001
+        print("[percorsi] V1T1_HAR non calcolata:", str(e)[:100])
     if scrivi:
         OGGI.write_text(_json.dumps(out, ensure_ascii=False, default=float), encoding="utf-8")
     return out

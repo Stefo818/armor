@@ -640,3 +640,26 @@ Contiene ruoli, dati e metodo, le 12 varianti pre-registrate (V0-V2 × T0-T3), l
 - Selettore mercato: i modelli sono sull'S&P 500; il "reale" viene ricalcolato per VWCE, S&P pesi uguali (rsp), Nasdaq, DAX, FTSE MIB, Nikkei, IWM, EEM (e mweq, urth, stoxx600 se le serie esistono). STRUMENTI in previsioni_hub.py. Valute locali.
 - armor_index.storia(): valore un mese fa, medie settimana e mese, giorni sopra/sotto 40; cruscotto.armor_window riscritta in italiano semplice.
 - Non verificato: mweq/urth/stoxx600 (assenti nei dati locali), tocco reale su telefono.
+
+## Patch 59 (icona app)
+Marchio come icona (manifest, apple-touch-icon, `?v=2` per rompere la cache).
+
+## Patch 60a (taratura + classifica)
+- `PROTOCOLLO_TARATURA.md`, `taratura.py` (taratura annidata Platt/isotonica di A1 e FHS+VIX, fasce VIX, miscela), comando `python -m armor taratura` (step mensile in valida.yml, continue-on-error). Esito: la taratura peggiora, nessun numero adottato.
+- `classifica.py`: voto 1-100 per modello (50 + 400 × BSS medio; peso del vivo n/(n+400)), storia in `data/classifica_storia.csv`, registrata ogni giorno da `jobs.tutto`, mostrata in Previsioni. Comando `python -m armor classifica`.
+- Variante ombra `V1T1_HAR` nel motore di percorsi (`vrp.har_ultima`).
+- Da fare: 60b (semaforo a 4/5 stati), 61-62 (grandi fondi: WRMFNS, COT, 13F, Form 4, 13D).
+
+## Patch 60b (semaforo del rischio di calo, 5 stati)
+`semaforo_rischio.py`: rapporto modello/normale (A1 e FHS+VIX; bersagli 1m≥5% e 3m≥10%), Verde<0,8·Giallo<1,3·Arancione<2,0·Rosso; Grigio se i due modelli divergono >60%; isteresi 3 sedute (Grigio/Rosso subito). Tabella storica dal 1990 (colori in ordine), stato in `data/semaforo_rischio_stato.csv`, aggiornato da `jobs.tutto`; tabella rifatta dal comando `taratura` (mensile). Mostrato in Previsioni. Dal 2013 i colori alti hanno visto meno cali del previsto (poche date): non corretto.
+
+## Patch 61-62 (grandi fondi, peso zero)
+`grandi_fondi.py` + `PROTOCOLLO_GRANDI_FONDI.md`: fondi monetari (FRED WRMFNS, aggiunta a sources.FRED), COT (storia scaricata dal 2006), percentile mobile 5 anni, prova a blocchi in due metà. Pagina nel contesto/Mercati, registro `data/grandi_fondi_badge_registro.csv`. NON fatti: 13F, Form 4, 13D (rete SEC non raggiungibile dal cloud di sviluppo), badge in Saldi/Opportunità. Da verificare su GitHub: primo scarico WRMFNS e COT 2006+.
+
+## Patch 63 (completamento 60b-62)
+- `sec_dati.py` (13F con pannello ex ante, Form 4, 13D da form.idx; incrementale, aggregati in data/grandi_fondi/), comandi `sec-sonda` e `sec-aggiorna`, workflow `grandi_fondi.yml` (sabato + manuale; segreto SEC_USER_AGENT). Provati SOLO su file finti: la prima esecuzione su GitHub («sonda») verifica le colonne reali (data/grandi_fondi/sonda.txt).
+- `candidati.py` (curva VIX, accelerazione paura, distanza media 50; CMF non fatto: mancano volumi), `semaforo_mercati.py` (4 mercati su 6 con colori in ordine), badge a peso zero in Saldi e Opportunità.
+
+## Patch 64 (Super Armor Index in «Oggi»)
+`super_armor.py`: numero 1-100 (100 = mercato pericoloso) da 5 pilastri con pesi fissi: previsione 30 · Indice Armor 25 · economia reale 25 (8 serie con ritardi di pubblicazione) · paura e opzioni 20 · grandi fondi 0 (10 se superano la prova). Fasce 25/40/55/70. Blocco compatto in cima a Oggi (gauge, 5 anelli, frase che si espande, storico con ieri/settimana/mese e frecce, tabella di affidabilità). Storia ricostruita dal 2000 in `data/super_armor_storia.csv` (poi registrata ogni giorno da `jobs.tutto`), `data/super_armor_prev_storia.csv` (rapporti dei modelli dal 1990), prova in `data/super_armor_prova.json` (rifatta col comando `taratura`).
+Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% dei casi, dopo «Sano» 9%); capacità di distinguere ≈0,69-0,70, come il miglior singolo pilastro (Indice Armor 0,70-0,72), non migliore. Economia reale: utile per la salute di fondo, quasi nulla per i cali di breve dal 2013.

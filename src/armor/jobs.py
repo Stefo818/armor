@@ -324,6 +324,32 @@ def tutto(skip_download: bool = False) -> None:
     daily_extras(ctx)
     n = journal.update_outcomes(vwce_series(), closed_sp500())
     print(f"Esiti verificati a scadenza: {n}")
+    try:   # semaforo del rischio di calo a 5 stati (isteresi 3 sedute), da A1 e FHS+VIX di oggi
+        from . import semaforo_rischio
+        print("[semaforo]", semaforo_rischio.aggiorna(ctx["pred"], str(closed_sp500().index[-1].date())) and "ok")
+    except Exception as e:  # noqa: BLE001
+        print("[semaforo] non aggiornato:", str(e)[:100])
+    try:   # Super Armor Index: valore del giorno nella storia (ricostruita dal 2000, poi reale)
+        from . import super_armor, armor_index
+        _p = closed_sp500()
+        _o = super_armor.calcola(armor_index.compute(_p), _p)
+        if _o:
+            super_armor.registra(_o)
+            print(f"[super armor] {_o['sai']:.0f}/100 ({_o['concordanza']})")
+    except Exception as e:  # noqa: BLE001
+        print("[super armor] non registrato:", str(e)[:100])
+    try:   # grandi fondi (peso zero): percentili, prova storica, registro giornaliero
+        from . import grandi_fondi
+        grandi_fondi.run(closed_sp500())
+        from . import candidati
+        candidati.run(closed_sp500())
+    except Exception as e:  # noqa: BLE001
+        print("[grandi fondi] non aggiornati:", str(e)[:100])
+    try:   # classifica dei modelli (voto 1-100), una riga per modello al giorno
+        from . import classifica
+        classifica.registra(str(closed_sp500().index[-1].date()))
+    except Exception as e:  # noqa: BLE001
+        print("[classifica] non registrata:", str(e)[:100])
     try:
         from . import journal3
         print(f"[diario v3] esiti nuovi: {journal3.update_outcomes(closed_sp500())}; {journal3.verify()[1]}")
@@ -503,6 +529,33 @@ def main() -> None:
         from . import vrp
         r = vrp.run()
         print({m: x["promettente"] for m, x in r["promettenti"].items()})
+    elif cmd == "sec-sonda":   # prova di accesso ai dati SEC: elenco, nomi dei file, intestazioni
+        from . import sec_dati
+        print(sec_dati.sonda())
+    elif cmd == "sec-aggiorna":   # scarica (a pezzi) 13F, insider, 13D e ricalcola i segnali dei Grandi fondi
+        from . import sec_dati, grandi_fondi
+        sec_dati.aggiorna_tutto(int(sys.argv[2]) if len(sys.argv) > 2 else 10)
+        r = grandi_fondi.run()
+        print({k: (v["stato"], v["prova"].get("verdetto")) for k, v in r["segnali"].items()})
+    elif cmd == "taratura":   # taratura annidata di A1 e FHS+VIX (PROTOCOLLO_TARATURA.md, lento)
+        from . import taratura
+        cache = "/tmp/armor_taratura_cache.pkl"
+        r = taratura.run(cache=cache)
+        print(r.get("verdetto") if isinstance(r, dict) else r)
+        from . import semaforo_rischio   # tabella storica dei colori, riusa le stesse previsioni passate
+        t = semaforo_rischio.run(cache=cache)
+        print("semaforo, colori in ordine:", t["monotona"])
+        from . import super_armor
+        from .features import closed_sp500 as _cs
+        print("Super Armor Index, fasce in ordine:", super_armor.valuta(_cs())["ordine"])
+        from . import semaforo_mercati
+        print("semaforo su altri mercati:", {k: v.get("monotona") for k, v in semaforo_mercati.run()["mercati"].items()})
+    elif cmd == "classifica":   # classifica dei modelli con voto da 1 a 100
+        from . import classifica
+        from .features import closed_sp500
+        for r in classifica.calcola():
+            print(r["posto"], r["modello"], r["voto"])
+        print("registrata:", classifica.registra(str(closed_sp500().index[-1].date())))
     elif cmd == "verifica-percorsi":   # 12 varianti del motore di percorsi contro A1, con la regola di adozione del protocollo (lento: ~15 minuti)
         from . import percorsi
         r = percorsi.run_verifica()

@@ -550,6 +550,14 @@ var emb=document.getElementById('armor-op-data');if(emb){go(JSON.parse(emb.textC
 })();</script>"""
 
 
+def _gf_badge() -> str:
+    try:
+        from . import grandi_fondi
+        return grandi_fondi.badge_html()
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def block(data_json: str | None = None) -> str:
     emb = f"<script type='application/json' id='armor-op-data'>{data_json}</script>" if data_json else ""
     ii = _h.escape(json.dumps({**saldi.IND_INFO, "cap_rpo": ("Capitalizzazione / RPO", "Capitalizzazione divisa per i contratti firmati e non ancora fatturati (RPO).", "Più basso = il mercato prezza poco il lavoro già in portafoglio."),
@@ -559,4 +567,4 @@ def block(data_json: str | None = None) -> str:
     return (f"{saldi.CSS}{CSS_EXTRA}<h2>Opportunità: le 30 aziende della settimana</h2><div class='explain'><p>Ogni sabato Armor ordina le aziende per somiglianza ai fattori che, in letteratura, hanno storicamente accompagnato rendimenti futuri migliori: "
             "revisioni delle stime, momentum, crescita, qualità, sorprese sui conti, contratti già firmati e catalizzatori. Le crescite indicate sono <b>fasce di incertezza, non promesse</b>. "
             "Lo storico delle settimane precedenti (previsto contro reale) è in fondo e si vede anche quando è negativo. <b>Non è una consulenza finanziaria.</b></p></div>"
-            f"{emb}<div class='sdw' data-op='1' data-ii='{ii}'></div>{JS}")
+            f"{_gf_badge()}" f"{emb}<div class='sdw' data-op='1' data-ii='{ii}'></div>{JS}")

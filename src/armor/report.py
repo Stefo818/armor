@@ -800,7 +800,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                  ("skew", "SKEW"), ("nfci", "Condizioni finanziarie")]
     chip_opts = [(k, l) for k, l in chip_defs if k in chartdata and (chartdata[k]["d"] or chartdata[k].get("i"))]
     # ---- nuovi moduli (ognuno protetto: se uno fallisce, la pagina resta)
-    from . import allarmi, bilancio, decennio, insight, mercati, news as newsmod, posizionamento, regime as regmod, semafori
+    from . import allarmi, bilancio, decennio, insight, mercati, news as newsmod, posizionamento, regime as regmod, semafori, super_armor
     sem = semafori.compute(p, livemod.load())
     from . import armor_index
     aix = armor_index.compute(sp)
@@ -1029,6 +1029,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     reg_box = _safe(lambda: tensione.CSS + tensione.box_oggi(reg_o), "Regime di tensione") if reg_o else ""
     p_regime = _safe(lambda: tensione.pagina(reg_o, None, tensione.grafico_dati()), "Pagina regime")
     p_oggi = (f"<a id='oggi'></a>{topbtns}"
+              f"{_safe(lambda: super_armor.html(aix, p), 'Super Armor Index')}"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
               f"{sem_new}{reg_box}"
@@ -1065,7 +1066,8 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
               f"<h3 style='margin-top:22px'>Segnali di stress del mercato</h3>{chiaro.flags_simple(fl0)}</details>")
     p_ctx = (parts.context_section(p)
              + "<h3 style='margin-top:18px'>Altri mercati: il rischio è globale o solo americano?</h3><div class='card scroll'>" + _safe(lambda: mercati.html(mercati.compute()), "Confronto mercati") + "</div>"
-             + "<h3 style='margin-top:18px'>Opzioni e posizionamento</h3><div class='card scroll'>" + _safe(posizionamento.html, "Posizionamento") + "</div>")
+             + "<h3 style='margin-top:18px'>Opzioni e posizionamento</h3><div class='card scroll'>" + _safe(posizionamento.html, "Posizionamento") + "</div>"
+             + "<h3 style='margin-top:18px'>Grandi fondi</h3><div class='card scroll'>" + _safe(__import__("armor.grandi_fondi", fromlist=["html"]).html, "Grandi fondi") + "</div>")
     p_an = (f"<h2>Analisi giornaliera: indici, confronto col passato e notizie</h2>{parts.analysis_section(rep_an, arch_an)}"
             f"<h2 style='margin-top:26px'>Gli ultimi 10 anni a confronto con oggi</h2><div class='card'>{_safe(lambda: decennio.html(ind10, tr10), 'Analisi dei 10 anni')}</div>"
             f"<h2 style='margin-top:26px'>Rapporto settimanale</h2>{bilancio.weekly_html(wk)}")

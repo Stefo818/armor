@@ -654,11 +654,19 @@ var emb=document.getElementById('armor-sd-data');if(emb){go(JSON.parse(emb.textC
 })();</script>"""
 
 
+def _gf_badge() -> str:
+    try:
+        from . import grandi_fondi
+        return grandi_fondi.badge_html()
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def block(data_json: str | None = None) -> str:
     emb = f"<script type='application/json' id='armor-sd-data'>{data_json}</script>" if data_json else ""
     ii = _h.escape(json.dumps(IND_INFO, ensure_ascii=False), quote=True)
     return (f"{CSS}<h2>Saldi: i titoli e gli ETF scesi di più</h2><div class='explain'><p>I 100 più calati per periodo, con fatturato, valutazioni, debito, causa del calo e un punteggio di <b>salute e probabilità di recupero stimate</b> (1-100). "
             "Il punteggio nasce da regole scritte in anticipo e viene verificato sui risultati reali (tabella in fondo). <b>Non è una consulenza finanziaria né un consiglio di acquisto</b>: un titolo sceso può continuare a scendere.</p></div>"
-            f"{emb}<div class='sdw' data-sd='1' data-ii='{ii}'></div><h3 style='margin-top:22px'>Quanto ha funzionato il punteggio</h3>{tabella_verifica()}"
+            f"{_gf_badge()}" f"{emb}<div class='sdw' data-sd='1' data-ii='{ii}'></div><h3 style='margin-top:22px'>Quanto ha funzionato il punteggio</h3>{tabella_verifica()}"
             "<p class='mu'>La tabella si riempie col tempo: ogni giorno si registrano i 30 titoli più calati per periodo e si misurano i rendimenti reali a 1 e 3 mesi. Un test storico sui bilanci SEC non è ancora stato fatto.</p>"
             f"{JS}")

@@ -11,7 +11,7 @@ concurrency:
 jobs:
   valida:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
     env:
       PYTHONUNBUFFERED: '1'
     steps:
@@ -30,5 +30,11 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m armor valuta-modelli
+      - name: Taratura dei modelli (protocollo di taratura)
+        continue-on-error: true
+        timeout-minutes: 90
+        env:
+          PYTHONPATH: src
+        run: python -m armor taratura
       - name: Salva i dati nel repository
         run: bash scripts/salva.sh "Convalida mensile" data
