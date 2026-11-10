@@ -677,10 +677,3 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - sw.js: armor-v65.
 
 - Patch 67: grandi_fondi.py scarta le date duplicate nei segnali SEC (errore "duplicate labels").
-
-## Patch 68 - Saldi e Opportunità: causa del calo, diluizione, comunicati, brevetti
-- `titoli_eventi.causa_calo` ha il parametro `volrel`; nuovo tipo «opaca» (voto 35); «ignota» vale 60 o 70 o 62 secondo `quota`. `titoli.top_json` aggiunge `vr` (volume relativo).
-- `titoli_fond`: `moduli_diluizione` (item «DIL» dentro `eventi_8k`), `rd_da_facts`, `comunicato_8k` (Exhibit 99.1 via index.json), `titoli_sec`, indicatori `rd_cap`, `rd_ricavi`, `rd_crescita`.
-- `saldi.arricchisci(..., comunicati_max)`: comunicati come notizie, ricerca notizie anti-omonimi (`ev.filtra_omonimi`), facts SEC letti una volta.
-- `brevetti.py` + workflow `brevetti.yml` (venerdì 22:00 UTC, opzione «solo prova»): abbina i titolari dei brevetti ai simboli. Non ancora provato su dati veri (qui nessuna rete): eseguire prima la prova e incollare l'esito. `data/brevetti_non_abbinati.csv` elenca i titolari da aggiungere a `data/universo/alias_brevetti.json`.
-- Da fare (Patch 69): imbuto a 4 canali, pesi v2 in parallelo (ombra) con regola di adozione scritta prima, bilanci SEC a più trimestri. Patch 70: test storico con dati SEC (ottimista: mancano i prezzi dei titoli usciti dalla Borsa).

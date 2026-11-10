@@ -1971,7 +1971,7 @@ def test_saldi_ricostruzione_e_storico(tmp_path, monkeypatch):
     for nome in ("FILE", "REGISTRO", "VERIFICA", "RICOSTRUITO", "LOG"):
         monkeypatch.setattr(saldi, nome, tmp_path / (nome + ".x"))
     monkeypatch.setattr(saldi, "DATA", tmp_path)
-    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30, comunicati_max=2: (_ind_finto(tk), {}, {t: [] for t in tk}))
+    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30: (_ind_finto(tk), {}, {t: [] for t in tk}))
     cc = arch["close"].drop(columns=["SPY", "VT"])
     top = titoli.top_json(titoli.metriche(cc, arch["vol"][cc.columns], arch["close"]["SPY"]), cc, {t: f"Az {t}" for t in cc}, {}, n=30)
     (tmp_path / "titoli_top.json").write_text(saldi.json.dumps(top), encoding="utf-8")
@@ -1998,7 +1998,7 @@ def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
         monkeypatch.setattr(op, nome, tmp_path / (nome + ".x"))
     monkeypatch.setattr(op, "DATA", tmp_path)
     monkeypatch.setattr(op, "forza_temi", lambda r: [{"tema": "Robotica", "forza": 60, "notizie": 50, "prezzi": 70, "etf": "BOTZ"}])
-    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30, comunicati_max=2: (_ind_finto(tk), {}, {t: [] for t in tk}))
+    monkeypatch.setattr(saldi, "arricchisci", lambda tk, nomi, log=print, giorni_8k=30: (_ind_finto(tk), {}, {t: [] for t in tk}))
     d = op.aggiorna(log=lambda *a: None)
     assert d["ordine"] and d["prec"]["ric"] and d["prec"]["settimana"] < d["settimana"] and d["prec"]["ordine"]
     assert all("da_allora" in x for x in d["prec"]["titoli"].values())
@@ -2335,65 +2335,3 @@ def test_su_giorni_con_date_duplicate():
     pct = pd.Series([10.0, 20.0, 30.0], index=pd.to_datetime(["2020-01-01", "2020-01-01", "2020-02-01"]))
     r = su_giorni(pct, pd.bdate_range("2020-03-01", periods=3), 2)
     assert r.iloc[0] == 30.0
-
-
-def test_brevetti_abbinamento_e_conteggio(tmp_path):
-    import io
-    import zipfile
-    import pandas as pd
-    from armor import brevetti as b
-    voci = [("AAPL", "1", "Apple Inc."), ("MSFT", "2", "MICROSOFT CORP"), ("GOOGL", "3", "Alphabet Inc."), ("GOOG", "3", "Alphabet Inc."),
-            ("GAP", "4", "Gap Inc"), ("TGT", "5", "Target Corp"), ("TGTX", "6", "Target Corp"), ("MU", "7", "MICRON TECHNOLOGY INC")]
-    idx = b.indice_nomi(voci)
-    al = b.carica_alias()
-    assert b.abbina("Apple Inc.", idx, al) == (["AAPL"], "alias")
-    assert b.abbina("Microsoft Technology Licensing, LLC", idx, al)[0] == ["MSFT"]
-    assert b.abbina("Micron Technology, Inc.", idx, al)[0] == ["MU"]
-    assert b.abbina("Alphabet Inc.", idx, {})[0] == ["GOOGL", "GOOG"]          # due classi di azioni della stessa società
-    assert b.abbina("Target Corporation", idx, {}) is None                     # nome condiviso da due società diverse: scartato
-    assert b.abbina("Gap Inc", idx, {})[1] == "esatto"
-    assert b.abbina("General Hospital Corp", idx, {}) is None                  # parola generica: nessun abbinamento a caso
-    assert b.abbina("Universita di Roma", idx, al) is None
-    df = pd.DataFrame({"org": ["Apple Inc."] * 3 + ["Microsoft Technology Licensing, LLC"] * 2 + ["Ignota SRL"] * 4,
-                       "data": ["2026-06-01", "2026-03-01", "2025-03-01", "2026-05-01", "2024-01-01", "2026-05-01", "2026-05-02", "2026-05-03", "2026-05-04"]})
-    r = b.conta(df, idx, "2026-11-10", al)
-    assert r["t"]["AAPL"]["n12"] == 2 and r["t"]["AAPL"]["n12p"] == 1 and r["t"]["MSFT"]["n12"] == 1
-    assert r["non_abbinati"]["Ignota SRL"] == 4 and abs(r["meta"]["quota_abbinata"] - 3 / 7) < 1e-3
-    # file PatentsView finti
-    def zip_tsv(nome, testo):
-        p = tmp_path / (nome + ".zip")
-        with zipfile.ZipFile(p, "w") as z:
-            z.writestr(nome + ".tsv", testo)
-        return p
-    zb = zip_tsv("g_patent", "patent_id\tpatent_type\tpatent_date\n1\tutility\t2026-05-01\n2\tdesign\t2026-05-01\n3\tutility\t2019-01-01\n")
-    zt = zip_tsv("g_assignee_disambiguated", "patent_id\tassignee_sequence\tdisambig_assignee_organization\n1\t0\tApple Inc.\n2\t0\tApple Inc.\n3\t0\tApple Inc.\n")
-    d = b.leggi_bulk(zb, zt, "2026-11-10")
-    assert len(d) == 1 and d["org"].iloc[0] == "Apple Inc."
-    assert b.frase({"n12": 40, "n12p": 20, "crescita": 1.0}, 0.03).startswith("40 brevetti")
-
-
-def test_diluizione_comunicati_e_omonimi():
-    from armor import titoli_eventi as ev
-    from armor import titoli_fond as f
-    sub = {"filings": {"recent": {"form": ["8-K", "S-3", "424B5", "10-Q"], "filingDate": ["2026-11-01", "2026-10-20", "2026-01-02", "2026-10-01"], "accessionNumber": ["a", "b", "c", "d"]}}}
-    dil = f.moduli_diluizione(sub, 90, "2026-11-09")
-    assert [x["form"] for x in dil] == ["S-3"] and dil[0]["item"] == "DIL"
-    facts = {"facts": {"us-gaap": {"ResearchAndDevelopmentExpense": {"units": {"USD": [
-        {"start": "2024-01-01", "end": "2024-12-31", "val": 80, "form": "10-K", "filed": "2025-02-01"},
-        {"start": "2025-01-01", "end": "2025-12-31", "val": 100, "form": "10-K", "filed": "2026-02-01"},
-        {"start": "2026-01-01", "end": "2026-03-31", "val": 30, "form": "10-Q", "filed": "2026-05-01"}]}}}}}
-    assert f.rd_da_facts(facts)["rd"] == 100 and f.rd_da_facts(facts, "2025-06-01")["rd"] == 80 and f.rd_da_facts(facts)["rd_1a"] == 80
-    idx = {"directory": {"item": [{"name": "d123.htm"}, {"name": "ex99-1.htm"}, {"name": "ex99-1.jpg"}]}}
-    assert f.trova_ex99(idx) == "ex99-1.htm"
-    assert f.comunicato_8k("1234", "0001-26-000001", lambda u: idx, lambda u: "<p>FOR IMMEDIATE RELEASE</p><p>Acme wins a $90 million contract</p>").startswith("Acme wins")
-    n = [{"title": "Gap Inc shares fall after earnings", "summary": ""}, {"title": "Generation gap widens in Europe", "summary": ""}, {"title": "Target wins", "summary": "(NASDAQ: TGTX) news"}]
-    assert len(ev.filtra_omonimi(n, "Gap Inc.", "GAP")) == 1
-    assert [x["title"] for x in ev.filtra_omonimi(n, "Target Corp", "TGTX")] == ["Target wins"]
-    # causa opaca: crollo specifico con volumi alti e nessuna notizia
-    c = ev.causa_calo(-0.30, -0.02, 1.0, [], 3.0)
-    assert c["tipo"] == "opaca" and ev.causa_calo(-0.30, -0.02, 1.0, [], 1.0)["tipo"] == "ignota"
-    from armor import saldi
-    assert saldi.calo_score(c, [], "1s") == 35 and saldi.calo_score(ev.causa_calo(-0.30, -0.02, 1.0, [], 1.0), [], "1s") == 60
-    assert saldi.calo_score(ev.causa_calo(-0.10, -0.05, 1.0, []), [], "1s") == 70
-    assert any("S-3" in m for m in saldi.tetti({"mesi_cassa": 8}, [], dil)) is False or True
-    assert any("S-3" in m for m in saldi.tetti({"mesi_cassa": 9.0}, [], [{"item": "DIL", "evento": "x"}]))
