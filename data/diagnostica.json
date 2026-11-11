@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-11T12:09:27Z",
+ "data_utc": "2026-11-11T15:04:11Z",
  "oggi": "2026-11-11",
  "ultima_previsione": "2026-11-10",
  "giorni_da_ultima": 1,
@@ -71,15 +71,15 @@
   {
    "nome": "breadth200",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "breadth50",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -393,8 +393,8 @@
   {
    "nome": "epu",
    "chiave": false,
-   "ultima_data": "2026-11-09",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-10",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -722,8 +722,8 @@
   {
    "nome": "nh_nl",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
