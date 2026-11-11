@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-11T02:55:57Z",
+ "data_utc": "2026-11-11T12:09:27Z",
  "oggi": "2026-11-11",
  "ultima_previsione": "2026-11-10",
  "giorni_da_ultima": 1,
@@ -85,8 +85,8 @@
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-09",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-10",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -148,8 +148,8 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-09",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-10",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -414,8 +414,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-09",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-10",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -428,8 +428,8 @@
   {
    "nome": "fear_greed",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -729,8 +729,8 @@
   {
    "nome": "nikkei",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
