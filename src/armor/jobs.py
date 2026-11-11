@@ -338,6 +338,12 @@ def tutto(skip_download: bool = False) -> None:
         print("[semaforo]", semaforo_rischio.aggiorna(ctx["pred"], str(closed_sp500().index[-1].date())) and "ok")
     except Exception as e:  # noqa: BLE001
         print("[semaforo] non aggiornato:", str(e)[:100])
+    try:   # motore Titan v47: indici e previsioni del giorno (data/titan.json, data/titan_storia.csv)
+        from . import titan_job
+        _t = titan_job.esegui()
+        print(f"[titan] armor {_t['armor_index']:.1f} · super {_t['super_armor']:.1f} · radar {_t['radar_decennio']:.1f}")
+    except Exception as e:  # noqa: BLE001
+        print("[titan] non calcolato:", str(e)[:120])
     try:   # Super Armor Index: valore del giorno nella storia (ricostruita dal 2000, poi reale)
         from . import super_armor, armor_index
         _p = closed_sp500()
@@ -455,6 +461,9 @@ def main() -> None:
         from . import validate
         r = validate.run()
         print(r[r.model == "armor"].to_string(index=False))
+    elif cmd == "titan":
+        from . import titan_job
+        print(titan_job.esegui())
     elif cmd == "valuta-modelli":
         from . import modeleval
         step = int(sys.argv[2]) if len(sys.argv) > 2 else 5
@@ -648,7 +657,7 @@ def main() -> None:
         from . import journal3
         print(journal3.verify())
     else:
-        print("Comandi: tutto | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
+        print("Comandi: tutto | titan | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
 
 
 if __name__ == "__main__":

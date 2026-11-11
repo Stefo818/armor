@@ -1,3 +1,6 @@
+# AGGIORNAMENTO 11/11/2026 — vedi PROTOCOLLO_ARMOR_V47.md
+Per decisione dell'utente il motore Titan v47 sostituisce FHS+VIX come riferimento, in due fasi (calcolo giornaliero subito, indice mostrato dopo 10 giorni di verifica). Le regole di revisione annuale (10 novembre 2027) restano. Il testo sotto vale fino al passaggio alla Fase 2.
+
 # Protocollo Modelli (scritto il 10 novembre 2026, prima di vedere risultati dal vivo)
 
 ## Riferimento

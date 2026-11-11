@@ -1,0 +1,47 @@
+{
+ "data": "2026-11-10",
+ "armor_index": 42.7,
+ "super_armor": 43.8,
+ "radar_decennio": 77.7,
+ "pilastri": {
+  "p1": 42.3,
+  "p2": 41.7,
+  "p3": 43.1,
+  "p4": 51.3,
+  "p5": 33.4,
+  "p6": 50.9
+ },
+ "previsioni": {
+  "1 settimana": {
+   "calo": 0.1095,
+   "rialzo": 0.5483,
+   "soglia_calo": 0.05,
+   "data": "2026-11-10"
+  },
+  "1 mese": {
+   "calo": 0.0604,
+   "rialzo": 0.733,
+   "soglia_calo": 0.1,
+   "data": "2026-11-10"
+  },
+  "3 mesi": {
+   "calo": 0.1967,
+   "rialzo": 0.6004,
+   "soglia_calo": 0.1,
+   "data": "2026-11-10"
+  },
+  "6 mesi": {
+   "calo": 0.2971,
+   "rialzo": 0.6014,
+   "soglia_calo": 0.1,
+   "data": "2026-11-10"
+  },
+  "12 mesi": {
+   "calo": 0.4425,
+   "rialzo": 0.6046,
+   "soglia_calo": 0.1,
+   "data": "2026-11-10"
+  }
+ },
+ "versione": "titan-v47"
+}

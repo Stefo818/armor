@@ -66,3 +66,17 @@ def test_previsioni_oggi_forma():
     assert 0.0 <= r["p_dd_v40"].iloc[-1] <= 1.0
     assert 0.0 <= r["p_up_v40"].iloc[-1] <= 1.0
     assert r.index[-1] == df.index[-1]
+
+
+def test_finestra_previsioni_uguale_al_walk_forward_completo():
+    df = _build(_raw())
+    n = len(df)
+    full = titan.walk_forward(df, 63, 0.10, include_today=True).iloc[-1]
+    win = titan.walk_forward(df, 63, 0.10, include_today=True, from_idx=max(0, n - 1 - (63 + 420))).iloc[-1]
+    assert abs(full["p_dd_v40"] - win["p_dd_v40"]) < 1e-9
+    assert abs(full["p_up_v40"] - win["p_up_v40"]) < 1e-9
+
+
+def test_previsioni_oggi_cinque_orizzonti():
+    r = titan.previsioni_oggi(_build(_raw()))
+    assert len(r) == 5 and all(0 <= v["calo"] <= 1 and 0 <= v["rialzo"] <= 1 for v in r.values())

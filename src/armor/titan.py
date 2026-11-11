@@ -127,9 +127,11 @@ def market_stage(S: dict) -> pd.DataFrame:
 
     # macro con ritardi di pubblicazione (giorni in cui il dato era davvero noto)
     hy_oas = _lag(g("hy_oas"), 0)
-    baa = g("baa").dropna()
+    baa = g("baa").dropna()   # livello BAA mensile: noto solo a fine mese -> ritardo 35 giorni
     baa_sp = (baa - df["y10y"].reindex(baa.index).ffill()).dropna() if len(baa) else pd.Series(dtype=float)
-    baa_sp = _lag(baa_sp, 5)
+    baa_sp = _lag(baa_sp, 35)
+    if "baa10y" in S and len(S["baa10y"]):   # spread BAA-10Y giornaliero (dal 1986) ha la precedenza
+        baa_sp = _lag(g("baa10y"), 1).combine_first(baa_sp)
     ebp = _lag(g("ebp"), 28)
     nfci = _lag(g("nfci"), 6)
     icsa = _lag(g("icsa"), 6)
@@ -141,7 +143,7 @@ def market_stage(S: dict) -> pd.DataFrame:
 
     df["hy_oas"] = ri(hy_oas).ffill()
     df["baa_spread"] = ri(baa_sp).ffill()
-    df["credit_level"] = df["hy_oas"].combine_first(df["baa_spread"] * 2.2).ffill()
+    df["credit_level"] = (df["baa_spread"] * 2.2).ffill()   # hy_oas non si usa: parte dal 2023 e spezzerebbe la serie
     df["ebp"] = ri(ebp).ffill().fillna(0.0)
     df["nfci"] = ri(nfci).ffill().fillna(0.0)
 
@@ -235,7 +237,7 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     df["z_cpi_accel"] = _cz(df["cpi_accel_6m"])
     df["inflation_bite"] = 0.55 * df["z_cpi_accel"] + 0.45 * df["z_oil_shock"]
 
-    doy = df.index.dayofyear.values
+    doy = df.index.day_of_year.values
     wave = np.cos(2.0 * np.pi * (doy - 285.0) / 365.25)
     midterm = ((df.index.year % 4 == 2) & (df.index.month >= 8)).astype(float)
     df["cycle_harmonic_bull"] = (0.65 * wave + 0.35 * midterm) * df["P_clock"]
@@ -412,7 +414,8 @@ REQUIRED_COLS = [
 
 
 # ---------------------------------------------------------------- probabilita'
-def walk_forward(df: pd.DataFrame, horizon: int = 126, dd_thresh: float = 0.10, include_today: bool = False, step: int = 10) -> pd.DataFrame:
+def walk_forward(df: pd.DataFrame, horizon: int = 126, dd_thresh: float = 0.10, include_today: bool = False, step: int = 10,
+                 from_idx: int = 0) -> pd.DataFrame:
     """Walk-forward di v40 (calo >= dd_thresh nei prossimi `horizon` giorni, e rialzo). Con include_today=True
     aggiunge l'ultima riga di df (previsione per OGGI: addestramento solo su esiti gia' noti)."""
     from sklearn.linear_model import LogisticRegression
@@ -436,6 +439,7 @@ def walk_forward(df: pd.DataFrame, horizon: int = 126, dd_thresh: float = 0.10, 
     idxs = list(range(start, n - horizon, step))
     if include_today:
         idxs.append(n - 1)
+    idxs = [i for i in idxs if i >= from_idx]
     embargo = 5 if horizon <= 21 else 21
     w6 = 0.35 if horizon <= 63 else (0.75 if horizon <= 126 else 1.10)
     w8 = 0.45 if horizon <= 63 else (0.95 if horizon <= 126 else 1.40)
@@ -521,10 +525,13 @@ def walk_forward(df: pd.DataFrame, horizon: int = 126, dd_thresh: float = 0.10, 
 
 
 def previsioni_oggi(df: pd.DataFrame) -> dict:
-    """Probabilita' di calo e di rialzo per OGGI sui 5 orizzonti (ultima riga di df)."""
+    """Probabilita' di calo e di rialzo per OGGI sui 5 orizzonti (ultima riga di df).
+    Il peso Boltzmann usa solo le ultime 35 previsioni maturate, quindi basta una finestra recente:
+    il risultato e' identico al walk-forward completo, ma in pochi secondi."""
     res = {}
+    n = len(df)
     for h, th, nome in ORIZZONTI:
-        r = walk_forward(df, h, th, include_today=True)
+        r = walk_forward(df, h, th, include_today=True, from_idx=max(0, n - 1 - (h + 420)))
         last = r.iloc[-1]
         res[nome] = {"calo": round(float(last["p_dd_v40"]), 4), "rialzo": round(float(last["p_up_v40"]), 4),
                      "soglia_calo": th, "data": str(r.index[-1].date())}
