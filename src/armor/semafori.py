@@ -444,6 +444,80 @@ def cambiati(items: list[dict], oggi: str) -> tuple[list[dict], str | None]:
     return out, dt
 
 
+PESO_LUCE = {"ok": 0, "wa": 1, "ba": 2}
+
+
+def colori_a(sp: pd.Series, date: str, cache: dict | None = None) -> dict:
+    """Colore di ogni indicatore alla data indicata, con i soli dati noti fino a quella data (stesse soglie di oggi). Serve ai confronti con ieri, la settimana e il mese scorsi."""
+    d = pd.Timestamp(date)
+    cache = cache if cache is not None else {}
+    out = {}
+    for spec in SPEC:
+        key = spec[0]
+        try:
+            if key not in cache:
+                cache[key] = series_of(key, sp)
+            s = cache[key]
+            s = s[s.index <= d]
+            if s.empty or (d - s.index[-1]).days > 400:
+                continue
+            out[key] = light_of(spec, float(s.iloc[-1]), s)
+        except Exception:  # noqa: BLE001
+            continue
+    return out
+
+
+def confronti(sp: pd.Series, items: list[dict], oggi: str) -> list[dict]:
+    """Per ieri, 1 settimana fa e 1 mese fa: quanti indicatori sono cambiati di colore, quanti peggiorati e migliorati, e come erano i conteggi allora."""
+    d0 = pd.Timestamp(oggi)
+    prima = sp.index[sp.index < d0]
+    punti = [("ieri", "rispetto a ieri", prima[-1] if len(prima) else None), ("sett", "rispetto a una settimana fa", d0 - pd.Timedelta(days=7)),
+             ("mese", "rispetto a un mese fa", d0 - pd.DateOffset(months=1))]
+    cache, out = {}, []
+    reg = pd.read_csv(_storia_path()) if _storia_path().exists() else pd.DataFrame(columns=["date", "key", "light"])
+    for k, lab, dt in punti:
+        if k == "ieri" and not reg[reg["date"] < oggi].empty:
+            dt = pd.Timestamp(reg[reg["date"] < oggi]["date"].max())          # stessi colori già mostrati ieri (con il VIX di allora)
+        if dt is None:
+            continue
+        ds = dt.strftime("%Y-%m-%d")
+        reg_d = reg[reg["date"] == ds]
+        ref = dict(zip(reg_d["key"], reg_d["light"])) if len(reg_d) >= 20 else colori_a(sp, ds, cache)
+        comuni = [(i["key"], ref[i["key"]], i["light"]) for i in items if i["key"] in ref and ref[i["key"]] in PESO_LUCE and i["light"] in PESO_LUCE]
+        if len(comuni) < 20:
+            continue
+        peggio = [i for i in comuni if PESO_LUCE[i[2]] > PESO_LUCE[i[1]]]
+        meglio = [i for i in comuni if PESO_LUCE[i[2]] < PESO_LUCE[i[1]]]
+        nomi = {i["key"]: i["name"] for i in items}
+        out.append({"id": k, "testo": lab, "data": dt.strftime("%d/%m"), "cambiati": len(peggio) + len(meglio), "peggio": len(peggio), "meglio": len(meglio), "tot": len(comuni),
+                    "prima": {c: sum(1 for i in comuni if i[1] == c) for c in ("ok", "wa", "ba")}, "ora": {c: sum(1 for i in comuni if i[2] == c) for c in ("ok", "wa", "ba")},
+                    "nomi_peggio": [nomi[i[0]] for i in peggio][:6], "nomi_meglio": [nomi[i[0]] for i in meglio][:6]})
+    return out
+
+
+def confronti_html(conf: list[dict] | None) -> str:
+    """Tre tessere: quanti indicatori sono variati rispetto a ieri, alla settimana scorsa e al mese scorso."""
+    if not conf:
+        return ""
+    e = _h.escape
+    cards = ""
+    for c in conf:
+        saldo = c["meglio"] - c["peggio"]
+        cls = "ok" if saldo > 0 else ("ba" if saldo < 0 else "mu")
+        verdetto = "più tranquilli" if saldo > 0 else ("più tesi" if saldo < 0 else "stesso equilibrio")
+        det = []
+        if c["peggio"]:
+            det.append("peggiorati: " + ", ".join(e(n) for n in c["nomi_peggio"]) + (" …" if c["peggio"] > len(c["nomi_peggio"]) else ""))
+        if c["meglio"]:
+            det.append("migliorati: " + ", ".join(e(n) for n in c["nomi_meglio"]) + (" …" if c["meglio"] > len(c["nomi_meglio"]) else ""))
+        p, o = c["prima"], c["ora"]
+        cards += (f"<details class='cfc {cls}'><summary><span class='cft'>{e(c['testo'])} <small>({c['data']})</small></span><b class='cfn'>{c['cambiati']}</b>"
+                  f"<span class='cfs'>su {c['tot']} sono cambiati: <span class='ba'>{c['peggio']} peggio</span> · <span class='ok'>{c['meglio']} meglio</span></span><em>{verdetto}</em></summary>"
+                  f"<div class='cfd'>Allora: {p['ok']} verdi, {p['wa']} gialli, {p['ba']} rossi. Oggi: {o['ok']} verdi, {o['wa']} gialli, {o['ba']} rossi."
+                  + ("<br>" + "<br>".join(det) if det else "") + "</div></details>")
+    return ("<div class='cfg'><div class='cfh'>Quanti semafori sono cambiati <small>tocca una tessera per i dettagli</small></div><div class='cfw'>" + cards + "</div></div>")
+
+
 def _stato_gruppo(its: list[dict]) -> str:
     n = {k: sum(1 for i in its if i["light"] == k) for k in ("ba", "wa", "ok")}
     if n["ba"] and n["ba"] >= max(1, n["ok"]):
@@ -453,7 +527,7 @@ def _stato_gruppo(its: list[dict]) -> str:
     return "ok"
 
 
-def oggi_html(items: list[dict], oggi: str) -> str:
+def oggi_html(items: list[dict], oggi: str, conf: list[dict] | None = None) -> str:
     if not items:
         return ""
     e = _h.escape
@@ -484,7 +558,7 @@ def oggi_html(items: list[dict], oggi: str) -> str:
         txt = " · ".join(f"<b>{e(c['name'])}</b>: <span class='{c['da']}t'>{nm.get(c['da'], '')}</span> → <span class='{c['a']}t'>{nm.get(c['a'], '')}</span>" for c in ch[:8])
         cambio = f"<div class='sgc'>Cambiati dal {dt[8:10]}/{dt[5:7]}: {txt}{' …' if len(ch) > 8 else ''}</div>"
     return (f"<div class='card sgbox'><div class='sght'><b>Semafori di oggi</b><span class='mu'>{tot} indicatori" + (f" · {inf} solo informativi" if inf else "") + "</span></div>"
-            f"<div class='sgbar'>{seg}</div><div class='sgpills'>{pills}</div>{panels}{cambio}"
+            f"<div class='sgbar'>{seg}</div>{confronti_html(conf)}<div class='sgpills'>{pills}</div>{panels}{cambio}"
             "<div class='sgl'><a href='#' data-semlist='all'>Vedi tutti i semafori ›</a> <a href='#indici' data-go='indici'>Schede con le spiegazioni ›</a></div></div>")
 
 
@@ -492,6 +566,11 @@ OGGI_JS = r"""<script>(function(){document.addEventListener('click',function(ev)
 [].forEach.call(box.querySelectorAll('.sgpan'),function(x){x.hidden=true});[].forEach.call(box.querySelectorAll('.sgp'),function(x){x.classList.remove('sel')});if(!open){p.hidden=false;b.classList.add('sel')}})})();</script>"""
 
 OGGI_CSS = """
+.cfg{margin:10px 0 2px}.cfh{font-size:12.5px;font-weight:700;margin-bottom:6px}.cfh small{font-weight:500;color:var(--mu);margin-left:6px}.cfw{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}@media(max-width:640px){.cfw{grid-template-columns:1fr}}
+.cfc{border:1px solid var(--bd);border-left:4px solid var(--mu);border-radius:10px;background:var(--bg);padding:6px 10px}.cfc.ok{border-left-color:var(--ok)}.cfc.ba{border-left-color:var(--bad)}
+.cfc>summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center}.cfc>summary::-webkit-details-marker{display:none}
+.cft{grid-column:1/3;font-size:12px;color:var(--mu);font-weight:700}.cft small{font-weight:500}.cfn{font-size:28px;font-weight:800;line-height:1.1}.cfs{font-size:12px;line-height:1.35}.cfs .ba{color:var(--bad);font-weight:700}.cfs .ok{color:var(--ok);font-weight:700}
+.cfc>summary em{grid-column:1/3;font-style:normal;font-size:11.5px;font-weight:700;margin-top:2px}.cfc.ok em{color:var(--ok)}.cfc.ba em{color:var(--bad)}.cfc.mu em{color:var(--mu)}.cfd{font-size:12px;color:var(--mu);line-height:1.5;margin-top:6px;border-top:1px dashed var(--bd);padding-top:6px}
 .sgbox{padding:12px 14px}.sght{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .sgbar{display:flex;gap:3px;height:38px;border-radius:10px;overflow:hidden}.sgs{display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;text-decoration:none;font-size:12px;min-width:88px}
 .sgs b{font-size:17px}.sgs span{font-size:11px;opacity:.95}.sgs.ok{background:var(--ok)}.sgs.wa{background:var(--warn);color:#1a1a1a}.sgs.ba{background:var(--bad)}

@@ -173,12 +173,15 @@ function load(cb,key){if(DATA[key])return cb(DATA);
 fetch('series/'+encodeURIComponent(key)+'.json?'+Date.now()).then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.d)DATA[key]=j;cb(DATA)}).catch(function(){cb(DATA)})}
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
-function series(s){var D=[];for(var i=0;i<s.d.length;i++)D.push([s.d[i]*86400,s.v[i]]);var I=[],I1=[],I10=[];if(s.i){for(var j=0;j<s.i.t.length;j++)I.push([s.i.t[j],s.i.v[j]]);if(s.i.t1)for(var a=0;a<s.i.t1.length;a++)I1.push([s.i.t1[a],s.i.v1[a]]);if(s.i.t10)for(var b=0;b<s.i.t10.length;b++)I10.push([s.i.t10[b],s.i.v10[b]])}
+function series(s){var D=[];for(var i=0;i<s.d.length;i++)D.push([s.d[i]*86400,s.v[i]]);var I=[],I1=[],I10=[];if(s.i&&s.i.t){for(var j=0;j<s.i.t.length;j++)I.push([s.i.t[j],s.i.v[j]]);if(s.i.t1)for(var a=0;a<s.i.t1.length;a++)I1.push([s.i.t1[a],s.i.v1[a]]);if(s.i.t10)for(var b=0;b<s.i.t10.length;b++)I10.push([s.i.t10[b],s.i.v10[b]])}
 var tk=s._k&&window.LIVETICKS&&window.LIVETICKS[s._k];if(tk&&tk.length){[I,I1,I10].forEach(function(A){tk.forEach(function(p){if(!A.length||p[0]>A[A.length-1][0])A.push(p)})})}
 return{D:D,I:I,I1:I1,I10:I10}}
 function pts(s,range){var x=series(s),D=x.D,I=x.I,r=RANGES.filter(function(a){return a[0]===range})[0];
-var last=Math.max(D.length?D[D.length-1][0]:0,I.length?I[I.length-1][0]:0,x.I1.length?x.I1[x.I1.length-1][0]:0);var from=r[2]?last-r[2]:0;
-if(range==='1h'||range==='6h'||range==='1d'||range==='1w'){var src=range==='1h'&&x.I1.length>=5?x.I1:(range==='6h'&&x.I10.length>=5?x.I10:I);var P=src.filter(function(p){return p[0]>=from});if(P.length>=5)return P;if(range==='1w'){P=D.filter(function(p){return p[0]>=from});return P.length>=3?P:[]}return[]}
+var li=Math.max(I.length?I[I.length-1][0]:0,x.I1.length?x.I1[x.I1.length-1][0]:0,x.I10.length?x.I10[x.I10.length-1][0]:0);var last=Math.max(D.length?D[D.length-1][0]:0,li);
+var intra=(range==='1h'||range==='6h'||range==='1d')&&li>0;var from=r[2]?(intra?li:last)-r[2]:0;
+if(range==='1h'||range==='6h'||range==='1d'||range==='1w'){var src=range==='1h'&&x.I1.length>=5?x.I1:(range==='6h'&&x.I10.length>=5?x.I10:I);var P=src.filter(function(p){return p[0]>=from});if(P.length>=5)return P;if(range==='1w'){P=D.filter(function(p){return p[0]>=from});return P.length>=3?P:[]}
+var cand=range==='1h'?[x.I1,x.I10,I]:(range==='6h'?[x.I10,I]:[I]),nn=range==='1h'?60:(range==='6h'?72:100000);for(var c=0;c<cand.length;c++){if(cand[c].length>=5)return cand[c].slice(-nn)}
+return D.length>=3?D.slice(-30):[]}
 var P2=D.filter(function(p){return p[0]>=from});if(I.length&&P2.length&&I[I.length-1][0]>P2[P2.length-1][0]+3600)P2.push(I[I.length-1]);return P2.length>=3?P2:[]}
 function avail(s){var o={};RANGES.forEach(function(r){o[r[0]]=pts(s,r[0]).length>0});return o}
 function tfmt(t,span){var d=new Date(t*1000);if(span<=2*86400)return d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
@@ -209,7 +212,9 @@ function onTick(){if(!st.s||!LIVEKEYS[st.key]||tip.style.display==='block')retur
 if(['1h','6h','1d'].indexOf(st.range)>=0){var tk=(window.LIVETICKS||{})[st.key]||[];if(tk.length)note('In diretta: si aggiorna ogni 15 secondi (ultimo dato '+new Date(tk[tk.length-1][0]*1000).toLocaleTimeString('it-IT')+').')}}
 (window.ARMOR_TICKS=window.ARMOR_TICKS||[]).push(onTick);
 function note(t){var n=root.querySelector('.clive');if(!n){n=document.createElement('div');n.className='muted clive';n.style.fontSize='12px';rbox.parentNode.insertBefore(n,rbox.nextSibling)}n.textContent=t}
-function setRange(r){st.range=r;var cn=root.querySelector('.clive');if(cn)cn.textContent='';st.P=pts(st.s,r);if(['1h','6h','1d'].indexOf(r)>=0)note(LIVEKEYS[st.key]?'In diretta: si aggiorna ogni 15 secondi mentre l\'app è aperta.':'Questo dato si aggiorna ogni 15 minuti (ritardo della fonte: circa 15 minuti).');stats_();rbox.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.r===r)});draw(null)}
+function setRange(r){st.range=r;var cn=root.querySelector('.clive');if(cn)cn.textContent='';st.P=pts(st.s,r);if(['1h','6h','1d'].indexOf(r)>=0)note(LIVEKEYS[st.key]?'In diretta: si aggiorna ogni 15 secondi mentre l\'app è aperta.':'Questo dato si aggiorna ogni 15 minuti (ritardo della fonte: circa 15 minuti).');if(['1h','6h','1d'].indexOf(r)>=0&&st.P.length){var lt=st.P[st.P.length-1][0],sp_=lt-st.P[0][0],lim=r==='1h'?5400:(r==='6h'?64800:172800);var dd=new Date(lt*1000).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+if(sp_>3*86400)note('Dati orari non disponibili: mostro gli ultimi giorni (ultimo dato '+dd+').');else if(Date.now()/1000-lt>1800)note('Mercato chiuso: mostro gli ultimi scambi disponibili (ultimo dato '+dd+'). Alla riapertura si aggiorna da solo.')}
+stats_();rbox.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.r===r)});draw(null)}
 function show(key){load(function(D){var s=D[key];st.key=key;st.s=s;if(s)s._k=key;if(!s){title.textContent='Grafico non disponibile';stats.innerHTML='';st.P=[];draw(null);rbox.innerHTML='';help.textContent='Questo dato non è ancora stato scaricato.';return}
 st.dec=s.dec==null?2:s.dec;title.innerHTML='<h3 style="margin:0 0 4px">'+s.l+'</h3>';help.textContent=(window.HELP&&window.HELP[key])||'';
 var av=avail(s);rbox.innerHTML='';RANGES.forEach(function(r){var b=document.createElement('button');b.textContent=r[1];b.dataset.r=r[0];b.disabled=!av[r[0]]&&!(LIVEKEYS[key]&&['1h','6h','1d'].indexOf(r[0])>=0);b.onclick=function(){setRange(r[0])};rbox.appendChild(b)});

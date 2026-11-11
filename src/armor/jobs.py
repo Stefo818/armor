@@ -342,6 +342,14 @@ def tutto(skip_download: bool = False) -> None:
         from . import titan_job
         _t = titan_job.esegui()
         print(f"[titan] armor {_t['armor_index']:.1f} · super {_t['super_armor']:.1f} · radar {_t['radar_decennio']:.1f}")
+        try:   # valori di Titan per la pagina Storico (date del diario e ultima seduta)
+            import pandas as _pd
+            from . import titan_job as _tj, titan_registro
+            _jp = DATA / "journal.csv"
+            _dd = _pd.read_csv(_jp)["asof"].unique() if _jp.exists() else []
+            print("[titan-registro] date nuove:", titan_registro.aggiorna(_tj.costruisci(), _dd))
+        except Exception as e:  # noqa: BLE001
+            print("[titan-registro] non aggiornato:", str(e)[:120])
     except Exception as e:  # noqa: BLE001
         print("[titan] non calcolato:", str(e)[:120])
     try:   # Indice Occasione, fase, fasce per orizzonte e salute (data/occasione.json)

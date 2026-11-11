@@ -10,7 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
-from . import occasione_ui, soglie, titan_schede, titan_ui, titan_vista
+from . import occasione_ui, soglie, titan_registro, titan_schede, titan_ui, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -461,24 +461,38 @@ def history_html(date, pred, hist, jr, outc):
         thr = PRIMARY[hz]
         ser = (h[f"p_{hz}"] * 100) if len(h) and f"p_{hz}" in h else pd.Series(dtype=float)
         base = pred[hz]["base"][thr] * 100
+        try:
+            tit = titan_registro.serie_hz(hz)
+        except Exception as ex:  # noqa: BLE001
+            print("Titan nello storico non disponibile:", str(ex)[:80], flush=True)
+            tit = None
         live = pd.Series(dtype=float)
         if len(j):
             g = j[j.horizon == hz].sort_values("asof")
             live = pd.Series(g["pp"].values * 100, index=g["asof"].values).groupby(level=0).last()
         today = pd.Series([pred[hz]["p"][thr] * 100], index=[date])
         ser = pd.concat([ser, today]) if len(ser) else today
-        ch = svg_lines([(f"Probabilità stimata (%), calo ≥{thr}% entro {HZ_LABEL[hz]}", ser, cols[hz])],
+        linee = [(f"Probabilità stimata (%), calo ≥{thr}% entro {HZ_LABEL[hz]}", ser, cols[hz])]
+        if tit is not None and len(tit) > 2:
+            linee.append(("Titan (modello di riferimento)", tit, "#0d9488"))
+        ch = svg_lines(linee,
                        fmt=lambda v: it(v, 0) + "%", ymin=0, hline=base,
                        dots=[("Previsioni registrate nel diario", live, "#1b2330")] if len(live) else None)
         charts.append(f"<div class='hzc' id='hzc-{hz}' style='{'' if k == 0 else 'display:none'}'>{ch}"
                       f"<p class='muted'>Linea tratteggiata = frequenza storica ({it(base, 0)}%). La linea colorata è la stima walk-forward sullo S&P 500 dal 2000 "
-                      "(ogni punto usa solo i dati noti allora); i pallini sono le previsioni vere, registrate nel diario in tempo reale.</p></div>")
+                      "(ogni punto usa solo i dati noti allora); i pallini sono le previsioni vere, registrate nel diario in tempo reale. "
+                      "La linea verde-acqua è Titan, il modello di riferimento dall'11 novembre 2026: stessa regola (calo ≥ soglia entro lo stesso periodo), valori ricalcolati con i soli dati noti in ogni data.</p></div>")
         btns.append(f"<button class='tab{' on' if k == 0 else ''}' data-hz='{hz}' onclick=\"showHz('{hz}')\">{HZ_LABEL[hz]}</button>")
     out = [f"<div class='tabs'>{''.join(btns)}</div>{''.join(charts)}"]
     if not len(j):
         out.append("<p class='muted'>Il diario è ancora vuoto: la prima previsione verrà registrata al prossimo aggiornamento.</p>")
         return "".join(out)
 
+    try:
+        titan_pd = titan_registro.per_data()
+    except Exception as ex:  # noqa: BLE001
+        print("Titan nel diario non disponibile:", str(ex)[:80], flush=True)
+        titan_pd = {}
     j = j.sort_values(["horizon", "asof"])
     j["prev_pp"] = j.groupby("horizon")["pp"].shift(1)
     if len(o):
@@ -501,12 +515,14 @@ def history_html(date, pred, hist, jr, outc):
                 esito += f" · calo ≥{int(r['thr1'])}%: {'avvenuto' if int(hit) == 1 else 'no'}"
             d_ = pd.to_numeric(x.get("discrepancy"), errors="coerce")
             scost = pct(d_, 1, True) if pd.notna(d_) else "—"
+        tv = titan_pd.get((r["asof"].strftime("%Y-%m-%d"), hz))
+        tcell = f"<b>{pct(tv[0], 1)}</b> <small class='muted'>rialzo {pct(tv[1], 0)}</small>" if tv else "—"
         rng = f"{pct(r['q50'], 1, True)} <small class='muted'>[{pct(r['q10'], 1, True)} … {pct(r['q90'], 1, True)}]</small>"
         rows.append(f"<tr><td>{r['asof'].strftime('%d/%m/%Y')}</td><td>{HZ_LABEL[hz]}</td>"
-                    f"<td>{pct(r['pp'], 1)} <small class='muted'>calo ≥{int(r['pthr'])}%</small></td><td>{it(r['ratio'], 2)}×</td>"
+                    f"<td>{pct(r['pp'], 1)} <small class='muted'>calo ≥{int(r['pthr'])}%</small></td><td>{tcell}</td><td>{it(r['ratio'], 2)}×</td>"
                     f"<td><span class='badge {LEVEL_CLASS.get(r['level'], 'ok')}'>{esc(r['level'])}</span></td>"
                     f"<td>{rng}</td><td>{ch or '—'}</td><td>{scad}</td><td>{esito}</td><td>{scost}</td></tr>")
-    head = ("<table><thead><tr><th>Data</th><th>Orizzonte</th><th>Probabilità di calo</th><th>Rispetto al normale</th><th>Livello</th>"
+    head = ("<table><thead><tr><th>Data</th><th>Orizzonte</th><th>Probabilità di calo</th><th>Titan: probabilità di calo</th><th>Rispetto al normale</th><th>Livello</th>"
             "<th>Rendimento ipotizzato VWCE [80%]</th><th>Variazione rispetto alla previsione precedente</th><th>Scadenza</th>"
             "<th>Esito reale</th><th>Scostamento</th></tr></thead><tbody>")
     vis, old = rows[:48], rows[48:]
@@ -1030,7 +1046,8 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
         semafori.registra_colori(sem, today_d.isoformat())
     except Exception as ex:  # noqa: BLE001
         print("Storico semafori non salvato:", str(ex)[:100], flush=True)
-    sem_new = _safe(lambda: semafori.oggi_html(sem, today_d.isoformat()), "Semafori di oggi") if sem else ""
+    sem_conf = _safe(lambda: semafori.confronti(sp, sem, today_d.isoformat()), "Confronto semafori") if sem else None
+    sem_new = _safe(lambda: semafori.oggi_html(sem, today_d.isoformat(), sem_conf), "Semafori di oggi") if sem else ""
     reg_o = _safe(lambda: tensione.oggi(), "Regime di tensione") or None
     if reg_o:
         _safe(lambda: tensione.registra_ombra(reg_o), "Registro regime")
@@ -1095,7 +1112,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
              + "<h2 style='margin-top:26px'>Esperimento: premio di volatilità (in ombra)</h2><div class='card'>" + _safe(vrp.html, "VRP") + "</div>"
              + "<h2 style='margin-top:26px'>Ricerca modello: salute delle aziende, macro e storia lunga</h2><div class='card'>" + _safe(ciclico.html_ricerca, "Ricerca modello") + "</div>")
     p_sto = (f"<h2>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero.</p>"
-             f"<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno. <i>Rispetto al normale</i>: 1× = nella norma. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (tra parentesi l'intervallo dell'80% dei casi). <i>Variazione</i>: rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>"
+             f"<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno del modello del diario. <i>Titan</i>: la stima di quel giorno del modello di riferimento (sotto, il punteggio di rialzo: non è una probabilità). <i>Rispetto al normale</i>: 1× = nella norma. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (tra parentesi l'intervallo dell'80% dei casi). <i>Variazione</i>: rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>"
              f"<h2>Previsto contro reale</h2><div class='card'>{pv}</div>"
              f"<h2>Registro dei dati giornalieri</h2>{parts.registry_section()}"
              f"<h2>Come va l'app: miglioramento automatico</h2><div class='card scroll'>{imp_html}</div>"

@@ -28,6 +28,17 @@ NOMI = {"disaccordo": "Disaccordo tra i modelli", "dati": "Dati non aggiornati",
 ETICHETTA_HZ = {"10g": "10 giorni", "1m": "1 mese", "3m": "3 mesi", "6m": "6 mesi"}
 
 
+
+def _titan_ultimo() -> dict:
+    """Probabilità di calo di Titan (ultima data del registro) per orizzonte del diario."""
+    try:
+        from . import titan_registro
+        r = titan_registro.carica()
+        return {x.hz: float(x.calo) for x in r[r["date"] == r["date"].max()].itertuples()} if len(r) else {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 def _a1(hz: str, r: dict) -> float:
     """Probabilità principale di A1 (se un altro motore fosse adottato, A1 resta in p_a1)."""
     return float((r.get("p_a1") or r["p"])[PRIMARY[hz]])
@@ -203,11 +214,14 @@ def html() -> str:
            f"<p style='margin:4px 0 10px'><b>Come muoverti.</b> {e(muovi)}</p>"]
     ori = a.get("orizzonti") or []
     if ori:
-        out.append("<div class='mu' style='margin:8px 0 4px'><b>Cosa aspettarti, orizzonte per orizzonte</b> — probabilità di un calo almeno pari alla soglia. A1 = modello ufficiale, sfidante = modello in prova (FHS+VIX), «normale» = quanto succede in media nella storia</div>")
+        out.append("<div class='mu' style='margin:8px 0 4px'><b>Cosa aspettarti, orizzonte per orizzonte</b> — probabilità di un calo almeno pari alla soglia. A1 = modello ufficiale, sfidante = modello in prova (FHS+VIX), Titan = modello di riferimento, «normale» = quanto succede in media nella storia</div>")
+        tit = _titan_ultimo()
         for o in ori:
             fascia, conf = _lettura(o)
             doppio = o["sfidante"] is not None and abs(o["a1"] - o["sfidante"]) >= 0.005
             dett = (f"A1 {o['a1']:.0%} · sfidante {o['sfidante']:.0%} · normale {o['normale']:.0%}" if doppio else f"A1 {o['a1']:.0%} · normale {o['normale']:.0%}")
+            if tit.get(o["hz"]) is not None:
+                dett += f" · Titan (riferimento) {tit[o['hz']]:.0%}"
             out.append(f"<div style='border-top:1px solid rgba(128,128,128,.25);padding:6px 0'><b>{e(ETICHETTA_HZ[o['hz']])}, calo ≥{o['soglia']}%:</b> {e(fascia)}"
                        f"{' (' + e(conf) + ')' if conf else ''}<div class='mu'>{e(dett)}</div></div>")
     out.append("<div class='mu' style='margin:10px 0 4px'><b>Perché</b> — i cinque controlli (acceso = attenzione)</div>")
