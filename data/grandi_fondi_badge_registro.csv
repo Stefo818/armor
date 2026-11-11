@@ -10,3 +10,11 @@ data,segnale,valore,percentile,stato,peso
 2026-11-09,f13_indicizzati,2.099,32.5,normale,0
 2026-11-09,insider,0.153,54.8,normale,0
 2026-11-09,d13,542.0,50.8,normale,0
+2026-11-10,mmf,0.636,15.6,basso,0
+2026-11-10,cot_lev,-18.742,30.2,normale,0
+2026-11-10,cot_am,46.744,77.5,normale,0
+2026-11-10,cot_dealer,-34.662,26.3,normale,0
+2026-11-10,f13_protezione,1.185,47.5,normale,0
+2026-11-10,f13_indicizzati,2.099,32.5,normale,0
+2026-11-10,insider,0.153,54.8,normale,0
+2026-11-10,d13,542.0,50.8,normale,0

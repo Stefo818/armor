@@ -1,10 +1,10 @@
 {
- "asof": "2026-11-09",
+ "asof": "2026-11-10",
  "segnali": [
   {
    "id": "disaccordo",
    "acceso": true,
-   "dettaglio": "10 giorni: calo ≥5% → A1 4%, sfidante 10%; 1 mese: calo ≥10% → A1 3%, sfidante 9%; 3 mesi: calo ≥10% → A1 7%, sfidante 21%; 6 mesi: calo ≥10% → A1 14%, sfidante 29%"
+   "dettaglio": "10 giorni: calo ≥5% → A1 4%, sfidante 10%; 3 mesi: calo ≥10% → A1 7%, sfidante 20%"
   },
   {
    "id": "dati",
@@ -14,9 +14,9 @@
   {
    "id": "mai_visto",
    "acceso": false,
-   "dettaglio": "distanza dalla norma 3.7, limite 8.9 (superato solo dall'1% dei 9281 giorni di storia)",
-   "valore": 3.735772952406903,
-   "soglia": 8.944779266233493
+   "dettaglio": "distanza dalla norma 3.8, limite 8.9 (superato solo dall'1% dei 9282 giorni di storia)",
+   "valore": 3.7730842920677756,
+   "soglia": 8.94394220437554
   },
   {
    "id": "errori",
@@ -26,55 +26,55 @@
   },
   {
    "id": "instabilita",
-   "acceso": false,
-   "dettaglio": "a 1 mese la probabilità va da 14% a 16% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)",
+   "acceso": true,
+   "dettaglio": "a 3 mesi la probabilità va da 25% a 29% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)",
    "per_finestra": {
     "dal 1950": {
-     "1m": 0.137,
-     "3m": 0.286
+     "1m": 0.124,
+     "3m": 0.269
     },
     "dal 1990": {
-     "1m": 0.152,
-     "3m": 0.288
+     "1m": 0.143,
+     "3m": 0.2866666666666667
     },
     "ultimi 15 anni": {
-     "1m": 0.165,
-     "3m": 0.269
+     "1m": 0.15233333333333332,
+     "3m": 0.24933333333333332
     }
    }
   }
  ],
- "livello": "media",
- "n_accesi": 1,
- "avviso": "",
+ "livello": "bassa",
+ "n_accesi": 2,
+ "avviso": "Stima poco affidabile: disaccordo tra i modelli (10 giorni: calo ≥5% → A1 4%, sfidante 10%; 3 mesi: calo ≥10% → A1 7%, sfidante 20%); stima instabile (a 3 mesi la probabilità va da 25% a 29% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)).",
  "orizzonti": [
   {
    "hz": "10g",
    "soglia": 5,
-   "a1": 0.04361665773749899,
-   "sfidante": 0.1036,
-   "normale": 0.06208884918378949
+   "a1": 0.04471281800507755,
+   "sfidante": 0.099,
+   "normale": 0.062086328013968406
   },
   {
    "hz": "1m",
    "soglia": 10,
-   "a1": 0.0267477835245801,
-   "sfidante": 0.0852,
-   "normale": 0.05180399804973184
+   "a1": 0.02745461880283354,
+   "sfidante": 0.0734,
+   "normale": 0.051801893308414254
   },
   {
    "hz": "3m",
    "soglia": 10,
-   "a1": 0.07341824596194962,
-   "sfidante": 0.2072,
-   "normale": 0.15213675213675212
+   "a1": 0.07476075367293021,
+   "sfidante": 0.2008,
+   "normale": 0.15213056041675146
   },
   {
    "hz": "6m",
    "soglia": 10,
-   "a1": 0.13543003092304173,
-   "sfidante": 0.2868,
-   "normale": 0.25425388664463217
+   "a1": 0.1377251227850083,
+   "sfidante": 0.2714,
+   "normale": 0.2542435123225069
   }
  ]
 }
