@@ -415,7 +415,7 @@ REQUIRED_COLS = [
 
 # ---------------------------------------------------------------- probabilita'
 def walk_forward(df: pd.DataFrame, horizon: int = 126, dd_thresh: float = 0.10, include_today: bool = False, step: int = 10,
-                 from_idx: int = 0) -> pd.DataFrame:
+                 from_idx: int = 0, dates=None) -> pd.DataFrame:
     """Walk-forward di v40 (calo >= dd_thresh nei prossimi `horizon` giorni, e rialzo). Con include_today=True
     aggiunge l'ultima riga di df (previsione per OGGI: addestramento solo su esiti gia' noti)."""
     from sklearn.linear_model import LogisticRegression
@@ -440,6 +440,9 @@ def walk_forward(df: pd.DataFrame, horizon: int = 126, dd_thresh: float = 0.10, 
     if include_today:
         idxs.append(n - 1)
     idxs = [i for i in idxs if i >= from_idx]
+    if dates is not None:   # date scelte dal chiamante (es. la valutazione dei modelli): stesse date per tutti i modelli
+        pos = df.index.get_indexer(pd.DatetimeIndex(dates))
+        idxs = sorted(int(i) for i in pos if i >= max(start, from_idx) and i < n - horizon)
     embargo = 5 if horizon <= 21 else 21
     w6 = 0.35 if horizon <= 63 else (0.75 if horizon <= 126 else 1.10)
     w8 = 0.45 if horizon <= 63 else (0.95 if horizon <= 126 else 1.40)

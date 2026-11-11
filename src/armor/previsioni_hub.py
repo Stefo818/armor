@@ -111,6 +111,19 @@ def _modelli_celle(pred: dict | None) -> dict:
             cl, _t = direzione(pu, None if b.get("p_neg") is None else 1 - b["p_neg"])
             celle[hz] = (cl, f"Rialzo {_pc(pu)}", f"tipico {_sg(x['ret']['q50'])}")
         out[nome_sim(nome_v)] = {"stato": "mostrato" if nome_v == o.get("mostrata") else "in ombra", "tipo": "sim", "celle": celle}
+    try:
+        from . import titan_ui
+        td = titan_ui.carica()
+        if td and td.get("previsioni"):
+            celle = {}
+            for hz, nome in (("10g", "1 settimana"), ("1m", "1 mese"), ("3m", "3 mesi"), ("6m", "6 mesi"), ("12m", "12 mesi")):
+                x = td["previsioni"].get(nome)
+                if x:
+                    cl, lv = titan_ui.livello_calo(x["calo"])
+                    celle[hz] = (cl, "Rischio " + lv, f"calo ≥{round(x['soglia_calo'] * 100)}%: {_pc(x['calo'])}")
+            out["Titan (riferimento)"] = {"stato": "in uso", "tipo": "risk", "celle": celle}
+    except Exception:  # noqa: BLE001
+        pass
     if pred:
         celle = {}
         for hz in ("10g", "1m", "3m", "6m"):
@@ -118,7 +131,7 @@ def _modelli_celle(pred: dict | None) -> dict:
                 cl, t = LIV.get(pred[hz].get("level", ""), ("wa", "Rischio nella norma"))
                 q50 = (pred[hz].get("ret") or {}).get("q50")
                 celle[hz] = (cl, t, f"tipico {_sg(q50)}" if q50 is not None else "")
-        out["Modello principale (A1)"] = {"stato": "in uso", "tipo": "risk", "celle": celle}
+        out["Modello principale (A1)"] = {"stato": "mostrato", "tipo": "risk", "celle": celle}
     try:
         sh = pd.read_csv(DATA / "journal_shadow.csv")
         ult = sh[sh["asof"] == sh["asof"].max()]

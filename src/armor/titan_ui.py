@@ -68,7 +68,7 @@ def html() -> str:
         return ""
     sch = "".join(_scheda(n.capitalize() if n[0].isdigit() is False else n, x) for n, x in d["previsioni"].items())
     pil = "".join(_pilastro(k, float(v)) for k, v in d.get("pilastri", {}).items() if k in PILASTRI)
-    return ("<div class='explain'><p><b>Modello ufficiale: motore Titan</b> · dati del " + E(d["data"]) + f". Indice Armor <b>{_it(d['armor_index'], 1)}</b>, Super Armor <b>{_it(d['super_armor'], 1)}</b>. "
+    return ("<div class='explain'><p><b>Modello di riferimento: motore Titan</b> · dati del " + E(d["data"]) + f". Indice Armor <b>{_it(d['armor_index'], 1)}</b>, Super Armor <b>{_it(d['super_armor'], 1)}</b>. "
             "Per ogni periodo trovi la probabilità stimata di un calo importante (5% in una settimana, 10% negli altri periodi) e un punteggio di tendenza. "
             "Sono stime ottenute provando il modello sul passato, non promesse.</p></div>"
             f"<div class='pvg'>{sch}</div>"

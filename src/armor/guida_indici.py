@@ -7,6 +7,13 @@ from .super_armor import NOMI, PESI
 
 
 def html() -> str:
+    try:
+        from . import titan_schede
+        g = titan_schede.guida_html()
+        if g:
+            return g
+    except Exception:  # noqa: BLE001
+        pass
     E = _h.escape
     fam = "".join(f"<li>{E(n)} <small>{w}%</small></li>" for n, (w, _it) in armor_index.GROUPS.items())
     pil = "".join(f"<li>{E(NOMI[k])} <small>{PESI[k]:.0f}%</small></li>" for k in ("previsione", "armor", "economia", "vix") if PESI.get(k))

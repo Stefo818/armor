@@ -27,3 +27,9 @@ Stato al 10 novembre 2026: una settimana Modesta, un mese Buona, tre mesi Modest
 
 ## Vincitori per periodo
 Per ogni settimana, mese, trimestre, semestre vince il modello con l'errore medio più basso tra Normale, A1, FHS, FHS+VIX. Se primo e secondo sono entro l'1%: «Pari». Si contano solo previsioni con esito noto. Sono informazioni, non decidono il riferimento.
+
+---
+## Aggiornamento 11/2026: Titan è il modello di riferimento
+Su decisione dell'utente, dal novembre 2026 il riferimento per tutti gli orizzonti è **Titan** (motore v47, `src/armor/titan.py`), al posto di FHS+VIX. FHS+VIX e A1 restano come altre opinioni.
+Titan entra nella valutazione mensile (`python -m armor valuta-modelli`, `titan_valuta.py`) con la stessa regola degli altri: stesse date, probabilità di calo con esiti già noti, frequenza «normale» purged. Si valutano solo i cali (il «rialzo» di Titan è un punteggio di tendenza, non una probabilità).
+La regola annuale resta: il riferimento cambia solo se uno sfidante ha il voto cumulativo più alto per l'intero anno a ogni fine mese; prossima revisione a novembre 2027.

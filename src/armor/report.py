@@ -10,7 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
-from . import soglie, titan_vista
+from . import soglie, titan_schede, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -1038,10 +1038,11 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     reg_box = _safe(lambda: tensione.CSS + tensione.box_oggi(reg_o, None, reg_an), "Regime di tensione") if reg_o else ""
     p_regime = _safe(lambda: tensione.pagina(reg_o, None, tensione.grafico_dati(), reg_an), "Pagina regime")
     p_oggi = (f"<a id='oggi'></a>{topbtns}"
-              f"{_safe(lambda: super_armor_ui.html(aix, p), 'Super Armor Index')}"
+              f"{_safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index')}"
               f"{_safe(guida_indici.html, 'Guida agli indici')}"
-              f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
+              f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>"
               f"{_safe(lambda: soglie.html(aix['value'] if aix else None, _sai_titan(p)), 'Zone di rischio')}"
+              f"{kpi}"
               f"{_safe(lambda: perche.html(perche.carica()) + perche.JS, 'Perché si muove oggi')}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
               f"{_safe(lambda: scadenze.banner(scadenze.elenco()), 'Scadenze')}{sem_new}{reg_box}"
@@ -1056,7 +1057,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     p_indici = (hero_old + "<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
                 "<div class='explain'><p>Ogni scheda mostra il valore di oggi, un <b>semaforo</b> (verde = tranquillo, giallo = attenzione, rosso = allarme), come si legge l'indice e quando preoccuparsi. "
                 "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>" +
-                armor_index.detail_html(aix) + f"<div class='card'><h3 style='margin-top:0'>Coerenza dei segnali</h3>{insight.coherence_html(coh)}</div>" + semafori.html(sem)
+                (_safe(titan_schede.indici_html, 'Schede Titan') or armor_index.detail_html(aix)) + f"<div class='card'><h3 style='margin-top:0'>Coerenza dei segnali</h3>{insight.coherence_html(coh)}</div>" + semafori.html(sem)
                 + "<h2 style='margin-top:26px'>Mappa settimanale dei segnali</h2>" + map_intro + map_full
                 + "<h2 style='margin-top:26px'>Confronto con le grandi crisi</h2>" + _safe(lambda: extra13.crisi_html(aix, sp), "Confronto crisi"))
     p_az = ("<h2>Salute delle aziende in VWCE</h2>" + _safe(lambda: aziende.html(aziende.load()), "Aziende VWCE"))

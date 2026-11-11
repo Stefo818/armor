@@ -526,13 +526,13 @@ def _barre_storiche(stato: str, r: dict | None) -> str:
             ver, vc = f"Meno spesso della media storica ({d:.0f} punti)".replace("-", "−"), "#16a34a"
         else:
             ver, vc = "In linea con la media storica", "#64748b"
-        return (f"<div class='rg-c'><div class='rg-ct'>{titolo}</div><div class='rg-two'>"
-                f"<div><div class='rg-dl'>Dopo giorni come oggi</div>{_pallini(a, 'var(--rgc)')}<div class='rg-nn' style='color:var(--rgc)'>{a * 100:.0f}<small> su 100</small></div></div>"
-                f"<div><div class='rg-dl'>Media storica <small>(tutti i giorni dal 2000)</small></div>{_pallini(b, 'var(--mu)')}<div class='rg-nn'>{b * 100:.0f}<small> su 100</small></div></div></div>"
+        return (f"<div class='rg-c rg-cc'><div class='rg-ct'>{titolo}</div>"
+                f"<div class='rg-br'><span>Dopo giorni come oggi</span><div class='rg-bt'><i style='width:{a * 100:.0f}%;background:var(--rgc)'></i></div><b style='color:var(--rgc)'>{a * 100:.0f}%</b></div>"
+                f"<div class='rg-br'><span>Media di sempre</span><div class='rg-bt'><i style='width:{b * 100:.0f}%;background:var(--mu)'></i></div><b>{b * 100:.0f}%</b></div>"
                 f"<div class='rg-ver' style='background:{vc}1f;border-color:{vc};color:{vc}'>{ver}</div></div>")
     out = (coppia("Nei 6 mesi dopo, l'S&amp;P 500 ha toccato un <b>nuovo minimo</b>?", "a", "minimo")
            + coppia("Nei 6 mesi dopo, ha perso <b>almeno il 10%</b>?", "b", "calo"))
-    out += "<div class='rg-keyp'><i style='background:var(--rgc)'></i> = volte in cui è successo, su 100 casi · <i></i> = non è successo</div>"
+    out = "<div class='rg-cg'>" + out + "</div><p class='rg-t'>Le barre dicono in quante occasioni su 100 è successo, dal 2000: a sinistra nei giorni simili a oggi, a destra in tutti i giorni.</p>"
     if g13 and g13["n"] >= 40:
         out += f"<p class='rg-t'>Guardando solo dal 2013 (periodo più recente, {g13['n']} giorni): nuovo minimo nel <b>{_pc(g13['a'])}</b> dei casi.</p>"
     ad = r.get("adozione", {})
@@ -659,7 +659,9 @@ CSS = ("<style>"
        ".rg-keyp{font-size:11px;color:var(--mu);margin:2px 0 8px}.rg-keyp i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--bd);vertical-align:-1px}"
        ".rg-aff{font-size:12.5px;line-height:1.45;border-left:4px solid #d97706;background:var(--bg);border-radius:0 10px 10px 0;padding:7px 11px;margin:8px 0}.rg-aff.ok{border-color:#16a34a}</style>")
 
-CSS = CSS + tensione40.CSS
+CSS = CSS + tensione40.CSS + ("<style>.rg-cg{display:grid;grid-template-columns:1fr 1fr;gap:8px}@media(max-width:620px){.rg-cg{grid-template-columns:1fr}}"
+       ".rg-cc{padding:8px 10px}.rg-br{display:grid;grid-template-columns:120px 1fr 38px;gap:6px;align-items:center;font-size:11.5px;margin:3px 0}.rg-br span{color:var(--mu)}"
+       ".rg-bt{height:8px;border-radius:99px;background:var(--bd);overflow:hidden}.rg-bt i{display:block;height:100%;border-radius:99px}.rg-br b{text-align:right;font-size:12.5px}</style>")
 
 
 def grafico_dati(a: pd.Series | None = None, p: pd.Series | None = None) -> dict | None:

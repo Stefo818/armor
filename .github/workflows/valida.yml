@@ -11,7 +11,7 @@ concurrency:
 jobs:
   valida:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300
     env:
       PYTHONUNBUFFERED: '1'
     steps:

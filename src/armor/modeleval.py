@@ -174,6 +174,12 @@ def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=pri
         log("[valuta] multi-variabile + famiglie dell'Indice (logistica, alberi) ...")
         preds["MVF-logit"] = pd.DataFrame(model_mv.mv_preds(p, dates, "logit", 63, fam=True))
         preds["MVF-GBM"] = pd.DataFrame(model_mv.mv_preds(p, dates, "gbm", 126, fam=True))
+        try:   # Titan: motore ufficiale di Armor (riferimento dal 11/2026), stesse date e stessa regola degli altri
+            from . import titan_valuta
+            log("[valuta] Titan ...")
+            preds["Titan"] = titan_valuta.preds(dates, log=log)
+        except Exception as e:  # noqa: BLE001
+            log("[valuta] Titan non valutato: " + str(e)[:100])
         if cache:
             pickle.dump(preds, open(cache, "wb"))
     ftgt = lambda df: df[df.kind != "q"]

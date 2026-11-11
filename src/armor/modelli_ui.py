@@ -1,19 +1,19 @@
 """Pagina «Modelli» (Patch 81): tutti i modelli di previsione, chi è il riferimento, chi vince per orizzonte e per periodo, come è calcolato ognuno.
 Dati: model_eval.json (valutazione mensile), modelli_finestre.json (vincitori per periodo), classifica (voto cumulativo). La pagina non cambia nessun modello:
-il riferimento (FHS+VIX) cambia solo con la regola annuale di PROTOCOLLO_MODELLI.md."""
+il riferimento (Titan) cambia solo con la regola annuale di PROTOCOLLO_MODELLI.md."""
 import html as _h
 import json
 
 from .config import DATA, PRIMARY
 
-RIFERIMENTO = "FHS+VIX"
+RIFERIMENTO = "Titan"   # dal 11/2026 (scelta dell'utente); prima FHS+VIX
 HZ = ("10g", "1m", "3m", "6m")
 HZ_NOME = {"10g": "Una settimana", "1m": "Un mese", "3m": "Tre mesi", "6m": "Sei mesi"}
 HZ_SEDUTE = {"10g": "7 sedute", "1m": "21 sedute", "3m": "63 sedute", "6m": "126 sedute"}
-COL = {"Normale": "#94a3b8", "A1": "#f59e0b", "FHS": "#0ea5e9", "FHS+VIX": "#6366f1", "MV-logit": "#14b8a6", "MV-GBM": "#ec4899", "MVF-logit": "#84cc16", "MVF-GBM": "#a855f7", "Combinato": "#ef4444", "Combinato-B": "#64748b", "Pari": "#cbd5e1"}
-NOMI = {"Normale": "Normale (frequenza storica)", "A1": "A1 · solo prezzi", "FHS": "FHS · simulazione della nervosità", "FHS+VIX": "FHS+VIX · simulazione + indice della paura",
+COL = {"Titan": "#eab308", "Normale": "#94a3b8", "A1": "#f59e0b", "FHS": "#0ea5e9", "FHS+VIX": "#6366f1", "MV-logit": "#14b8a6", "MV-GBM": "#ec4899", "MVF-logit": "#84cc16", "MVF-GBM": "#a855f7", "Combinato": "#ef4444", "Combinato-B": "#64748b", "Pari": "#cbd5e1"}
+NOMI = {"Titan": "Titan · motore ufficiale Armor", "Normale": "Normale (frequenza storica)", "A1": "A1 · solo prezzi", "FHS": "FHS · simulazione della nervosità", "FHS+VIX": "FHS+VIX · simulazione + indice della paura",
         "MV-logit": "Multi-variabile (regressione)", "MV-GBM": "Multi-variabile (alberi)", "MVF-logit": "Multi-variabile + famiglie (regressione)", "MVF-GBM": "Multi-variabile + famiglie (alberi)", "Combinato": "Combinato (miscela)", "Combinato-B": "Combinato senza correzione"}
-BREVI = {"Normale": "Normale", "A1": "A1", "FHS": "FHS", "FHS+VIX": "FHS+VIX", "MV-logit": "MV regress.", "MV-GBM": "MV alberi", "MVF-logit": "MVF regress.", "MVF-GBM": "MVF alberi", "Combinato": "Combinato", "Combinato-B": "Combinato B"}
+BREVI = {"Titan": "Titan", "Normale": "Normale", "A1": "A1", "FHS": "FHS", "FHS+VIX": "FHS+VIX", "MV-logit": "MV regress.", "MV-GBM": "MV alberi", "MVF-logit": "MVF regress.", "MVF-GBM": "MVF alberi", "Combinato": "Combinato", "Combinato-B": "Combinato B"}
 
 
 def etichetta(r: dict | None) -> tuple[str, str]:
@@ -96,7 +96,7 @@ def _podio(d: dict) -> str:
 
 
 def _heat(d: dict) -> str:
-    modelli = ["A1", "FHS", "FHS+VIX", "MV-logit", "MV-GBM"]
+    modelli = ["Titan", "FHS+VIX", "FHS", "A1", "MV-logit", "MV-GBM"]
     head = "".join(f"<div class='md-hh'>{HZ_NOME[h]}</div>" for h in HZ)
     out = f"<div class='md-heat' role='table' aria-label='Abilità dei modelli per orizzonte'><div></div>{head}"
     for m in modelli:
@@ -115,6 +115,9 @@ def _heat(d: dict) -> str:
 
 
 SCHEDE = [
+    ("Titan", "Il motore Titan (riferimento)", "Il motore ufficiale di Armor: lo stesso che calcola Indice Armor e Super Armor.",
+     "Sei pilastri (prezzi, credito, paura, rischio tra i mercati, lavoro ed economia, liquidità) diventano una probabilità di calo con un modello che si riaddestra solo su esiti già noti e usa un sistema di pesi che segue i modelli più recenti. Nessun dato dal futuro entra mai.",
+     "È il riferimento per tutti gli orizzonti dal novembre 2026. Il «rialzo» di Titan è un punteggio di tendenza, non una probabilità: per questo la pagina valuta solo i cali."),
     ("Normale", "La frequenza storica", "Dice: «in passato, in situazioni qualsiasi, il calo è successo X volte su 100».",
      "Conta quante volte, nella storia già conclusa, l'S&P 500 è sceso del 5% o del 10% entro l'orizzonte scelto. Non guarda la situazione di oggi.",
      "Serve da metro: ogni altro modello vale solo se sbaglia meno di lui. Non è un modello da battere facilmente, perché è onesto e non ha il problema di adattarsi al caso."),
@@ -124,9 +127,9 @@ SCHEDE = [
     ("FHS", "Simulazione della nervosità", "Simula 5000 possibili futuri e conta in quanti il mercato scende troppo.",
      "Un modello della volatilità (GJR-GARCH con code spesse) stima quanto sarà nervoso il mercato e ne simula i percorsi giorno per giorno fino a 126 sedute. La probabilità è la quota di percorsi in calo.",
      "Reagisce subito quando il mercato si agita; usa solo prezzi."),
-    ("FHS+VIX", "Simulazione + indice della paura (riferimento)", "Come la FHS, ma ancorata a ciò che le opzioni prezzano oggi (il VIX).",
+    ("FHS+VIX", "Simulazione + indice della paura (ex riferimento)", "Come la FHS, ma ancorata a ciò che le opzioni prezzano oggi (il VIX).",
      "Stessa simulazione, ma la nervosità iniziale è corretta con il VIX, tenendo conto che il VIX in media sovrastima il rischio vero (fattore 0,8). Il VIX aiuta soprattutto nei momenti di stress.",
-     "È il riferimento per tutti gli orizzonti perché ha l'errore totale più basso o pari al più basso. Attenzione: è quasi gemello della FHS, il vantaggio è piccolo."),
+     "Era il riferimento fino a novembre 2026. Attenzione: è quasi gemello della FHS, il vantaggio è piccolo."),
     ("MV-logit", "Multi-variabile con regressione", "Mette insieme prezzi, macro e credito.",
      "Alle misure sui prezzi aggiunge indicatori economici e di credito, con una regressione.", "Nel test peggiora rispetto alla frequenza storica: più ingredienti non hanno migliorato la previsione."),
     ("MV-GBM", "Multi-variabile con alberi", "Come sopra, ma con alberi decisionali (più flessibile).", "Gli alberi cercano combinazioni non lineari degli stessi indicatori.", "Anche questo non batte la frequenza storica: troppa flessibilità, pochi cali veri da imparare."),
@@ -144,7 +147,7 @@ def _schede(d: dict) -> str:
             if r and r["bss"] is not None and m != "Normale":
                 rs.append(f"{HZ_NOME[hz]} {r['bss'] * 100:+.1f}%".replace(".", ","))
         num = ("<p><b>Risultato (bravura rispetto alla frequenza storica):</b> " + " · ".join(rs) + ".</p>") if rs else ""
-        ref = " <em class='md-tag'>riferimento</em>" if m == RIFERIMENTO else (" <em class='md-tag md-t2'>seconda opinione</em>" if m == "A1" else "")
+        ref = " <em class='md-tag'>riferimento</em>" if m == RIFERIMENTO else (" <em class='md-tag md-t2'>seconda opinione</em>" if m in ("A1", "FHS+VIX") else "")
         out += (f"<details class='md-sc' style='border-left:5px solid {COL[m]}'><summary><b>{E(tit)}</b>{ref}<small>{E(uno)}</small></summary>"
                 f"<div><p><b>Come è calcolato.</b> {E(come)}</p>{num}<p><b>Punti forti e limiti.</b> {E(lim)}</p></div></details>")
     return out
@@ -184,7 +187,7 @@ def revisione_html() -> str:
     righe = "".join(f"<div class='md-rv'><span>{E(NOMI.get(m, m))}</span><b>{x['sopra']} su {x['mesi']}</b></div>" for m, x in sorted(r["sfidanti"].items(), key=lambda kv: -kv[1]["sopra"])[:5])
     stato = (f"Controlli mensili raccolti: <b>{r['mesi']} su 12</b>. " + ("Nessuno sfidante ha superato il riferimento a ogni fine mese: il riferimento non cambia." if not r["cambia"] else f"Attenzione: {E(r['cambia'])} è sopra il riferimento a tutti i controlli: valutare il cambio a novembre."))
     return (f"<div class='explain'><p>{stato}</p>" + (f"<div class='md-rvs'>{righe}<small>fine mesi in cui lo sfidante ha il voto più alto del riferimento</small></div>" if righe else "")
-            + "<p>Servono almeno 12 controlli (uno a fine mese). Se la regola non scatta a novembre, il riferimento resta FHS+VIX e si riparte.</p></div>")
+            + "<p>Servono almeno 12 controlli (uno a fine mese). Se la regola non scatta a novembre, il riferimento resta Titan e si riparte.</p></div>")
 
 
 def html(ev: dict | None = None, fin: dict | None = None, classifica_html: str = "") -> str:
@@ -200,10 +203,11 @@ def html(ev: dict | None = None, fin: dict | None = None, classifica_html: str =
     if not d:
         return CSS + "<h2>Modelli</h2><p class='mu'>La scheda comparirà dopo la prima valutazione dei modelli.</p>"
     dj = _h.escape(json.dumps({"d": d, "col": COL, "nomi": NOMI, "brevi": BREVI, "ref": RIFERIMENTO}, ensure_ascii=False, separators=(",", ":")), quote=True)
-    hero = ("<div class='md-hero'><div><small>MODELLO DI RIFERIMENTO · TUTTI GLI ORIZZONTI</small><h3>FHS+VIX</h3>"
-            "<p>È il modello con cui si misura tutto il resto. <b>A1</b> resta come seconda opinione: il semaforo continua a mostrare la stima dei due insieme e, se si contraddicono, diventa grigio.</p></div>"
-            "<div class='md-rule'><b>Regola decisa in anticipo</b><p>Il riferimento cambia solo se un altro modello ha un voto cumulativo più alto del riferimento <b>per l'intero anno</b> (a ogni fine mese). "
-            "La valutazione si fa <b>ogni novembre</b>: la prossima è a novembre 2027. Se la regola non scatta, non si cambia nulla.</p></div></div>")
+    hero = ("<div class='md-hero'><div><small>MODELLO DI RIFERIMENTO · TUTTI GLI ORIZZONTI</small><h3>Titan</h3>"
+            "<p>È il motore ufficiale di Armor (lo stesso di Indice Armor e Super Armor) e il modello con cui si misura tutto il resto, da novembre 2026. "
+            "<b>FHS+VIX</b> (il riferimento precedente) e <b>A1</b> restano come altre opinioni.</p></div>"
+            "<div class='md-rule'><b>Regola decisa in anticipo</b><p>Titan è stato scelto come riferimento su decisione dell'utente. Da ora il riferimento cambia solo se un altro modello ha un voto cumulativo più alto "
+            "<b>per l'intero anno</b> (a ogni fine mese). La valutazione si fa <b>ogni novembre</b>: la prossima è a novembre 2027. Se la regola non scatta, non si cambia nulla.</p></div></div>")
     come = ("<details class='md-info'><summary><i>i</i> Come leggere i numeri</summary><div><p>Per ogni modello si guarda la probabilità di calo che aveva previsto e si confronta con quello che è successo davvero. "
             "<b>Bravura</b> (in inglese BSS) = di quanto il suo errore è più piccolo di quello della <b>frequenza storica</b>. +7% vuol dire che sbaglia il 7% in meno; 0% che non aggiunge niente; negativo che peggiora.</p>"
             "<p>Le <b>righe sottili</b> sono il margine di incertezza (90%): se includono lo zero, non si può dire che il modello sia davvero meglio del caso. "
@@ -237,12 +241,12 @@ h+='<div class="md-tr'+(r.m===D.ref?' md-ref':'')+'"><span class="md-tp">'+(i+1)
 '<div class="md-sk" aria-hidden="true"><u style="left:'+sc(0)+'%"></u>'+(lo!=null&&hi!=null?'<s style="left:'+sc(lo)+'%;width:'+(sc(hi)-sc(lo))+'%"></s>':'')+'<i style="left:'+sc(r.bss)+'%;background:'+(r.bss<0?'#dc2626':col)+'"></i></div><b class="md-bv" style="color:'+(r.bss<0?'#dc2626':'inherit')+'">'+P(r.bss)+'</b></div>'});
 return h+'</div><p class="md-nota">Il pallino è la bravura, la riga sottile il margine di incertezza (90%), la linea verticale è lo zero = come la frequenza storica. '+o.righe[0].n+' previsioni dal '+E(o.righe[0].da.slice(0,4))+'.</p>'}
 function vincitori(o){var f=o.fin;if(!f)return '<p class="mu">I vincitori per periodo compaiono dopo la prossima valutazione mensile.</p>';var pers=[['settimana','Settimana'],['mese','Mese'],['trimestre','Trimestre'],['semestre','Semestre']];
-var ms=['Normale','A1','FHS','FHS+VIX','Pari'];
+var ms=['Normale','Titan','A1','FHS','FHS+VIX','Pari'].filter(function(m){return Object.keys(f.periodi).some(function(k){return f.periodi[k].quote&&f.periodi[k].quote[m]!==undefined})});
 var h='<div class="md-sorts" role="group" aria-label="Periodo">Periodo: '+pers.map(function(p){return '<button type="button" data-per="'+p[0]+'" class="'+(st.per===p[0]?'on':'')+'">'+p[1]+'</button>'}).join('')+' <span class="md-sp"></span><button type="button" data-rec="0" class="'+(st.rec?'':'on')+'">Tutta la storia</button><button type="button" data-rec="1" class="'+(st.rec?'on':'')+'">Ultimi 12 anni</button></div>';
 pers.forEach(function(p){var x=f.periodi[p[0]];if(!x)return;var q=st.rec?x.quote_12a:x.quote;h+='<div class="md-wrow'+(st.per===p[0]?' on':'')+'"><span>'+p[1]+'<small>'+x.n+' periodi</small></span><div class="md-stack" role="img" aria-label="'+ms.map(function(m){return m+' '+q[m]+'%'}).join(', ')+'">'+ms.map(function(m){return q[m]>0?'<i style="width:'+q[m]+'%;background:'+D.col[m]+'" title="'+E(m)+': '+q[m]+'% dei periodi">'+(q[m]>=9?Math.round(q[m]):'')+'</i>':''}).join('')+'</div></div>'});
 h+='<div class="md-leg">'+ms.map(function(m){return '<span><i style="background:'+D.col[m]+'"></i>'+E(m)+'</span>'}).join('')+'<small>% di periodi vinti</small></div>';
 var u=f.periodi[st.per].ultimi;h+='<div class="md-ult"><b>Ultimi periodi ('+E(st.per)+')</b><div>'+u.map(function(z){return '<span class="md-chip" style="background:'+D.col[z.v]+';color:'+(z.v==='Pari'||z.v==='Normale'?'#0f172a':'#fff')+'" title="'+E(z.p)+': vince '+E(z.v)+' ('+z.n+' previsioni)">'+E(z.p.replace(/^\d{4}-/,'').replace(/^(\d\d)$/,function(m){return ['','gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'][+m]||m}))+'<small>'+E(z.v)+'</small></span>'}).join('')+'</div></div>';return h}
-function nel(o){var f=o.fin;if(!f)return '';var ys=Object.keys(f.anni).sort();var ms=['Normale','A1','FHS','FHS+VIX'];var cum={};ms.forEach(function(m){cum[m]=[]});var sm={},sn=0;ms.forEach(function(m){sm[m]=0});
+function nel(o){var f=o.fin;if(!f)return '';var ys=Object.keys(f.anni).sort();var ms=['Normale','Titan','A1','FHS','FHS+VIX'].filter(function(m){return f.anni[ys[0]][m]!==undefined});var cum={};ms.forEach(function(m){cum[m]=[]});var sm={},sn=0;ms.forEach(function(m){sm[m]=0});
 ys.forEach(function(y){var n=f.anni_n[y]||1;ms.forEach(function(m){sm[m]+=f.anni[y][m]*n});ms.forEach(function(m){cum[m].push(m==='Normale'?0:1-sm[m]/sm.Normale)})});
 var W=640,H=240,L=44,Rr=10,T=10,B=26;var all=[];ms.forEach(function(m){if(m!=='Normale')all=all.concat(cum[m].slice(2))});var lo=Math.min(-0.02,Math.min.apply(null,all)),hi=Math.max(0.02,Math.max.apply(null,all));
 var X=function(i){return L+i/(ys.length-1)*(W-L-Rr)},Y=function(v){return T+(hi-v)/(hi-lo)*(H-T-B)};
@@ -251,7 +255,7 @@ s+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" stroke="current
 ms.forEach(function(m){if(m==='Normale'||st.hide[m])return;var pts=cum[m].map(function(v,i){return i<2?null:X(i).toFixed(1)+','+Y(v).toFixed(1)}).filter(Boolean).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="'+D.col[m]+'" stroke-width="'+(m===D.ref?3:2)+'" stroke-linejoin="round"/>'});s+='</svg>';
 var leg='<div class="md-leg">'+ms.filter(function(m){return m!=='Normale'}).map(function(m){return '<button type="button" data-hide="'+m+'" class="md-lb'+(st.hide[m]?' off':'')+'" aria-pressed="'+(!st.hide[m])+'"><i style="background:'+D.col[m]+'"></i>'+E(m)+' '+P(cum[m][cum[m].length-1])+'</button>'}).join('')+'<small>tocca per nascondere</small></div>';
 return s+leg+'<p class="md-nota">Ogni linea parte dal 1990 e somma gli errori anno dopo anno: è la bravura cumulativa. Se le linee si sfiorano, i modelli sono praticamente alla pari.</p>'}
-function taratura(o){var ms=['A1','FHS','FHS+VIX'].filter(function(m){return o.cal[m]});if(!ms.length)return '';var S=240,L=34,B=26,T=8;var mx=0;ms.forEach(function(m){o.cal[m].forEach(function(p){mx=Math.max(mx,p[0],p[1])})});mx=Math.max(0.05,Math.ceil(mx*20)/20);
+function taratura(o){var ms=['Titan','A1','FHS','FHS+VIX'].filter(function(m){return o.cal[m]});if(!ms.length)return '';var S=240,L=34,B=26,T=8;var mx=0;ms.forEach(function(m){o.cal[m].forEach(function(p){mx=Math.max(mx,p[0],p[1])})});mx=Math.max(0.05,Math.ceil(mx*20)/20);
 var X=function(v){return L+v/mx*(S-L-8)},Y=function(v){return S-B-v/mx*(S-B-T)};var s='<svg viewBox="0 0 '+S+' '+S+'" class="md-svg md-sq" role="img" aria-label="Previsto contro reale">';
 for(var g=0;g<=4;g++){var v=mx*g/4;s+='<line x1="'+L+'" x2="'+(S-8)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="currentColor" opacity=".1"/><text x="'+(L-4)+'" y="'+(Y(v)+3)+'" text-anchor="end" font-size="9" fill="currentColor" opacity=".6">'+Math.round(v*100)+'</text><text x="'+X(v)+'" y="'+(S-10)+'" text-anchor="middle" font-size="9" fill="currentColor" opacity=".6">'+Math.round(v*100)+'</text>'}
 s+='<line x1="'+X(0)+'" y1="'+Y(0)+'" x2="'+X(mx)+'" y2="'+Y(mx)+'" stroke="currentColor" stroke-dasharray="4 3" opacity=".5"/>';

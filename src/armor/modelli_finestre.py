@@ -11,7 +11,7 @@ from .config import DATA, PRIMARY
 
 FILE = DATA / "modelli_finestre.json"
 HZ = ("10g", "1m", "3m", "6m")
-MODELLI = ("A1", "FHS", "FHS+VIX")
+MODELLI = ("A1", "FHS", "FHS+VIX", "Titan")
 PERIODI = {"settimana": "W", "mese": "M", "trimestre": "Q", "semestre": "H"}
 
 

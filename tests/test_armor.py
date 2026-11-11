@@ -1710,7 +1710,7 @@ def test_regime_frase_e_box():
     o = {"data": "2026-11-06", "A": 50.3, "min20": 39.0, "ma60": 44.0, "Pn": 0.7, "dd": -0.02, "stato": "formazione", "sopra45": 12, "sopra40": 20, "v": {k: False for k in t.VARIANTI}}
     r = {"stati": {"tutto": {"formazione": {"n": 500, "a": 0.55, "b": 0.3}, "tutti": {"a": 0.32, "b": 0.28}}, "2013_oggi": {}}, "adozione": {"adottata": False}}
     h = t.box_oggi(o, r)
-    assert "Tensione in formazione" in h and "non ancora confermata su dati nuovi" in h and "12" in h and ">55<" in h and "Quanto è alta la tensione oggi" in h and "Come si legge" in h and "rg-dots" in h and "rg-gauge" in h
+    assert "Tensione in formazione" in h and "non ancora confermata su dati nuovi" in h and "12" in h and ">55%<" in h and "Quanto è alta la tensione oggi" in h and "Come si legge" in h and "rg-cg" in h and "rg-gauge" in h
 
 
 def test_regime_analoghi():
@@ -1828,7 +1828,7 @@ def test_modelli_pagina_e_regola_revisione():
     for i, m in enumerate(mesi):
         dt = str(m.end_time.date())
         righe += [{"data": dt, "modello": "FHS+VIX", "voto": 60}, {"data": dt, "modello": "A1", "voto": 70 if i != 5 else 59}, {"data": dt, "modello": "X", "voto": 65}]
-    r = mu.revisione(pd.DataFrame(righe))
+    r = mu.revisione(pd.DataFrame(righe), ref="FHS+VIX")
     assert r["mesi"] == 12 and r["sfidanti"]["A1"]["sopra"] == 11 and r["cambia"] == "X"
     assert mu.revisione(pd.DataFrame(righe[:12]))["cambia"] is None and mu.revisione(None)["cambia"] is None
     # finestre: vincitori con pareggio entro l'1%
@@ -2760,8 +2760,10 @@ def test_previsione_ui_spiega_in_semplice():
     assert "non ancora disponibile" in pu.html(o, t, None) and "compare al prossimo" in pu.html(None, None)
 
 
-def test_guida_indici():
+def test_guida_indici(monkeypatch):
     from armor import guida_indici as gi
+    from armor import titan_vista
+    monkeypatch.setattr(titan_vista, "ATTIVO", False)   # guida del modello precedente (quella Titan è provata in test_titan_schede)
     h = gi.html()
     assert "Nuovo qui?" in h and "Indice Armor" in h and "Super Armor Index" in h and "30%" in h and "22%" in h and "non sono consigli" in h.lower()
 

@@ -62,8 +62,17 @@ def carta(nome: str, sotto: str, r: float | None, colore: str, p: dict, chiave_m
         x = (p or {}).get(k)
         if x and x.get("normale"):
             righe += f"<div class='pv-r'>{E(t.capitalize())}: <b>{_pct(x[chiave_modello])}</b> <span>(di solito {_pct(x['normale'])})</span></div>"
+    if r is None:
+        grande, verso = "n.d.", ""
+    elif abs(r - 1) < 0.05:
+        grande, verso = "= solito", "rischio uguale al solito"
+    elif r >= 1.95:
+        grande, verso = f"{_n(r)} volte", "il rischio abituale"
+    else:
+        grande, verso = f"{'+' if r > 1 else '−'}{abs(r - 1) * 100:.0f}%", f"rischio di calo {'più alto' if r > 1 else 'più basso'} del solito"
     return (f"<div class='pv-card' style='border-top:4px solid {colore}'><div class='pv-cn'>{E(nome)}</div><div class='pv-cs'>{E(sotto)}</div>"
-            f"<div class='pv-big' style='color:{COL[z]}'>{_n(r)}×</div><div class='pv-fr'><b>{E(frase_rapporto(r))}</b></div>{righe}</div>")
+            f"<div class='pv-big' style='color:{COL[z]}'>{grande}</div><div class='pv-fr'><b>{E(verso)}</b> <span class='pv-x'>(indice {_n(r, 2)}×)</span></div>"
+            f"<div class='pv-sp'>In pratica, oggi questo modello stima:</div>{righe}</div>")
 
 
 def legenda_semaforo() -> str:
@@ -164,8 +173,10 @@ def html(o: dict | None, t: dict | None, variazione: dict | None = None) -> str:
     carte = ("<h4 class='pv-h4'>Le due stime, in parole semplici</h4><div class='pv-cards'>"
              + carta("Modello base", "Guarda solo l'andamento del prezzo dell'S&P 500 negli ultimi mesi e anni. Non conosce il VIX.", ra, BASE_C, p, "A1")
              + carta("Modello con la paura", "Guarda anche quanto il mercato è agitato oggi (l'indice della paura, il VIX) e simula migliaia di possibili futuri.", rf, PAURA_C, p, "FHS+VIX") + "</div>"
-             "<p class='pv-t2'><b>Come leggere il «×».</b> 1× = rischio come sempre. 0,7× = il 30% in meno del solito. 1,4× = il 40% in più. 2× = il doppio. "
-             "È la media dei due periodi (1 mese e 3 mesi).</p>" + info)
+             "<p class='pv-t2'><b>Come leggere il numero grande.</b> Confronta il rischio di oggi con quello <b>di tutti i giorni della storia</b>. "
+             "«+37%» = oggi un calo è il 37% più probabile del solito; «−33%» = il 33% meno probabile; «= solito» = come sempre. "
+             "Sotto ci sono le probabilità vere: per esempio «16% (di solito 19%)» vuol dire che oggi il modello stima 16 casi su 100 di un calo importante, contro i 19 abituali. "
+             "Il numero «×» tra parentesi è lo stesso confronto espresso come rapporto (1× = uguale, 2× = il doppio) ed è la media dei due periodi, un mese e tre mesi.</p>" + info)
     # 4) scala
     sc = "<h4 class='pv-h4'>Dove cadono oggi i due modelli</h4>" + "".join(scala(p, k, t_) for k, t_ in ORIZZONTI) + \
         "<p class='pv-t2'><b>B</b> = modello base, <b>P</b> = modello con la paura. Più il pallino è a destra, più il modello vede un calo probabile rispetto al solito; il centro è il livello abituale.</p>"
@@ -188,7 +199,7 @@ CSS = """<style>
 .pv-info summary i{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--tx);color:var(--bg);font-style:normal;font-size:12px;margin-right:6px}.pv-info p{margin:8px 0}
 .pv-q{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);font-weight:700}.pv-a{font-size:17px;line-height:1.4;margin:6px 0}.pv-v{font-size:14px;color:var(--mu)}.pv-v b{color:var(--tx)}
 .pv-varx{display:flex;gap:10px;align-items:center;border:1px dashed var(--bd);border-radius:12px;padding:8px 12px;font-size:13.5px;margin:8px 0}.pv-ar{font-size:22px;font-weight:800;min-width:24px;text-align:center}
-.pv-h4{margin:22px 0 6px;font-size:16px}.pv-t2{font-size:13px;line-height:1.5;color:var(--mu);margin:6px 0}.pv-t2 b{color:var(--tx)}
+.pv-x{font-size:11.5px;color:var(--mu);font-weight:400}.pv-sp{font-size:11.5px;color:var(--mu);margin-top:6px}.pv-h4{margin:22px 0 6px;font-size:16px}.pv-t2{font-size:13px;line-height:1.5;color:var(--mu);margin:6px 0}.pv-t2 b{color:var(--tx)}
 .pv-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:520px){.pv-cards{grid-template-columns:1fr}}
 .pv-card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.pv-cn{font-weight:800;font-size:15px}.pv-cs{font-size:12px;color:var(--mu);margin:3px 0 8px;line-height:1.4}
 .pv-big{font-size:38px;font-weight:800;line-height:1}.pv-fr{font-size:13px;margin:4px 0 8px}.pv-r{font-size:12.5px;color:var(--tx);margin-top:3px}.pv-r span{color:var(--mu)}
