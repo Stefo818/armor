@@ -10,6 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
+from . import soglie, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -22,6 +23,12 @@ LEVEL_CLASS = {"Basso": "ok", "Normale": "ok", "Elevato": "warn", "Alto": "bad"}
 REL_TXT = {"Utile": "Affidabilità: utile", "Debole": "Affidabilità: debole", "Non affidabile": "Affidabilità: non dimostrata"}
 REL_CLASS = {"Utile": "ok", "Debole": "warn", "Non affidabile": "bad"}
 
+
+
+def _sai_titan(p) -> float | None:
+    """Super Armor di oggi dal motore Titan (None se i dati non sono freschi)."""
+    t = titan_vista.serie("super_armor_index", p.index[-1])
+    return None if t is None else float(t.iloc[-1])
 
 def it(x, d=1):
     return f"{x:,.{d}f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -1034,6 +1041,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
               f"{_safe(lambda: super_armor_ui.html(aix, p), 'Super Armor Index')}"
               f"{_safe(guida_indici.html, 'Guida agli indici')}"
               f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>{kpi}"
+              f"{_safe(lambda: soglie.html(aix['value'] if aix else None, _sai_titan(p)), 'Zone di rischio')}"
               f"{_safe(lambda: perche.html(perche.carica()) + perche.JS, 'Perché si muove oggi')}"
               f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
               f"{_safe(lambda: scadenze.banner(scadenze.elenco()), 'Scadenze')}{sem_new}{reg_box}"
