@@ -190,6 +190,20 @@ def revisione_html() -> str:
             + "<p>Servono almeno 12 controlli (uno a fine mese). Se la regola non scatta a novembre, il riferimento resta Titan e si riparte.</p></div>")
 
 
+def _px() -> dict:
+    """Valore di fine anno di S&P 500 e VWCE (per confrontarli con la bravura dei modelli nel grafico)."""
+    out = {}
+    try:
+        from .features import closed_sp500, vwce_series
+        for k, f in (("sp", closed_sp500), ("vw", vwce_series)):
+            x = f().dropna()
+            if len(x):
+                out[k] = {str(a): round(float(b), 2) for a, b in x.groupby(x.index.year).last().items()}
+    except Exception:  # noqa: BLE001
+        pass
+    return out
+
+
 def html(ev: dict | None = None, fin: dict | None = None, classifica_html: str = "") -> str:
     if ev is None:
         try:
@@ -202,7 +216,7 @@ def html(ev: dict | None = None, fin: dict | None = None, classifica_html: str =
     d = dati(ev, fin)
     if not d:
         return CSS + "<h2>Modelli</h2><p class='mu'>La scheda comparirà dopo la prima valutazione dei modelli.</p>"
-    dj = _h.escape(json.dumps({"d": d, "col": COL, "nomi": NOMI, "brevi": BREVI, "ref": RIFERIMENTO}, ensure_ascii=False, separators=(",", ":")), quote=True)
+    dj = _h.escape(json.dumps({"d": d, "col": COL, "nomi": NOMI, "brevi": BREVI, "ref": RIFERIMENTO, "px": _px()}, ensure_ascii=False, separators=(",", ":")), quote=True)
     hero = ("<div class='md-hero'><div><small>MODELLO DI RIFERIMENTO · TUTTI GLI ORIZZONTI</small><h3>Titan</h3>"
             "<p>È il motore ufficiale di Armor (lo stesso di Indice Armor e Super Armor) e il modello con cui si misura tutto il resto, da novembre 2026. "
             "<b>FHS+VIX</b> (il riferimento precedente) e <b>A1</b> restano come altre opinioni.</p></div>"
@@ -229,7 +243,7 @@ def html(ev: dict | None = None, fin: dict | None = None, classifica_html: str =
 
 
 JS = r"""<script>(function(){var R=document.getElementById('mdroot');if(!R||R.dataset.on)return;R.dataset.on=1;var D;try{D=JSON.parse(R.dataset.d)}catch(e){return}
-var HZ=['10g','1m','3m','6m'],st={hz:'1m',per:'mese',rec:false,sort:'bss',hide:{}};
+var HZ=['10g','1m','3m','6m'],st={hz:'1m',per:'mese',rec:false,sort:'bss',hide:{},idx:{}};
 function E(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function P(x,d){return x==null?'–':((x*100>=0?'+':'−')+Math.abs(x*100).toFixed(d==null?1:d)).replace('.',',')+'%'}
 function sel(){var h='';HZ.forEach(function(k){var o=D.d[k];if(o)h+='<button type="button" role="tab" aria-selected="'+(k===st.hz)+'" class="'+(k===st.hz?'on':'')+'" data-hz="'+k+'">'+E(o.nome)+'</button>'});R.querySelector('.md-sel').innerHTML=h}
@@ -252,9 +266,15 @@ var W=640,H=240,L=44,Rr=10,T=10,B=26;var all=[];ms.forEach(function(m){if(m!=='N
 var X=function(i){return L+i/(ys.length-1)*(W-L-Rr)},Y=function(v){return T+(hi-v)/(hi-lo)*(H-T-B)};
 var s='<svg viewBox="0 0 '+W+' '+H+'" class="md-svg" role="img" aria-label="Bravura cumulativa nel tempo">';for(var g=0;g<=4;g++){var v=lo+(hi-lo)*g/4;s+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="currentColor" opacity=".12"/><text x="'+(L-6)+'" y="'+(Y(v)+4)+'" text-anchor="end" font-size="10" fill="currentColor" opacity=".6">'+(v*100).toFixed(0)+'%</text>'}
 s+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" stroke="currentColor" opacity=".5"/>';ys.forEach(function(y,i){if(i%5===0)s+='<text x="'+X(i)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" fill="currentColor" opacity=".6">'+y+'</text>'});
-ms.forEach(function(m){if(m==='Normale'||st.hide[m])return;var pts=cum[m].map(function(v,i){return i<2?null:X(i).toFixed(1)+','+Y(v).toFixed(1)}).filter(Boolean).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="'+D.col[m]+'" stroke-width="'+(m===D.ref?3:2)+'" stroke-linejoin="round"/>'});s+='</svg>';
+ms.forEach(function(m){if(m==='Normale'||st.hide[m])return;var pts=cum[m].map(function(v,i){return i<2?null:X(i).toFixed(1)+','+Y(v).toFixed(1)}).filter(Boolean).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="'+D.col[m]+'" stroke-width="'+(m===D.ref?3:2)+'" stroke-linejoin="round"/>'});var PX=D.px||{},IDX=[['sp','S&P 500','#e6a700'],['vw','VWCE','#3b82f6']];
+IDX.forEach(function(q){if(!st.idx[q[0]]||!PX[q[0]])return;var vs=ys.map(function(y){return PX[q[0]][y]});var ok=vs.filter(function(v){return v!=null});if(ok.length<3)return;var a=Math.min.apply(null,ok),b=Math.max.apply(null,ok);
+var pts=vs.map(function(v,i){return v==null?null:X(i).toFixed(1)+','+Y(lo+(hi-lo)*(v-a)/(b-a)).toFixed(1)}).filter(Boolean).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="'+q[2]+'" stroke-width="2" stroke-dasharray="5 3" opacity=".9"/>'});
+var cw=(W-L-Rr)/Math.max(1,ys.length-1);
+ys.forEach(function(y,i){var t=y;ms.forEach(function(m){if(m!=='Normale'&&!st.hide[m])t+='\n'+m+': '+P(cum[m][i])});IDX.forEach(function(q){if(st.idx[q[0]]&&PX[q[0]]&&PX[q[0]][y]!=null)t+='\n'+q[1]+': '+Math.round(PX[q[0]][y]).toLocaleString('it-IT')});s+='<rect class="md-hv" x="'+(X(i)-cw/2).toFixed(1)+'" y="'+T+'" width="'+cw.toFixed(1)+'" height="'+(H-T-B)+'"><title>'+E(t)+'</title></rect>'});
+s+='</svg>';
 var leg='<div class="md-leg">'+ms.filter(function(m){return m!=='Normale'}).map(function(m){return '<button type="button" data-hide="'+m+'" class="md-lb'+(st.hide[m]?' off':'')+'" aria-pressed="'+(!st.hide[m])+'"><i style="background:'+D.col[m]+'"></i>'+E(m)+' '+P(cum[m][cum[m].length-1])+'</button>'}).join('')+'<small>tocca per nascondere</small></div>';
-return s+leg+'<p class="md-nota">Ogni linea parte dal 1990 e somma gli errori anno dopo anno: è la bravura cumulativa. Se le linee si sfiorano, i modelli sono praticamente alla pari.</p>'}
+leg=leg.replace('<small>tocca per nascondere</small>','<span class="md-idxl">Confronta con:</span>'+IDX.filter(function(q){return PX[q[0]]}).map(function(q){return '<button type="button" data-idx="'+q[0]+'" class="md-lb'+(st.idx[q[0]]?'':' off')+'" aria-pressed="'+(!!st.idx[q[0]])+'"><i style="background:'+q[2]+'"></i>'+q[1]+' (linea tratteggiata)</button>'}).join('')+'<small>tocca per nascondere o mostrare · passa il mouse su un anno per i valori</small>');
+return s+leg+'<p class="md-nota">Le linee tratteggiate (S&amp;P 500 e VWCE) hanno una scala propria, solo per vedere se i modelli sbagliano di più nei crolli. Ogni linea parte dal 1990 e somma gli errori anno dopo anno: è la bravura cumulativa. Se le linee si sfiorano, i modelli sono praticamente alla pari.</p>'}
 function taratura(o){var ms=['Titan','A1','FHS','FHS+VIX'].filter(function(m){return o.cal[m]});if(!ms.length)return '';var S=240,L=34,B=26,T=8;var mx=0;ms.forEach(function(m){o.cal[m].forEach(function(p){mx=Math.max(mx,p[0],p[1])})});mx=Math.max(0.05,Math.ceil(mx*20)/20);
 var X=function(v){return L+v/mx*(S-L-8)},Y=function(v){return S-B-v/mx*(S-B-T)};var s='<svg viewBox="0 0 '+S+' '+S+'" class="md-svg md-sq" role="img" aria-label="Previsto contro reale">';
 for(var g=0;g<=4;g++){var v=mx*g/4;s+='<line x1="'+L+'" x2="'+(S-8)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="currentColor" opacity=".1"/><text x="'+(L-4)+'" y="'+(Y(v)+3)+'" text-anchor="end" font-size="9" fill="currentColor" opacity=".6">'+Math.round(v*100)+'</text><text x="'+X(v)+'" y="'+(S-10)+'" text-anchor="middle" font-size="9" fill="currentColor" opacity=".6">'+Math.round(v*100)+'</text>'}
@@ -265,7 +285,7 @@ return '<div class="md-cal">'+s+'<p class="md-nota">Ogni pallino raggruppa giorn
 function draw(){var o=D.d[st.hz];if(!o)return;var et=o.et;
 R.querySelector('#md-ex').innerHTML='<div class="md-hint" style="border-color:'+et[1]+'"><b>'+E(o.nome)+'</b> · calo ≥'+o.thr+'% in '+o.sedute+' · affidabilità del riferimento: <b style="color:'+et[1]+'">'+et[0]+'</b></div>'+
 '<h4>Classifica</h4>'+tabella(o)+'<h4>Chi vince nei periodi</h4>'+vincitori(o)+'<h4>Bravura cumulativa nel tempo</h4>'+nel(o)+'<h4>Le previsioni sono oneste? (taratura)</h4>'+taratura(o);sel()}
-R.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.hz){st.hz=b.dataset.hz}else if(b.dataset.sort){st.sort=b.dataset.sort}else if(b.dataset.per){st.per=b.dataset.per}else if(b.dataset.rec!=null){st.rec=b.dataset.rec==='1'}else if(b.dataset.hide){st.hide[b.dataset.hide]=!st.hide[b.dataset.hide]}else return;draw()});
+R.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.hz){st.hz=b.dataset.hz}else if(b.dataset.sort){st.sort=b.dataset.sort}else if(b.dataset.per){st.per=b.dataset.per}else if(b.dataset.rec!=null){st.rec=b.dataset.rec==='1'}else if(b.dataset.hide){st.hide[b.dataset.hide]=!st.hide[b.dataset.hide]}else if(b.dataset.idx){st.idx[b.dataset.idx]=!st.idx[b.dataset.idx]}else return;draw()});
 sel();draw()})()</script>"""
 
 CSS = """<style>
@@ -286,7 +306,7 @@ CSS = """<style>
 .md-tr.md-ref{border-color:#6366f1;box-shadow:0 0 0 1px #6366f1}.md-tp{font-weight:800;color:var(--mu)}.md-tm b{font-size:13px;display:flex;align-items:center;gap:6px}.md-tm i{width:10px;height:10px;border-radius:3px;flex:none}.md-tm small{display:block;color:var(--mu);font-size:11px;margin-top:1px}
 .md-sk{position:relative;height:12px;background:var(--bd);border-radius:99px}.md-sk u{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--tx);opacity:.5}.md-sk s{position:absolute;top:5px;height:2px;background:var(--tx);opacity:.55}.md-sk i{position:absolute;top:-1px;width:14px;height:14px;margin-left:-7px;border-radius:50%;border:2px solid var(--card)}.md-bv{text-align:right;font-size:14px}
 .md-wrow{display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center;margin:4px 0;opacity:.75}.md-wrow.on{opacity:1}.md-wrow span{font-size:12px;font-weight:700}.md-wrow small{display:block;font-weight:400;color:var(--mu);font-size:10.5px}
-.md-stack{display:flex;height:24px;border-radius:8px;overflow:hidden;border:1px solid var(--bd)}.md-stack i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:10.5px;font-weight:700;color:#fff}
+.md-hv{fill:transparent}.md-hv:hover{fill:rgba(127,127,127,.16)}.md-idxl{font-size:12px;color:var(--mu);margin-left:8px}.md-stack{display:flex;height:24px;border-radius:8px;overflow:hidden;border:1px solid var(--bd)}.md-stack i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:10.5px;font-weight:700;color:#fff}
 .md-leg{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px;margin:8px 0}.md-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}.md-leg small{color:var(--mu);margin-left:auto}.md-lb.off{opacity:.4;text-decoration:line-through}.md-lb{padding:3px 10px;font-size:12px}
 .md-ult>div{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.md-chip{display:flex;flex-direction:column;align-items:center;border-radius:10px;padding:4px 10px;font-size:12px;font-weight:700}.md-chip small{font-size:10px;font-weight:600;opacity:.9}
 .md-rvs{margin:6px 0}.md-rv{display:flex;justify-content:space-between;border-top:1px solid var(--bd);padding:4px 0;font-size:13px}.md-rvs small{color:var(--mu);font-size:11px}

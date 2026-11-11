@@ -183,6 +183,13 @@ def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=pri
         if cache:
             pickle.dump(preds, open(cache, "wb"))
     ftgt = lambda df: df[df.kind != "q"]
+    try:   # archivio delle probabilità storiche di ogni modello, per il grafico di confronto
+        from . import modelli_preds
+        for nome, d_ in preds.items():
+            if not nome.startswith("MVF"):
+                modelli_preds.salva(nome, ftgt(d_))
+    except Exception as e:  # noqa: BLE001
+        log("[valuta] archivio previsioni non salvato: " + str(e)[:80])
     set1 = {m: ftgt(d) for m, d in preds.items() if not m.startswith("MVF")}
     rows1, cal1 = _score(p, dates, set1, "modelli", step)
     setF = {m: ftgt(d) for m, d in preds.items() if m in ("A1", "FHS", "MV-logit", "MV-GBM") or m.startswith("MVF")}

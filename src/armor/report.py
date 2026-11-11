@@ -10,7 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
-from . import soglie, titan_schede, titan_vista
+from . import soglie, titan_schede, titan_ui, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -1049,7 +1049,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
               f"<section class='b5'>{parts.valuations_mini(vcards)}</section>{ui.next_event_html(today_d)}"
               f"<h2 style='margin-top:22px'>Indice Armor contro i mercati, giorno per giorno</h2>{cf_intro}{cf_small}"
               f"<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>{_safe(diagnostica.banner, 'Avviso diario')}{_safe(affidabilita.html, 'Affidabilità')}"
-              f"<section class='b5'>{chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}</section>"
+              f"<section class='b5'>{titan_ui.bilancio_html() or chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}</section>"
               f"{_safe(ciclico.box_rischio, 'Rischio ciclico')}{_safe(ciclico.box_simili, 'Mesi simili')}"
               f"<h2 style='margin-top:22px'>Mappa dei segnali, settimana per settimana</h2>{map_intro}{map_small}"
               "<div class='topbtns' style='margin-top:10px'><button class='btn pri' data-cal='1'>Apri il calendario: previsto e reale</button><button class='btn' data-go='indici'>Mappa completa</button></div>"

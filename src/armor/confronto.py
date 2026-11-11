@@ -8,7 +8,7 @@ import pandas as pd
 from . import semafori, store
 from .config import DATA
 
-GRUPPI = [("a", "Mercati azionari (linee in alto, base 100)"), ("rischio", "Rischio Armor"), ("vol", "Volatilità"), ("cred", "Credito e tassi"),
+GRUPPI = [("a", "Mercati azionari (linee in alto, base 100)"), ("rischio", "Indici Armor e pilastri Titan"), ("prev", "Previsioni dei modelli: probabilità di calo"), ("vol", "Volatilità"), ("cred", "Credito e tassi"),
           ("val", "Valutazioni"), ("mat", "Materie prime e cripto"), ("sent", "Sentimento, ampiezza e valute"), ("mer", "Mercato")]
 
 # chiave, etichetta, colore, unità, acceso all'inizio, gruppo
@@ -17,13 +17,25 @@ SERIES = [
     ("mweq", "MSCI World Equal Weight (MWEQ)", "#14b8a6", "", 0, "a"), ("rsp", "S&P 500 Equal Weight", "#f97316", "", 0, "a"),
     ("urth", "MSCI World (URTH)", "#84cc16", "", 0, "a"), ("stoxx600", "Europa STOXX 600", "#ec4899", "", 0, "a"), ("eem", "Mercati emergenti", "#ef4444", "", 0, "a"),
     ("dax", "DAX", "#06b6d4", "", 0, "a"), ("ftsemib", "FTSE MIB", "#22c55e", "", 0, "a"), ("nikkei", "Nikkei 225", "#eab308", "", 0, "a"), ("iwm", "Small cap USA", "#8b5cf6", "", 0, "a"),
-    ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"), ("p_calo_1m", "Prob. calo ≥10% a 1 mese", "#ef4444", "%", 1, "rischio"),
-    ("p_up_1m", "Prob. rialzo ≥5% a 1 mese", "#22c55e", "%", 1, "rischio"), ("p_calo_10g", "Prob. calo ≥5% a 10 giorni", "#f97316", "%", 0, "rischio"),
-    ("p_calo_3m", "Prob. calo ≥10% a 3 mesi", "#dc2626", "%", 0, "rischio"),
-    ("g_paura", "Famiglia Paura e stress", "#06b6d4", "", 0, "rischio"), ("g_credito", "Famiglia Credito", "#14b8a6", "", 0, "rischio"),
-    ("g_tassi", "Famiglia Tassi", "#3b82f6", "", 0, "rischio"), ("g_valutazioni", "Famiglia Valutazioni", "#ec4899", "", 0, "rischio"),
-    ("g_tendenza", "Famiglia Tendenza", "#a855f7", "", 0, "rischio"), ("g_sentimento", "Famiglia Sentimento", "#eab308", "", 0, "rischio"),
-    ("g_economia", "Famiglia Economia reale", "#84cc16", "", 0, "rischio"), ("g_modello", "Famiglia Modello", "#f472b6", "", 0, "rischio"),
+    ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("super", "Super Armor (SAI)", "#f59e0b", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"),
+    ("t_p1", "Pilastro Andamento dei prezzi", "#8b5cf6", "", 0, "rischio"), ("t_p2", "Pilastro Credito", "#14b8a6", "", 0, "rischio"), ("t_p3", "Pilastro Paura sui mercati", "#06b6d4", "", 0, "rischio"),
+    ("t_p4", "Pilastro Rischio tra i mercati", "#ec4899", "", 0, "rischio"), ("t_p5", "Pilastro Lavoro ed economia", "#84cc16", "", 0, "rischio"), ("t_p6", "Pilastro Liquidità", "#3b82f6", "", 0, "rischio"),
+    ("pm_Titan_10g", "Titan (riferimento) · calo ≥5% a 10 giorni", "#eab308", "%", 0, "prev"),
+    ("pm_Titan_1m", "Titan (riferimento) · calo ≥10% a 1 mese", "#eab308", "%", 1, "prev"),
+    ("pm_Titan_3m", "Titan (riferimento) · calo ≥10% a 3 mesi", "#eab308", "%", 1, "prev"),
+    ("pm_Titan_6m", "Titan (riferimento) · calo ≥10% a 6 mesi", "#eab308", "%", 0, "prev"),
+    ("pm_FHS+VIX_10g", "FHS+VIX · calo ≥5% a 10 giorni", "#6366f1", "%", 0, "prev"),
+    ("pm_FHS+VIX_1m", "FHS+VIX · calo ≥10% a 1 mese", "#6366f1", "%", 0, "prev"),
+    ("pm_FHS+VIX_3m", "FHS+VIX · calo ≥10% a 3 mesi", "#6366f1", "%", 0, "prev"),
+    ("pm_FHS+VIX_6m", "FHS+VIX · calo ≥10% a 6 mesi", "#6366f1", "%", 0, "prev"),
+    ("pm_FHS_10g", "FHS · calo ≥5% a 10 giorni", "#0ea5e9", "%", 0, "prev"),
+    ("pm_FHS_1m", "FHS · calo ≥10% a 1 mese", "#0ea5e9", "%", 0, "prev"),
+    ("pm_FHS_3m", "FHS · calo ≥10% a 3 mesi", "#0ea5e9", "%", 0, "prev"),
+    ("pm_FHS_6m", "FHS · calo ≥10% a 6 mesi", "#0ea5e9", "%", 0, "prev"),
+    ("pm_A1_10g", "A1 · calo ≥5% a 10 giorni", "#f59e0b", "%", 0, "prev"),
+    ("pm_A1_1m", "A1 · calo ≥10% a 1 mese", "#f59e0b", "%", 0, "prev"),
+    ("pm_A1_3m", "A1 · calo ≥10% a 3 mesi", "#f59e0b", "%", 0, "prev"),
+    ("pm_A1_6m", "A1 · calo ≥10% a 6 mesi", "#f59e0b", "%", 0, "prev"),
     ("vix", "VIX", "#f59e0b", "", 0, "vol"), ("vix_ratio", "VIX / VIX3M", "#fb923c", "", 0, "vol"), ("vvix", "VVIX", "#fbbf24", "", 0, "vol"),
     ("move", "MOVE (volatilità obbligazioni)", "#f87171", "", 0, "vol"), ("skew", "SKEW", "#c084fc", "", 0, "vol"),
     ("hy_oas", "Spread High Yield", "#a16207", " %", 0, "cred"), ("ig_oas", "Spread Investment Grade", "#ca8a04", " %", 0, "cred"),
@@ -89,17 +101,21 @@ def build(sp: pd.Series, vw: pd.Series, aix: dict | None) -> dict | None:
         out["regime"] = al(tensione.pct_espanso(tensione.pressione(aix["hist"].dropna())) * 100, 3)
     except Exception:  # noqa: BLE001
         pass
-    rh = DATA / "risk_history.csv"
-    if rh.exists():
-        h = pd.read_csv(rh, parse_dates=["date"]).set_index("date")
-        for k, c in (("p_calo_10g", "p_10g"), ("p_calo_1m", "p_1m"), ("p_calo_3m", "p_3m")):
-            if c in h:
-                out[k] = al(h[c] * 100, 5)
-    fe = DATA / "fhs_eval.csv"
-    if fe.exists():
-        f = pd.read_csv(fe, parse_dates=["date"])
-        u = f[(f.hz == "1m") & (f.kind == "up") & (f.thr == 5)].set_index("date")["p"] * 100
-        out["p_up_1m"] = al(u, 10)
+    try:   # indici e pilastri del motore Titan (storia completa dal 1990)
+        t = pd.read_csv(DATA / "titan_storia.csv", index_col=0, parse_dates=True)
+        out["super"] = al(t["super_armor_index"], 3)
+        for i in range(1, 7):
+            out[f"t_p{i}"] = al(t[f"p{i}_stress"], 3)
+    except Exception:  # noqa: BLE001
+        pass
+    try:   # probabilità di calo storiche dei modelli (Titan, FHS+VIX, FHS, A1): data/modelli_preds.csv
+        from . import modelli_preds
+        mp = modelli_preds.carica()
+        if mp is not None:
+            for (m, h), g in mp.groupby(["model", "hz"]):
+                out[f"pm_{m}_{h}"] = al(g.drop_duplicates("date").set_index("date")["p"] * 100, 12)
+    except Exception:  # noqa: BLE001
+        pass
     for k, key in SIMPLE.items():
         try:
             x = store.load(key)
@@ -122,10 +138,6 @@ def build(sp: pd.Series, vw: pd.Series, aix: dict | None) -> dict | None:
             out["putcall"] = al(pc, 5)
     except Exception:  # noqa: BLE001
         pass
-    G = aix["G"]
-    for k, g in FAM.items():
-        if g in G:
-            out[k] = al(1 + 99 * ((G[g] - 0.10) / 0.75).clip(0, 1), 3)
     try:
         from .features import price_features
         out["dd252"] = al(-price_features(sp)["dd252"] * 100, 3)
@@ -168,7 +180,7 @@ JS = r"""
 function nf(x,d){return x==null?'n.d.':x.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function init(root){
 if(root.dataset.on)return;root.dataset.on='1';root.innerHTML='<p class="mu">Caricamento del grafico…</p>';
-var D=null,per=756,lastPer=756,view=null,act={},openG={rischio:true},meta={},dragA=null,dragB=null,tstart=null,pan=null,pin=null,hov=null;
+var D=null,per=756,lastPer=756,view=null,act={},openG={rischio:true,prev:true},meta={},dragA=null,dragB=null,tstart=null,pan=null,pin=null,hov=null;
 var emb=document.getElementById('armor-cf-data');
 function expand(j){var n=j.d.length;j.m={};j.meta.forEach(function(m){j.m[m.k]=m;var o=j.s[m.k];if(o&&o.v){var a=new Array(n);for(var i=0;i<n;i++)a[i]=null;for(var q=0;q<o.v.length;q++)a[o.o+q]=o.v[q];j.s[m.k]=a}})}
 function go(j){if(!j.m)expand(j);D=j;D.meta.forEach(function(m){act[m.k]=!!m.on;meta[m.k]=m});build()}
@@ -226,9 +238,9 @@ function fd(i){var d=new Date(D.d[i]*86400000);return d.getUTCDate()+'/'+(d.getU
 function zbar(){var z=root.querySelector('.cfzoom');if(!z)return;var cust=!!view;root.querySelectorAll('.cfbar button[data-p]').forEach(function(b){b.classList.toggle('on',!cust&&per===+b.dataset.p)});
  z.innerHTML='<button data-sh="-1" title="Indietro nel tempo">◀</button><button data-sh="1" title="Avanti nel tempo">▶</button><span>'+(cust?'Vista: <b>'+fd(i0)+' – '+fd(i1)+'</b> ('+(i1-i0+1)+' sedute)':'<span class="mu">Trascina per ingrandire · tasto destro o due dita per scorrere</span>')+'</span>'+(cust?'<button data-z="0" class="pri">Azzera zoom</button>':'')}
 function stats(){var el=root.querySelector('.cfst');if(!el)return;var arm=D.s.armor,sp=D.s.sp500;if(!arm||!sp){el.innerHTML='';return}var hi=[],lo=[];
- for(var i=i0;i<=i1-21;i++){if(arm[i]==null||sp[i]==null||sp[i+21]==null)continue;var f=(sp[i+21]/sp[i]-1)*100;if(arm[i]>=60)hi.push(f);else if(arm[i]<=40)lo.push(f)}
+ for(var i=i0;i<=i1-21;i++){if(arm[i]==null||sp[i]==null||sp[i+21]==null)continue;var f=(sp[i+21]/sp[i]-1)*100;if(arm[i]>=45)hi.push(f);else if(arm[i]<35)lo.push(f)}
  function av(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:null}
- el.innerHTML='<b>Nel periodo scelto</b> (descrittivo, non una previsione): dopo i giorni con Indice Armor ≥60 l\'S&amp;P 500 ha reso in media <b>'+nf(av(hi),1)+'%</b> nel mese successivo ('+hi.length+' giorni); dopo quelli ≤40, <b>'+nf(av(lo),1)+'%</b> ('+lo.length+' giorni).'}
+ el.innerHTML='<b>Nel periodo scelto</b> (descrittivo, non una previsione): dopo i giorni con Indice Armor in zona pericolo (45 o più) l\'S&amp;P 500 ha reso in media <b>'+nf(av(hi),1)+'%</b> nel mese successivo ('+hi.length+' giorni); dopo quelli in zona tranquilla (sotto 35), <b>'+nf(av(lo),1)+'%</b> ('+lo.length+' giorni).'}
 function idx(cx){var rc=cv.getBoundingClientRect(),i=Math.round(i0+(cx-rc.left-L)/(W-L-R)*(i1-i0));return Math.max(i0,Math.min(i1,i))}
 function tip(clientX){var rc=cv.getBoundingClientRect(),x=clientX-rc.left,i=idx(clientX);hov=i;draw();
  var t=root.querySelector('.cftip'),dt=new Date(D.d[i]*86400000);var h='<b>'+dt.getUTCDate()+'/'+(dt.getUTCMonth()+1)+'/'+dt.getUTCFullYear()+'</b>';

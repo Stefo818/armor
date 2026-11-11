@@ -537,5 +537,5 @@ def previsioni_oggi(df: pd.DataFrame) -> dict:
         r = walk_forward(df, h, th, include_today=True, from_idx=max(0, n - 1 - (h + 420)))
         last = r.iloc[-1]
         res[nome] = {"calo": round(float(last["p_dd_v40"]), 4), "rialzo": round(float(last["p_up_v40"]), 4),
-                     "soglia_calo": th, "data": str(r.index[-1].date())}
+                     "soglia_calo": th, "normale": round(float(last["hist_base_dd"]), 4), "data": str(r.index[-1].date())}
     return res

@@ -464,6 +464,9 @@ def main() -> None:
     elif cmd == "titan":
         from . import titan_job
         print(titan_job.esegui())
+    elif cmd == "titan-storia":   # previsioni storiche di Titan per il grafico di confronto (lento: 20-40 minuti)
+        from . import titan_valuta
+        titan_valuta.storia()
     elif cmd == "valuta-modelli":
         from . import modeleval
         step = int(sys.argv[2]) if len(sys.argv) > 2 else 5

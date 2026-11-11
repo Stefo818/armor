@@ -74,3 +74,47 @@ def html() -> str:
             f"<div class='pvg'>{sch}</div>"
             "<h3>I sei pilastri dietro l'Indice Armor</h3><p class='mu'>Ogni pilastro va da 1 (nessuna tensione) a 100 (tensione massima). Sopra 40 è zona di attenzione.</p>"
             f"<div>{pil}</div>")
+
+
+def bilancio_html() -> str:
+    """Riquadro «cosa dice il modello nei prossimi mesi»: per ogni periodo il rischio di calo di Titan contro il rischio abituale e la tendenza."""
+    d = carica()
+    if not d or not d.get("previsioni"):
+        return ""
+    righe, voti = "", {"alto": 0, "basso": 0, "norma": 0}
+    for nome, x in d["previsioni"].items():
+        n = x.get("normale")
+        sg = SOGLIA_TXT.get(round(x["soglia_calo"], 2), f"{x['soglia_calo'] * 100:.0f}%")
+        if n:
+            r = x["calo"] / n
+            k = "alto" if r > 1.25 else ("basso" if r < 0.8 else "norma")
+            conf = {"alto": ("bad", "rischio più alto del solito"), "basso": ("ok", "rischio più basso del solito"), "norma": ("warn", "rischio nella norma")}[k]
+            if nome in ("1 mese", "3 mesi", "6 mesi"):
+                voti[k] += 1
+            frase = f"Di solito, in passato, un calo di almeno {sg} è arrivato in <b>{_it(n * 100)}</b> casi su 100; oggi il modello ne stima <b>{_it(x['calo'] * 100)}</b>."
+            marker = f"<u style='left:{min(n * 100, 100):.0f}%'></u>"
+        else:
+            conf = ("warn", "rischio " + livello_calo(x["calo"])[1])
+            frase = f"Il modello stima {_it(x['calo'] * 100)} casi su 100 di un calo di almeno {sg}."
+            marker = ""
+        w = max(2, min(100, x["calo"] * 100))
+        righe += (f"<div class='bal'><div class='balh'><b>{E(nome.capitalize())}</b><span class='badge {conf[0]}'>{conf[1]}</span></div>"
+                  f"<div class='tugn'><span class='dn'>Calo ≥{sg}: <b>{_it(x['calo'] * 100)}%</b></span><span class='up'>Tendenza: <b>{tendenza(x['rialzo'])}</b> ({_it(x['rialzo'] * 100)}/100)</span></div>"
+                  f"<div class='tbar'><i style='width:{w:.0f}%;background:{ {'bad': '#dc2626', 'ok': '#16a34a', 'warn': '#d97706'}[conf[0]] }'></i>{marker}</div>"
+                  f"<div class='mu'>{frase}</div></div>")
+    nv = sum(voti.values())
+    if nv:
+        if voti["alto"] > voti["basso"]:
+            head, hc = f"Nei prossimi 1-6 mesi il rischio di un calo importante è <b>più alto del solito</b> ({voti['alto']} periodi su {nv}).", "bad"
+        elif voti["basso"] > voti["alto"]:
+            head, hc = f"Nei prossimi 1-6 mesi il rischio di un calo importante è <b>più basso del solito</b> ({voti['basso']} periodi su {nv}).", "ok"
+        else:
+            head, hc = f"Nei prossimi 1-6 mesi il rischio di un calo importante è <b>in linea con il solito</b> ({voti['norma']} periodi su {nv}).", "warn"
+    else:
+        head, hc = "Previsioni del modello Titan (riferimento).", "warn"
+    return (CSS_B + f"<div class='balbox'><div class='vd {hc} big'>{head}</div>{righe}</div><div class='explain'><p><b>Come leggere.</b> La barra è la probabilità stimata di un calo importante (5% in una settimana, 10% negli altri periodi); il trattino è la frequenza abituale. "
+            "La tendenza è un punteggio da 0 a 100 della direzione (non una probabilità). Modello: Titan, il riferimento di Armor.</p></div>")
+
+
+CSS_B = ("<style>.tbar{position:relative;height:9px;border-radius:99px;background:var(--bd);margin:6px 0 6px;overflow:visible}.tbar i{display:block;height:100%;border-radius:99px}"
+         ".tbar u{position:absolute;top:-4px;width:2px;height:17px;background:var(--tx);opacity:.7}</style>")

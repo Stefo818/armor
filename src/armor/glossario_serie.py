@@ -97,3 +97,22 @@ G = {
 
 def scheda(k: str):
     return G.get(k)
+
+
+_PIL = {"t_p1": ("Andamento dei prezzi", "quanto la Borsa è scesa dai massimi, la distanza dalle medie a 50 e 200 giorni e le valutazioni"),
+        "t_p2": ("Credito", "il costo del credito per le imprese e il ciclo del credito"), "t_p3": ("Paura sui mercati", "l'indice della paura, la volatilità delle obbligazioni e le opzioni"),
+        "t_p4": ("Rischio tra i mercati", "come si muovono insieme obbligazioni, azioni e altri mercati e cosa fanno i grandi fondi"),
+        "t_p5": ("Lavoro ed economia", "sussidi di disoccupazione, tensione sul credito e permessi di costruzione"),
+        "t_p6": ("Liquidità", "la moneta nel sistema, le condizioni finanziarie, rame contro oro, dollaro e Borse del mondo")}
+G.update({k: (f"Pilastro «{n}» del motore Titan: {d}.", "È uno dei sei mattoni del Super Armor: mostra da dove arriva il rischio.",
+              "Da 1 (nessuna tensione) a 100 (tensione massima); sopra 40 è zona di attenzione.", "Motore Titan, giornaliero.") for k, (n, d) in _PIL.items()})
+G["armor"] = ("L'Indice Armor (motore Titan): giudizio da 1 a 100 sul pericolo di calo e di nervosità del mercato, con una parte veloce (paura, liquidità, rimbalzi) e una lenta (prezzi, credito, valutazioni).",
+              "Dice quanto il contesto è pericoloso per chi ha azioni. Non prevede il giorno del calo.",
+              "Zone dai dati dal 1995: sotto 35 tranquillo, 35-40 neutro, 40-45 allarme, da 45 pericolo. 40 è la soglia di stress.", "Motore Titan, giornaliero.")
+G["super"] = ("Super Armor (SAI): la media dei sei pilastri Titan (prezzi, credito, paura, rischio tra i mercati, lavoro ed economia, liquidità).",
+              "Riassume da quali aree arriva il rischio.", "Zone dai dati dal 1995: sotto 35 tranquillo, 35-45 neutro, 45-55 allarme, da 55 pericolo.", "Motore Titan, giornaliero.")
+for _m, _d in (("Titan", "il motore ufficiale di Armor (riferimento)"), ("FHS+VIX", "simulazione della nervosità ancorata all'indice della paura (ex riferimento)"),
+               ("FHS", "simulazione della nervosità sui soli prezzi"), ("A1", "regressione sui soli prezzi")):
+    for _h, _t, _n in (("10g", 5, "10 giorni"), ("1m", 10, "1 mese"), ("3m", 10, "3 mesi"), ("6m", 10, "6 mesi")):
+        G[f"pm_{_m}_{_h}"] = (f"Probabilità di un calo di almeno il {_t}% dell'S&P 500 entro {_n}, stimata dal modello {_m}: {_d}.", "Il rischio di una correzione secondo quel modello: confronta più modelli sullo stesso grafico.",
+                              "Più la linea è alta, più il modello vede un calo probabile. Il livello abituale (la frequenza storica) è circa 5-15% a seconda dell'orizzonte.", "Valutazione mensile dei modelli (stessa regola per tutti).")

@@ -17,3 +17,14 @@ def preds(dates, df: pd.DataFrame | None = None, log=print) -> pd.DataFrame:
         for t, v in r["p_dd_v40"].items():
             righe.append({"date": t, "hz": hz, "kind": "down", "thr": int(round(th * 100)), "p": float(v)})
     return pd.DataFrame(righe)
+
+
+def storia(step: int = 5, log=print) -> int:
+    """Calcola le previsioni storiche di Titan (ogni `step` sedute dal 1990) e le salva in data/modelli_preds.csv per il grafico di confronto."""
+    from . import modelli_preds
+    from .features import closed_sp500
+    p = closed_sp500()
+    dates = p.index[p.index >= "1990-01-01"][::step]
+    n = modelli_preds.salva("Titan", preds(dates, log=log))
+    log(f"[titan-storia] salvate le previsioni storiche ({n} righe totali nel file)")
+    return n
