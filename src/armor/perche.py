@@ -33,6 +33,15 @@ AZIENDE_MONDO = {  # VWCE: simbolo: (nome, peso indicativo %)
 AREE = {  # simboli (indici di Borsa) → nome, peso indicativo % nel VWCE
     "usa": (("^GSPC",), "USA", 62.0), "eu": (("^GDAXI", "^FTSE", "^FCHI"), "Europa", 15.0), "jp": (("^N225",), "Giappone", 5.5), "asia": (("^HSI",), "Cina e Asia", 12.0)}
 FX = "EURUSD=X"
+ISIN = {  # codici usati da onvista per i prezzi aggiornati dal telefono (XLB e XOM non rispondono: restano i dati del server)
+    "XLK": ("US81369Y8030", "FUND"), "XLF": ("US81369Y6059", "FUND"), "XLV": ("US81369Y2090", "FUND"), "XLY": ("US81369Y4070", "FUND"), "XLC": ("US81369Y8527", "FUND"),
+    "XLI": ("US81369Y7040", "FUND"), "XLP": ("US81369Y3080", "FUND"), "XLE": ("US81369Y5069", "FUND"), "XLU": ("US81369Y8865", "FUND"), "XLRE": ("US81369Y8600", "FUND"),
+    "NVDA": ("US67066G1040", "STOCK"), "AAPL": ("US0378331005", "STOCK"), "MSFT": ("US5949181045", "STOCK"), "AMZN": ("US0231351067", "STOCK"), "GOOGL": ("US02079K3059", "STOCK"),
+    "META": ("US30303M1027", "STOCK"), "AVGO": ("US11135F1012", "STOCK"), "TSLA": ("US88160R1014", "STOCK"), "BRK-B": ("US0846707026", "STOCK"), "JPM": ("US46625H1005", "STOCK"),
+    "LLY": ("US5324571083", "STOCK"), "V": ("US92826C8394", "STOCK"), "ORCL": ("US68389X1054", "STOCK"), "NFLX": ("US64110L1061", "STOCK"), "MA": ("US57636Q1040", "STOCK"),
+    "COST": ("US22160K1051", "STOCK"), "WMT": ("US9311421039", "STOCK"), "PLTR": ("US69608A1088", "STOCK"), "JNJ": ("US4781601046", "STOCK"), "HD": ("US4370761029", "STOCK"),
+    "AMD": ("US0079031078", "STOCK"), "BAC": ("US0605051046", "STOCK"), "UNH": ("US91324P1021", "STOCK"), "TSM": ("US8740391003", "STOCK"), "MU": ("US5951121038", "STOCK"),
+    "TM": ("US8923313071", "STOCK"), "NVO": ("US6701002056", "STOCK")}
 TEMI_ICONA = {"Banche centrali e tassi": "🏦", "Inflazione": "🛒", "Lavoro e crescita": "👷", "Guerre e geopolitica": "🌍", "Dazi e commercio": "🚢",
               "Energia e materie prime": "🛢️", "Utili e conti aziendali": "📊", "Intelligenza artificiale e chip": "💾", "Credito e banche": "💳", "Regole e cause legali": "⚖️"}
 GRUPPI_SP = {"Mercati", "Banche centrali", "Inflazione e lavoro", "Dazi e commercio"}
@@ -209,7 +218,17 @@ def costruisci(v: dict | None = None, fresche: dict | None = None, quotes: dict 
     for d, k, g in ((sp, "sp", GRUPPI_SP), (vw, "vw", GRUPPI_VW)):
         if d:
             d["notizie"] = scegli_notizie(fresche.get(k, []), archivio, 1 if d["chg"] >= 0 else -1, g, ora)
-    return {"ora": ora.strftime("%Y-%m-%dT%H:%M:%SZ"), "sp": sp, "vwce": vw, "aperto": bool((quotes.get("sp500") or {}).get("open")), "ok": bool(sp or vw)}
+    return {"ora": ora.strftime("%Y-%m-%dT%H:%M:%SZ"), "sp": sp, "vwce": vw, "aperto": bool((quotes.get("sp500") or {}).get("open")), "ok": bool(sp or vw),
+            "live": dati_live(v, (vw or {}).get("aree", []), (vw or {}).get("settori", []))}
+
+
+def dati_live(v: dict, vw_aree: list[dict], vw_sett: list[dict] | None = None) -> dict:
+    """Tutto ciò che serve alla pagina per ricalcolare la scheda da sola con i prezzi aggiornati (pesi, nomi, codici, ultimo dato del server)."""
+    sim = set(SETTORI) | set(AZIENDE) | set(AZIENDE_MONDO)
+    return {"isin": {k: list(x) for k, x in ISIN.items()},
+            "sp": {"sett": [[k, n, w] for k, (n, w) in SETTORI.items()], "az": [[k, n, w] for k, (n, w) in AZIENDE.items()]},
+            "vw": {"az": [[k, n, w] for k, (n, w) in AZIENDE_MONDO.items()], "aree": vw_aree, "sett": vw_sett or []},
+            "base": {k: v[k] for k in sim if v.get(k) is not None}, "usa_w": AREE["usa"][2]}
 
 
 def salva(d: dict) -> None:
@@ -276,16 +295,59 @@ def html(d: dict | None, ora_loc: datetime | None = None) -> str:
             "Le barre mostrano di quanto ogni voce muove l'indice, in punti percentuali stimati (variazione × peso indicativo): verde = spinge in su, rosso = in giù. "
             "Per «Euro/dollaro» la barra è l'effetto sul VWCE: se l'euro sale, i titoli americani valgono meno in euro. Le notizie sono i titoli più vicini al movimento, non una prova della causa. "
             "Pesi approssimati: la scheda dà l'ordine di grandezza, non il conto esatto.</div></details>")
+    dati = ("<script type='application/json' id='pcd'>" + json.dumps(d["live"], ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") + "</script>") if d.get("live") else ""
     stato = "mercato USA aperto" if d.get("aperto") else "ultimo dato disponibile"
-    return (CSS + f"<div class='pc' id='pch'><div class='pc-h'><b>Perché si muove oggi</b><span>aggiornato alle {t} · {stato}</span><button type='button' id='pcr' title='Aggiorna ora'>↻</button></div>"
-            f"<div class='pc-tabs'>{tabs}</div>{pan}{info}</div>")
+    return (CSS + f"<div class='pc' id='pch'><div class='pc-h'><b>Perché si muove oggi</b><span id='pcs'>aggiornato alle {t} · {stato}</span><button type='button' id='pcr' title='Aggiorna ora'>↻</button></div>"
+            f"<div class='pc-tabs'>{tabs}</div>{pan}{info}{dati}</div>")
 
 
 JS = """<script>(function(){var W=document.getElementById('pch');if(!W||W.dataset.on)return;W.dataset.on=1;var cur=null;
 function show(){var t=cur||(W.querySelector('.pc-tabs button.on')||{dataset:{}}).dataset.t;if(!t)return;cur=t;W.querySelectorAll('.pc-tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});W.querySelectorAll('.pc-panel').forEach(function(p){p.hidden=p.dataset.t!==t})}
-function ag(){var r=document.getElementById('pcr');if(r)r.classList.add('spin');fetch('perche.html?'+Date.now(),{cache:'no-store'}).then(function(x){return x.text()}).then(function(h){var t=document.createElement('div');t.innerHTML=h;var n=t.querySelector('#pch');if(n){W.innerHTML=n.innerHTML;show()}}).catch(function(){}).then(function(){var r2=document.getElementById('pcr');if(r2)setTimeout(function(){r2.classList.remove('spin')},600)})}
+function ag(){var r=document.getElementById('pcr');if(r)r.classList.add('spin');fetch('perche.html?'+Date.now(),{cache:'no-store'}).then(function(x){return x.text()}).then(function(h){var t=document.createElement('div');t.innerHTML=h;var n=t.querySelector('#pch');if(n){W.innerHTML=n.innerHTML;show();if(window.pcLive)window.pcLive()}}).catch(function(){}).then(function(){var r2=document.getElementById('pcr');if(r2)setTimeout(function(){r2.classList.remove('spin')},600)})}
 W.addEventListener('click',function(e){var b=e.target.closest('.pc-tabs button');if(b){cur=b.dataset.t;show();return}if(e.target.closest('#pcr'))ag()});
-show();if(location.protocol.indexOf('http')===0)setInterval(ag,300000)})()</script>"""
+show();if(location.protocol.indexOf('http')===0)setInterval(ag,120000)})()</script>"""
+
+
+LIVE_JS = r"""<script>(function(){var W=document.getElementById('pch');if(!W||location.protocol.indexOf('http')!==0||window.pcLiveOn)return;window.pcLiveOn=1;
+var API='https://api.onvista.de/api/v1/instruments/',EVERY=45000,live={},busy=false,fails=0,timer=null,t0=0;
+function E(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function P(x,d){var t=(x>=0?'+':'')+x.toFixed(d==null?1:d);return t.replace('.',',').replace('-','−')}
+function col(x){return x>=0?'#16a34a':'#dc2626'}
+function data(){var e=document.getElementById('pcd');if(!e)return null;try{return JSON.parse(e.textContent)}catch(x){return null}}
+function ch(s,b){return live[s]!=null?live[s]:b[s]}
+function righe(l,b){var o=[];l.forEach(function(a){var c=ch(a[0],b);if(c!=null)o.push({s:a[0],n:a[1],chg:c*100,contr:a[2]*c})});o.sort(function(x,y){return Math.abs(y.contr)-Math.abs(x.contr)});return o}
+function nomi(l,v,n){return l.filter(function(x){return x.contr*v>0}).slice(0,n)}
+function barre(l){var m=0.01;l.forEach(function(x){m=Math.max(m,Math.abs(x.contr))});return l.map(function(x){var w=Math.abs(x.contr)/m*50,pos=x.contr>=0,et=x.fx?((x.chg>0?'euro più forte ':'euro più debole ')+P(x.chg)+'%'):P(x.chg)+'%';
+return "<div class='pc-r'><span class='pc-n'>"+E(x.n)+"</span><div class='pc-bar'><i style='left:"+(pos?50:(50-w).toFixed(0))+"%;width:"+w.toFixed(0)+"%;background:"+col(x.contr)+"'></i><u></u></div><b style='color:"+col(x.contr)+"'>"+et+"</b></div>"}).join('')}
+function chips(l){return l.slice(0,6).map(function(x){return "<span class='pc-chip' style='border-color:"+col(x.chg)+"'><b>"+E(x.s)+"</b> <em style='color:"+col(x.chg)+"'>"+P(x.chg)+"%</em></span>"}).join('')}
+function titSp(sett,az,c){var v=c>=0?1:-1;if(Math.abs(c)<0.0015)return 'Giornata piatta: i settori si compensano.';var a=nomi(sett,v,2),z=nomi(az,v,2),k=sett.filter(function(x){return x.contr*v<0})[0];
+var t=(v>0?'Spinto da ':'Pesano ')+(a.length?a.map(function(x){return x.n+' ('+P(x.chg)+'%)'}).join(' e '):'pochi titoli');if(z.length)t+='; tra le aziende '+z.map(function(x){return x.n+' '+P(x.chg)+'%'}).join(', ');
+if(k)t+='. '+(v>0?'Frena ':'Regge ')+k.n+' ('+P(k.chg)+'%)';return t+'.'}
+function titVw(aree,sett,c){if(Math.abs(c)<0.0015)return 'Quasi fermo: le aree del mondo si compensano.';var v=c>=0?1:-1,pro=nomi(aree,v,2),k=aree.filter(function(x){return x.contr*v<0})[0];
+function fr(x){return x.fx?((x.chg<0?'euro più debole':'euro più forte')+' ('+P(x.chg)+'%)'):x.n+' ('+P(x.chg)+'%)'}
+var t=(v>0?'Sale con ':'Scende per ')+(pro.length?pro.map(fr).join(' e '):'movimento diffuso');if(k)t+='; '+(v>0?'frena ':'regge ')+fr(k);var s=nomi(sett,v,1);if(s.length)t+='. Tra i settori guida '+s[0].n+' ('+P(s[0].chg)+'%)';return t+'.'}
+function tab(k,c){var b=W.querySelector(".pc-tabs button[data-t='"+k+"'] span");if(b){b.style.color=col(c);b.textContent=(c>=0?'▲ ':'▼ ')+Math.abs(c*100).toFixed(2).replace('.',',')+'%'}}
+function render(){var D=data(),L=window.LIVE&&window.LIVE.quotes;if(!D||!L||!Object.keys(live).length)return;var b=D.base,sp=L.sp500&&L.sp500.chg,vw=L.vwce&&L.vwce.chg;
+var P1=W.querySelector(".pc-panel[data-t='sp']"),P2=W.querySelector(".pc-panel[data-t='vw']");
+if(P1&&sp!=null){var se=righe(D.sp.sett,b),az=righe(D.sp.az,b),su=se.filter(function(x){return x.chg>0}).length;
+P1.querySelector('.pc-tt').innerHTML=E(titSp(se,az,sp))+" <small>"+su+" settori su "+se.length+" in rialzo</small>";var c1=P1.querySelector('.pc-cols>div');if(c1)c1.innerHTML="<div class='pc-st'>Settori</div>"+barre(se.slice(0,5));
+var ch1=P1.querySelector('.pc-chips');if(ch1)ch1.innerHTML=chips(az);tab('sp',sp)}
+if(P2&&vw!=null){var az2=righe(D.vw.az,b),ar=D.vw.aree.map(function(x){var y=Object.assign({},x);if(x.n==='USA'&&sp!=null){y.chg=sp*100;y.contr=D.usa_w*sp}return y});
+ar.sort(function(x,y){return Math.abs(y.contr)-Math.abs(x.contr)});
+P2.querySelector('.pc-tt').innerHTML=E(titVw(ar,D.vw.sett,vw))+P2.querySelector('.pc-tt small').outerHTML;var c2=P2.querySelectorAll('.pc-cols>div')[1];if(c2){var h=c2.querySelector('.pc-st');c2.innerHTML=(h?h.outerHTML:'')+barre(ar.slice(0,5))}
+var ch2=P2.querySelector('.pc-chips');if(ch2)ch2.innerHTML=chips(az2);tab('vw',vw)}
+var s=document.getElementById('pcs');if(s){var d=new Date(t0);s.textContent='prezzi aggiornati alle '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2)+' · USA con circa 15 minuti di ritardo'}}
+window.pcLive=render;
+function best(j){var Lq=[];if(j&&j.quote)Lq.push(j.quote);if(j&&j.quoteList&&j.quoteList.list)Lq=Lq.concat(j.quoteList.list);Lq=Lq.filter(function(q){return q&&q.last>0&&q.previousLast>0&&q.datetimeLast});
+Lq.sort(function(a,b){return new Date(b.datetimeLast)-new Date(a.datetimeLast)});return Lq[0]}
+function one(s,i){return fetch(API+i[1]+'/ISIN:'+i[0]+'/snapshot',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var q=best(j);if(!q)return 0;var c=q.last/q.previousLast-1;if(Math.abs(c)>=0.25)return 0;live[s]=c;return 1}).catch(function(){return 0})}
+function poll(){if(busy||document.hidden)return;var D=data();if(!D){return}busy=true;
+Promise.all(Object.keys(D.isin).map(function(s){return one(s,D.isin[s])})).then(function(r){var n=r.reduce(function(a,b){return a+b},0);if(n>5){fails=0;t0=Date.now();render()}else fails++;busy=false}).catch(function(){busy=false;fails++})}
+function loop(){poll();timer=setTimeout(loop,fails>=3?180000:EVERY)}
+document.addEventListener('visibilitychange',function(){if(!document.hidden){clearTimeout(timer);loop()}});
+setTimeout(loop,2500)})();</script>"""
+
+JS = JS + LIVE_JS
 
 CSS = """<style>
 .pc{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:10px 14px;margin:0 0 12px}.pc-h{display:flex;align-items:center;gap:10px;font-size:14px}.pc-h span{color:var(--mu);font-size:11.5px;flex:1}
