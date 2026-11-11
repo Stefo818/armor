@@ -16,30 +16,35 @@
    "calo": 0.1095,
    "rialzo": 0.5483,
    "soglia_calo": 0.05,
+   "normale": 0.062,
    "data": "2026-11-10"
   },
   "1 mese": {
    "calo": 0.0604,
    "rialzo": 0.733,
    "soglia_calo": 0.1,
+   "normale": 0.0519,
    "data": "2026-11-10"
   },
   "3 mesi": {
    "calo": 0.1967,
    "rialzo": 0.6004,
    "soglia_calo": 0.1,
+   "normale": 0.1526,
    "data": "2026-11-10"
   },
   "6 mesi": {
    "calo": 0.2971,
    "rialzo": 0.6014,
    "soglia_calo": 0.1,
+   "normale": 0.2551,
    "data": "2026-11-10"
   },
   "12 mesi": {
    "calo": 0.4425,
    "rialzo": 0.6046,
    "soglia_calo": 0.1,
+   "normale": 0.375,
    "data": "2026-11-10"
   }
  },
