@@ -13,7 +13,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from . import semafori, store
+from . import semafori, store, titan_vista
 from .config import DATA
 
 # gruppo -> (peso, [(chiave, tipo, giallo, rosso)])  tipo: hi = più alto peggio, lo = più basso peggio, pct = solo percentile
@@ -264,19 +264,23 @@ def compute(sp: pd.Series, use_cache: bool = True) -> dict | None:
         if idx.empty:
             return None
         t = idx.index[-1]
+        tv = titan_vista.serie("armor_index", t)   # valore ufficiale: motore Titan, se i suoi dati sono freschi
+        if tv is not None:
+            idx = tv
         val = float(idx.iloc[-1])
+        chiave = str(t.date()) + ("+titan" if tv is not None else "")
         ev = None
         if use_cache and CACHE.exists():
             try:
                 c = json.loads(CACHE.read_text(encoding="utf-8"))
-                if c.get("date") == str(t.date()):
+                if c.get("date") == chiave:
                     ev = c["eval"]
             except Exception:  # noqa: BLE001
                 ev = None
         if ev is None:
-            ev = evaluate(sp, combine(S)[0])
+            ev = evaluate(sp, idx)
             try:
-                CACHE.write_text(json.dumps({"date": str(t.date()), "eval": ev}), encoding="utf-8")
+                CACHE.write_text(json.dumps({"date": chiave, "eval": ev}), encoding="utf-8")
             except Exception:  # noqa: BLE001
                 pass
         groups = []
@@ -289,7 +293,7 @@ def compute(sp: pd.Series, use_cache: bool = True) -> dict | None:
                     its.append({"key": key, "name": nm, "score": float(S.loc[t, key]), "value": last.get(key)})
             groups.append({"name": g, "weight": weights_in_use()[g], "score": None if pd.isna(sc) else float(sc), "items": its})
         prev = float(idx.iloc[-6]) if len(idx) > 6 else val
-        return {"value": val, "date": t, "hist": idx, "groups": groups, "eval": ev, "change5": val - prev, "G": G, "S": S}
+        return {"value": val, "date": t, "hist": idx, "groups": groups, "eval": ev, "change5": val - prev, "G": G, "S": S, "titan": tv is not None}
     except Exception as e:  # noqa: BLE001
         print("Indice Armor non calcolato:", str(e)[:120], flush=True)
         return None

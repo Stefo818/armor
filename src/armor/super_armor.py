@@ -13,7 +13,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from . import store
+from . import store, titan_vista
 from .config import ARCHIVE, DATA
 
 STORIA = DATA / "super_armor_storia.csv"
@@ -218,9 +218,13 @@ def ricostruisci(p: pd.Series, armor_hist: pd.Series, dal: str = "2000-01-03") -
 
 def storia() -> pd.DataFrame | None:
     try:
-        return pd.read_csv(STORIA, index_col=0, parse_dates=True)
+        st = pd.read_csv(STORIA, index_col=0, parse_dates=True)
     except Exception:  # noqa: BLE001
         return None
+    tv = titan_vista.serie("super_armor_index", st.index[-1]) if len(st) else None
+    if tv is not None:   # la storia usa gli stessi valori Titan mostrati oggi
+        st["sai"] = tv.reindex(st.index, method="ffill", limit=5).fillna(st["sai"])
+    return st
 
 
 # ---------------- oggi ----------------
@@ -328,7 +332,11 @@ def calcola(aix: dict | None, p: pd.Series) -> dict | None:
         s2 = sum(w2.values())
         so = float(sum(w2[k] * pil[k]["score"] for k in w2) / s2)
         ombra = {"sai": so, "delta": so - sai}
-    return {"data": str(p.index[-1].date()), "sai": sai, "pesi": w, "pilastri": pil, "concordanza": conc, "dispersione": std, "quote": {k: v / tot for k, v in contr.items()},
+    tv = titan_vista.serie("super_armor_index", p.index[-1])   # valore ufficiale: motore Titan, se fresco
+    titan = tv is not None
+    if titan:
+        sai = float(tv.iloc[-1])
+    return {"data": str(p.index[-1].date()), "titan": titan, "sai": sai, "pesi": w, "pilastri": pil, "concordanza": conc, "dispersione": std, "quote": {k: v / tot for k, v in contr.items()},
             "mercato": mv, "economia": pil.get("economia", {}).get("score"), "ombra": ombra}
 
 
