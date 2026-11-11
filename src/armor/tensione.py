@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 
 from . import regime_analoghi, store
+from . import tensione40
 from .config import DATA, ROOT
 from .features import closed_sp500, fwd_maxdd, fwd_ret
 
@@ -434,7 +435,7 @@ def oggi(a: pd.Series | None = None, p: pd.Series | None = None) -> dict | None:
         return {"data": str(f.index[-1].date()), "A": float(r["A"]), "min20": float(r["min20"]), "ma60": float(r["ma60"]), "Pn": None if pd.isna(r["Pn"]) else float(r["Pn"]),
                 "dd": None if pd.isna(r["dd"]) else float(r["dd"]), "stato": str(st.iloc[-1]), "sopra45": sedute_sopra(f["A"]),
                 "sopra40": sedute_sopra(f["A"], 40.0), "v": {k: bool(r[k]) for k in VARIANTI},
-                "ult20": [round(float(x), 1) for x in f["A"].dropna().tail(20).values]}
+                "ult20": [round(float(x), 1) for x in f["A"].dropna().tail(20).values], "t40": tensione40.metriche(f["A"])}
     except Exception as e:  # noqa: BLE001
         print("Regime di tensione non calcolato:", str(e)[:100], flush=True)
         return None
@@ -606,16 +607,22 @@ def box_oggi(o: dict | None, r: dict | None = None, an: dict | None = None) -> s
             "Tensione persistente: sopra 45 senza mai scendere per almeno 20 sedute. Persistente con mercato in calo: come prima, ma l'S&amp;P 500 è già almeno il 5% sotto il suo massimo.</p>"
             "<p><b>Pressione accumulata</b> = somma di quanto l'indice è stato sopra 40 nei giorni passati, con peso che si dimezza ogni ~23 sedute, trasformata in una scala 0–100 rispetto a tutta la storia.</p>"
             "<p><b>I pallini</b> = guardiamo ogni giorno passato (dal 2000) in cui il mercato era nello stesso stato di oggi e contiamo cosa è successo nei 6 mesi dopo, confrontandolo con la <b>media storica</b>: la quota di casi in cui è successa la stessa cosa guardando <b>tutti</b> i giorni dal 2000, qualunque fosse lo stato.</p></div></details>")
-    passato = (f"<div class='rg-step'><i class='rg-n'>4</i><div><b>E in passato, nello stesso stato?</b><span>Tutti i giorni dal 2000 in cui lo stato era «{NOMI_STATO[st]}» (anche non di fila), e cosa è successo nei 6 mesi dopo ciascuno.</span></div></div>"
+    passato = (f"<div class='rg-step'><i class='rg-n'>2</i><div><b>E in passato, nello stesso stato?</b><span>Tutti i giorni dal 2000 in cui lo stato era «{NOMI_STATO[st]}» (anche non di fila), e cosa è successo nei 6 mesi dopo ciascuno.</span></div></div>"
                f"{_barre_storiche(st, r)}")
+    t40 = tensione40.html(o.get("t40"))
+    if t40:
+        corpo = ("<div class='rg-step'><i class='rg-n'>1</i><div><b>Da quanto tempo l'Indice Armor è sopra 40?</b>"
+                 "<span>40 è la soglia di ingresso nella zona di stress (1 = ottimo, 100 = pericolo massimo). Qui vedi da quanti giorni di Borsa è sopra, quante volte negli ultimi 10, 30, 90 e 120 giorni e la media.</span></div></div>" + t40)
+    else:   # senza abbastanza storia: vecchio riquadro
+        corpo = ("<div class='rg-step'><i class='rg-n'>1</i><div><b>Quanto è alta la tensione oggi?</b><span>L'Indice Armor da 0 a 100: verde = calma, grigio = normale, arancione = tensione (da 45).</span></div></div>"
+                 f"<div class='rg-gw'>{_contachilometri(a, col)}</div>"
+                 "<div class='rg-step'><i class='rg-n'>2</i><div><b>È alta da abbastanza tempo?</b><span>Ogni barra è una seduta di Borsa. L'allerta scatta solo se tutte le ultime 20 superano la linea a 45.</span></div></div>"
+                 f"{venti}<div class='rg-t'>{cont}</div>{serb}")
     return (f"<section class='card rt rg' style='--rgc:{col};border-left:5px solid {col}'><div class='rg-q'>Regime di tensione · <a href='#regime' data-go='regime'>Dettagli ›</a></div>"
             f"<div class='rg-hero'><div class='rg-hl'><i style='background:{col}'></i><span>{NOMI_STATO[st]}</span></div><div class='rg-sub'>{titolo}.</div>"
             "<div class='rg-what'>Il «regime» dice se la tensione del mercato è <b>passeggera</b> o <b>dura da tempo</b>: quando dura, in passato i cali grandi sono stati più frequenti.</div></div>"
             f"<div class='rg-stairs' role='list' aria-label='I cinque stati possibili'>{scala}</div>"
-            "<div class='rg-step'><i class='rg-n'>1</i><div><b>Quanto è alta la tensione oggi?</b><span>L'Indice Armor da 0 a 100: verde = calma, grigio = normale, arancione = tensione (da 45).</span></div></div>"
-            f"<div class='rg-gw'>{_contachilometri(a, col)}</div>"
-            "<div class='rg-step'><i class='rg-n'>2</i><div><b>È alta da abbastanza tempo?</b><span>Ogni barra è una seduta di Borsa. L'allerta scatta solo se tutte le ultime 20 superano la linea a 45.</span></div></div>"
-            f"{venti}<div class='rg-t'>{cont}</div>{serb}{passato}{regime_analoghi.html(an) if an is not None else ''}{info}</section>")
+            f"{corpo}{passato}{regime_analoghi.html(an) if an is not None else ''}{info}</section>")
 
 
 CSS = ("<style>"
@@ -651,6 +658,8 @@ CSS = ("<style>"
        ".rg-ver{margin-top:8px;border:1px solid;border-radius:99px;padding:4px 12px;font-size:12px;font-weight:700;text-align:center}"
        ".rg-keyp{font-size:11px;color:var(--mu);margin:2px 0 8px}.rg-keyp i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--bd);vertical-align:-1px}"
        ".rg-aff{font-size:12.5px;line-height:1.45;border-left:4px solid #d97706;background:var(--bg);border-radius:0 10px 10px 0;padding:7px 11px;margin:8px 0}.rg-aff.ok{border-color:#16a34a}</style>")
+
+CSS = CSS + tensione40.CSS
 
 
 def grafico_dati(a: pd.Series | None = None, p: pd.Series | None = None) -> dict | None:
