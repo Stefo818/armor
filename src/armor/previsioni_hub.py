@@ -406,8 +406,16 @@ def _semaforo() -> str:
         return "<p class='mu'>Semaforo non disponibile: " + _h.escape(str(ex)[:80]) + "</p>"
 
 
+def _titan() -> str:
+    try:
+        from . import titan_ui
+        return titan_ui.html()
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def html(pred: dict | None = None) -> str:
     righe = storico_dati()
     return (CSS + "<div class='pvw'><h2>Previsioni: cosa dicono i modelli</h2><div class='explain'><p><b>In breve.</b> Per ogni periodo, la probabilità di chiudere in rialzo, la fascia dei rendimenti possibili e il confronto con quello che succede normalmente. "
             "Sotto trovi tutti i modelli affiancati e la tabella completa delle previsioni passate contro il risultato reale. Sono probabilità, non promesse.</p></div>"
-            + carte() + "<h3>Semaforo del rischio di calo</h3>" + _semaforo() + "<h3>Classifica dei modelli (voto da 1 a 100, aggiornata ogni giorno)</h3>" + _classifica() + "<h3>Tutti i modelli, in uso e in ombra</h3>" + modelli(pred) + "<h3>Previsioni passate e risultato reale</h3>" + storico_html(righe) + "</div>")
+            + _titan() + "<h3>Simulazione del modello precedente</h3>" + carte() + "<h3>Semaforo del rischio di calo</h3>" + _semaforo() + "<h3>Classifica dei modelli (voto da 1 a 100, aggiornata ogni giorno)</h3>" + _classifica() + "<h3>Tutti i modelli, in uso e in ombra</h3>" + modelli(pred) + "<h3>Previsioni passate e risultato reale</h3>" + storico_html(righe) + "</div>")
