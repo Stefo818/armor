@@ -30,6 +30,11 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m armor titan-storia
+      - name: Prove dell'Indice Occasione, delle fasce e della salute
+        continue-on-error: true
+        env:
+          PYTHONPATH: src
+        run: python -m armor occasione-verifica
       - name: Valutazione dei modelli (A1 contro FHS)
         continue-on-error: true
         env:

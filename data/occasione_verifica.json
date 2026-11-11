@@ -1,0 +1,666 @@
+{
+ "protocollo": "3e0aa440e3b531aa4c7b6630",
+ "asof": "2026-11-10",
+ "epoche": [
+  {
+   "periodo": "1928-1949",
+   "tutti": {
+    "giorni": 5495,
+    "gruppi": 1,
+    "m6": 2.5,
+    "m12": 2.1,
+    "pos12": 53,
+    "discesa6m": -12.6
+   },
+   "occ50": {
+    "giorni": 1739,
+    "gruppi": 4,
+    "m6": -2.5,
+    "m12": -4.5,
+    "pos12": 42,
+    "discesa6m": -18.3
+   },
+   "occ70": {
+    "giorni": 886,
+    "gruppi": 6,
+    "m6": -0.8,
+    "m12": -3.8,
+    "pos12": 41,
+    "discesa6m": -16.7
+   },
+   "coltello": {
+    "giorni": 609,
+    "gruppi": 10,
+    "m6": 2.2,
+    "m12": 6.9,
+    "pos12": 61,
+    "discesa6m": -12.8
+   }
+  },
+  {
+   "periodo": "1950-1967",
+   "tutti": {
+    "giorni": 4524,
+    "gruppi": 1,
+    "m6": 5.5,
+    "m12": 10.1,
+    "pos12": 75,
+    "discesa6m": -4.8
+   },
+   "occ50": {
+    "giorni": 132,
+    "gruppi": 2,
+    "m6": 12.3,
+    "m12": 19.7,
+    "pos12": 100,
+    "discesa6m": -4.4
+   },
+   "occ70": {
+    "giorni": 59,
+    "gruppi": 1,
+    "m6": 13.1,
+    "m12": 22.0,
+    "pos12": 100,
+    "discesa6m": -7.7
+   },
+   "coltello": {
+    "giorni": 146,
+    "gruppi": 3,
+    "m6": 13.4,
+    "m12": 26.4,
+    "pos12": 100,
+    "discesa6m": -3.4
+   }
+  },
+  {
+   "periodo": "1968-1989",
+   "tutti": {
+    "giorni": 5530,
+    "gruppi": 1,
+    "m6": 3.4,
+    "m12": 8.2,
+    "pos12": 65,
+    "discesa6m": -6.8
+   },
+   "occ50": {
+    "giorni": 439,
+    "gruppi": 6,
+    "m6": 15.9,
+    "m12": 20.6,
+    "pos12": 90,
+    "discesa6m": -5.7
+   },
+   "occ70": {
+    "giorni": 172,
+    "gruppi": 4,
+    "m6": 20.7,
+    "m12": 23.7,
+    "pos12": 94,
+    "discesa6m": -4.4
+   },
+   "coltello": {
+    "giorni": 292,
+    "gruppi": 5,
+    "m6": -2.0,
+    "m12": 12.6,
+    "pos12": 79,
+    "discesa6m": -13.7
+   }
+  },
+  {
+   "periodo": "1990-2007",
+   "tutti": {
+    "giorni": 4538,
+    "gruppi": 1,
+    "m6": 4.7,
+    "m12": 9.8,
+    "pos12": 78,
+    "discesa6m": -6.0
+   },
+   "occ50": {
+    "giorni": 366,
+    "gruppi": 4,
+    "m6": 7.1,
+    "m12": 15.9,
+    "pos12": 65,
+    "discesa6m": -8.9
+   },
+   "occ70": {
+    "giorni": 119,
+    "gruppi": 3,
+    "m6": 2.1,
+    "m12": 10.9,
+    "pos12": 59,
+    "discesa6m": -9.7
+   },
+   "coltello": {
+    "giorni": 233,
+    "gruppi": 6,
+    "m6": 8.3,
+    "m12": 20.1,
+    "pos12": 68,
+    "discesa6m": -8.1
+   }
+  },
+  {
+   "periodo": "2008-2026",
+   "tutti": {
+    "giorni": 4745,
+    "gruppi": 1,
+    "m6": 6.9,
+    "m12": 13.8,
+    "pos12": 84,
+    "discesa6m": -7.2
+   },
+   "occ50": {
+    "giorni": 614,
+    "gruppi": 7,
+    "m6": 11.2,
+    "m12": 19.4,
+    "pos12": 86,
+    "discesa6m": -8.9
+   },
+   "occ70": {
+    "giorni": 267,
+    "gruppi": 6,
+    "m6": 14.4,
+    "m12": 25.4,
+    "pos12": 96,
+    "discesa6m": -4.5
+   },
+   "coltello": {
+    "giorni": 252,
+    "gruppi": 9,
+    "m6": 7.6,
+    "m12": 18.5,
+    "pos12": 71,
+    "discesa6m": -12.9
+   }
+  }
+ ],
+ "episodi": [
+  {
+   "massimo": "1990-07-16",
+   "minimo": "1990-10-11",
+   "calo": -19.9,
+   "segnali": 1,
+   "primo": "1990-11-15",
+   "sedute_dal_minimo": 25,
+   "sopra_minimo": 7.3,
+   "discesa_dopo": 0.0
+  },
+  {
+   "massimo": "1998-07-17",
+   "minimo": "1998-08-31",
+   "calo": -19.3,
+   "segnali": 1,
+   "primo": "1998-09-24",
+   "sedute_dal_minimo": 17,
+   "sopra_minimo": 8.9,
+   "discesa_dopo": 0.0
+  },
+  {
+   "massimo": "2000-03-24",
+   "minimo": "2002-10-09",
+   "calo": -49.1,
+   "segnali": 6,
+   "primo": "2001-01-19",
+   "sedute_dal_minimo": -430,
+   "sopra_minimo": 72.8,
+   "discesa_dopo": -42.1
+  },
+  {
+   "massimo": "2007-10-09",
+   "minimo": "2009-03-09",
+   "calo": -56.8,
+   "segnali": 5,
+   "primo": "2008-02-26",
+   "sedute_dal_minimo": -260,
+   "sopra_minimo": 104.2,
+   "discesa_dopo": -51.0
+  },
+  {
+   "massimo": "2018-09-20",
+   "minimo": "2018-12-24",
+   "calo": -19.8,
+   "segnali": 1,
+   "primo": "2019-01-08",
+   "sedute_dal_minimo": 9,
+   "sopra_minimo": 9.5,
+   "discesa_dopo": 0.0
+  },
+  {
+   "massimo": "2020-02-19",
+   "minimo": "2020-03-23",
+   "calo": -33.9,
+   "segnali": 1,
+   "primo": "2020-04-07",
+   "sedute_dal_minimo": 11,
+   "sopra_minimo": 18.9,
+   "discesa_dopo": 0.0
+  },
+  {
+   "massimo": "2022-01-03",
+   "minimo": "2022-10-12",
+   "calo": -25.4,
+   "segnali": 2,
+   "primo": "2022-07-08",
+   "sedute_dal_minimo": -67,
+   "sopra_minimo": 9.0,
+   "discesa_dopo": -8.3
+  },
+  {
+   "massimo": "2025-02-19",
+   "minimo": "2025-04-08",
+   "calo": -18.9,
+   "segnali": 1,
+   "primo": "2025-04-25",
+   "sedute_dal_minimo": 12,
+   "sopra_minimo": 10.9,
+   "discesa_dopo": 0.0
+  }
+ ],
+ "soldi": {
+  "1990-2021": {
+   "arrivi": 370,
+   "rate": {
+    "media": -2.7,
+    "vince": 25,
+    "peggior_10": -11.5,
+    "miglior_10": 7.9
+   },
+   "attesa": {
+    "media": -4.3,
+    "vince": 31,
+    "peggior_10": -18.2,
+    "miglior_10": 9.7
+   }
+  },
+  "1934-1989": {
+   "arrivi": 607,
+   "rate": {
+    "media": -2.4,
+    "vince": 35,
+    "peggior_10": -14.0,
+    "miglior_10": 9.9
+   },
+   "attesa": {
+    "media": -3.4,
+    "vince": 38,
+    "peggior_10": -22.3,
+    "miglior_10": 14.5
+   }
+  }
+ },
+ "fasce": {
+  "1 settimana": {
+   "2000-2012": {
+    "n": 654,
+    "copertura": 76,
+    "copertura_storica": 73,
+    "abilita": 5.9
+   },
+   "2013-2026": {
+    "n": 696,
+    "copertura": 79,
+    "copertura_storica": 83,
+    "abilita": 5.7
+   },
+   "regge": true
+  },
+  "1 mese": {
+   "2000-2012": {
+    "n": 654,
+    "copertura": 76,
+    "copertura_storica": 75,
+    "abilita": 2.1
+   },
+   "2013-2026": {
+    "n": 693,
+    "copertura": 78,
+    "copertura_storica": 82,
+    "abilita": 4.3
+   },
+   "regge": true
+  },
+  "3 mesi": {
+   "2000-2012": {
+    "n": 654,
+    "copertura": 70,
+    "copertura_storica": 72,
+    "abilita": -0.3
+   },
+   "2013-2026": {
+    "n": 685,
+    "copertura": 80,
+    "copertura_storica": 82,
+    "abilita": 1.9
+   },
+   "regge": false
+  },
+  "6 mesi": {
+   "2000-2012": {
+    "n": 654,
+    "copertura": 70,
+    "copertura_storica": 70,
+    "abilita": 1.5
+   },
+   "2013-2026": {
+    "n": 672,
+    "copertura": 79,
+    "copertura_storica": 86,
+    "abilita": 3.1
+   },
+   "regge": true
+  },
+  "12 mesi": {
+   "2000-2012": {
+    "n": 654,
+    "copertura": 63,
+    "copertura_storica": 68,
+    "abilita": 1.4
+   },
+   "2013-2026": {
+    "n": 647,
+    "copertura": 76,
+    "copertura_storica": 86,
+    "abilita": 0.8
+   },
+   "regge": true
+  }
+ },
+ "tendenza": {
+  "1928-1949 1 mese": {
+   "rialzo": {
+    "quota": 43,
+    "su": 59,
+    "q10": -5.6,
+    "q90": 7.2
+   },
+   "laterale": {
+    "quota": 16,
+    "su": 49,
+    "q10": -9.8,
+    "q90": 6.7
+   },
+   "ribasso": {
+    "quota": 37,
+    "su": 50,
+    "q10": -10.8,
+    "q90": 8.5
+   }
+  },
+  "1928-1949 3 mesi": {
+   "rialzo": {
+    "quota": 43,
+    "su": 60,
+    "q10": -11.3,
+    "q90": 14.0
+   },
+   "laterale": {
+    "quota": 16,
+    "su": 47,
+    "q10": -17.2,
+    "q90": 13.7
+   },
+   "ribasso": {
+    "quota": 37,
+    "su": 48,
+    "q10": -21.9,
+    "q90": 16.5
+   }
+  },
+  "1950-1989 1 mese": {
+   "rialzo": {
+    "quota": 62,
+    "su": 61,
+    "q10": -3.7,
+    "q90": 5.1
+   },
+   "laterale": {
+    "quota": 15,
+    "su": 65,
+    "q10": -4.2,
+    "q90": 5.9
+   },
+   "ribasso": {
+    "quota": 24,
+    "su": 53,
+    "q10": -5.8,
+    "q90": 6.2
+   }
+  },
+  "1950-1989 3 mesi": {
+   "rialzo": {
+    "quota": 62,
+    "su": 67,
+    "q10": -5.4,
+    "q90": 10.1
+   },
+   "laterale": {
+    "quota": 15,
+    "su": 64,
+    "q10": -6.5,
+    "q90": 12.8
+   },
+   "ribasso": {
+    "quota": 24,
+    "su": 54,
+    "q10": -9.2,
+    "q90": 11.9
+   }
+  },
+  "1990-2007 1 mese": {
+   "rialzo": {
+    "quota": 71,
+    "su": 63,
+    "q10": -3.5,
+    "q90": 4.6
+   },
+   "laterale": {
+    "quota": 12,
+    "su": 71,
+    "q10": -2.9,
+    "q90": 8.3
+   },
+   "ribasso": {
+    "quota": 17,
+    "su": 50,
+    "q10": -8.4,
+    "q90": 6.6
+   }
+  },
+  "1990-2007 3 mesi": {
+   "rialzo": {
+    "quota": 71,
+    "su": 70,
+    "q10": -4.0,
+    "q90": 8.8
+   },
+   "laterale": {
+    "quota": 12,
+    "su": 81,
+    "q10": -6.8,
+    "q90": 12.8
+   },
+   "ribasso": {
+    "quota": 17,
+    "su": 48,
+    "q10": -13.3,
+    "q90": 13.7
+   }
+  },
+  "2008-2026 1 mese": {
+   "rialzo": {
+    "quota": 72,
+    "su": 68,
+    "q10": -3.6,
+    "q90": 4.6
+   },
+   "laterale": {
+    "quota": 11,
+    "su": 64,
+    "q10": -5.3,
+    "q90": 8.4
+   },
+   "ribasso": {
+    "quota": 17,
+    "su": 59,
+    "q10": -8.6,
+    "q90": 8.6
+   }
+  },
+  "2008-2026 3 mesi": {
+   "rialzo": {
+    "quota": 72,
+    "su": 75,
+    "q10": -5.6,
+    "q90": 9.2
+   },
+   "laterale": {
+    "quota": 11,
+    "su": 76,
+    "q10": -4.9,
+    "q90": 14.4
+   },
+   "ribasso": {
+    "quota": 17,
+    "su": 63,
+    "q10": -13.6,
+    "q90": 14.7
+   }
+  }
+ },
+ "salute": {
+  "mercato": {
+   "1995-2010": [
+    {
+     "giorni": 25,
+     "discesa": 0.1
+    },
+    {
+     "giorni": 23,
+     "discesa": 13.6
+    },
+    {
+     "giorni": 26,
+     "discesa": 19.4
+    },
+    {
+     "giorni": 26,
+     "discesa": 38.1
+    },
+    {
+     "base": 18.1
+    }
+   ],
+   "2011-2026": [
+    {
+     "giorni": 30,
+     "discesa": 3.2
+    },
+    {
+     "giorni": 38,
+     "discesa": 8.7
+    },
+    {
+     "giorni": 19,
+     "discesa": 21.7
+    },
+    {
+     "giorni": 14,
+     "discesa": 27.5
+    },
+    {
+     "base": 12.1
+    }
+   ],
+   "1995-2026": [
+    {
+     "giorni": 28,
+     "discesa": 1.8
+    },
+    {
+     "giorni": 30,
+     "discesa": 10.6
+    },
+    {
+     "giorni": 22,
+     "discesa": 20.3
+    },
+    {
+     "giorni": 20,
+     "discesa": 34.5
+    },
+    {
+     "base": 15.1
+    }
+   ]
+  },
+  "economia": {
+   "1995-2010": [
+    {
+     "giorni": 30,
+     "discesa": 7.0
+    },
+    {
+     "giorni": 39,
+     "discesa": 8.5
+    },
+    {
+     "giorni": 14,
+     "discesa": 32.9
+    },
+    {
+     "giorni": 18,
+     "discesa": 45.9
+    },
+    {
+     "base": 18.1
+    }
+   ],
+   "2011-2026": [
+    {
+     "giorni": 31,
+     "discesa": 4.0
+    },
+    {
+     "giorni": 44,
+     "discesa": 10.5
+    },
+    {
+     "giorni": 17,
+     "discesa": 27.7
+    },
+    {
+     "giorni": 8,
+     "discesa": 18.6
+    },
+    {
+     "base": 12.1
+    }
+   ],
+   "1995-2026": [
+    {
+     "giorni": 31,
+     "discesa": 5.5
+    },
+    {
+     "giorni": 41,
+     "discesa": 9.6
+    },
+    {
+     "giorni": 15,
+     "discesa": 30.1
+    },
+    {
+     "giorni": 13,
+     "discesa": 37.6
+    },
+    {
+     "base": 15.1
+    }
+   ]
+  }
+ }
+}

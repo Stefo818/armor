@@ -10,7 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
-from . import soglie, titan_schede, titan_ui, titan_vista
+from . import occasione_ui, soglie, titan_schede, titan_ui, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
 from .features import closed_sp500, fwd_maxdd, fwd_maxup, fwd_ret, price_features, vwce_display, vwce_series
@@ -1039,6 +1039,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     p_regime = _safe(lambda: tensione.pagina(reg_o, None, tensione.grafico_dati(), reg_an), "Pagina regime")
     p_oggi = (f"<a id='oggi'></a>{topbtns}"
               f"{_safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index')}"
+              f"{_safe(occasione_ui.html, 'Bussola di oggi')}"
               f"{_safe(guida_indici.html, 'Guida agli indici')}"
               f"{kpi}"
               f"{_safe(lambda: perche.html(perche.carica()) + perche.JS, 'Perché si muove oggi')}"
@@ -1069,7 +1070,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
         pp = p[p.index >= "1985-01-01"]
         v = json.loads(inclinazione.FILE_VERIFICA.read_text(encoding="utf-8")) if inclinazione.FILE_VERIFICA.exists() else None
         return inclinazione.html(inclinazione.oggi(pp, store.load("vix"), store.load("armor_index")), v)
-    p_prev = (_safe(lambda: previsioni_hub.html(pred), "Previsioni") + _safe(_incl, "Inclinazione")
+    p_prev = (_safe(occasione_ui.previsioni_html, "Fasce per orizzonte") + _safe(lambda: previsioni_hub.html(pred), "Previsioni") + _safe(_incl, "Inclinazione")
               + f"<details class='pvdet' open><summary>Dettagli del modello principale e di tutte le soglie</summary><h2 style='margin-top:14px'>Previsioni per periodo: calo o rialzo?</h2>{chiaro.PREV_INTRO}"
               f"<div class='grid4'>{cards}</div>"
               f"<h3 style='margin-top:22px'>Scenari da 1 settimana a 1 anno</h3><div class='card'>{_safe(percorsi.html, 'Scenari')}</div>"

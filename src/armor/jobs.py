@@ -344,6 +344,12 @@ def tutto(skip_download: bool = False) -> None:
         print(f"[titan] armor {_t['armor_index']:.1f} · super {_t['super_armor']:.1f} · radar {_t['radar_decennio']:.1f}")
     except Exception as e:  # noqa: BLE001
         print("[titan] non calcolato:", str(e)[:120])
+    try:   # Indice Occasione, fase, fasce per orizzonte e salute (data/occasione.json)
+        from . import occasione
+        _o = occasione.aggiorna()
+        print(f"[occasione] {_o['occasione']} · stato {_o['stato']} · sconto {_o['sconto']}%")
+    except Exception as e:  # noqa: BLE001
+        print("[occasione] non calcolato:", str(e)[:120])
     try:   # Super Armor Index: valore del giorno nella storia (ricostruita dal 2000, poi reale)
         from . import super_armor, armor_index
         _p = closed_sp500()
@@ -464,6 +470,13 @@ def main() -> None:
     elif cmd == "titan":
         from . import titan_job
         print(titan_job.esegui())
+    elif cmd == "occasione":
+        from . import occasione
+        print({k: v for k, v in occasione.aggiorna().items() if k != "storia"})
+    elif cmd == "occasione-verifica":   # prove storiche dell'Indice Occasione, delle fasce e della salute (1-3 minuti)
+        from . import occasione_verifica
+        r = occasione_verifica.esegui()
+        print("[occasione-verifica] protocollo", r["protocollo"], "· epoche", len(r["epoche"]), "· episodi", len(r["episodi"]))
     elif cmd == "titan-storia":   # previsioni storiche di Titan per il grafico di confronto (lento: 20-40 minuti)
         from . import titan_valuta
         titan_valuta.storia()
@@ -660,7 +673,7 @@ def main() -> None:
         from . import journal3
         print(journal3.verify())
     else:
-        print("Comandi: tutto | titan | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
+        print("Comandi: tutto | titan | occasione | occasione-verifica | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
 
 
 if __name__ == "__main__":
