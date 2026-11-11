@@ -50,7 +50,7 @@ def consiglio(o: dict) -> str:
 
 
 def _tessera(titolo: str, valore: str, chip: str, col: str, nota: str) -> str:
-    return (f"<div class='oc-t' style='--c:{col}'><span class='oc-tt'>{E(titolo)}</span><span class='oc-chip'>{E(chip)}</span>"
+    return (f"<div class='oc-t' style='--c:{col}' role='button' tabindex='0' onclick=\"this.classList.toggle('x')\" onkeydown=\"if(event.key==='Enter'||event.key===' '){{this.classList.toggle('x');event.preventDefault()}}\"><span class='oc-tt'>{E(titolo)}</span><span class='oc-chip'>{E(chip)}</span>"
             f"<b class='oc-v'>{valore}</b><span class='oc-tn'>{nota}</span></div>")
 
 
@@ -186,7 +186,7 @@ def previsioni_html() -> str:
 
 
 CSS = ("<style>.oc h3{margin:0 0 8px}.oc h3 small,.oc h4 small{font-size:12px;color:var(--mu);font-weight:500;margin-left:6px}.oc h4{margin:14px 0 6px;font-size:14px}"
-       ".oc-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}@media(max-width:900px){.oc-g{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.oc-g{grid-template-columns:1fr}}"
+       ".oc-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}@media(max-width:900px){.oc-g{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.oc-g{gap:6px}.oc-t{padding:6px 8px 7px;cursor:pointer;gap:1px}.oc-tt{font-size:10.5px;letter-spacing:.2px;line-height:1.25}.oc-v{font-size:21px}.oc-chip{font-size:11px;padding:0 7px}.oc-tn{display:none;margin-top:3px;font-size:12.5px;color:var(--tx)}.oc-t.x{grid-column:1/-1}.oc-t.x .oc-tn{display:block}.oc-t::after{content:'tocca ▾';position:absolute;right:8px;bottom:6px;font-size:10px;color:var(--mu)}.oc-t.x::after{content:'chiudi ▴'}.oc-t{-webkit-tap-highlight-color:transparent}.oc h3 small{display:block;margin:2px 0 0}.oc-msg{font-size:13px;padding:7px 9px}.oc-d>summary{font-size:13px;padding:8px 0}.oc-b{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 26px;font-size:12px}}"
        ".oc-t{position:relative;border:1px solid var(--bd);border-top:4px solid var(--c);border-radius:12px;padding:8px 10px 9px;background:var(--bg);display:flex;flex-direction:column;gap:2px}"
        ".oc-tt{font-size:11.5px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.3px}.oc-v{font-size:24px;font-weight:800;line-height:1.1;color:var(--c)}.oc-v small{font-size:12px;color:var(--mu);font-weight:600}"
        ".oc-chip{align-self:flex-start;font-weight:800;font-size:12px;padding:1px 9px;border-radius:99px;border:1.5px solid var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}"

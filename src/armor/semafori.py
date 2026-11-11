@@ -511,11 +511,11 @@ def confronti_html(conf: list[dict] | None) -> str:
         if c["meglio"]:
             det.append("migliorati: " + ", ".join(e(n) for n in c["nomi_meglio"]) + (" …" if c["meglio"] > len(c["nomi_meglio"]) else ""))
         p, o = c["prima"], c["ora"]
-        cards += (f"<details class='cfc {cls}'><summary><span class='cft'>{e(c['testo'])} <small>({c['data']})</small></span><b class='cfn'>{c['cambiati']}</b>"
-                  f"<span class='cfs'>su {c['tot']} sono cambiati: <span class='ba'>{c['peggio']} peggio</span> · <span class='ok'>{c['meglio']} meglio</span></span><em>{verdetto}</em></summary>"
-                  f"<div class='cfd'>Allora: {p['ok']} verdi, {p['wa']} gialli, {p['ba']} rossi. Oggi: {o['ok']} verdi, {o['wa']} gialli, {o['ba']} rossi."
+        cards += (f"<details class='scc {cls}'><summary><span class='sct'>{e(c['testo'])} <small>({c['data']})</small></span><b class='scn'>{c['cambiati']}</b>"
+                  f"<span class='scs'>su {c['tot']} sono cambiati: <span class='ba'>{c['peggio']} peggio</span> · <span class='ok'>{c['meglio']} meglio</span></span><em>{verdetto}</em></summary>"
+                  f"<div class='scd'>Allora: {p['ok']} verdi, {p['wa']} gialli, {p['ba']} rossi. Oggi: {o['ok']} verdi, {o['wa']} gialli, {o['ba']} rossi."
                   + ("<br>" + "<br>".join(det) if det else "") + "</div></details>")
-    return ("<div class='cfg'><div class='cfh'>Quanti semafori sono cambiati <small>tocca una tessera per i dettagli</small></div><div class='cfw'>" + cards + "</div></div>")
+    return ("<div class='scg'><div class='sch'>Quanti semafori sono cambiati <small>tocca una tessera per i dettagli</small></div><div class='scw'>" + cards + "</div></div>")
 
 
 def _stato_gruppo(its: list[dict]) -> str:
@@ -566,11 +566,11 @@ OGGI_JS = r"""<script>(function(){document.addEventListener('click',function(ev)
 [].forEach.call(box.querySelectorAll('.sgpan'),function(x){x.hidden=true});[].forEach.call(box.querySelectorAll('.sgp'),function(x){x.classList.remove('sel')});if(!open){p.hidden=false;b.classList.add('sel')}})})();</script>"""
 
 OGGI_CSS = """
-.cfg{margin:10px 0 2px}.cfh{font-size:12.5px;font-weight:700;margin-bottom:6px}.cfh small{font-weight:500;color:var(--mu);margin-left:6px}.cfw{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}@media(max-width:640px){.cfw{grid-template-columns:1fr}}
-.cfc{border:1px solid var(--bd);border-left:4px solid var(--mu);border-radius:10px;background:var(--bg);padding:6px 10px}.cfc.ok{border-left-color:var(--ok)}.cfc.ba{border-left-color:var(--bad)}
-.cfc>summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center}.cfc>summary::-webkit-details-marker{display:none}
-.cft{grid-column:1/3;font-size:12px;color:var(--mu);font-weight:700}.cft small{font-weight:500}.cfn{font-size:28px;font-weight:800;line-height:1.1}.cfs{font-size:12px;line-height:1.35}.cfs .ba{color:var(--bad);font-weight:700}.cfs .ok{color:var(--ok);font-weight:700}
-.cfc>summary em{grid-column:1/3;font-style:normal;font-size:11.5px;font-weight:700;margin-top:2px}.cfc.ok em{color:var(--ok)}.cfc.ba em{color:var(--bad)}.cfc.mu em{color:var(--mu)}.cfd{font-size:12px;color:var(--mu);line-height:1.5;margin-top:6px;border-top:1px dashed var(--bd);padding-top:6px}
+.scg{margin:10px 0 2px}.sch{font-size:12.5px;font-weight:700;margin-bottom:6px}.sch small{font-weight:500;color:var(--mu);margin-left:6px}.scw{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}@media(max-width:640px){.scw{grid-template-columns:1fr}}
+.scc{border:1px solid var(--bd);border-left:4px solid var(--mu);border-radius:10px;background:var(--bg);padding:6px 10px}.scc.ok{border-left-color:var(--ok)}.scc.ba{border-left-color:var(--bad)}
+.scc>summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center}.scc>summary::-webkit-details-marker{display:none}
+.sct{grid-column:1/3;font-size:12px;color:var(--mu);font-weight:700}.sct small{font-weight:500}.scn{font-size:28px;font-weight:800;line-height:1.1}.scs{font-size:12px;line-height:1.35}.scs .ba{color:var(--bad);font-weight:700}.scs .ok{color:var(--ok);font-weight:700}
+.scc>summary em{grid-column:1/3;font-style:normal;font-size:11.5px;font-weight:700;margin-top:2px}.scc.ok em{color:var(--ok)}.scc.ba em{color:var(--bad)}.scc.mu em{color:var(--mu)}.scd{font-size:12px;color:var(--mu);line-height:1.5;margin-top:6px;border-top:1px dashed var(--bd);padding-top:6px}
 .sgbox{padding:12px 14px}.sght{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .sgbar{display:flex;gap:3px;height:38px;border-radius:10px;overflow:hidden}.sgs{display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;text-decoration:none;font-size:12px;min-width:88px}
 .sgs b{font-size:17px}.sgs span{font-size:11px;opacity:.95}.sgs.ok{background:var(--ok)}.sgs.wa{background:var(--warn);color:#1a1a1a}.sgs.ba{background:var(--bad)}

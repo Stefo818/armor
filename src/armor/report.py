@@ -1221,7 +1221,11 @@ details.exp[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius
 .scorebox{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:center;margin-bottom:12px}.lab{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .hz .hzh h3{font-size:19px}.hz .prow{border-top:1px solid var(--bd)}
 @media(max-width:600px){.lq.big1{grid-column:span 2}.big{font-size:38px}.lqp{font-size:22px}.big1 .lqp{font-size:32px}}
-"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+archivio_dati.CSS+infobox.CSS+semafori.OGGI_CSS+novita.CSS+"""</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
+"""+parts.CSS+semafori.CSS+armor_index.CSS+chiaro.CSS+extra13.CSS+mappa.MAPPA_CSS+cruscotto.CSS+confronto.CSS+aziende.CSS+ciclico.CSS+forza.CSS+semafori.LISTA_CSS+ui.CSS+archivio_dati.CSS+infobox.CSS+semafori.OGGI_CSS+novita.CSS+"""@media(max-width:600px){body{padding:8px;font-size:15px;line-height:1.45}h1{font-size:24px}h2{font-size:16.5px;margin:16px 0 8px}h3{font-size:15px;margin-top:12px}header{margin-bottom:8px}
+.card{padding:10px;border-radius:12px}.hero{padding:14px;border-radius:14px}.hl1{font-size:25px}.hl2{font-size:14.5px}.grid4,.grid2{gap:8px}.grid2{margin-top:8px}.lqrow{grid-template-columns:repeat(2,1fr);gap:6px}.lq{padding:8px 10px;border-radius:12px}
+.explain,.expl{padding:2px 12px;font-size:13.5px}.big{font-size:34px}.plain{font-size:14px}.scorebox{gap:10px}table{font-size:13px}th,td{padding:5px 5px}details.exp>summary{padding:9px 11px}details>summary{padding:8px 3px}
+.pgnav{gap:5px;padding:6px 0;margin-bottom:6px}.pgnav button{padding:7px 12px;font-size:13.5px}.prow b{font-size:18px}.hyp b{font-size:18px}footer{margin:16px 0 6px}}
+</style></head><body>{{BODY}}<script>function showHz(h){document.querySelectorAll('.hzc').forEach(e=>e.style.display=e.id==='hzc-'+h?'':'none');document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.hz===h))}</script><script>
 (function(){
 function fmt(v,d){return v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function paint(L){if(!L||!L.quotes)return;var now=Date.now();

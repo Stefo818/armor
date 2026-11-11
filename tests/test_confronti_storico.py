@@ -40,3 +40,13 @@ def test_titan_registro_serie_e_dizionario(tmp_path, monkeypatch):
     s = titan_registro.serie_hz("1m")
     assert abs(s.iloc[-1] - 6.04) < 1e-6 and abs(s.iloc[0] - 6.0) < 1e-6 and len(s) == 2
     assert titan_registro.per_data()[(pd.Timestamp("2026-11-10"), "1m")] == (0.0604, 0.7)
+
+
+def test_touch_grafico_e_classi_separate():
+    from armor import confronto, occasione_ui, semafori
+    js = confronto.JS
+    for s in ("dbl:dbl", "touchcancel", "data-fs", "cfull", "pointer:coarse", "dblclick"):
+        assert s in js
+    # le tessere dei semafori non devono riusare le classi del grafico di confronto
+    assert ".cfw{display:grid" not in semafori.CSS and ".cfc{border" not in semafori.CSS
+    assert "classList.toggle('x')" in occasione_ui._tessera("a", "1", "b", "#fff", "n")
