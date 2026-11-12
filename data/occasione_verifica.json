@@ -1,6 +1,6 @@
 {
  "protocollo": "3e0aa440e3b531aa4c7b6630",
- "asof": "2026-11-10",
+ "asof": "2026-11-11",
  "epoche": [
   {
    "periodo": "1928-1949",
@@ -145,7 +145,7 @@
   {
    "periodo": "2008-2026",
    "tutti": {
-    "giorni": 4745,
+    "giorni": 4746,
     "gruppi": 1,
     "m6": 6.9,
     "m12": 13.8,
@@ -301,7 +301,7 @@
     "abilita": 5.9
    },
    "2013-2026": {
-    "n": 696,
+    "n": 697,
     "copertura": 79,
     "copertura_storica": 83,
     "abilita": 5.7
@@ -313,7 +313,7 @@
     "n": 654,
     "copertura": 76,
     "copertura_storica": 75,
-    "abilita": 2.1
+    "abilita": 2.2
    },
    "2013-2026": {
     "n": 693,
@@ -572,12 +572,12 @@
      "discesa": 27.5
     },
     {
-     "base": 12.1
+     "base": 12.0
     }
    ],
    "1995-2026": [
     {
-     "giorni": 28,
+     "giorni": 27,
      "discesa": 1.8
     },
     {
@@ -637,7 +637,7 @@
      "discesa": 18.6
     },
     {
-     "base": 12.1
+     "base": 12.0
     }
    ],
    "1995-2026": [

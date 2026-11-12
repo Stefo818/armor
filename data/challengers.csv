@@ -7,7 +7,7 @@ CAPE (valutazioni),3m_15,0.0,670,-0.0045,-0.0434,-0.006,0.093,-0.0177,2000-01-01
 CAPE (valutazioni),6m_10,1.0,663,0.0372,-0.035,0.018,0.006,0.0059,2000-01-01,scartata
 CAPE (valutazioni),6m_20,0.0,663,-0.0205,-0.162,0.002,0.049,-0.0611,2000-01-01,scartata
 NFCI (condizioni finanziarie),10g_5,1.0,675,0.0061,-0.0004,-0.028,-0.001,0.0034,2000-01-01,scartata
-NFCI (condizioni finanziarie),1m_5,0.0,674,-0.0091,-0.0052,-0.011,0.0,-0.0075,2000-01-01,scartata
+NFCI (condizioni finanziarie),1m_5,0.0,674,-0.0091,-0.0052,-0.011,-0.0,-0.0075,2000-01-01,scartata
 NFCI (condizioni finanziarie),1m_10,1.0,674,-0.0274,-0.0048,-0.058,-0.012,-0.0191,2000-01-01,scartata
 NFCI (condizioni finanziarie),3m_10,1.0,670,-0.048,-0.0152,-0.095,-0.043,-0.0351,2000-01-01,scartata
 NFCI (condizioni finanziarie),3m_15,0.0,670,-0.0069,-0.0004,-0.091,-0.012,-0.0048,2000-01-01,scartata
@@ -70,8 +70,8 @@ Prezzo/fatturato S&P 500,3m_15,0.0,334,,-0.1944,,-0.005,-0.1944,2013-01-02,perio
 Prezzo/fatturato S&P 500,6m_10,1.0,334,,-0.3317,,-0.047,-0.3317,2013-01-02,periodo di test troppo breve
 Prezzo/fatturato S&P 500,6m_20,0.0,334,,-0.4319,,0.08,-0.4319,2013-01-02,periodo di test troppo breve
 Sentiment AAII (rialzisti meno ribassisti),,,0,,,,,,,storico troppo breve
-Fear & Greed CNN,,,252,,,,,,,storico troppo breve
-Ampiezza: titoli sopra media 200g,,,303,,,,,,,storico troppo breve
+Fear & Greed CNN,,,253,,,,,,,storico troppo breve
+Ampiezza: titoli sopra media 200g,,,304,,,,,,,storico troppo breve
 Algoritmo: gradient boosting,10g_5,1.0,322,-0.0035,-0.0395,-0.04,-0.13,-0.0189,2000-01-01,scartata
 Algoritmo: gradient boosting,1m_5,0.0,321,-0.0024,-0.0135,-0.003,-0.066,-0.0069,2000-01-01,scartata
 Algoritmo: gradient boosting,1m_10,1.0,321,-0.03,-0.0256,-0.002,0.066,-0.0284,2000-01-01,scartata
