@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-12T04:03:59Z",
+ "data_utc": "2026-11-12T20:57:47Z",
  "oggi": "2026-11-12",
  "ultima_previsione": "2026-11-11",
  "giorni_da_ultima": 1,
@@ -29,15 +29,15 @@
   {
    "nome": "anfci",
    "chiave": false,
-   "ultima_data": "2026-10-30",
-   "giorni_ritardo": 13,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 6,
    "stato": "ok"
   },
   {
    "nome": "armor_index",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -71,22 +71,22 @@
   {
    "nome": "breadth200",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "breadth50",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -148,15 +148,15 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "claims_up",
    "chiave": false,
-   "ultima_data": "2026-10-31",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-07",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
@@ -288,8 +288,8 @@
   {
    "nome": "dax",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -393,8 +393,8 @@
   {
    "nome": "epu",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -414,8 +414,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -428,8 +428,8 @@
   {
    "nome": "fear_greed",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -442,8 +442,8 @@
   {
    "nome": "ftsemib",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -505,8 +505,8 @@
   {
    "nome": "hy_oas",
    "chiave": true,
-   "ultima_data": "2026-11-09",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -519,8 +519,8 @@
   {
    "nome": "icsa",
    "chiave": true,
-   "ultima_data": "2026-10-31",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-07",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
@@ -533,8 +533,8 @@
   {
    "nome": "ig_oas",
    "chiave": false,
-   "ultima_data": "2026-11-09",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-11",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -652,8 +652,8 @@
   {
    "nome": "mweq",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -694,9 +694,9 @@
   {
    "nome": "nfci",
    "chiave": true,
-   "ultima_data": "2026-10-30",
-   "giorni_ritardo": 13,
-   "stato": "warning"
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 6,
+   "stato": "ok"
   },
   {
    "nome": "nfci_credit",
@@ -722,15 +722,15 @@
   {
    "nome": "nh_nl",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "nikkei",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -918,8 +918,8 @@
   {
    "nome": "rrp",
    "chiave": false,
-   "ultima_data": "2026-11-10",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -1100,22 +1100,22 @@
   {
    "nome": "stlfsi",
    "chiave": false,
-   "ultima_data": "2026-10-30",
-   "giorni_ritardo": 13,
+   "ultima_data": "2026-11-06",
+   "giorni_ritardo": 6,
    "stato": "ok"
   },
   {
    "nome": "stoxx50",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "stoxx600",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -1289,8 +1289,8 @@
   {
    "nome": "vwce_de",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {

@@ -446,20 +446,20 @@
    "valore": 40.0,
    "zona": 2,
    "stato": "Rischio",
-   "posizione": 0.5938173201206377
+   "posizione": 0.5939250323136579
   },
   "economia": {
-   "valore": 40.7,
+   "valore": 40.6,
    "zona": 1,
    "stato": "Neutro",
-   "posizione": 0.5844463593278759
+   "posizione": 0.5812149935372685
   }
  },
  "titan_calo": {
   "1 settimana": 0.1049,
   "1 mese": 0.0577,
-  "3 mesi": 0.192,
-  "6 mesi": 0.2957,
-  "12 mesi": 0.4434
+  "3 mesi": 0.1919,
+  "6 mesi": 0.2954,
+  "12 mesi": 0.4428
  }
 }
