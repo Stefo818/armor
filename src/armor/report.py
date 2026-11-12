@@ -474,14 +474,14 @@ def history_html(date, pred, hist, jr, outc):
         ser = pd.concat([ser, today]) if len(ser) else today
         linee = [(f"Probabilità stimata (%), calo ≥{thr}% entro {HZ_LABEL[hz]}", ser, cols[hz])]
         if tit is not None and len(tit) > 2:
-            linee.append(("Titan (modello di riferimento)", tit, "#0d9488"))
+            linee.append(("Titan (stato di salute)", tit, "#0d9488"))
         ch = svg_lines(linee,
                        fmt=lambda v: it(v, 0) + "%", ymin=0, hline=base,
                        dots=[("Previsioni registrate nel diario", live, "#1b2330")] if len(live) else None)
         charts.append(f"<div class='hzc' id='hzc-{hz}' style='{'' if k == 0 else 'display:none'}'>{ch}"
                       f"<p class='muted'>Linea tratteggiata = frequenza storica ({it(base, 0)}%). La linea colorata è la stima walk-forward sullo S&P 500 dal 2000 "
                       "(ogni punto usa solo i dati noti allora); i pallini sono le previsioni vere, registrate nel diario in tempo reale. "
-                      "La linea verde-acqua è Titan, il modello di riferimento dall'11 novembre 2026: stessa regola (calo ≥ soglia entro lo stesso periodo), valori ricalcolati con i soli dati noti in ogni data.</p></div>")
+                      "La linea verde-acqua è Titan, che dal 12 novembre 2026 misura lo stato di salute del mercato (la previsione dei cali è di FHS+VIX): stessa regola (calo ≥ soglia entro lo stesso periodo), valori ricalcolati con i soli dati noti in ogni data.</p></div>")
         btns.append(f"<button class='tab{' on' if k == 0 else ''}' data-hz='{hz}' onclick=\"showHz('{hz}')\">{HZ_LABEL[hz]}</button>")
     out = [f"<div class='tabs'>{''.join(btns)}</div>{''.join(charts)}"]
     if not len(j):
@@ -1105,14 +1105,14 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
             f"<h2 style='margin-top:26px'>Rapporto settimanale</h2>{bilancio.weekly_html(wk)}")
     p_pf = ui.PAC_HTML + pacsim.HTML + live_html + parts.portfolio_section()
     p_fid = ("<h2>Quanto mi posso fidare di Armor?</h2>" + _safe(lambda: ui.fiducia_html(sp, live=learning.live_table(sp)), "Pagina di fiducia")
-             + "<h2 style='margin-top:26px'>Sfidanti in prova</h2><div class='card'>" + _safe(campioni.html, "Motori per orizzonte") + "</div>"
+             + "<h2 style='margin-top:26px'>Motori per orizzonte</h2><div class='card'>" + _safe(campioni.html, "Motori per orizzonte") + "</div>"
              + "<h2 style='margin-top:26px'>Verifica storica con margini d'errore</h2><div class='card'>" + _safe(verifica.html, "Verifica storica") + "</div>"
              + "<h2 style='margin-top:26px'>VWCE in euro</h2><div class='card'>" + _safe(serie_eur.html, "VWCE in euro") + "</div>"
              + "<h2 style='margin-top:26px'>Motore di percorsi: regola di adozione</h2><div class='card'>" + _safe(percorsi.html_verifica, "Percorsi verifica") + "</div>"
              + "<h2 style='margin-top:26px'>Esperimento: premio di volatilità (in ombra)</h2><div class='card'>" + _safe(vrp.html, "VRP") + "</div>"
              + "<h2 style='margin-top:26px'>Ricerca modello: salute delle aziende, macro e storia lunga</h2><div class='card'>" + _safe(ciclico.html_ricerca, "Ricerca modello") + "</div>")
     p_sto = (f"<h2>Storico delle previsioni</h2><p class='muted'>Cosa aveva previsto Armor, giorno per giorno, e cosa è successo davvero.</p>"
-             f"<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno del modello del diario. <i>Titan</i>: la stima di quel giorno del modello di riferimento (sotto, il punteggio di rialzo: non è una probabilità). <i>Rispetto al normale</i>: 1× = nella norma. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (tra parentesi l'intervallo dell'80% dei casi). <i>Variazione</i>: rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>"
+             f"<div class='explain'><p><b>Come leggere la tabella.</b> <i>Probabilità di calo</i>: la stima di quel giorno del modello del diario. <i>Titan</i>: la stima di quel giorno di Titan, lo stato di salute (sotto, il punteggio di rialzo: non è una probabilità). <i>Rispetto al normale</i>: 1× = nella norma. <i>Rendimento ipotizzato</i>: cosa ci si poteva aspettare dal VWCE (tra parentesi l'intervallo dell'80% dei casi). <i>Variazione</i>: rispetto all'ultima previsione per lo stesso periodo. <i>Scadenza</i>: quando si può verificare. <i>Esito reale</i> e <i>Scostamento</i> compaiono a scadenza.</p></div><div class='card scroll'>{hist_html}</div>"
              f"<h2>Previsto contro reale</h2><div class='card'>{pv}</div>"
              f"<h2>Registro dei dati giornalieri</h2>{parts.registry_section()}"
              f"<h2>Come va l'app: miglioramento automatico</h2><div class='card scroll'>{imp_html}</div>"

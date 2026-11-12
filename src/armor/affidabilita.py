@@ -164,7 +164,7 @@ def calcola(pred: dict, p: pd.Series, t, diario: pd.DataFrame | None = None, sal
 
 
 SPIEGA = {
-    "disaccordo": ("Il modello ufficiale (A1, guarda i prezzi passati) e lo sfidante (guarda anche la volatilità di oggi e il VIX) danno risposte molto diverse.",
+    "disaccordo": ("FHS+VIX (il modello che prevede: guarda la volatilità di oggi e il VIX) e A1 (la seconda opinione: guarda i prezzi passati) danno risposte molto diverse.",
                    "Quando sono lontani, la verità sta in un intervallo ampio: usa la fascia tra i due numeri, non uno solo."),
     "dati": ("Controlla che le serie usate dal modello (prezzi, VIX, spread, ecc.) siano aggiornate.", "Se acceso, il numero può essere basato su dati vecchi."),
     "mai_visto": ("Misura quanto le condizioni di oggi assomigliano a quelle già viste dal 1990.", "Se acceso, il modello non ha esempi simili e la stima vale meno."),
@@ -214,14 +214,14 @@ def html() -> str:
            f"<p style='margin:4px 0 10px'><b>Come muoverti.</b> {e(muovi)}</p>"]
     ori = a.get("orizzonti") or []
     if ori:
-        out.append("<div class='mu' style='margin:8px 0 4px'><b>Cosa aspettarti, orizzonte per orizzonte</b> — probabilità di un calo almeno pari alla soglia. A1 = modello ufficiale, sfidante = modello in prova (FHS+VIX), Titan = modello di riferimento, «normale» = quanto succede in media nella storia</div>")
+        out.append("<div class='mu' style='margin:8px 0 4px'><b>Cosa aspettarti, orizzonte per orizzonte</b> — probabilità di un calo almeno pari alla soglia. FHS+VIX = modello che prevede, A1 = seconda opinione, Titan = stato di salute del mercato, «normale» = quanto succede in media nella storia</div>")
         tit = _titan_ultimo()
         for o in ori:
             fascia, conf = _lettura(o)
             doppio = o["sfidante"] is not None and abs(o["a1"] - o["sfidante"]) >= 0.005
-            dett = (f"A1 {o['a1']:.0%} · sfidante {o['sfidante']:.0%} · normale {o['normale']:.0%}" if doppio else f"A1 {o['a1']:.0%} · normale {o['normale']:.0%}")
+            dett = (f"FHS+VIX {o['sfidante']:.0%} · A1 {o['a1']:.0%} · normale {o['normale']:.0%}" if doppio else f"A1 {o['a1']:.0%} · normale {o['normale']:.0%}")
             if tit.get(o["hz"]) is not None:
-                dett += f" · Titan (riferimento) {tit[o['hz']]:.0%}"
+                dett += f" · Titan (stato di salute) {tit[o['hz']]:.0%}"
             out.append(f"<div style='border-top:1px solid rgba(128,128,128,.25);padding:6px 0'><b>{e(ETICHETTA_HZ[o['hz']])}, calo ≥{o['soglia']}%:</b> {e(fascia)}"
                        f"{' (' + e(conf) + ')' if conf else ''}<div class='mu'>{e(dett)}</div></div>")
     out.append("<div class='mu' style='margin:10px 0 4px'><b>Perché</b> — i cinque controlli (acceso = attenzione)</div>")

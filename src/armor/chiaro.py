@@ -70,11 +70,14 @@ def horizon_simple(hz, r, mat_hz, spot, rel, old_card_html):
     if rel:
         relw = {"Utile": "<span class='badge ok'>Stima affidabile nei test</span>", "Debole": "<span class='badge warn'>Stima debole: usala solo come indizio</span>",
                 "Non affidabile": "<span class='badge bad'>Stima poco affidabile</span>"}[rel[0]]
-    if r.get("adottato"):
+    if r.get("motore") == "FHS+VIX" and r.get("p_a1"):
+        relw += (f"<div class='mu' style='margin-top:6px'><span class='badge ok'>Modello principale: FHS+VIX</span> Simulazione guidata dalla volatilità di oggi e dal VIX. "
+                 f"Seconda opinione (A1, guarda i prezzi passati): {P(r['p_a1'][prim])}.</div>")
+    elif r.get("adottato"):
         relw += (f"<div class='mu' style='margin-top:6px'><span class='badge ok'>Adottato sulla verifica storica, in conferma dal vivo</span> Motore: {r.get('motore')}. "
                  f"A1 stimava {P(r['p_a1'][prim]) if r.get('p_a1') else 'n.d.'}. Dettagli in «Quanto fidarsi».</div>")
     sf = r.get("sfidante")
-    if sf and prim in sf.get("p", {}):
+    if sf and prim in sf.get("p", {}) and r.get("motore") != "FHS+VIX":
         ps = sf["p"][prim]
         relw += (f"<div class='mu sfr' style='margin-top:6px'><span class='badge warn'>Sperimentale</span> Modello in prova ({sf['motore']}): "
                  f"scendere di almeno {prim}% = <b>{P(ps)}</b> (A1: {P(pdn)}). Non è il numero principale: è in verifica dal vivo.</div>")

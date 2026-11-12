@@ -68,7 +68,7 @@ def html() -> str:
         return ""
     sch = "".join(_scheda(n.capitalize() if n[0].isdigit() is False else n, x) for n, x in d["previsioni"].items())
     pil = "".join(_pilastro(k, float(v)) for k, v in d.get("pilastri", {}).items() if k in PILASTRI)
-    return ("<div class='explain'><p><b>Modello di riferimento: motore Titan</b> · dati del " + E(d["data"]) + f". Indice Armor <b>{_it(d['armor_index'], 1)}</b>, Super Armor <b>{_it(d['super_armor'], 1)}</b>. "
+    return ("<div class='explain'><p><b>Stato di salute del mercato: motore Titan</b> · dati del " + E(d["data"]) + f". Indice Armor <b>{_it(d['armor_index'], 1)}</b>, Super Armor <b>{_it(d['super_armor'], 1)}</b>. "
             "Per ogni periodo trovi la probabilità stimata di un calo importante (5% in una settimana, 10% negli altri periodi) e un punteggio di tendenza. "
             "Sono stime ottenute provando il modello sul passato, non promesse.</p></div>"
             f"<div class='pvg'>{sch}</div>"
@@ -111,9 +111,9 @@ def bilancio_html() -> str:
         else:
             head, hc = f"Nei prossimi 1-6 mesi il rischio di un calo importante è <b>in linea con il solito</b> ({voti['norma']} periodi su {nv}).", "warn"
     else:
-        head, hc = "Previsioni del modello Titan (riferimento).", "warn"
+        head, hc = "Stato di salute del mercato secondo Titan.", "warn"
     return (CSS_B + f"<div class='balbox'><div class='vd {hc} big'>{head}</div>{righe}</div><div class='explain'><p><b>Come leggere.</b> La barra è la probabilità stimata di un calo importante (5% in una settimana, 10% negli altri periodi); il trattino è la frequenza abituale. "
-            "La tendenza è un punteggio da 0 a 100 della direzione (non una probabilità). Modello: Titan, il riferimento di Armor.</p></div>")
+            "La tendenza è un punteggio da 0 a 100 della direzione (non una probabilità). Modello: Titan, che misura lo stato di salute del mercato (la previsione principale dei cali è di FHS+VIX).</p></div>")
 
 
 CSS_B = ("<style>.tbar{position:relative;height:9px;border-radius:99px;background:var(--bd);margin:6px 0 6px;overflow:visible}.tbar i{display:block;height:100%;border-radius:99px}"

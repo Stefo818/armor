@@ -17,6 +17,12 @@ def controllo_diario() -> None:
     """Rilegge la catena di hash del diario v3. Se è rotta il processo termina con errore (il workflow diventa rosso)."""
     from . import journal3
     ok, n, err = journal3.verifica_estrema()
+    if not ok:   # caso tipico: due esecuzioni hanno scritto le stesse righe (per esempio un giro locale e uno di GitHub): si ripara e si ricontrolla
+        try:
+            journal3.ripara()
+        except Exception as e:  # noqa: BLE001
+            print("[diario] riparazione non riuscita:", str(e)[:100], flush=True)
+        ok, n, err = journal3.verifica_estrema()
     if ok:
         print(f"[diario] integrità ok: {n} righe, catena valida", flush=True)
         return
@@ -65,6 +71,11 @@ def forecast(write: bool = True) -> dict:
                 journal3.append_previsione(d0, "Percorsi", var, res["_diag"], ing, {hz: x for hz, x in res.items() if not hz.startswith("_")})
     except Exception as e:  # noqa: BLE001
         print("[percorsi] non calcolati:", str(e)[:120])
+    try:   # decisione di novembre 2026: il numero principale è FHS+VIX (A1 resta in p_a1 per il confronto)
+        from . import campioni as _cp
+        pred, mid = _cp.promuovi(pred, mid)
+    except Exception as e:  # noqa: BLE001
+        print("[promuovi] non applicato:", str(e)[:100])
     if write:
         controllo_diario()
     try:   # scenari stimati sui rendimenti di VWCE in euro (serie a segmenti dichiarati)
@@ -84,6 +95,11 @@ def forecast(write: bool = True) -> dict:
             shadow.run(p, t, pred_a1, spot)
         except Exception as e:  # noqa: BLE001
             print("[ombra] errore:", str(e)[:100])
+        try:   # registro giornaliero di FHS+VIX, Titan, Titan+ (in ombra) e A1: serve alla tabella «Chi ha sbagliato di meno»
+            from . import ombra_modelli
+            print(f"[confronto-giorni] righe registrate: {ombra_modelli.registra(pred, t, p)}", flush=True)
+        except Exception as e:  # noqa: BLE001
+            print("[confronto-giorni] non registrato:", str(e)[:100])
     return {"date": t, "pred": pred, "spot": spot, "eng": eng, "fitted": fitted, "model": mid}
 
 

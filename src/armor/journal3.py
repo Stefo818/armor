@@ -133,6 +133,63 @@ def verifica(path=None) -> tuple[bool, int, str | None]:
     return (True, n, None) if ok else (False, n, f"riga {n}: {err}")
 
 
+def ripara(path=None, scarti=None, log=print) -> tuple[int, int]:
+    """Ripara il caso tipico di catena rotta: due esecuzioni hanno scritto la stessa riga (stessa data, tipo, modello, variante, orizzonte), per esempio
+    un giro locale con diario non aggiornato e un giro di GitHub. Si tocca solo la parte dopo la prima rottura: le righe doppie vanno in
+    data/journal_v3_scartate.csv (con la nota del motivo), le altre si ricollegano alla catena. Le righe prima della rottura non cambiano mai.
+    Se la rottura ha un'altra causa (riga modificata a mano) non si tocca nulla. Restituisce (righe scartate, righe ricollegate)."""
+    import csv
+    path = path or FILE
+    if not path.exists():
+        return 0, 0
+    with open(path, newline="", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    prev, b = "GENESIS", None
+    for i, r in enumerate(rows):
+        if r.get("prev_hash") != prev:
+            b = i
+            break
+        if _h(prev, r) != r.get("hash"):
+            return 0, 0   # riga modificata: non è un doppione, non si ripara
+        prev = r["hash"]
+    if b is None:
+        return 0, 0
+    visti = {(r["asof"], r["kind"], r["model"], r["variante"], r["horizon"]) for r in rows[:b]}
+    tieni, scarta = [], []
+    for r in rows[b:]:
+        k = (r["asof"], r["kind"], r["model"], r["variante"], r["horizon"])
+        if k in visti:
+            scarta.append(r)
+        else:
+            visti.add(k)
+            tieni.append(r)
+    if not scarta:
+        return 0, 0
+    out = []
+    for r in tieni:
+        r = {c: r.get(c, "") for c in COLS}
+        r["prev_hash"] = prev
+        r["hash"] = _h(prev, r)
+        prev = r["hash"]
+        out.append(r)
+    scarti = scarti or (path.parent / "journal_v3_scartate.csv")
+    nuovo = not scarti.exists()
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    with open(scarti, "a", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=COLS + ["scartata_il", "motivo"])
+        if nuovo:
+            w.writeheader()
+        for r in scarta:
+            w.writerow({**{c: r.get(c, "") for c in COLS}, "scartata_il": now, "motivo": "riga doppia scritta da un'altra esecuzione (diario non aggiornato)"})
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=COLS, lineterminator="\n")
+        w.writeheader()
+        for r in rows[:b] + out:
+            w.writerow({c: r.get(c, "") for c in COLS})
+    log(f"[diario] riparato: {len(scarta)} righe doppie spostate in {scarti.name}, {len(out)} righe ricollegate")
+    return len(scarta), len(out)
+
+
 def backup_settimanale(oggi=None, base=None, mantieni: int = 12) -> str | None:
     """Una copia del diario per settimana ISO in data/journal_backups/journal_v3_AAAA-SS.csv (se non c'è già), tiene le ultime `mantieni`, aggiorna indice.json.
     Restituisce il nome del file creato, None se la settimana era già coperta o il diario non esiste."""

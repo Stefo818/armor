@@ -190,15 +190,23 @@ def evaluate(start: str = "1990-01-01", step: int = 5, sims: int = 2000, log=pri
                 modelli_preds.salva(nome, ftgt(d_))
     except Exception as e:  # noqa: BLE001
         log("[valuta] archivio previsioni non salvato: " + str(e)[:80])
+    try:   # Titan+ (in ombra, dal 12/11/2026): FHS+VIX corretto dai pilastri di Titan; entra in classifica e confronto ma NON nella miscela
+        from . import modelli_preds as _mpz, titan_plus
+        log("[valuta] Titan+ (in ombra) ...")
+        preds["Titan+"] = titan_plus.storia_preds(log=log)
+        _mpz.salva("Titan+", ftgt(preds["Titan+"]))
+    except Exception as e:  # noqa: BLE001
+        log("[valuta] Titan+ non valutato: " + str(e)[:100])
     set1 = {m: ftgt(d) for m, d in preds.items() if not m.startswith("MVF")}
+    set1_ens = {m: d for m, d in set1.items() if m != "Titan+"}   # la miscela non usa Titan+ (è solo in ombra)
     rows1, cal1 = _score(p, dates, set1, "modelli", step)
     setF = {m: ftgt(d) for m, d in preds.items() if m in ("A1", "FHS", "MV-logit", "MV-GBM") or m.startswith("MVF")}
     rowsF, calF = _score(p, dates, setF, "famiglie", step)
     log("[valuta] combinazione, taratura e ritorno al normale ...")
     base_fn = lambda hz, k, t: purged_base(p, dates, hz, k, t)
     out_fn = lambda hz, k, t: outcome(p, dates, hz, k, t)
-    comb, state = ensemble.combine(p, dates, set1, base_fn, out_fn, step=step)
-    combB, _ = ensemble.combine(p, dates, set1, base_fn, out_fn, step=step, isotonic=False)   # variante B: scelta a posteriori, solo informativa
+    comb, state = ensemble.combine(p, dates, set1_ens, base_fn, out_fn, step=step)
+    combB, _ = ensemble.combine(p, dates, set1_ens, base_fn, out_fn, step=step, isotonic=False)   # variante B: scelta a posteriori, solo informativa
     cols = ["date", "hz", "kind", "thr", "p"]
     set2 = {"A1": set1["A1"], "FHS": set1["FHS"], "Combinato": comb[cols], "Combinato-B": combB[cols]}
     rows2, cal2 = _score(p, dates, set2, "finale", step)

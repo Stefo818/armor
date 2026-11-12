@@ -20,12 +20,16 @@ SERIES = [
     ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("super", "Super Armor (SAI)", "#f59e0b", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"),
     ("t_p1", "Pilastro Andamento dei prezzi", "#8b5cf6", "", 0, "rischio"), ("t_p2", "Pilastro Credito", "#14b8a6", "", 0, "rischio"), ("t_p3", "Pilastro Paura sui mercati", "#06b6d4", "", 0, "rischio"),
     ("t_p4", "Pilastro Rischio tra i mercati", "#ec4899", "", 0, "rischio"), ("t_p5", "Pilastro Lavoro ed economia", "#84cc16", "", 0, "rischio"), ("t_p6", "Pilastro Liquidità", "#3b82f6", "", 0, "rischio"),
-    ("pm_Titan_10g", "Titan (riferimento) · calo ≥5% a 10 giorni", "#eab308", "%", 0, "prev"),
-    ("pm_Titan_1m", "Titan (riferimento) · calo ≥10% a 1 mese", "#eab308", "%", 1, "prev"),
-    ("pm_Titan_3m", "Titan (riferimento) · calo ≥10% a 3 mesi", "#eab308", "%", 1, "prev"),
-    ("pm_Titan_6m", "Titan (riferimento) · calo ≥10% a 6 mesi", "#eab308", "%", 0, "prev"),
+    ("pm_Titan_10g", "Titan (stato di salute) · calo ≥5% a 10 giorni", "#eab308", "%", 0, "prev"),
+    ("pm_Titan_1m", "Titan (stato di salute) · calo ≥10% a 1 mese", "#eab308", "%", 1, "prev"),
+    ("pm_Titan_3m", "Titan (stato di salute) · calo ≥10% a 3 mesi", "#eab308", "%", 1, "prev"),
+    ("pm_Titan_6m", "Titan (stato di salute) · calo ≥10% a 6 mesi", "#eab308", "%", 0, "prev"),
+    ("pm_Titan+_10g", "Titan+ (in ombra) · calo ≥5% a 10 giorni", "#d946ef", "%", 0, "prev"),
+    ("pm_Titan+_1m", "Titan+ (in ombra) · calo ≥10% a 1 mese", "#d946ef", "%", 1, "prev"),
+    ("pm_Titan+_3m", "Titan+ (in ombra) · calo ≥10% a 3 mesi", "#d946ef", "%", 0, "prev"),
+    ("pm_Titan+_6m", "Titan+ (in ombra) · calo ≥10% a 6 mesi", "#d946ef", "%", 0, "prev"),
     ("pm_FHS+VIX_10g", "FHS+VIX · calo ≥5% a 10 giorni", "#6366f1", "%", 0, "prev"),
-    ("pm_FHS+VIX_1m", "FHS+VIX · calo ≥10% a 1 mese", "#6366f1", "%", 0, "prev"),
+    ("pm_FHS+VIX_1m", "FHS+VIX · calo ≥10% a 1 mese", "#6366f1", "%", 1, "prev"),
     ("pm_FHS+VIX_3m", "FHS+VIX · calo ≥10% a 3 mesi", "#6366f1", "%", 0, "prev"),
     ("pm_FHS+VIX_6m", "FHS+VIX · calo ≥10% a 6 mesi", "#6366f1", "%", 0, "prev"),
     ("pm_FHS_10g", "FHS · calo ≥5% a 10 giorni", "#0ea5e9", "%", 0, "prev"),
@@ -114,6 +118,18 @@ def build(sp: pd.Series, vw: pd.Series, aix: dict | None) -> dict | None:
         if mp is not None:
             for (m, h), g in mp.groupby(["model", "hz"]):
                 out[f"pm_{m}_{h}"] = al(g.drop_duplicates("date").set_index("date")["p"] * 100, 12)
+        try:   # dal 12/11/2026 anche i valori giornalieri registrati in ombra (A1, FHS+VIX, Titan, Titan+)
+            from . import ombra_modelli as _om
+            rg = _om.carica()
+            for col, m in _om.MOD.items():
+                for h, g in rg.groupby("hz"):
+                    z = g[["date", col]].dropna()
+                    if len(z):
+                        k = f"pm_{m}_{h}"
+                        z = z.drop_duplicates("date").set_index("date")[col] * 100
+                        out[k] = al(pd.concat([mp[(mp.model == m) & (mp.hz == h)].drop_duplicates("date").set_index("date")["p"] * 100, z]).pipe(lambda s_: s_[~s_.index.duplicated(keep="last")]).sort_index(), 12)
+        except Exception:  # noqa: BLE001
+            pass
     except Exception:  # noqa: BLE001
         pass
     for k, key in SIMPLE.items():

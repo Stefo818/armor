@@ -18,6 +18,8 @@ PESO_VIVO = 400.0
 
 NOMI = {
     "A1": "A1: modello base sui prezzi",
+    "Titan": "Titan: stato di salute del mercato (sei pilastri)",
+    "Titan+": "Titan+: FHS+VIX corretto dai pilastri di Titan (in ombra)",
     "FHS": "FHS: simulazione della nervosità del mercato",
     "FHS+VIX": "FHS+VIX: la stessa simulazione, aggiustata con l'indice della paura",
     "MV-logit": "Multi-variabile (prezzi, macro, credito), regressione",
@@ -166,10 +168,10 @@ def dal_vivo(sp: pd.Series | None = None) -> dict:
     return {m: {"n": e["n"], "bss": (1 - e["err"] / e["err_b"]) if e["err_b"] > 0 else None} for m, e in res.items()}
 
 
-def _stato(m: str, in_uso: str = "Titan") -> str:
+def _stato(m: str, in_uso: str = "FHS+VIX") -> str:
     if m == in_uso:
         return "riferimento"
-    if m in ("A1", "FHS+VIX"):
+    if m in ("A1", "Titan"):
         return "seconda opinione"
     if m == "V1T1":
         return "sfidante"

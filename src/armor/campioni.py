@@ -124,6 +124,30 @@ def applica(pred: dict, p: pd.Series, t, mid: str, camp: dict | None = None, fhs
     return pred, f"{mid}+{tag}({','.join(h for h in HORIZONS if h in ok)})"
 
 
+def promuovi(pred: dict, mid: str) -> tuple[dict, str]:
+    """Novembre 2026: FHS+VIX è il modello che prevede (numero principale). A1 resta in p_a1 come confronto; Titan misura lo stato di salute; Titan+ è solo in ombra.
+    Dove FHS+VIX non è stato calcolato, resta il numero che c'era."""
+    from .model import VERDICT, level_of
+    fatti = []
+    for hz, r in pred.items():
+        sf = r.get("sfidante")
+        if not sf or not sf.get("p") or hz not in PRIMARY:
+            continue
+        try:
+            if not r.get("p_a1"):
+                r["p_a1"] = dict(r["p"])
+            r["p"] = {thr: float(sf["p"][thr]) for thr in r["p"]}
+            r["motore"], r["adottato"] = "FHS+VIX", True
+            prim = PRIMARY[hz]
+            r["ratio"] = r["p"][prim] / r["base"][prim] if r["base"][prim] > 0 else 1.0
+            r["level"] = level_of(r["ratio"])
+            r["verdict"] = VERDICT[r["level"]]
+            fatti.append(hz)
+        except Exception as e:  # noqa: BLE001
+            print(f"[promuovi] {hz} resta com'era:", str(e)[:60], flush=True)
+    return pred, ("FHS+VIX" if fatti else mid)
+
+
 REVISIONE = "10 maggio 2027"
 DIVERGENZA_PUNTI, DIVERGENZA_RAPPORTO = 0.05, 2.0
 

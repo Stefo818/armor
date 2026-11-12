@@ -111,7 +111,7 @@ G["armor"] = ("L'Indice Armor (motore Titan): giudizio da 1 a 100 sul pericolo d
               "Zone dai dati dal 1995: sotto 35 tranquillo, 35-40 neutro, 40-45 allarme, da 45 pericolo. 40 è la soglia di stress.", "Motore Titan, giornaliero.")
 G["super"] = ("Super Armor (SAI): la media dei sei pilastri Titan (prezzi, credito, paura, rischio tra i mercati, lavoro ed economia, liquidità).",
               "Riassume da quali aree arriva il rischio.", "Zone dai dati dal 1995: sotto 35 tranquillo, 35-45 neutro, 45-55 allarme, da 55 pericolo.", "Motore Titan, giornaliero.")
-for _m, _d in (("Titan", "il motore ufficiale di Armor (riferimento)"), ("FHS+VIX", "simulazione della nervosità ancorata all'indice della paura (ex riferimento)"),
+for _m, _d in (("Titan", "il motore che misura lo stato di salute del mercato"), ("Titan+", "FHS+VIX corretto dai pilastri di Titan, in ombra dal 12 novembre 2026"), ("FHS+VIX", "simulazione della nervosità ancorata all'indice della paura (il modello che prevede)"),
                ("FHS", "simulazione della nervosità sui soli prezzi"), ("A1", "regressione sui soli prezzi")):
     for _h, _t, _n in (("10g", 5, "10 giorni"), ("1m", 10, "1 mese"), ("3m", 10, "3 mesi"), ("6m", 10, "6 mesi")):
         G[f"pm_{_m}_{_h}"] = (f"Probabilità di un calo di almeno il {_t}% dell'S&P 500 entro {_n}, stimata dal modello {_m}: {_d}.", "Il rischio di una correzione secondo quel modello: confronta più modelli sullo stesso grafico.",
