@@ -1,5 +1,5 @@
 {
-"date": "2026-11-11",
+"date": "2026-11-12",
 "segnali": [
 {
 "segnale": "Utili in calo (12 mesi)",
@@ -46,13 +46,13 @@
 {
 "segnale": "Prezzo sotto la media a 10 mesi",
 "colonna": "sma10",
-"valore": 2.6,
+"valore": 3.81,
 "acceso": false
 },
 {
 "segnale": "VIX sopra 30",
 "colonna": "vix",
-"valore": 19.46,
+"valore": 17.49,
 "acceso": false
 },
 {
@@ -84,7 +84,7 @@
 "totale": 13,
 "percentile_accesi": 55,
 "analoghi": {
-"data": "2026-11-11",
+"data": "2026-11-12",
 "colonne": [
 "eps_g12",
 "eps_g3",
@@ -114,11 +114,18 @@
 "infl": 4.02,
 "indpro_g12": 2.25,
 "sahm": 0.0,
-"mom12": 9.81,
-"sma10": 2.6,
-"dd252": -3.81
+"mom12": 11.25,
+"sma10": 3.81,
+"dd252": -2.55
 },
 "mesi": [
+{
+"mese": "1999-11",
+"distanza": 0.37,
+"ret_6": 2.4,
+"ret_12": -5.3,
+"calo_max_12": -5.3
+},
 {
 "mese": "2000-04",
 "distanza": 0.39,
@@ -127,15 +134,8 @@
 "calo_max_12": -24.0
 },
 {
-"mese": "1999-11",
-"distanza": 0.4,
-"ret_6": 2.4,
-"ret_12": -5.3,
-"calo_max_12": -5.3
-},
-{
 "mese": "2025-09",
-"distanza": 0.44,
+"distanza": 0.4,
 "ret_6": -5.2,
 "ret_12": 14.4,
 "calo_max_12": -5.2
@@ -149,59 +149,59 @@
 },
 {
 "mese": "1999-05",
-"distanza": 0.5,
+"distanza": 0.48,
 "ret_6": 6.7,
 "ret_12": 9.1,
 "calo_max_12": -4.2
 },
 {
 "mese": "1999-02",
-"distanza": 0.52,
+"distanza": 0.5,
 "ret_6": 8.9,
 "ret_12": 8.9,
 "calo_max_12": -1.0
 },
 {
 "mese": "2018-09",
-"distanza": 0.52,
+"distanza": 0.5,
 "ret_6": -2.7,
 "ret_12": 2.2,
 "calo_max_12": -19.3
 },
 {
-"mese": "2018-03",
-"distanza": 0.52,
-"ret_6": 10.3,
-"ret_12": 7.3,
-"calo_max_12": -11.0
-},
-{
 "mese": "1998-07",
-"distanza": 0.53,
+"distanza": 0.5,
 "ret_6": 14.2,
 "ret_12": 18.6,
 "calo_max_12": -14.6
 },
 {
+"mese": "2018-03",
+"distanza": 0.53,
+"ret_6": 10.3,
+"ret_12": 7.3,
+"calo_max_12": -11.0
+},
+{
 "mese": "2018-06",
-"distanza": 0.54,
+"distanza": 0.55,
 "ret_6": -8.6,
 "ret_12": 8.2,
 "calo_max_12": -13.5
 },
 {
+"mese": "2006-04",
+"distanza": 0.56,
+"ret_6": 5.1,
+"ret_12": 13.1,
+"calo_max_12": -6.6
+},
+{
 "mese": "2000-09",
-"distanza": 0.55,
+"distanza": 0.56,
 "ret_6": -19.2,
 "ret_12": -27.5,
 "calo_max_12": -32.8
-},
-{
-"mese": "2006-05",
-"distanza": 0.56,
-"ret_6": 10.3,
-"ret_12": 20.5,
-"calo_max_12": -3.7
 },
 {
 "mese": "1999-08",
@@ -211,96 +211,96 @@
 "calo_max_12": -5.5
 },
 {
-"mese": "2005-08",
-"distanza": 0.57,
-"ret_6": 4.9,
-"ret_12": 6.8,
-"calo_max_12": -3.6
-},
-{
-"mese": "2005-12",
-"distanza": 0.59,
-"ret_6": 1.8,
-"ret_12": 13.6,
-"calo_max_12": -2.0
-},
-{
 "mese": "2025-06",
-"distanza": 0.59,
+"distanza": 0.57,
 "ret_6": 11.1,
 "ret_12": 20.9,
 "calo_max_12": -0.1
 },
 {
+"mese": "2005-08",
+"distanza": 0.58,
+"ret_6": 4.9,
+"ret_12": 6.8,
+"calo_max_12": -3.6
+},
+{
 "mese": "1997-03",
-"distanza": 0.59,
+"distanza": 0.58,
 "ret_6": 25.1,
 "ret_12": 45.5,
 "calo_max_12": -2.6
 },
 {
+"mese": "2006-01",
+"distanza": 0.58,
+"ret_6": -0.3,
+"ret_12": 12.4,
+"calo_max_12": -4.4
+},
+{
 "mese": "2007-06",
-"distanza": 0.6,
+"distanza": 0.58,
 "ret_6": -1.7,
 "ret_12": -14.9,
 "calo_max_12": -15.3
 },
 {
-"mese": "1997-10",
-"distanza": 0.61,
-"ret_6": 21.6,
-"ret_12": 20.1,
-"calo_max_12": -0.9
-},
-{
-"mese": "1996-10",
-"distanza": 0.61,
-"ret_6": 13.6,
-"ret_12": 29.7,
-"calo_max_12": -0.2
-},
-{
 "mese": "1998-01",
-"distanza": 0.61,
+"distanza": 0.59,
 "ret_6": 14.3,
 "ret_12": 30.5,
 "calo_max_12": -2.3
 },
 {
-"mese": "1996-07",
-"distanza": 0.62,
-"ret_6": 22.8,
-"ret_12": 49.1,
-"calo_max_12": 1.5
+"mese": "1996-10",
+"distanza": 0.59,
+"ret_6": 13.6,
+"ret_12": 29.7,
+"calo_max_12": -0.2
 },
 {
 "mese": "2017-12",
-"distanza": 0.62,
+"distanza": 0.6,
 "ret_6": 1.7,
 "ret_12": -6.2,
 "calo_max_12": -12.1
 },
 {
+"mese": "1997-10",
+"distanza": 0.6,
+"ret_6": 21.6,
+"ret_12": 20.1,
+"calo_max_12": -0.9
+},
+{
 "mese": "2007-01",
-"distanza": 0.63,
+"distanza": 0.62,
 "ret_6": 1.2,
 "ret_12": -4.2,
 "calo_max_12": -8.9
 },
 {
-"mese": "2005-05",
+"mese": "2017-08",
 "distanza": 0.63,
-"ret_6": 4.9,
-"ret_12": 6.6,
-"calo_max_12": -1.2
+"ret_6": 9.8,
+"ret_12": 17.4,
+"calo_max_12": -0.6
+},
+{
+"mese": "2006-07",
+"distanza": 0.63,
+"ret_6": 12.7,
+"ret_12": 14.0,
+"calo_max_12": -0.8
 }
 ],
 "rialzo_12_su_k": 19,
-"mediana_12": 9.1,
+"mediana_12": 12.4,
 "p10_12": -10.9,
-"p90_12": 30.2,
+"p90_12": 26.2,
 "calo10_12_su_k": 9,
-"rialzo_6_su_k": 19,
+"rialzo_6_su_k": 18,
 "nota": "Non ancora validato: si mostra nell'app solo se supera la verifica della Fase B."
 },
 "ombra": [
@@ -308,14 +308,14 @@
 "modello": "Famiglie combinate (storia lunga)",
 "ob": "calo10",
 "h": 3,
-"p": 0.1865,
+"p": 0.1729,
 "base": 0.1478
 },
 {
 "modello": "Due stadi: recessione poi calo (storia lunga)",
 "ob": "calo10",
 "h": 3,
-"p": 0.2444,
+"p": 0.2262,
 "base": 0.1478
 }
 ]

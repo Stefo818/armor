@@ -8,6 +8,6 @@
  "regime": "Calma",
  "vix": "calma",
  "aix_band": "moderato",
- "divergence": false,
+ "divergence": true,
  "event": "2026-11-10"
 }
