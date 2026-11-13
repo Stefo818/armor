@@ -1,0 +1,447 @@
+{
+ "protocollo": "PROTOCOLLO_MINIMI.md",
+ "asof": "2026-11-06",
+ "scale": {
+  "1s": {
+   "nome": "1 settimana",
+   "tolleranza": 0.01,
+   "n_giorni": 1856,
+   "n_candidati": 1035,
+   "tutto": {
+    "n": 1035,
+    "risparmio": 4.2,
+    "ic90": [
+     2.1,
+     6.7
+    ],
+    "auc": 0.618,
+    "freq": 0.6,
+    "q_media": 0.615
+   },
+   "taratura": {
+    "n": 645,
+    "risparmio": 4.4,
+    "ic90": [
+     1.6,
+     8.0
+    ],
+    "auc": 0.617,
+    "freq": 0.597,
+    "q_media": 0.603
+   },
+   "conferma": {
+    "n": 390,
+    "risparmio": 3.8,
+    "ic90": [
+     0.9,
+     7.1
+    ],
+    "auc": 0.622,
+    "freq": 0.605,
+    "q_media": 0.636
+   },
+   "fasce": [
+    {
+     "fascia": "bassa",
+     "n": 281,
+     "q_media": 0.49,
+     "reale": 0.473
+    },
+    {
+     "fascia": "media",
+     "n": 672,
+     "q_media": 0.649,
+     "reale": 0.629
+    },
+    {
+     "fascia": "alta",
+     "n": 82,
+     "q_media": 0.773,
+     "reale": 0.793
+    }
+   ],
+   "copertura80": {
+    "tutto": 0.788,
+    "taratura": 0.788,
+    "conferma": 0.79
+   },
+   "calibrazione_adottata": false,
+   "prove": {
+    "p1_taratura": true,
+    "p1_conferma": true,
+    "p2_taratura_fasce": true,
+    "p3_copertura": true
+   },
+   "etichetta": "verificata",
+   "utilita": {
+    "1m": {
+     "minimo_probabile": {
+      "n": 82,
+      "mediana": 0.0125,
+      "positivi": 0.6951
+     },
+     "tutti": {
+      "n": 1853,
+      "mediana": 0.0123,
+      "positivi": 0.643
+     }
+    },
+    "3m": {
+     "minimo_probabile": {
+      "n": 82,
+      "mediana": 0.0329,
+      "positivi": 0.8293
+     },
+     "tutti": {
+      "n": 1845,
+      "mediana": 0.0321,
+      "positivi": 0.6974
+     }
+    },
+    "12m": {
+     "minimo_probabile": {
+      "n": 82,
+      "mediana": 0.1096,
+      "positivi": 0.7927
+     },
+     "tutti": {
+      "n": 1807,
+      "mediana": 0.1187,
+      "positivi": 0.7851
+     }
+    }
+   }
+  },
+  "1m": {
+   "nome": "1 mese",
+   "tolleranza": 0.02,
+   "n_giorni": 1853,
+   "n_candidati": 619,
+   "tutto": {
+    "n": 619,
+    "risparmio": 5.3,
+    "ic90": [
+     0.9,
+     9.8
+    ],
+    "auc": 0.617,
+    "freq": 0.538,
+    "q_media": 0.547
+   },
+   "taratura": {
+    "n": 401,
+    "risparmio": 7.4,
+    "ic90": [
+     1.8,
+     12.5
+    ],
+    "auc": 0.645,
+    "freq": 0.536,
+    "q_media": 0.542
+   },
+   "conferma": {
+    "n": 218,
+    "risparmio": 1.2,
+    "ic90": [
+     -6.6,
+     9.4
+    ],
+    "auc": 0.565,
+    "freq": 0.541,
+    "q_media": 0.555
+   },
+   "fasce": [
+    {
+     "fascia": "bassa",
+     "n": 311,
+     "q_media": 0.458,
+     "reale": 0.45
+    },
+    {
+     "fascia": "media",
+     "n": 304,
+     "q_media": 0.635,
+     "reale": 0.622
+    },
+    {
+     "fascia": "alta",
+     "n": 4,
+     "q_media": 0.763,
+     "reale": 1.0
+    }
+   ],
+   "copertura80": {
+    "tutto": 0.79,
+    "taratura": 0.783,
+    "conferma": 0.803
+   },
+   "calibrazione_adottata": false,
+   "prove": {
+    "p1_taratura": true,
+    "p1_conferma": false,
+    "p2_taratura_fasce": true,
+    "p3_copertura": true
+   },
+   "etichetta": "parziale",
+   "utilita": {
+    "1m": {
+     "minimo_probabile": {
+      "n": 4,
+      "mediana": 0.0214,
+      "positivi": 0.75
+     },
+     "tutti": {
+      "n": 1853,
+      "mediana": 0.0123,
+      "positivi": 0.643
+     }
+    },
+    "3m": {
+     "minimo_probabile": {
+      "n": 4,
+      "mediana": 0.0086,
+      "positivi": 0.75
+     },
+     "tutti": {
+      "n": 1845,
+      "mediana": 0.0321,
+      "positivi": 0.6974
+     }
+    },
+    "12m": {
+     "minimo_probabile": {
+      "n": 4,
+      "mediana": 0.0332,
+      "positivi": 0.5
+     },
+     "tutti": {
+      "n": 1807,
+      "mediana": 0.1187,
+      "positivi": 0.7851
+     }
+    }
+   }
+  },
+  "3m": {
+   "nome": "3 mesi",
+   "tolleranza": 0.04,
+   "n_giorni": 1845,
+   "n_candidati": 469,
+   "tutto": {
+    "n": 469,
+    "risparmio": 10.9,
+    "ic90": [
+     2.6,
+     19.1
+    ],
+    "auc": 0.656,
+    "freq": 0.612,
+    "q_media": 0.579
+   },
+   "taratura": {
+    "n": 340,
+    "risparmio": 14.5,
+    "ic90": [
+     3.6,
+     23.0
+    ],
+    "auc": 0.69,
+    "freq": 0.635,
+    "q_media": 0.586
+   },
+   "conferma": {
+    "n": 129,
+    "risparmio": 1.7,
+    "ic90": [
+     -6.0,
+     13.1
+    ],
+    "auc": 0.531,
+    "freq": 0.55,
+    "q_media": 0.561
+   },
+   "fasce": [
+    {
+     "fascia": "bassa",
+     "n": 191,
+     "q_media": 0.469,
+     "reale": 0.44
+    },
+    {
+     "fascia": "media",
+     "n": 261,
+     "q_media": 0.647,
+     "reale": 0.728
+    },
+    {
+     "fascia": "alta",
+     "n": 17,
+     "q_media": 0.768,
+     "reale": 0.765
+    }
+   ],
+   "copertura80": {
+    "tutto": 0.791,
+    "taratura": 0.812,
+    "conferma": 0.736
+   },
+   "calibrazione_adottata": false,
+   "prove": {
+    "p1_taratura": true,
+    "p1_conferma": false,
+    "p2_taratura_fasce": true,
+    "p3_copertura": false
+   },
+   "etichetta": "parziale",
+   "utilita": {
+    "1m": {
+     "minimo_probabile": {
+      "n": 17,
+      "mediana": 0.0137,
+      "positivi": 0.5882
+     },
+     "tutti": {
+      "n": 1853,
+      "mediana": 0.0123,
+      "positivi": 0.643
+     }
+    },
+    "3m": {
+     "minimo_probabile": {
+      "n": 17,
+      "mediana": 0.0116,
+      "positivi": 0.6471
+     },
+     "tutti": {
+      "n": 1845,
+      "mediana": 0.0321,
+      "positivi": 0.6974
+     }
+    },
+    "12m": {
+     "minimo_probabile": {
+      "n": 17,
+      "mediana": -0.0073,
+      "positivi": 0.4118
+     },
+     "tutti": {
+      "n": 1807,
+      "mediana": 0.1187,
+      "positivi": 0.7851
+     }
+    }
+   }
+  },
+  "1a": {
+   "nome": "1 anno",
+   "tolleranza": 0.08,
+   "n_giorni": 1807,
+   "n_candidati": 236,
+   "tutto": {
+    "n": 236,
+    "risparmio": 37.0,
+    "ic90": [
+     26.2,
+     48.5
+    ],
+    "auc": 0.686,
+    "freq": 0.547,
+    "q_media": 0.594
+   },
+   "taratura": {
+    "n": 182,
+    "risparmio": 43.9,
+    "ic90": [
+     37.7,
+     54.6
+    ],
+    "auc": 0.795,
+    "freq": 0.527,
+    "q_media": 0.61
+   },
+   "conferma": {
+    "n": 54,
+    "risparmio": 0.2,
+    "ic90": [
+     -3.0,
+     6.6
+    ],
+    "auc": 0.42,
+    "freq": 0.611,
+    "q_media": 0.541
+   },
+   "fasce": [
+    {
+     "fascia": "bassa",
+     "n": 68,
+     "q_media": 0.481,
+     "reale": 0.471
+    },
+    {
+     "fascia": "media",
+     "n": 158,
+     "q_media": 0.633,
+     "reale": 0.551
+    },
+    {
+     "fascia": "alta",
+     "n": 10,
+     "q_media": 0.757,
+     "reale": 1.0
+    }
+   ],
+   "copertura80": {
+    "tutto": 0.695,
+    "taratura": 0.61,
+    "conferma": 0.981
+   },
+   "calibrazione_adottata": false,
+   "prove": {
+    "p1_taratura": true,
+    "p1_conferma": false,
+    "p2_taratura_fasce": true,
+    "p3_copertura": false
+   },
+   "etichetta": "parziale",
+   "utilita": {
+    "1m": {
+     "minimo_probabile": {
+      "n": 10,
+      "mediana": 0.0168,
+      "positivi": 0.8
+     },
+     "tutti": {
+      "n": 1853,
+      "mediana": 0.0123,
+      "positivi": 0.643
+     }
+    },
+    "3m": {
+     "minimo_probabile": {
+      "n": 10,
+      "mediana": 0.0101,
+      "positivi": 0.7
+     },
+     "tutti": {
+      "n": 1845,
+      "mediana": 0.0321,
+      "positivi": 0.6974
+     }
+    },
+    "12m": {
+     "minimo_probabile": {
+      "n": 10,
+      "mediana": 0.2106,
+      "positivi": 0.8
+     },
+     "tutti": {
+      "n": 1807,
+      "mediana": 0.1187,
+      "positivi": 0.7851
+     }
+    }
+   }
+  }
+ },
+ "calibrazione": {}
+}

@@ -46,5 +46,11 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m armor taratura
+      - name: Minimi e lungo periodo (storia e prove, protocollo PROTOCOLLO_MINIMI.md)
+        continue-on-error: true
+        timeout-minutes: 60
+        env:
+          PYTHONPATH: src
+        run: python -m armor minimi-storia
       - name: Salva i dati nel repository
         run: bash scripts/salva.sh "Convalida mensile" data

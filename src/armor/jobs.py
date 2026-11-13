@@ -100,6 +100,11 @@ def forecast(write: bool = True) -> dict:
             print(f"[confronto-giorni] righe registrate: {ombra_modelli.registra(pred, t, p)}", flush=True)
         except Exception as e:  # noqa: BLE001
             print("[confronto-giorni] non registrato:", str(e)[:100])
+        for nome in ("minimi", "lungo_periodo"):   # radar dei minimi (1s/1m/3m/1a) e fase di lungo periodo: PROTOCOLLO_MINIMI.md
+            try:
+                __import__(f"armor.{nome}", fromlist=["aggiorna"]).aggiorna()
+            except Exception as e:  # noqa: BLE001
+                print(f"[{nome}] non aggiornato:", str(e)[:100])
     return {"date": t, "pred": pred, "spot": spot, "eng": eng, "fitted": fitted, "model": mid}
 
 
@@ -487,6 +492,10 @@ def main() -> None:
         tutto(skip_download=True)
     elif cmd == "diagnosi":
         diagnosi()
+    elif cmd == "minimi-storia":
+        from . import minimi
+        minimi.costruisci_storia()
+        minimi.valuta_e_salva()
     elif cmd == "valida":
         from . import validate
         r = validate.run()
@@ -697,7 +706,7 @@ def main() -> None:
         from . import journal3
         print(journal3.verify())
     else:
-        print("Comandi: tutto | titan | occasione | occasione-verifica | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
+        print("Comandi: tutto | titan | occasione | occasione-verifica | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | minimi-storia | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
 
 
 if __name__ == "__main__":
