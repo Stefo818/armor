@@ -1,112 +1,323 @@
 {
  "date": "2026-11-13",
- "source": "Yahoo Finance (VT, stesso indice di VWCE)",
+ "source": "Yahoo Finance (VT, stesso indice di VWCE): pesi del 2026-11-07 riportati a oggi con i prezzi",
  "top": [
   [
-   "NVIDIA Corp",
-   4.54318,
-   "NVDA",
-   4013.0
+   "Apple Inc",
+   4.174308189151326,
+   "AAPL",
+   5177.4
   ],
   [
-   "Apple Inc",
-   4.1058302,
-   "AAPL",
-   5157.2
+   "NVIDIA Corp",
+   3.872959717862332,
+   "NVDA",
+   3932.3
   ],
   [
    "Microsoft Corp",
-   3.2492198,
+   3.134263294942906,
    "MSFT",
-   3883.9
+   3890.4
   ],
   [
    "Amazon.com Inc",
-   2.0609200000000003,
+   2.0706967390822477,
    "AMZN",
-   2891.9
+   2883.4
   ],
   [
    "Alphabet Inc Class A",
-   1.73223,
+   1.7577218785123168,
    "GOOGL",
-   3672.2
+   3636.2
   ],
   [
    "Taiwan Semiconductor Manufacturing Co Ltd",
-   1.6245801,
+   1.7470731663947103,
    "2330.TW",
-   60941.1
+   2068.0
   ],
   [
    "Broadcom Inc",
-   1.3931900000000002,
+   1.6082855854283085,
    "AVGO",
-   1739.3
+   1656.5
   ],
   [
    "Meta Platforms Inc Class A",
-   1.35921,
+   1.3966101128224633,
    "META",
-   1594.5
+   1640.7
   ],
   [
    "Alphabet Inc Class C",
-   1.3585699999999998,
+   1.3674966742033154,
    "GOOG",
-   3631.0
+   3596.2
   ],
   [
    "Micron Technology Inc",
-   1.02386,
+   1.1283506308931912,
    "MU",
-   903.4
+   880.6
   ]
  ],
  "sectors": [
   [
    "Tecnologia",
-   32.009998
+   32.33855789072479
   ],
   [
    "Finanza",
-   15.840000000000002
+   15.847426807761734
   ],
   [
    "Industria",
-   10.91
+   10.998489293600818
   ],
   [
    "Salute",
-   8.61
+   8.523019357135551
   ],
   [
    "Beni di consumo ciclici",
-   8.48
+   8.280806937344243
   ],
   [
    "Comunicazioni",
-   7.510000499999999
+   7.486068272864413
   ],
   [
    "Beni di consumo base",
-   4.37
+   4.345585724811571
   ],
   [
    "Energia",
-   4.0
+   4.056059696031078
   ],
   [
    "Materiali",
-   3.8599998
+   3.761378503764841
   ],
   [
    "Servizi di pubblica utilità",
-   2.26
+   2.2490069376817527
   ],
   [
    "Immobiliare",
-   2.16
+   2.1136005782791996
   ]
- ]
+ ],
+ "base": {
+  "data": "2026-11-07",
+  "chiave": [
+   [
+    "NVDA",
+    4.543
+   ],
+   [
+    "AAPL",
+    4.106
+   ],
+   [
+    "MSFT",
+    3.249
+   ],
+   [
+    "AMZN",
+    2.061
+   ],
+   [
+    "GOOGL",
+    1.732
+   ],
+   [
+    "2330.TW",
+    1.625
+   ],
+   [
+    "AVGO",
+    1.393
+   ],
+   [
+    "META",
+    1.359
+   ],
+   [
+    "GOOG",
+    1.359
+   ],
+   [
+    "MU",
+    1.024
+   ],
+   [
+    "Tecnologia",
+    32.01
+   ],
+   [
+    "Finanza",
+    15.84
+   ],
+   [
+    "Industria",
+    10.91
+   ],
+   [
+    "Salute",
+    8.61
+   ],
+   [
+    "Beni di consumo ciclici",
+    8.48
+   ],
+   [
+    "Comunicazioni",
+    7.51
+   ],
+   [
+    "Beni di consumo base",
+    4.37
+   ],
+   [
+    "Energia",
+    4.0
+   ],
+   [
+    "Materiali",
+    3.86
+   ],
+   [
+    "Servizi di pubblica utilità",
+    2.26
+   ],
+   [
+    "Immobiliare",
+    2.16
+   ]
+  ],
+  "top": [
+   [
+    "NVIDIA Corp",
+    4.54318,
+    "NVDA"
+   ],
+   [
+    "Apple Inc",
+    4.1058302,
+    "AAPL"
+   ],
+   [
+    "Microsoft Corp",
+    3.2492198,
+    "MSFT"
+   ],
+   [
+    "Amazon.com Inc",
+    2.0609200000000003,
+    "AMZN"
+   ],
+   [
+    "Alphabet Inc Class A",
+    1.73223,
+    "GOOGL"
+   ],
+   [
+    "Taiwan Semiconductor Manufacturing Co Ltd",
+    1.6245801,
+    "2330.TW"
+   ],
+   [
+    "Broadcom Inc",
+    1.3931900000000002,
+    "AVGO"
+   ],
+   [
+    "Meta Platforms Inc Class A",
+    1.35921,
+    "META"
+   ],
+   [
+    "Alphabet Inc Class C",
+    1.3585699999999998,
+    "GOOG"
+   ],
+   [
+    "Micron Technology Inc",
+    1.02386,
+    "MU"
+   ]
+  ],
+  "sectors": [
+   [
+    "Tecnologia",
+    32.009998
+   ],
+   [
+    "Finanza",
+    15.840000000000002
+   ],
+   [
+    "Industria",
+    10.91
+   ],
+   [
+    "Salute",
+    8.61
+   ],
+   [
+    "Beni di consumo ciclici",
+    8.48
+   ],
+   [
+    "Comunicazioni",
+    7.510000499999999
+   ],
+   [
+    "Beni di consumo base",
+    4.37
+   ],
+   [
+    "Energia",
+    4.0
+   ],
+   [
+    "Materiali",
+    3.8599998
+   ],
+   [
+    "Servizi di pubblica utilità",
+    2.26
+   ],
+   [
+    "Immobiliare",
+    2.16
+   ]
+  ],
+  "prezzi": {
+   "VT": 151.72999572753906,
+   "NVDA": 186.63999938964844,
+   "AAPL": 342.3699951171875,
+   "MSFT": 530.6099853515625,
+   "AMZN": 259.29998779296875,
+   "GOOGL": 284.7799987792969,
+   "2330.TW": 2135.0,
+   "AVGO": 293.69000244140625,
+   "META": 610.1500244140625,
+   "GOOG": 283.92999267578125,
+   "MU": 690.0,
+   "IXN": 123.58000183105469,
+   "IXG": 130.0500030517578,
+   "EXI": 182.02000427246094,
+   "IXJ": 112.95999908447266,
+   "RXI": 197.9600067138672,
+   "IXP": 109.38999938964844,
+   "KXI": 72.58000183105469,
+   "IXC": 57.029998779296875,
+   "MXI": 107.5,
+   "JXI": 82.80999755859375,
+   "REET": 26.950000762939453
+  }
+ }
 }
