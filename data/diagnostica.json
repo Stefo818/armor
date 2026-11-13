@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-13T03:32:53Z",
+ "data_utc": "2026-11-13T12:37:50Z",
  "oggi": "2026-11-13",
  "ultima_previsione": "2026-11-12",
  "giorni_da_ultima": 1,
@@ -36,8 +36,8 @@
   {
    "nome": "armor_index",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -85,8 +85,8 @@
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -148,8 +148,8 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -414,8 +414,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-11",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -428,8 +428,8 @@
   {
    "nome": "fear_greed",
    "chiave": false,
-   "ultima_data": "2026-11-12",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -729,8 +729,8 @@
   {
    "nome": "nikkei",
    "chiave": false,
-   "ultima_data": "2026-11-12",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {

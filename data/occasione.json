@@ -443,16 +443,16 @@
  },
  "salute": {
   "mercato": {
-   "valore": 39.5,
+   "valore": 39.4,
    "zona": 1,
    "stato": "Neutro",
-   "posizione": 0.5673667205169628
+   "posizione": 0.5606892837910609
   },
   "economia": {
    "valore": 39.6,
    "zona": 1,
    "stato": "Neutro",
-   "posizione": 0.52859450726979
+   "posizione": 0.5287022078621433
   }
  },
  "titan_calo": {
