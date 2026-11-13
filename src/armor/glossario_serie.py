@@ -96,7 +96,10 @@ G = {
 
 
 def scheda(k: str):
-    return G.get(k)
+    if k in G:
+        return G[k]
+    from . import glossario_dati
+    return glossario_dati.scheda(k)
 
 
 _PIL = {"t_p1": ("Andamento dei prezzi", "quanto la Borsa è scesa dai massimi, la distanza dalle medie a 50 e 200 giorni e le valutazioni"),

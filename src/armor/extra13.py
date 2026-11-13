@@ -432,8 +432,15 @@ GLOSS = [
 
 def glossario_html() -> str:
     items = "".join(f"<details class='gl'><summary>{e(t)}</summary><p>{e(d)}</p><p class='mu'><b>Esempio:</b> {e(x)}</p></details>" for t, d, x in GLOSS)
+    try:
+        from . import glossario_dati, glossario_serie
+        dati = ("<h3 style='margin-top:22px'>Tutti i dati dell'app, spiegati</h3><p class='mu'>Per ogni dato: cos'è, perché conta, come si legge e da dove arriva. "
+                "Cerca per nome (per esempio «inflazione», «credito», «liquidità»).</p>" + glossario_dati.html()
+                + "<p class='mu'>I dati dei grafici di confronto (indici, volatilità, valutazioni, materie prime…) sono spiegati anche cliccando il loro nome nel grafico.</p>")
+    except Exception:  # noqa: BLE001
+        dati = ""
     return ("<input id='glq' type='search' placeholder='Cerca un termine (es. VIX, P/E, PAC)…' class='glq'>" + f"<div id='gllist'>{items}</div>"
-            "<script>(function(){var q=document.getElementById('glq');if(!q)return;q.oninput=function(){var v=q.value.toLowerCase();document.querySelectorAll('#gllist details').forEach(function(d){d.style.display=d.textContent.toLowerCase().indexOf(v)>=0?'':'none'})}})();</script>")
+            "<script>(function(){var q=document.getElementById('glq');if(!q)return;q.oninput=function(){var v=q.value.toLowerCase();document.querySelectorAll('#gllist details').forEach(function(d){d.style.display=d.textContent.toLowerCase().indexOf(v)>=0?'':'none'})}})();</script>" + dati)
 
 
 # ---------------------------------------------------------------- finestra in basso
