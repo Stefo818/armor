@@ -1,21 +1,21 @@
 {
  "protocollo": "PROTOCOLLO_MINIMI.md",
- "asof": "2026-11-06",
+ "asof": "2026-11-13",
  "scale": {
   "1s": {
    "nome": "1 settimana",
    "tolleranza": 0.01,
-   "n_giorni": 777,
-   "n_candidati": 451,
+   "n_giorni": 778,
+   "n_candidati": 452,
    "tutto": {
-    "n": 451,
-    "risparmio": 1.8,
+    "n": 452,
+    "risparmio": 1.7,
     "ic90": [
      -0.6,
-     5.0
+     5.1
     ],
-    "auc": 0.604,
-    "freq": 0.667,
+    "auc": 0.603,
+    "freq": 0.668,
     "q_media": 0.607
    },
    "taratura": {
@@ -30,22 +30,22 @@
     "q_media": 0.603
    },
    "conferma": {
-    "n": 237,
-    "risparmio": 1.1,
+    "n": 238,
+    "risparmio": 0.9,
     "ic90": [
      -3.0,
-     5.6
+     5.5
     ],
-    "auc": 0.599,
-    "freq": 0.675,
+    "auc": 0.597,
+    "freq": 0.676,
     "q_media": 0.611
    },
    "fasce": [
     {
      "fascia": "bassa",
-     "n": 100,
-     "q_media": 0.5,
-     "reale": 0.54
+     "n": 101,
+     "q_media": 0.501,
+     "reale": 0.545
     },
     {
      "fascia": "media",
@@ -63,7 +63,7 @@
    "copertura80": {
     "tutto": 0.836,
     "taratura": 0.827,
-    "conferma": 0.844
+    "conferma": 0.845
    },
    "calibrazione_adottata": true,
    "prove": {
@@ -83,7 +83,7 @@
      "tutti": {
       "n": 774,
       "mediana": 0.0142,
-      "positivi": 0.6452
+      "positivi": 0.6444
      }
     },
     "3m": {
@@ -95,7 +95,7 @@
      "tutti": {
       "n": 766,
       "mediana": 0.0403,
-      "positivi": 0.7429
+      "positivi": 0.742
      }
     },
     "12m": {
@@ -107,7 +107,7 @@
      "tutti": {
       "n": 728,
       "mediana": 0.122,
-      "positivi": 0.8201
+      "positivi": 0.819
      }
     }
    }
@@ -193,7 +193,7 @@
      "tutti": {
       "n": 774,
       "mediana": 0.0142,
-      "positivi": 0.6452
+      "positivi": 0.6444
      }
     },
     "3m": {
@@ -205,7 +205,7 @@
      "tutti": {
       "n": 766,
       "mediana": 0.0403,
-      "positivi": 0.7429
+      "positivi": 0.742
      }
     },
     "12m": {
@@ -217,7 +217,7 @@
      "tutti": {
       "n": 728,
       "mediana": 0.122,
-      "positivi": 0.8201
+      "positivi": 0.819
      }
     }
    }
@@ -303,7 +303,7 @@
      "tutti": {
       "n": 774,
       "mediana": 0.0142,
-      "positivi": 0.6452
+      "positivi": 0.6444
      }
     },
     "3m": {
@@ -315,7 +315,7 @@
      "tutti": {
       "n": 766,
       "mediana": 0.0403,
-      "positivi": 0.7429
+      "positivi": 0.742
      }
     },
     "12m": {
@@ -327,7 +327,7 @@
      "tutti": {
       "n": 728,
       "mediana": 0.122,
-      "positivi": 0.8201
+      "positivi": 0.819
      }
     }
    }
@@ -405,7 +405,7 @@
      "tutti": {
       "n": 774,
       "mediana": 0.0142,
-      "positivi": 0.6452
+      "positivi": 0.6444
      }
     },
     "3m": {
@@ -417,7 +417,7 @@
      "tutti": {
       "n": 766,
       "mediana": 0.0403,
-      "positivi": 0.7429
+      "positivi": 0.742
      }
     },
     "12m": {
@@ -429,7 +429,7 @@
      "tutti": {
       "n": 728,
       "mediana": 0.122,
-      "positivi": 0.8201
+      "positivi": 0.819
      }
     }
    }
@@ -437,8 +437,8 @@
  },
  "calibrazione": {
   "1s": [
-   0.21118297791693638,
-   1.1252634875206402
+   0.2185712945652849,
+   1.1169270588698716
   ]
  }
 }

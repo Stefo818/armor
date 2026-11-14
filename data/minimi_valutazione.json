@@ -1,20 +1,20 @@
 {
  "protocollo": "PROTOCOLLO_MINIMI.md",
- "asof": "2026-11-06",
+ "asof": "2026-11-13",
  "scale": {
   "1s": {
    "nome": "1 settimana",
    "tolleranza": 0.01,
-   "n_giorni": 1856,
-   "n_candidati": 1035,
+   "n_giorni": 1857,
+   "n_candidati": 1036,
    "tutto": {
-    "n": 1035,
-    "risparmio": 4.2,
+    "n": 1036,
+    "risparmio": 4.1,
     "ic90": [
-     2.1,
-     6.7
+     2.0,
+     6.8
     ],
-    "auc": 0.618,
+    "auc": 0.617,
     "freq": 0.6,
     "q_media": 0.615
    },
@@ -30,22 +30,22 @@
     "q_media": 0.603
    },
    "conferma": {
-    "n": 390,
-    "risparmio": 3.8,
+    "n": 391,
+    "risparmio": 3.6,
     "ic90": [
-     0.9,
-     7.1
+     1.0,
+     6.8
     ],
-    "auc": 0.622,
-    "freq": 0.605,
-    "q_media": 0.636
+    "auc": 0.62,
+    "freq": 0.606,
+    "q_media": 0.635
    },
    "fasce": [
     {
      "fascia": "bassa",
-     "n": 281,
-     "q_media": 0.49,
-     "reale": 0.473
+     "n": 282,
+     "q_media": 0.489,
+     "reale": 0.475
     },
     {
      "fascia": "media",
@@ -61,7 +61,7 @@
     }
    ],
    "copertura80": {
-    "tutto": 0.788,
+    "tutto": 0.789,
     "taratura": 0.788,
     "conferma": 0.79
    },
@@ -83,7 +83,7 @@
      "tutti": {
       "n": 1853,
       "mediana": 0.0123,
-      "positivi": 0.643
+      "positivi": 0.6426
      }
     },
     "3m": {
@@ -95,7 +95,7 @@
      "tutti": {
       "n": 1845,
       "mediana": 0.0321,
-      "positivi": 0.6974
+      "positivi": 0.697
      }
     },
     "12m": {
@@ -107,7 +107,7 @@
      "tutti": {
       "n": 1807,
       "mediana": 0.1187,
-      "positivi": 0.7851
+      "positivi": 0.7847
      }
     }
    }
@@ -193,7 +193,7 @@
      "tutti": {
       "n": 1853,
       "mediana": 0.0123,
-      "positivi": 0.643
+      "positivi": 0.6426
      }
     },
     "3m": {
@@ -205,7 +205,7 @@
      "tutti": {
       "n": 1845,
       "mediana": 0.0321,
-      "positivi": 0.6974
+      "positivi": 0.697
      }
     },
     "12m": {
@@ -217,7 +217,7 @@
      "tutti": {
       "n": 1807,
       "mediana": 0.1187,
-      "positivi": 0.7851
+      "positivi": 0.7847
      }
     }
    }
@@ -303,7 +303,7 @@
      "tutti": {
       "n": 1853,
       "mediana": 0.0123,
-      "positivi": 0.643
+      "positivi": 0.6426
      }
     },
     "3m": {
@@ -315,7 +315,7 @@
      "tutti": {
       "n": 1845,
       "mediana": 0.0321,
-      "positivi": 0.6974
+      "positivi": 0.697
      }
     },
     "12m": {
@@ -327,7 +327,7 @@
      "tutti": {
       "n": 1807,
       "mediana": 0.1187,
-      "positivi": 0.7851
+      "positivi": 0.7847
      }
     }
    }
@@ -413,7 +413,7 @@
      "tutti": {
       "n": 1853,
       "mediana": 0.0123,
-      "positivi": 0.643
+      "positivi": 0.6426
      }
     },
     "3m": {
@@ -425,7 +425,7 @@
      "tutti": {
       "n": 1845,
       "mediana": 0.0321,
-      "positivi": 0.6974
+      "positivi": 0.697
      }
     },
     "12m": {
@@ -437,7 +437,7 @@
      "tutti": {
       "n": 1807,
       "mediana": 0.1187,
-      "positivi": 0.7851
+      "positivi": 0.7847
      }
     }
    }

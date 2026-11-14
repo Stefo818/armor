@@ -1,5 +1,5 @@
 {
- "data": "2026-11-12",
+ "data": "2026-11-14",
  "fonte_cambio": "FRED DEXUSEU",
  "segmenti": [
   {
@@ -12,27 +12,27 @@
    "id": "a",
    "nome": "VWCE.DE reale",
    "da": "2019-07-29",
-   "a": "2026-11-12"
+   "a": "2026-11-13"
   },
   {
    "id": "c",
    "nome": "S&P 500 in euro (solo robustezza)",
    "da": "1999-01-04",
-   "a": "2026-11-11"
+   "a": "2026-11-13"
   }
  ],
  "limiti": "VT segue il FTSE Global All Cap (comprende le piccole aziende), VWCE il FTSE All-World; VT chiude alle 22:00 italiane e VWCE.DE alle 17:30 (per confrontare si usano rendimenti settimanali); ritenute sui dividendi diverse.",
  "sovrapposizione": {
   "da": "2019-08-02",
   "settimane": 380,
-  "correlazione": 0.9122339013875815,
-  "diff_annua": 0.0013386938682209415,
-  "vol_annua_vwce": 0.15003388388668973,
-  "vol_annua_vt": 0.15881533079348548
+  "correlazione": 0.9119954151992214,
+  "diff_annua": 0.0013209786423500347,
+  "vol_annua_vwce": 0.1498069351916144,
+  "vol_annua_vt": 0.15860973993978486
  },
  "robustezza_sp_eur": {
   "da": "1999-01-04",
-  "ultimo": 6831.074054150978
+  "ultimo": 6779.334767796307
  },
  "confronto_motori": {
   "da": "2011-07-01",
