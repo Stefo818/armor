@@ -74,6 +74,26 @@ CSS = """<style>
 </style>"""
 
 
+def contesto_chips() -> str:
+    """Quattro etichette di contesto (trend, crescita, affollamento, opzioni): non cambiano le regole di «extra» e «cautela»."""
+    out = ""
+    try:
+        from . import crescita, flussi, opzioni, trend
+        t, c, f, o = trend.carica(), crescita.carica(), flussi.carica(), opzioni.carica()
+        if t:
+            out += f"<button class='chip {'ok' if t['punteggio'] >= 2 else 'pw'}' data-go='segnali' title='Segnali di fondo'><b>Trend</b> · {t['punteggio']} segnali su 3</button>"
+        if c:
+            cl = {"verde": "ok", "giallo": "pw", "rosso": ""}.get(c["semaforo"]["colore"], "")
+            out += f"<button class='chip {cl}' data-go='segnali' title='Segnali di fondo'><b>Crescita</b> · {c['stima']:+.1f}% stimata</button>".replace(".", ",")
+        if f:
+            out += f"<button class='chip' data-go='segnali' title='Segnali di fondo'><b>Affollamento</b> · {f['stato']} ({f['termometro'] * 100:.0f}°)</button>"
+        if o and o.get("gex_mld") is not None:
+            out += f"<button class='chip' data-go='segnali' title='Segnali di fondo'><b>Opzioni</b> · gamma {'positiva' if o['gex_mld'] >= 0 else 'negativa'}</button>"
+    except Exception:  # noqa: BLE001
+        return ""
+    return out
+
+
 def html(minimi_usd: dict | None, minimi_eur: dict | None, fase: dict | None, regime: str | None, dal_massimo: float | None) -> str:
     c = calcola(minimi_usd, minimi_eur, fase, regime, dal_massimo)
     e, ca = c["extra"], c["cautela"]
@@ -92,5 +112,6 @@ def html(minimi_usd: dict | None, minimi_eur: dict | None, fase: dict | None, re
             f"<div class='rw'><b>Versamento extra</b><span class='t'><span class='badge {ek}'>{en}</span> {_h.escape(e['testo'])}</span></div>"
             f"<div class='rw'><b>Livello di cautela</b><span class='t'><span class='badge {ca['classe']}'>{ca['livello']}</span> {_h.escape(mot)}</span></div>"
             f"<div class='chips'>{chips}</div>"
+            f"<div class='chips'>{contesto_chips()}</div>"
             f"<p class='small' style='margin:6px 0 0'>{fase_txt}{_h.escape(c['euro'] or '')} Chiave di lettura: «minimo probabile» = il prezzo è vicino al più basso di quella scala e la stima dice che da qui non scende molto di più. "
             "Quanto versare in più resta una tua decisione; non è un consiglio finanziario.</p></div>")

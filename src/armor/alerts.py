@@ -28,7 +28,7 @@ def vix_band(v: float | None) -> str | None:
 
 def detect(state: dict, pred: dict, regime: str | None, vix: float | None, event: dict | None, move: float | None,
            today: str, aix_band: str | None = None, divergence: bool | None = None,
-           minimi: dict | None = None, fase: str | None = None) -> tuple[list[dict], dict]:
+           minimi: dict | None = None, fase: str | None = None, segnali: dict | None = None) -> tuple[list[dict], dict]:
     """Restituisce (avvisi da inviare, nuovo stato). Funzione pura: facile da provare.
     Si avvisa SOLO quando cambia qualcosa di importante: fascia dell'Indice Armor, divergenza attivata, evento importante oggi/domani,
     previsione a 1 mese che passa da basso/normale a elevato/alto, movimento enorme del VWCE."""
@@ -67,6 +67,21 @@ def detect(state: dict, pred: dict, regime: str | None, vix: float | None, event
             msgs.append({"title": "Cambia la fase di lungo periodo", "priority": 4, "tags": ["hourglass"],
                          "message": f"La fase del mercato a lungo termine passa da «{of}» a «{fase}». Apri l'app per vedere che cosa cambia."})
         new["fase"] = fase
+    if segnali:   # trend dell'S&P 500 (prezzo sopra/sotto la media a 200 giorni) e semaforo della crescita: PROTOCOLLO_MINIMI.md, parti H e J
+        if segnali.get("t1") is not None:
+            ot = state.get("t1")
+            if ot is not None and bool(ot) != bool(segnali["t1"]):
+                su = bool(segnali["t1"])
+                msgs.append({"title": "S&P 500 " + ("torna sopra" if su else "scende sotto") + " la media a 200 giorni", "priority": 3 if su else 4, "tags": ["chart_with_upwards_trend" if su else "chart_with_downwards_trend"],
+                             "message": "Il prezzo " + ("è tornato sopra" if su else "è sceso sotto") + " la sua media degli ultimi 200 giorni. È un segnale di contesto, non un ordine: apri l'app, pagina «Segnali di fondo»."})
+            new["t1"] = bool(segnali["t1"])
+        sem = segnali.get("crescita")
+        if sem:
+            os_ = state.get("crescita")
+            if os_ and os_ != sem and sem == "rosso":
+                msgs.append({"title": "Crescita economica: semaforo rosso", "priority": 4, "tags": ["traffic_light"],
+                             "message": "La stima della crescita in tempo reale o gli indicatori di recessione sono peggiorati. Apri l'app, pagina «Segnali di fondo»."})
+            new["crescita"] = sem
     if regime:
         new["regime"] = regime
     b = vix_band(vix)
@@ -149,7 +164,13 @@ def run(ctx: dict, regime: str | None, vix: float | None, event: dict | None, mo
         fase = (lp or {}).get("fase", {}).get("nome")
     except Exception:  # noqa: BLE001
         mo, fase = None, None
-    msgs, new = detect(st, ctx["pred"], regime, vix, event, move, today, aix_band, divergence, mo, fase)
+    try:
+        from . import crescita, trend
+        tr, cr = trend.carica(), crescita.carica()
+        seg = {"t1": (tr or {}).get("T1"), "crescita": ((cr or {}).get("semaforo") or {}).get("colore")}
+    except Exception:  # noqa: BLE001
+        seg = None
+    msgs, new = detect(st, ctx["pred"], regime, vix, event, move, today, aix_band, divergence, mo, fase, seg)
     pend = st.get("pending") or {}
     pending = pend.get("msgs", []) if pend.get("day") == today else []
     new.pop("pending", None)
