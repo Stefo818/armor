@@ -16,5 +16,7 @@
   "3m": "non_ancora",
   "1a": "non_ancora"
  },
- "fase": "Rischio di contrazione lunga"
+ "fase": "Rischio di contrazione lunga",
+ "t1": true,
+ "crescita": "verde"
 }

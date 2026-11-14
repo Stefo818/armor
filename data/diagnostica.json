@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-14T10:03:02Z",
+ "data_utc": "2026-11-14T11:45:46Z",
  "oggi": "2026-11-14",
  "ultima_previsione": "2026-11-13",
  "giorni_da_ultima": 1,
@@ -458,6 +458,20 @@
    "chiave": false,
    "ultima_data": "2026-07-01",
    "giorni_ritardo": 136,
+   "stato": "ok"
+  },
+  {
+   "nome": "gdp_real_g",
+   "chiave": false,
+   "ultima_data": "2026-07-01",
+   "giorni_ritardo": 136,
+   "stato": "ok"
+  },
+  {
+   "nome": "gdpnow",
+   "chiave": false,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 44,
    "stato": "ok"
   },
   {
