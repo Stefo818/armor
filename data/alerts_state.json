@@ -7,7 +7,14 @@
  },
  "regime": "Calma",
  "vix": "calma",
- "aix_band": "basso",
+ "aix_band": "moderato",
  "divergence": false,
- "event": "2026-11-10"
+ "event": "2026-11-10",
+ "minimi": {
+  "1s": "non_ancora",
+  "1m": "non_ancora",
+  "3m": "non_ancora",
+  "1a": "non_ancora"
+ },
+ "fase": "Rischio di contrazione lunga"
 }

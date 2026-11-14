@@ -1,6 +1,6 @@
 {
  "inizio": "2026-11-12",
- "giorni": 1,
+ "giorni": 2,
  "serie": {
   "eur": {
    "1s": {
@@ -20,7 +20,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -45,7 +45,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -64,7 +64,7 @@
       "q_media": null
      },
      "possibile": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -95,7 +95,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -122,7 +122,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -147,7 +147,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -172,7 +172,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -197,7 +197,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null

@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-14T03:29:32Z",
+ "data_utc": "2026-11-14T10:03:02Z",
  "oggi": "2026-11-14",
  "ultima_previsione": "2026-11-13",
  "giorni_da_ultima": 1,
@@ -36,8 +36,8 @@
   {
    "nome": "armor_index",
    "chiave": false,
-   "ultima_data": "2026-11-12",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -85,8 +85,8 @@
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-12",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -414,8 +414,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-12",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -652,8 +652,8 @@
   {
    "nome": "mweq",
    "chiave": false,
-   "ultima_data": "2026-11-12",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -1289,8 +1289,8 @@
   {
    "nome": "vwce_de",
    "chiave": false,
-   "ultima_data": "2026-11-12",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
