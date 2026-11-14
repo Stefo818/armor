@@ -45,3 +45,24 @@ Etichetta per orizzonte: **buona** (R² > 0,10 in entrambe le metà), **media** 
 
 ## Regole generali
 Nessun numero (soglie, tolleranze, pesi) si cambia dopo aver visto i risultati. Se una prova non è superata, l'app lo dichiara e non nasconde il risultato. L'impronta di questo file è salvata quando il lavoro giornaliero parte.
+
+
+---
+# Aggiunta del 14 novembre 2026 (scritta PRIMA di vedere i risultati delle parti C-G)
+
+## Parte C. Radar dei minimi in euro
+Serie: VWCE in euro (VT convertito in euro fino al 29/07/2019, poi VWCE.DE reale: `serie_eur`, segmenti dichiarati). Stesse scale, tolleranze, soglie (0,75 / 0,55), stesso modello (FHS+VIX, mezzo peso al VIX) e stesse prove della parte A. Date: una ogni 5 sedute dal 2011-01. Divisione dei periodi: taratura fino al 31/12/2018, conferma dal 2019. Etichetta con la stessa regola. Limite dichiarato: serie più corta (circa 18 anni), quindi meno casi.
+
+## Parte D. Tipo di ribasso (descrittiva)
+Distanza dal massimo storico (chiusure S&P 500, dal 1928): sotto 5% «vicino ai massimi»; 5-10% «calo normale»; 10-20% «correzione»; 20-30% «mercato orso»; oltre 30% «crisi». Per ogni fascia: calo ulteriore massimo (mediana e 80%) nelle 63 e 252 sedute successive, probabilità che il calo ulteriore superi il 10% in 252 sedute, rendimento mediano a 12 mesi. Giorni sovrapposti, quindi pochi episodi indipendenti: nessuna prova di capacità previsiva, solo contesto.
+
+## Parte E. Lungo periodo con i tassi (variante B)
+Variante A (in uso): y = a + b·ln(CAPE). Variante B: y = a + b·ln(CAPE) + c·(tasso a 10 anni meno inflazione sui 12 mesi), stesso metodo in avanti. B sostituisce A per un orizzonte (5, 8, 10, 15 anni) solo se il suo R² fuori campione supera quello di A di almeno 0,02 sia in 1920-1969 sia in 1970-2023 (per B il primo anno utile dipende dai dati sui tassi, dal 1953 circa: la prima metà è quindi 1960-1969). Altrimenti resta A e la pagina lo dice.
+
+## Parte F. Altri mercati (descrittiva)
+Per S&P 500, Nikkei 225, DAX, FTSE MIB (indici di prezzo, valute locali): calo massimo dal picco e durata più lunga sotto il massimo precedente (anni). Nessuna prova: serve a ricordare che il «decennio perduto» non è solo americano.
+
+## Parte G. Pagella in tempo reale e «Cosa fare oggi»
+Pagella: ogni giorno si salvano verdetto e q delle 4 scale; a maturazione (H sedute) si registra se il minimo ha tenuto. Si riportano numero di casi, frequenza reale e q media per verdetto; nessuna etichetta prima di 30 casi maturati.
+«Cosa fare oggi» (regole fisse, senza importi): versamento programmato = sempre «continua»; extra = «occasione forte» se almeno una scala tra 1 mese, 3 mesi e 1 anno è «probabile»; «occasione debole» se solo la settimana è «probabile» o se c'è almeno un «possibile»; altrimenti «nessuna occasione». Con fase «Rischio di contrazione lunga» la forza «forte» richiede «probabile» a 3 mesi o 1 anno, altrimenti diventa «debole». Cautela = la più alta tra: regime di tensione (calma/normale = bassa, formazione = media, persistente = alta), fase di lungo periodo (sana = bassa, cara = media, contrazione = alta, a meno che l'occasione sia forte) e distanza dal massimo (oltre 10% = alta).
+Avvisi sul telefono: un messaggio solo quando una scala diventa «probabile» (dal giorno prima non lo era) o cambia la fase di lungo periodo.

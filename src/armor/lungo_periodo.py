@@ -15,6 +15,8 @@ ORIZZONTI = (2, 3, 5, 8, 10, 15)
 PRIMO_OOS = "1920-01-01"
 META = "1969-12-31"
 SOGLIA_SANA, SOGLIA_CARA = 0.60, 0.85
+SOGLIA_B = 0.02                  # miglioramento minimo dell'R² perché la variante con i tassi sostituisca quella col solo CAPE
+ORIZZONTI_B = (5, 8, 10, 15)
 
 
 def dati_mensili() -> pd.DataFrame:
@@ -28,8 +30,28 @@ def dati_mensili() -> pd.DataFrame:
     r = (df["P"] + df["D"] / 12.0) / df["P"].shift(1) / (df["C"] / df["C"].shift(1))
     df["idx"] = r.fillna(1.0).cumprod()
     df["cape"] = cape.reindex(df.index)
+    df["tr"] = tasso_reale().reindex(df.index.to_timestamp("M")).values
     df.index = df.index.to_timestamp("M")
     return df.dropna(subset=["cape"])
+
+
+def _mese(x: pd.Series) -> pd.Series:
+    x = x.dropna()
+    x = x.groupby(x.index.to_period("M")).last()
+    x.index = x.index.to_timestamp("M")
+    return x
+
+
+def tasso_reale() -> pd.Series:
+    """Tasso a 10 anni meno inflazione sui 12 mesi (in frazione), mese per mese dal 1872: Shiller fino al 2023, poi FRED (GS10 e inflazione annua)."""
+    g = _mese(store.load("gs10_shiller")) / 100
+    g2 = _mese(store.load("gs10_m")) / 100
+    g = pd.concat([g, g2[g2.index > g.index[-1]]])
+    c = _mese(store.load("cpi_shiller"))
+    inf = c.pct_change(12)
+    y = _mese(store.load("cpi_yoy")) / 100
+    inf = pd.concat([inf, y[y.index > inf.index[-1]]])
+    return (g - inf).dropna()
 
 
 def _target(df: pd.DataFrame, h: int) -> pd.Series:
@@ -85,6 +107,58 @@ def valuta_orizzonte(df: pd.DataFrame, h: int) -> dict:
 
 def _r(x):
     return None if x is None or not np.isfinite(x) else round(float(x), 4)
+
+
+def _X(df: pd.DataFrame, idx) -> np.ndarray:
+    return np.column_stack([np.ones(len(idx)), np.log(df["cape"].values[idx]), df["tr"].values[idx]])
+
+
+def oos_b(df: pd.DataFrame, h: int) -> pd.DataFrame:
+    """Come oos(), ma con due variabili: ln(CAPE) e tasso reale. Solo mesi con tasso disponibile."""
+    n = 12 * h
+    y = _target(df, h).values
+    ok_tr = ~np.isnan(df["tr"].values)
+    rows = []
+    for i in range(len(df)):
+        if df.index[i] < pd.Timestamp(PRIMO_OOS) or not ok_tr[i]:
+            continue
+        ok = np.arange(0, max(i - n + 1, 0))
+        ok = ok[~np.isnan(y[ok]) & ok_tr[ok]] if len(ok) else ok
+        if len(ok) < 120:
+            continue
+        beta = np.linalg.lstsq(_X(df, ok), y[ok], rcond=None)[0]
+        res = y[ok] - _X(df, ok) @ beta
+        yh = float((_X(df, np.array([i])) @ beta)[0])
+        rows.append({"date": df.index[i], "yhat": yh, "bench": float(y[ok].mean()), "y": y[i], "q10": float(np.quantile(res, .10)), "q90": float(np.quantile(res, .90))})
+    return pd.DataFrame(rows).set_index("date")
+
+
+def confronta_b(df: pd.DataFrame, h: int) -> dict:
+    """Prova della variante B contro A sugli stessi mesi, nelle due metà; B sostituisce A solo se migliora l'R² di almeno 0,02 in entrambe."""
+    a, b = oos(df, h), oos_b(df, h)
+    a = a.reindex(b.index)
+    out = {"h": h}
+    for nome, f in (("prima", lambda z: z[z.index <= META]), ("dopo", lambda z: z[z.index > META])):
+        ra, rb = r2(f(a)), r2(f(b))
+        out[f"r2_a_{nome}"], out[f"r2_b_{nome}"] = _r(ra), _r(rb)
+    d1 = None if out["r2_a_prima"] is None or out["r2_b_prima"] is None else out["r2_b_prima"] - out["r2_a_prima"]
+    d2 = None if out["r2_a_dopo"] is None or out["r2_b_dopo"] is None else out["r2_b_dopo"] - out["r2_a_dopo"]
+    out["delta_prima"], out["delta_dopo"] = _r(d1), _r(d2)
+    out["adottata"] = bool(d1 is not None and d2 is not None and d1 >= SOGLIA_B and d2 >= SOGLIA_B)
+    return out
+
+
+def previsione_b(df: pd.DataFrame, h: int, cape_oggi: float, tr_oggi: float) -> dict:
+    y = _target(df, h)
+    pairs = y.dropna()
+    ok = np.array([df.index.get_loc(d) for d in pairs.index])
+    m = ~np.isnan(df["tr"].values[ok])
+    ok = ok[m]
+    beta = np.linalg.lstsq(_X(df, ok), y.values[ok], rcond=None)[0]
+    res = y.values[ok] - _X(df, ok) @ beta
+    yh = float(beta @ np.array([1.0, np.log(cape_oggi), tr_oggi]))
+    return {"atteso": _r(yh), "p10": _r(yh + float(np.quantile(res, .10))), "p50": _r(yh + float(np.quantile(res, .5))), "p90": _r(yh + float(np.quantile(res, .90))),
+            "p_perdita": _r(float((yh + res < 0).mean())), "coef_tasso": _r(float(beta[2]))}
 
 
 def fase(df: pd.DataFrame, cape_oggi: float) -> dict:
@@ -154,7 +228,7 @@ def calcola() -> dict:
     cape_oggi = float(store.load("cape_m").dropna().iloc[-1])
     ult = df.index[-1]
     res = {"asof": str(pd.Timestamp.now().date()), "dati_fino_a": str(ult.date())[:7], "cape_oggi": cape_oggi, "fase": fase(df, cape_oggi), "prova_fasi": prova_fasi(df),
-           "orizzonti": {}, "anni_simili": anni_simili(df, cape_oggi), "decenni_perduti": decenni_perduti(df)}
+           "tasso_reale_oggi": _r(float(tasso_reale().iloc[-1])), "orizzonti": {}, "anni_simili": anni_simili(df, cape_oggi), "decenni_perduti": decenni_perduti(df)}
     x_oggi = np.log(cape_oggi)
     for h in ORIZZONTI:
         v = valuta_orizzonte(df, h)
@@ -168,6 +242,19 @@ def calcola() -> dict:
         o = v.pop("oos")
         v.update({"atteso": _r(yh), "p10": _r(yh + float(np.quantile(res_, .10))), "p50": _r(yh + float(np.quantile(res_, .5))), "p90": _r(yh + float(np.quantile(res_, .90))),
                   "p_perdita": _r(float((yh + res_ < 0).mean())), "media_storica": _r(float(pairs.mean())), "a": _r(a), "b": _r(b)})
+        if h in ORIZZONTI_B:
+            try:
+                cb = confronta_b(df, h)
+                tr_oggi = float(tasso_reale().iloc[-1])
+                cb.update(previsione_b(df, h, cape_oggi, tr_oggi))
+                cb["tasso_reale_oggi"] = _r(tr_oggi)
+                v["variante_b"] = cb
+                v["modello"] = "B" if cb["adottata"] else "A"
+                if cb["adottata"]:
+                    v["atteso_a"], v["p_perdita_a"] = v["atteso"], v["p_perdita"]
+                    v.update({k2: cb[k2] for k2 in ("atteso", "p10", "p50", "p90", "p_perdita")})
+            except Exception as e:  # noqa: BLE001
+                v["variante_b"] = {"errore": str(e)[:80]}
         res["orizzonti"][str(h)] = v
         if h == 10:
             s = pairs.iloc[::3]

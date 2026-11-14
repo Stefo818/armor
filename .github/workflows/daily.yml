@@ -30,6 +30,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         timeout-minutes: 20
         run: python -m armor tutto
-      - name: Salva i dati nel repository
+      - name: Controlli prima di salvare (file chiave leggibili, diario integro)
+        id: controlli
         if: always()
+        env:
+          PYTHONPATH: src
+        run: python -m armor controlli
+      - name: Salva i dati nel repository
+        if: always() && steps.controlli.outcome != 'failure'
         run: bash scripts/salva.sh "Aggiornamento automatico dati" data

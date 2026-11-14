@@ -2153,7 +2153,7 @@ def test_opportunita_settimana_scorsa(tmp_path, monkeypatch):
 
 def test_navigazione_copre_tutte_le_pagine():
     from armor import navigazione
-    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "fondi", "valutazioni", "aziende", "macro", "grafici", "previsioni", "modelli", "minimi", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi", "verifiche"]
+    pagine = ["oggi", "notizie", "calendario", "mercati", "saldi", "opportunita", "indici", "regime", "fondi", "valutazioni", "aziende", "macro", "grafici", "previsioni", "modelli", "minimi", "fiducia", "contesto", "portafoglio", "storico", "archivio", "allarmi", "verifiche", "stato"]
     coperte = [p for _g, _l, ps, _i in navigazione.GRUPPI for p in ps]
     assert set(coperte) == set(pagine)
     assert [p for p in set(coperte) if coperte.count(p) > 1] == ["notizie"] or sorted(p for p in set(coperte) if coperte.count(p) > 1) == ["calendario", "notizie"]

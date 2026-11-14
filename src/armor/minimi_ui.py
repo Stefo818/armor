@@ -301,7 +301,105 @@ def _limiti(lp, o):
             "<li>Non è un consiglio finanziario. I numeri non cambiano dopo aver visto i risultati (regole scritte in PROTOCOLLO_MINIMI.md).</li></ul></div>")
 
 
-def html(o: dict | None, p: pd.Series | None = None, lp: dict | None = None, marc: dict | None = None) -> str:
+# ------------------------------------------------------------------ radar in euro, ribasso, altri mercati, pagella
+def _euro_html(o, v):
+    if not o:
+        return "<p class='mu'>Il radar in euro sarà disponibile dopo il prossimo aggiornamento giornaliero.</p>"
+    k, t, d = _riepilogo(o)
+    return (f"<div class='hero {k}'><span class='small'>Dati al {o['data'][8:]}/{o['data'][5:7]}/{o['data'][:4]} · VWCE in euro (storia: VT convertito in euro fino a luglio 2019, poi VWCE reale)</span><b class='big'>{t}</b>{d}</div>"
+            "<p class='sub'>Stessi metodi e stesse soglie del radar principale, ma sul prezzo che conta per te: quello in euro, con il cambio. La storia è più corta (circa 18 anni): meno casi, quindi più prudenza nell'etichetta.</p>"
+            "<div class='g4'>" + "".join(_scheda(k2, s) for k2, s in o["scale"].items()) + "</div>")
+
+
+def _ribasso_chart(r):
+    pts = r["storia"]
+    w, h, ml, mt, mb = 760, 230, 40, 8, 22
+    ymax = max(0.6, max(x[1] for x in pts))
+    n = len(pts)
+    x = lambda i: ml + (w - ml - 8) * i / max(n - 1, 1)
+    y = lambda v: mt + (h - mt - mb) * v / ymax
+    line = " ".join(f"{x(i):.1f},{y(v):.1f}" for i, (_, v) in enumerate(pts))
+    g = []
+    for lim, nome in ((0.10, "10%"), (0.20, "20%"), (0.30, "30%"), (0.50, "50%")):
+        if lim < ymax:
+            g.append(f"<line x1='{ml}' x2='{w - 8}' y1='{y(lim):.1f}' y2='{y(lim):.1f}' stroke='var(--bd)'/><text x='{ml - 4}' y='{y(lim) + 4:.1f}' text-anchor='end'>-{nome}</text>")
+    for yr in range(1930, 2030, 10):
+        i = next((j for j, (d, _) in enumerate(pts) if d >= f"{yr}-01-01"), None)
+        if i is not None:
+            g.append(f"<text x='{x(i):.1f}' y='{h - 6}' text-anchor='middle'>{yr}</text>")
+    oggi = r["dal_massimo"]
+    g.append(f"<polygon points='{ml},{mt} {line} {x(n - 1):.1f},{mt}' fill='var(--bad)' opacity='.22'/><polyline points='{line}' fill='none' stroke='var(--bad)' stroke-width='1.2'/>"
+             f"<circle cx='{x(n - 1):.1f}' cy='{y(oggi):.1f}' r='5' fill='var(--warn)' stroke='var(--card)' stroke-width='2'/>")
+    return f"<svg viewBox='0 0 {w} {h}' role='img' aria-label='Distanza dal massimo storico dello S&P 500 dal 1928'>{''.join(g)}</svg>"
+
+
+def _ribasso_html(r):
+    if not r:
+        return "<p class='mu'>Disponibile dopo il prossimo aggiornamento giornaliero.</p>"
+    cur = r["fascia"]
+    cls = {"vicino ai massimi": "", "calo normale": "w", "correzione": "w", "mercato orso": "b", "crisi": "b"}[cur]
+    h = [f"<div class='hero {cls}'><span class='small'>Distanza dal massimo storico dello S&amp;P 500 (massimo del {r['data_massimo'][8:]}/{r['data_massimo'][5:7]}/{r['data_massimo'][:4]}, {r['giorni_dal_massimo']} giorni fa)</span>"
+         f"<b class='big'>{_h.escape(cur.capitalize())}: {r['dal_massimo'] * 100:.1f}% sotto il massimo</b>"
+         "Il tipo di ribasso conta: dopo un calo normale il mercato di solito riparte; dopo un mercato orso i minimi si costruiscono con più calma. La tabella mostra che cosa è successo davvero dal 1928, partendo da ogni livello.</div>"]
+    h.append("<div class='card'>" + _ribasso_chart(r) + "<p class='small' style='margin:4px 0 0'>Ogni punto è una settimana: quanto il mercato era sotto il suo massimo di sempre. Il pallino arancione è oggi.</p></div>")
+    rows = ["<div class='card scroll' style='margin-top:10px'><table class='tb'><tr><th>Dove siamo</th><th>Giorni nella storia</th><th>Calo ulteriore in 3 mesi (metà dei casi / 4 su 5)</th><th>Calo ulteriore in 1 anno (metà / 4 su 5)</th><th>Casi con altro calo oltre 10%</th><th>Rendimento mediano a 1 anno</th></tr>"]
+    for f in r["fasce"]:
+        on = f["fascia"] == cur
+        st = " style='background:var(--warnbg);font-weight:600'" if on else ""
+        rows.append(f"<tr{st}><td>{'▶ ' if on else ''}{_h.escape(f['fascia'])} <span class='small'>({f['da'] * 100:.0f}-{min(f['a'], 1) * 100:.0f}%)</span></td><td>{f['giorni']} <span class='small'>({f['episodi']} episodi)</span></td>"
+                    f"<td>{_pc(f['calo63_med'], 1)} / {_pc(f['calo63_80'], 1)}</td><td>{_pc(f['calo252_med'], 1)} / {_pc(f['calo252_80'], 1)}</td><td>{_pc(f['p_oltre10'])}</td><td>{_sp(f['rend12_med'])}</td></tr>")
+    rows.append("</table><p class='small'>Chiave di lettura: «calo ulteriore» = di quanto scende ancora il prezzo, al punto più basso, dopo quel giorno. Giorni vicini si assomigliano: gli episodi indipendenti sono molto meno dei giorni. È un contesto storico, non una previsione.</p></div>")
+    h.append("".join(rows))
+    return "".join(h)
+
+
+def _altri_html(r):
+    am = (r or {}).get("altri_mercati") or []
+    if not am:
+        return ""
+    rows = ["<div class='card scroll'><table class='tb'><tr><th>Mercato</th><th>Calo massimo dal picco</th><th>Periodo più lungo sotto il massimo precedente</th><th>Oggi</th></tr>"]
+    for m in am:
+        lung = f"{m['anni_piu_lungo']:.1f} anni ({m['da']} → {m['a']})".replace(".", ",") if m["anni_piu_lungo"] is not None else "n/d"
+        oggi = "ai massimi" if (m["dal_massimo_oggi"] or 0) < 0.005 else f"{m['dal_massimo_oggi'] * 100:.1f}% sotto il massimo".replace(".", ",")
+        rows.append(f"<tr><td><b>{_h.escape(m['nome'])}</b><div class='small'>dati dal {m['inizio_dati']}</div></td><td>{_pc(m['calo_max'])}</td><td>{lung}</td><td>{oggi}</td></tr>")
+    rows.append("</table><p class='small'>Indici di prezzo (senza dividendi), in valuta locale. Serve a ricordare che un «decennio perduto» non è solo americano: il Giappone ha impiegato decenni a tornare sui massimi del 1989.</p></div>")
+    return "".join(rows)
+
+
+def _pagella_html(pg):
+    if not pg or not pg.get("inizio"):
+        return ("<p class='mu'>Il registro parte dal prossimo aggiornamento giornaliero: da quel giorno l'app salva ogni verdetto e, quando passa il tempo, scrive se il minimo ha tenuto davvero.</p>")
+    ini = pg["inizio"]
+    ser = pg["serie"].get("usd", {})
+    rows = ["<div class='card scroll'><table class='tb'><tr><th>Scala</th><th>Oggi</th><th>«Minimo probabile» dati</th><th>Esiti già noti</th><th>Il minimo ha tenuto</th><th>«Minimo possibile» dati</th><th>Esiti noti / tenuto</th></tr>"]
+    for k, s in ser.items():
+        pr, po = s["verdetti"]["probabile"], s["verdetti"]["possibile"]
+        ult = VER.get(s["ultimo"], ("no", "n/d"))[1] if s["ultimo"] else "n/d"
+        ten = lambda x: ("in attesa" if not x["maturi"] else (f"{_pc(x['tenuto'])} su {x['maturi']}" if x["maturi"] >= 30 else f"{_pc(x['tenuto'])} su {x['maturi']} (pochi casi)"))
+        rows.append(f"<tr><td><b>{_h.escape(s['nome'])}</b></td><td>{ult}</td><td>{pr['n']}</td><td>{pr['maturi']}</td><td>{ten(pr)}</td><td>{po['n']}</td><td>{po['maturi']} · {ten(po)}</td></tr>")
+    rows.append(f"</table><p class='small'>Registro attivo dal {ini[8:]}/{ini[5:7]}/{ini[:4]} ({pg['giorni']} {'giorno' if pg['giorni'] == 1 else 'giorni'}). Nulla è ricostruito col senno di poi: sono i verdetti dati il giorno stesso. "
+                "Un esito è noto quando sono passate tutte le sedute della scala (5, 21, 63, 252). Con meno di 30 casi il risultato non dice ancora niente di affidabile.</p></div>")
+    return "".join(rows)
+
+
+def _nota_tassi(lp):
+    if not lp:
+        return ""
+    bs = [(h, o["variante_b"]) for h, o in lp["orizzonti"].items() if isinstance(o.get("variante_b"), dict) and "delta_prima" in o["variante_b"]]
+    if not bs:
+        return ""
+    ad = [h for h, b in bs if b["adottata"]]
+    tr = lp.get("tasso_reale_oggi")
+    tr_t = (" Oggi il tasso a 10 anni supera l'inflazione di circa " + f"{tr * 100:.1f}".replace(".", ",") + "%.") if tr is not None else ""
+    if ad:
+        txt = "Aggiungere il tasso reale (tasso a 10 anni meno inflazione) ha migliorato la previsione a " + ", ".join(f"{h} anni" for h in ad) + ": per quegli orizzonti si usa il modello con i tassi."
+    else:
+        txt = "Abbiamo provato ad aggiungere il tasso reale (tasso a 10 anni meno inflazione) al CAPE: a 5, 8, 10 e 15 anni non ha migliorato la previsione in modo stabile nelle due metà della storia, quindi resta il solo CAPE."
+    return f"<div class='card' style='margin-top:10px'><p class='small' style='margin:0'><b>Prova con i tassi.</b> {txt}{tr_t}</p></div>"
+
+
+def html(o: dict | None, p: pd.Series | None = None, lp: dict | None = None, marc: dict | None = None, extra: dict | None = None) -> str:
+    extra = extra or {}
     if o is None:
         mi = "<p class='mu'>I minimi saranno disponibili dopo il prossimo aggiornamento giornaliero.</p>"
     else:
@@ -311,7 +409,13 @@ def html(o: dict | None, p: pd.Series | None = None, lp: dict | None = None, mar
             except Exception:  # noqa: BLE001
                 marc = {}
         mi = _minimi_html(o, marc or {}, p)
-    return (CSS + "<div class='mn'><h2>Minimi e lungo periodo</h2>"
+    top = extra.get("cosa_oggi", "")
+    return (CSS + "<div class='mn'><h2>Minimi e lungo periodo</h2>" + top +
             "<p class='sub'>Due domande per chi versa ogni mese: <b>il mercato è vicino a un minimo?</b> (1 settimana, 1 mese, 3 mesi, 1 anno) e <b>in che fase di lungo periodo siamo?</b> (2-15 anni).</p>"
-            "<h2 style='margin-top:18px'>1 · Radar dei minimi</h2>" + mi +
-            "<h2 style='margin-top:34px'>2 · Mercato a lungo termine</h2>" + _lungo_html(lp) + _limiti(lp, o) + "</div>")
+            "<h2 style='margin-top:18px'>1 · Radar dei minimi (S&amp;P 500)</h2>" + mi +
+            "<h2 style='margin-top:34px'>2 · Radar in euro (VWCE)</h2>" + _euro_html(extra.get("eur"), None) +
+            "<h2 style='margin-top:34px'>3 · Che tipo di ribasso è?</h2>" + _ribasso_html(extra.get("ribasso")) +
+            "<h2 style='margin-top:34px'>4 · Mercato a lungo termine</h2>" + _lungo_html(lp) + _nota_tassi(lp) +
+            "<h3>Non solo l'America: quanto tempo sotto i massimi</h3>" + (_altri_html(extra.get("ribasso")) or "<p class='mu'>Disponibile dopo il prossimo aggiornamento.</p>") +
+            "<h2 style='margin-top:34px'>5 · Pagella in tempo reale</h2><p class='sub'>I segnali dati davvero giorno per giorno e se si sono rivelati giusti: la prova più onesta, perché non può essere ritoccata dopo.</p>" + _pagella_html(extra.get("pagella")) +
+            _limiti(lp, o) + "</div>")

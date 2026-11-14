@@ -10,7 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
-from . import minimi, minimi_ui, lungo_periodo
+from . import minimi, minimi_ui, lungo_periodo, ribasso, pagella, cosa_oggi, stato_app
 from . import occasione_ui, soglie, titan_registro, titan_schede, titan_ui, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
@@ -912,7 +912,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     disc_line = ("<div class='banner'><b>Segnali discordanti:</b> " + f"{', '.join(coh['calmi'])} sono tranquilli, {', '.join(coh['tesi'])} no. <a href='#indici' data-go='indici'>Dettagli</a></div>") if coh["discordanti"] else ""
     ten_line = (f"<div class='card'><b>Rispetto agli ultimi 10 anni:</b> {sy10['verdict']} <a href='#' data-dock='dieci'>Analisi completa ›</a></div>") if sy10 else ""
     pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("mercati", "Mercati"), ("saldi", "Saldi"), ("opportunita", "Opportunità"), ("indici", "Indici"), ("regime", "Regime di tensione"), ("fondi", "Grandi fondi"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"), ("modelli", "Modelli"), ("minimi", "Minimi e lungo periodo"),
-             ("fiducia", "Quanto fidarsi"), ("calendario", "Calendario"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi"), ("verifiche", "Verifiche e scadenze")]
+             ("fiducia", "Quanto fidarsi"), ("calendario", "Calendario"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi"), ("verifiche", "Verifiche e scadenze"), ("stato", "Stato dell'app")]
     from . import navigazione
     nav = navigazione.html(pages)
     lazy_pages: dict[str, str] = {}
@@ -1055,7 +1055,13 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     reg_an = regime_analoghi.calcola() if reg_o else None
     reg_box = _safe(lambda: tensione.CSS + tensione.box_oggi(reg_o, None, reg_an), "Regime di tensione") if reg_o else ""
     p_regime = _safe(lambda: tensione.pagina(reg_o, None, tensione.grafico_dati(), reg_an), "Pagina regime")
-    p_oggi = (f"<a id='oggi'></a>{topbtns}"
+    def _cosa():
+        rb = ribasso.carica()
+        return cosa_oggi.html(minimi.carica_oggi(), minimi.carica_oggi("eur"), (lungo_periodo.carica() or {}).get("fase"), (reg_o or {}).get("stato"), (rb or {}).get("dal_massimo"))
+    cosa_html = _safe(_cosa, "Cosa fare oggi")
+    p_minimi = _safe(lambda: minimi_ui.html(minimi.carica_oggi(), p, lungo_periodo.carica(), None,
+                                            {"eur": minimi.carica_oggi("eur"), "ribasso": ribasso.carica(), "pagella": pagella.carica(), "cosa_oggi": cosa_html}), "Minimi e lungo periodo")
+    p_oggi = (f"<a id='oggi'></a>{topbtns}{cosa_html}"
               f"{_safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index')}"
               f"{_safe(occasione_ui.html, 'Bussola di oggi')}"
               f"{_safe(guida_indici.html, 'Guida agli indici')}"
@@ -1164,7 +1170,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
 <div id='offline' class='banner' style='display:none'></div><div id='alertbanner' class='banner' style='display:none'></div>
 {stale_txt}
 {page('oggi', p_oggi)}{page('indici', p_indici)}{page('regime', p_regime)}{page('fondi', _safe(fondi_ui.html, 'Pagina Grandi fondi'))}{page('valutazioni', p_val)}{page('aziende', p_az)}{page('macro', p_macro)}{page('grafici', p_graf)}{page('previsioni', p_prev)}{page('modelli', _safe(lambda: modelli_ui.html(classifica_html=classifica.html()), 'Pagina Modelli'))}{page('fiducia', p_fid)}{page('contesto', p_ctx)}
-{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('notizie', p_nz)}{page('calendario', p_cal)}{page('mercati', p_md)}{page('saldi', p_sd)}{page('opportunita', p_op)}{page('allarmi', p_al)}{page('minimi', _safe(lambda: minimi_ui.html(minimi.carica_oggi(), p, lungo_periodo.carica()), 'Minimi e lungo periodo'))}{page('verifiche', _safe(lambda: scadenze.html() + armor_lungo.html(armor_lungo.carica()), 'Scadenze'))}
+{page('portafoglio', p_pf)}{page('storico', p_sto)}{page('archivio', p_arc)}{page('notizie', p_nz)}{page('calendario', p_cal)}{page('mercati', p_md)}{page('saldi', p_sd)}{page('opportunita', p_op)}{page('allarmi', p_al)}{page('minimi', p_minimi)}{page('stato', _safe(stato_app.html, 'Stato dell' + chr(39) + 'app'))}{page('verifiche', _safe(lambda: scadenze.html() + armor_lungo.html(armor_lungo.carica()), 'Scadenze'))}
 {dock}{semafori.lista_html(sem) if sem else ''}
 <script>window.TICKER={json.dumps(cruscotto.ticker_items(newsmod.load_latest(), soon, aix), ensure_ascii=False)};</script>{cruscotto.TICKER_JS}
 <footer>Armor non è consulenza finanziaria. Le stime sono probabilità basate sul passato e possono essere sbagliate. Nessun modello prevede con certezza. Prezzi con ritardo di circa 15 minuti.</footer>

@@ -14,7 +14,7 @@ GRUPPI = [
      _svg("<path d='M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z'/><path d='M8.5 12l2.5 2.5 5-5'/>")),
     ("calendario", "Calendario", ["calendario", "notizie"], _svg("<rect x='3' y='5' width='18' height='16' rx='3'/><path d='M3 10h18M8 3v4M16 3v4'/><path d='M8 14h2M12 14h2M16 14h0M8 17h2'/>")),
     ("grafici", "Grafici", ["grafici", "storico", "archivio"], _svg("<path d='M3 3v18h18'/><path d='M7 15l4-5 3 3 5-7'/>")),
-    ("piano", "Piano", ["portafoglio", "allarmi", "verifiche"], _svg("<rect x='3' y='6' width='18' height='14' rx='3'/><path d='M3 10h18M16 15h2'/>")),
+    ("piano", "Piano", ["portafoglio", "allarmi", "verifiche", "stato"], _svg("<rect x='3' y='6' width='18' height='14' rx='3'/><path d='M3 10h18M16 15h2'/>")),
 ]
 
 CSS = """

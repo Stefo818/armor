@@ -19,6 +19,18 @@ STORIA = DATA / "minimi_storia.csv"
 VALUT = DATA / "minimi_valutazione.json"
 OGGI = DATA / "minimi_oggi.json"
 TARATURA_FINE = "2012-12-31"
+# serie «usd» = S&P 500 (dal 1990); serie «eur» = VWCE in euro (dal 2011): stessi metodi, file e periodi di taratura propri (PROTOCOLLO_MINIMI.md, parte C)
+FILE_EUR = {"storia": DATA / "minimi_eur_storia.csv", "valut": DATA / "minimi_eur_valutazione.json", "oggi": DATA / "minimi_eur_oggi.json"}
+FILE_USD = {"storia": STORIA, "valut": VALUT, "oggi": OGGI}
+CFG = {"usd": {"file": FILE_USD, "fine": TARATURA_FINE, "da": "1990-01-01"}, "eur": {"file": FILE_EUR, "fine": "2018-12-31", "da": "2011-01-01"}}
+
+
+def prezzi(serie: str = "usd") -> pd.Series:
+    if serie == "eur":
+        from . import serie_eur
+        return serie_eur.costruisci()["vwce_eur"].dropna()
+    from .features import closed_sp500
+    return closed_sp500()
 MIN_CASI = 150
 
 
@@ -150,7 +162,7 @@ def _fasce(c: pd.DataFrame, col: str = "q") -> list[dict]:
     return out
 
 
-def valuta(storia: pd.DataFrame, p: pd.Series) -> dict:
+def valuta(storia: pd.DataFrame, p: pd.Series, fine: str = TARATURA_FINE) -> dict:
     """Prove 1-5 del protocollo, per scala e per periodo."""
     from .modeleval import auc, block_ci
     T = tabella(storia, p)
@@ -171,7 +183,7 @@ def valuta(storia: pd.DataFrame, p: pd.Series) -> dict:
             lo, hi = block_ci(em.values, eb.values, 5)
             return {"n": int(len(s)), "risparmio": round(float(1 - em.sum() / eb.sum()) * 100, 1), "ic90": [round(lo * 100, 1), round(hi * 100, 1)],
                     "auc": round(auc(s[col], s["E"]), 3), "freq": round(float(s["E"].mean()), 3), "q_media": round(float(s[col].mean()), 3)}
-        tar, con = c[c.index <= TARATURA_FINE], c[c.index > TARATURA_FINE]
+        tar, con = c[c.index <= fine], c[c.index > fine]
         r["tutto"], r["taratura"], r["conferma"] = blocco(c), blocco(tar), blocco(con)
         r["fasce"] = _fasce(c)
         alta = [f for f in r["fasce"] if f["fascia"] == "alta"][0]
@@ -179,7 +191,7 @@ def valuta(storia: pd.DataFrame, p: pd.Series) -> dict:
                             "conferma": round(float((con["fut"] <= con["r80"]).mean()), 3) if len(con) else None}
         # calibrazione facoltativa (adottata solo con la regola del protocollo)
         cc = c.dropna(subset=["qc"])
-        tc, cc2 = cc[cc.index <= TARATURA_FINE], cc[cc.index > TARATURA_FINE]
+        tc, cc2 = cc[cc.index <= fine], cc[cc.index > fine]
         adot = False
         if len(tc) >= 40 and len(cc2) >= 40:
             b_t = ((tc["qc"] - tc["E"]) ** 2).mean() < ((tc["q"] - tc["E"]) ** 2).mean()
@@ -230,9 +242,8 @@ def verdetto(cand: bool, q: float) -> str:
     return "probabile" if q >= SOGLIA_ALTA else ("possibile" if q >= SOGLIA_MEDIA else "non_ancora")
 
 
-def oggi(p: pd.Series | None = None, vix: pd.Series | None = None, valut: dict | None = None, cal: dict | None = None, sims: int = 3000) -> dict:
-    from .features import closed_sp500
-    p = closed_sp500() if p is None else p
+def oggi(p: pd.Series | None = None, vix: pd.Series | None = None, valut: dict | None = None, cal: dict | None = None, sims: int = 3000, serie: str = "usd") -> dict:
+    p = prezzi(serie) if p is None else p
     vix = store.load("vix") if vix is None else vix
     t = p.index[-1]
     r = fhs.log_returns(p[p.index >= fhs.FIT_START])
@@ -241,7 +252,7 @@ def oggi(p: pd.Series | None = None, vix: pd.Series | None = None, valut: dict |
     st = statistiche(fhs.simulate(params, s2, sims, HMAX, seed=int(t.strftime("%Y%m%d")) % (2 ** 31)))
     if valut is None:
         try:
-            valut = json.loads(VALUT.read_text(encoding="utf-8"))
+            valut = json.loads(CFG[serie]["file"]["valut"].read_text(encoding="utf-8"))
         except Exception:  # noqa: BLE001
             valut = {"scale": {}}
     cal = cal if cal is not None else (valut.get("calibrazione") or {})
@@ -262,63 +273,62 @@ def oggi(p: pd.Series | None = None, vix: pd.Series | None = None, valut: dict |
 
 
 # ---------------------------------------------------------------- lavoro giornaliero
-def carica_oggi() -> dict | None:
+def carica_oggi(serie: str = "usd") -> dict | None:
     try:
-        return json.loads(OGGI.read_text(encoding="utf-8"))
+        return json.loads(CFG[serie]["file"]["oggi"].read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         return None
 
 
-def carica_storia() -> pd.DataFrame | None:
+def carica_storia(serie: str = "usd") -> pd.DataFrame | None:
     try:
-        d = pd.read_csv(STORIA, parse_dates=["date"])
+        d = pd.read_csv(CFG[serie]["file"]["storia"], parse_dates=["date"])
         return d if len(d) else None
     except Exception:  # noqa: BLE001
         return None
 
 
-def costruisci_storia(log=print) -> pd.DataFrame:
-    """Calcola la storia settimanale dal 1990 (una volta, 3-5 minuti) e la salva."""
-    from .features import closed_sp500
-    p = closed_sp500()
+def costruisci_storia(log=print, serie: str = "usd") -> pd.DataFrame:
+    """Calcola la storia settimanale (una volta, 3-5 minuti) e la salva."""
+    p = prezzi(serie)
     vix = store.load("vix")
-    dates = p.index[p.index >= "1990-01-01"][::5]
+    dates = p.index[p.index >= CFG[serie]["da"]][::5]
     d = storia_walk_forward(p, vix, dates, log=log)
-    d.to_csv(STORIA, index=False, date_format="%Y-%m-%d")
+    d.to_csv(CFG[serie]["file"]["storia"], index=False, date_format="%Y-%m-%d")
     return d
 
 
-def valuta_e_salva(log=print) -> dict:
-    from .features import closed_sp500
-    p = closed_sp500()
-    st = carica_storia()
-    v = valuta(st, p)
+def valuta_e_salva(log=print, serie: str = "usd") -> dict:
+    p = prezzi(serie)
+    st = carica_storia(serie)
+    v = valuta(st, p, CFG[serie]["fine"])
     v["calibrazione"] = calibrazione_finale(st, p, v)
-    VALUT.write_text(json.dumps(v, ensure_ascii=False, indent=1), encoding="utf-8")
-    log("[minimi] valutazione: " + ", ".join(f"{k} {x.get('etichetta')}" for k, x in v["scale"].items()))
+    CFG[serie]["file"]["valut"].write_text(json.dumps(v, ensure_ascii=False, indent=1), encoding="utf-8")
+    log(f"[minimi {serie}] valutazione: " + ", ".join(f"{k} {x.get('etichetta')}" for k, x in v["scale"].items()))
     return v
 
 
-def aggiorna(log=print) -> dict:
+def aggiorna(log=print, serie: str = "usd") -> dict:
     """Ogni giorno: stima di oggi (salvata in minimi_oggi.json e aggiunta alla storia). La storia e la valutazione si rifanno con la convalida mensile."""
-    o = oggi()
-    OGGI.write_text(json.dumps(o, ensure_ascii=False, indent=1), encoding="utf-8")
+    o = oggi(serie=serie)
+    f = CFG[serie]["file"]
+    f["oggi"].write_text(json.dumps(o, ensure_ascii=False, indent=1), encoding="utf-8")
     try:
-        st = carica_storia()
+        st = carica_storia(serie)
         if st is not None and pd.Timestamp(o["data"]) not in set(st["date"]):
             row = {"date": pd.Timestamp(o["data"])}
             for k, v in o["scale"].items():
                 row.update({f"q_{k}": round(v["q_grezza"], 4), f"r50_{k}": round(v["r50"], 4), f"r80_{k}": round(v["r80"], 4), f"r95_{k}": round(v["r95"], 4)})
-            pd.concat([st, pd.DataFrame([row])]).to_csv(STORIA, index=False, date_format="%Y-%m-%d")
+            pd.concat([st, pd.DataFrame([row])]).to_csv(f["storia"], index=False, date_format="%Y-%m-%d")
     except Exception as e:  # noqa: BLE001
         log("[minimi] storia non aggiornata: " + str(e)[:80])
-    log("[minimi] " + ", ".join(f"{k} q={x['q']:.2f} {x['verdetto']}" for k, x in o["scale"].items()))
+    log(f"[minimi {serie}] " + ", ".join(f"{k} q={x['q']:.2f} {x['verdetto']}" for k, x in o["scale"].items()))
     return o
 
 
-def marcatori(p: pd.Series, storia: pd.DataFrame | None = None, anni: float = 3.0) -> dict:
+def marcatori(p: pd.Series, storia: pd.DataFrame | None = None, anni: float = 3.0, serie: str = "usd") -> dict:
     """Per il grafico: per ogni scala i giorni degli ultimi anni con verdetto «probabile» o «possibile» e, se già noto, se il minimo ha tenuto."""
-    storia = carica_storia() if storia is None else storia
+    storia = carica_storia(serie) if storia is None else storia
     if storia is None:
         return {}
     ob = osservati(p)

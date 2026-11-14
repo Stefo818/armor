@@ -1,0 +1,170 @@
+{
+ "data": "2026-11-12",
+ "prezzo": 171.42,
+ "scale": {
+  "1s": {
+   "nome": "1 settimana",
+   "sedute": 5,
+   "tolleranza": 0.01,
+   "dal_minimo": 0.03364688856729359,
+   "minimo_livello": 165.84,
+   "minimo_data": "2026-11-06",
+   "candidato": false,
+   "q": 0.6347997240338289,
+   "q_grezza": 0.5753333333333334,
+   "r50": 0.0069261550100486735,
+   "r80": 0.02158707982006749,
+   "r95": 0.042887334458847334,
+   "verdetto": "non_ancora",
+   "etichetta": "parziale",
+   "fasce": [
+    {
+     "fascia": "bassa",
+     "n": 100,
+     "q_media": 0.5,
+     "reale": 0.54
+    },
+    {
+     "fascia": "media",
+     "n": 351,
+     "q_media": 0.637,
+     "reale": 0.704
+    },
+    {
+     "fascia": "alta",
+     "n": 0,
+     "q_media": null,
+     "reale": null
+    }
+   ],
+   "copertura80": {
+    "tutto": 0.836,
+    "taratura": 0.827,
+    "conferma": 0.844
+   }
+  },
+  "1m": {
+   "nome": "1 mese",
+   "sedute": 21,
+   "tolleranza": 0.02,
+   "dal_minimo": 0.03364688856729359,
+   "minimo_livello": 165.84,
+   "minimo_data": "2026-11-06",
+   "candidato": false,
+   "q": 0.5256666666666666,
+   "q_grezza": 0.5256666666666666,
+   "r50": 0.018340566152706905,
+   "r80": 0.05020668483400409,
+   "r95": 0.10688282351863788,
+   "verdetto": "non_ancora",
+   "etichetta": "parziale",
+   "fasce": [
+    {
+     "fascia": "bassa",
+     "n": 159,
+     "q_media": 0.476,
+     "reale": 0.547
+    },
+    {
+     "fascia": "media",
+     "n": 96,
+     "q_media": 0.591,
+     "reale": 0.625
+    },
+    {
+     "fascia": "alta",
+     "n": 0,
+     "q_media": null,
+     "reale": null
+    }
+   ],
+   "copertura80": {
+    "tutto": 0.863,
+    "taratura": 0.848,
+    "conferma": 0.88
+   }
+  },
+  "3m": {
+   "nome": "3 mesi",
+   "sedute": 63,
+   "tolleranza": 0.04,
+   "dal_minimo": 0.03727459760377583,
+   "minimo_livello": 165.26,
+   "minimo_data": "2026-09-10",
+   "candidato": true,
+   "q": 0.5783333333333334,
+   "q_grezza": 0.5783333333333334,
+   "r50": 0.03078669897995201,
+   "r80": 0.08621034601669886,
+   "r95": 0.18503414882638014,
+   "verdetto": "possibile",
+   "etichetta": "non verificata",
+   "fasce": [
+    {
+     "fascia": "bassa",
+     "n": 112,
+     "q_media": 0.483,
+     "reale": 0.652
+    },
+    {
+     "fascia": "media",
+     "n": 62,
+     "q_media": 0.589,
+     "reale": 0.597
+    },
+    {
+     "fascia": "alta",
+     "n": 0,
+     "q_media": null,
+     "reale": null
+    }
+   ],
+   "copertura80": {
+    "tutto": 0.851,
+    "taratura": 0.81,
+    "conferma": 0.905
+   }
+  },
+  "1a": {
+   "nome": "1 anno",
+   "sedute": 252,
+   "tolleranza": 0.08,
+   "dal_minimo": 0.21747159090909074,
+   "minimo_livello": 140.8,
+   "minimo_data": "2025-11-21",
+   "candidato": false,
+   "q": 0.5856666666666667,
+   "q_grezza": 0.5856666666666667,
+   "r50": 0.05988247090214582,
+   "r80": 0.16447575763826072,
+   "r95": 0.31494259557746546,
+   "verdetto": "non_ancora",
+   "etichetta": "non verificata",
+   "fasce": [
+    {
+     "fascia": "bassa",
+     "n": 41,
+     "q_media": 0.47,
+     "reale": 0.829
+    },
+    {
+     "fascia": "media",
+     "n": 33,
+     "q_media": 0.562,
+     "reale": 0.879
+    },
+    {
+     "fascia": "alta",
+     "n": 0,
+     "q_media": null,
+     "reale": null
+    }
+   ],
+   "copertura80": {
+    "tutto": 1.0,
+    "taratura": 1.0,
+    "conferma": 1.0
+   }
+  }
+ }
+}

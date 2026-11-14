@@ -31,6 +31,7 @@
   },
   "superata": true
  },
+ "tasso_reale_oggi": 0.0105,
  "orizzonti": {
   "2": {
    "h": 2,
@@ -105,7 +106,25 @@
    "p_perdita": 0.5438,
    "media_storica": 0.0717,
    "a": 0.2984,
-   "b": -0.0831
+   "b": -0.0831,
+   "variante_b": {
+    "h": 5,
+    "r2_a_prima": 0.3051,
+    "r2_b_prima": 0.2824,
+    "r2_a_dopo": -0.145,
+    "r2_b_dopo": -0.1317,
+    "delta_prima": -0.0227,
+    "delta_dopo": 0.0133,
+    "adottata": false,
+    "atteso": -0.013,
+    "p10": -0.1027,
+    "p50": -0.0137,
+    "p90": 0.075,
+    "p_perdita": 0.5813,
+    "coef_tasso": 0.233,
+    "tasso_reale_oggi": 0.0105
+   },
+   "modello": "A"
   },
   "8": {
    "h": 8,
@@ -130,7 +149,25 @@
    "p_perdita": 0.5038,
    "media_storica": 0.0702,
    "a": 0.2774,
-   "b": -0.0763
+   "b": -0.0763,
+   "variante_b": {
+    "h": 8,
+    "r2_a_prima": 0.505,
+    "r2_b_prima": 0.4326,
+    "r2_a_dopo": -0.0486,
+    "r2_b_dopo": -0.0478,
+    "delta_prima": -0.0724,
+    "delta_dopo": 0.0008,
+    "adottata": false,
+    "atteso": -0.0057,
+    "p10": -0.0774,
+    "p50": -0.0023,
+    "p90": 0.0642,
+    "p_perdita": 0.5267,
+    "coef_tasso": 0.0723,
+    "tasso_reale_oggi": 0.0105
+   },
+   "modello": "A"
   },
   "10": {
    "h": 10,
@@ -155,7 +192,25 @@
    "p_perdita": 0.4933,
    "media_storica": 0.0692,
    "a": 0.2697,
-   "b": -0.074
+   "b": -0.074,
+   "variante_b": {
+    "h": 10,
+    "r2_a_prima": 0.4754,
+    "r2_b_prima": 0.4765,
+    "r2_a_dopo": 0.0505,
+    "r2_b_dopo": 0.0339,
+    "delta_prima": 0.0011,
+    "delta_dopo": -0.0166,
+    "adottata": false,
+    "atteso": -0.0014,
+    "p10": -0.063,
+    "p50": 0.0023,
+    "p90": 0.0501,
+    "p_perdita": 0.4776,
+    "coef_tasso": -0.0835,
+    "tasso_reale_oggi": 0.0105
+   },
+   "modello": "A"
   },
   "15": {
    "h": 15,
@@ -180,7 +235,25 @@
    "p_perdita": 0.4397,
    "media_storica": 0.067,
    "a": 0.2435,
-   "b": -0.0654
+   "b": -0.0654,
+   "variante_b": {
+    "h": 15,
+    "r2_a_prima": 0.4062,
+    "r2_b_prima": 0.3407,
+    "r2_a_dopo": 0.0139,
+    "r2_b_dopo": 0.0085,
+    "delta_prima": -0.0655,
+    "delta_dopo": -0.0054,
+    "adottata": false,
+    "atteso": 0.0013,
+    "p10": -0.0403,
+    "p50": 0.0023,
+    "p90": 0.0408,
+    "p_perdita": 0.4609,
+    "coef_tasso": 0.0333,
+    "tasso_reale_oggi": 0.0105
+   },
+   "modello": "A"
   }
  },
  "anni_simili": [

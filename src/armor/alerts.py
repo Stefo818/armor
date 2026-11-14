@@ -27,7 +27,8 @@ def vix_band(v: float | None) -> str | None:
 
 
 def detect(state: dict, pred: dict, regime: str | None, vix: float | None, event: dict | None, move: float | None,
-           today: str, aix_band: str | None = None, divergence: bool | None = None) -> tuple[list[dict], dict]:
+           today: str, aix_band: str | None = None, divergence: bool | None = None,
+           minimi: dict | None = None, fase: str | None = None) -> tuple[list[dict], dict]:
     """Restituisce (avvisi da inviare, nuovo stato). Funzione pura: facile da provare.
     Si avvisa SOLO quando cambia qualcosa di importante: fascia dell'Indice Armor, divergenza attivata, evento importante oggi/domani,
     previsione a 1 mese che passa da basso/normale a elevato/alto, movimento enorme del VWCE."""
@@ -51,6 +52,21 @@ def detect(state: dict, pred: dict, regime: str | None, vix: float | None, event
             msgs.append({"title": "Allarme divergenza attivato", "priority": 4, "tags": ["eyes"],
                          "message": "I prezzi sono vicini ai massimi ma più segnali peggiorano: il rialzo è meno solido di quanto sembri. Apri l'app per i dettagli."})
         new["divergence"] = bool(divergence)
+    if minimi:   # una scala diventa «minimo probabile» (ieri non lo era); PROTOCOLLO_MINIMI.md, parte G
+        vecchi = state.get("minimi", {})
+        nuovi = {k: s["verdetto"] for k, s in minimi["scale"].items()}
+        for k, v in nuovi.items():
+            if v == "probabile" and vecchi.get(k) != "probabile":
+                s = minimi["scale"][k]
+                msgs.append({"title": f"Minimo probabile a {s['nome']}", "priority": 5 if k in ("3m", "1a") else 4, "tags": ["chart_with_downwards_trend"],
+                             "message": f"Il prezzo è vicino al minimo di {s['nome']} e la stima che non scenda molto di più è {s['q'] * 100:.0f}%. Apri l'app: pagina «Minimi e lungo periodo»."})
+        new["minimi"] = nuovi
+    if fase:
+        of = state.get("fase")
+        if of and of != fase:
+            msgs.append({"title": "Cambia la fase di lungo periodo", "priority": 4, "tags": ["hourglass"],
+                         "message": f"La fase del mercato a lungo termine passa da «{of}» a «{fase}». Apri l'app per vedere che cosa cambia."})
+        new["fase"] = fase
     if regime:
         new["regime"] = regime
     b = vix_band(vix)
@@ -126,7 +142,14 @@ def run(ctx: dict, regime: str | None, vix: float | None, event: dict | None, mo
         aix_band: str | None = None, divergence: bool | None = None) -> list[dict]:
     st = _load()
     today = date.today().isoformat()
-    msgs, new = detect(st, ctx["pred"], regime, vix, event, move, today, aix_band, divergence)
+    try:
+        from . import lungo_periodo, minimi
+        mo = minimi.carica_oggi()
+        lp = lungo_periodo.carica()
+        fase = (lp or {}).get("fase", {}).get("nome")
+    except Exception:  # noqa: BLE001
+        mo, fase = None, None
+    msgs, new = detect(st, ctx["pred"], regime, vix, event, move, today, aix_band, divergence, mo, fase)
     pend = st.get("pending") or {}
     pending = pend.get("msgs", []) if pend.get("day") == today else []
     new.pop("pending", None)

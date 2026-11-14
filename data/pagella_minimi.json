@@ -1,0 +1,210 @@
+{
+ "inizio": "2026-11-12",
+ "giorni": 1,
+ "serie": {
+  "eur": {
+   "1s": {
+    "nome": "1 settimana",
+    "sedute": 5,
+    "verdetti": {
+     "probabile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "possibile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "non_ancora": {
+      "n": 1,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     }
+    },
+    "ultimo": "non_ancora"
+   },
+   "1m": {
+    "nome": "1 mese",
+    "sedute": 21,
+    "verdetti": {
+     "probabile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "possibile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "non_ancora": {
+      "n": 1,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     }
+    },
+    "ultimo": "non_ancora"
+   },
+   "3m": {
+    "nome": "3 mesi",
+    "sedute": 63,
+    "verdetti": {
+     "probabile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "possibile": {
+      "n": 1,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "non_ancora": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     }
+    },
+    "ultimo": "possibile"
+   },
+   "1a": {
+    "nome": "1 anno",
+    "sedute": 252,
+    "verdetti": {
+     "probabile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "possibile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "non_ancora": {
+      "n": 1,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     }
+    },
+    "ultimo": "non_ancora"
+   }
+  },
+  "usd": {
+   "1s": {
+    "nome": "1 settimana",
+    "sedute": 5,
+    "verdetti": {
+     "probabile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "possibile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "non_ancora": {
+      "n": 1,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     }
+    },
+    "ultimo": "non_ancora"
+   },
+   "1m": {
+    "nome": "1 mese",
+    "sedute": 21,
+    "verdetti": {
+     "probabile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "possibile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "non_ancora": {
+      "n": 1,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     }
+    },
+    "ultimo": "non_ancora"
+   },
+   "3m": {
+    "nome": "3 mesi",
+    "sedute": 63,
+    "verdetti": {
+     "probabile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "possibile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "non_ancora": {
+      "n": 1,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     }
+    },
+    "ultimo": "non_ancora"
+   },
+   "1a": {
+    "nome": "1 anno",
+    "sedute": 252,
+    "verdetti": {
+     "probabile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "possibile": {
+      "n": 0,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     },
+     "non_ancora": {
+      "n": 1,
+      "maturi": 0,
+      "tenuto": null,
+      "q_media": null
+     }
+    },
+    "ultimo": "non_ancora"
+   }
+  }
+ }
+}

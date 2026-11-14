@@ -1,0 +1,9 @@
+date,serie,scala,verdetto,q,candidato
+2026-11-12,usd,1s,non_ancora,0.5267,0
+2026-11-12,usd,1m,non_ancora,0.463,0
+2026-11-12,usd,3m,non_ancora,0.5137,1
+2026-11-12,usd,1a,non_ancora,0.5793,0
+2026-11-12,eur,1s,non_ancora,0.6348,0
+2026-11-12,eur,1m,non_ancora,0.5257,0
+2026-11-12,eur,3m,possibile,0.5783,1
+2026-11-12,eur,1a,non_ancora,0.5857,0
