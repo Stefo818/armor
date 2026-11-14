@@ -3,154 +3,154 @@
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 24835,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 24836,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "vix": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 9287,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 9288,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "vix3m": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5115,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5116,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "vix9d": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 3990,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 3991,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "vvix": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 4989,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 4990,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "skew": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 9211,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 9212,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "move": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5935,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5936,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "nasdaq100": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 10360,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 10361,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "vt": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 4625,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 4626,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "hyg": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 4931,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 4932,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "ief": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 6113,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 6114,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "rsp": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5923,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5924,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "spy": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 8506,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 8507,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "gold": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 6577,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 6578,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "wti": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 6584,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 6585,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "dxy": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 14185,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 14186,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "eurusd": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5955,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5956,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "vwce_de": {
   "ok": true,
@@ -159,52 +159,52 @@
   "new_rows": 0,
   "last_date": "2026-11-12",
   "rows": 1855,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "baa10y": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-10",
-  "rows": 10215,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-12",
+  "rows": 10216,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "t10y2y": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 12609,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 12610,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "t10y3m": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 11218,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 11219,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "hy_oas": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-11",
-  "rows": 789,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-12",
+  "rows": 790,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "ig_oas": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-11",
-  "rows": 788,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-12",
+  "rows": 789,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "nfci": {
   "ok": true,
@@ -213,7 +213,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 2914,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "stlfsi": {
   "ok": true,
@@ -222,52 +222,52 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 1715,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "real10y": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-10",
-  "rows": 5969,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-12",
+  "rows": 5970,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "be10y": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5970,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5971,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "dgs10": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-10",
-  "rows": 16200,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-12",
+  "rows": 16201,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "dgs2": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-10",
-  "rows": 12608,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-12",
+  "rows": 12609,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "fedfunds": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-11",
-  "rows": 26432,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-12",
+  "rows": 26433,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "usd_broad": {
   "ok": true,
@@ -276,16 +276,16 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 5227,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "epu": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-11",
-  "rows": 15290,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-12",
+  "rows": 15291,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "icsa": {
   "ok": true,
@@ -294,7 +294,7 @@
   "new_rows": 0,
   "last_date": "2026-11-07",
   "rows": 3123,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "unrate": {
   "ok": true,
@@ -303,7 +303,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 945,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "cpi": {
   "ok": true,
@@ -312,7 +312,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 957,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "equity_value": {
   "ok": true,
@@ -321,7 +321,7 @@
   "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 305,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "gdp": {
   "ok": true,
@@ -330,43 +330,43 @@
   "new_rows": 0,
   "last_date": "2026-07-01",
   "rows": 319,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "pput": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 10167,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 10168,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "ps_m": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 106,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 107,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "cape_m": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 1875,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 1876,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "pe_m": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 1876,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 1877,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "aaii_bull": {
   "ok": false,
@@ -375,7 +375,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "aaii_bear": {
   "ok": false,
@@ -384,7 +384,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "aaii_spread": {
   "ok": false,
@@ -393,7 +393,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "gpr": {
   "ok": true,
@@ -402,7 +402,7 @@
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "gpr_threat": {
   "ok": true,
@@ -411,7 +411,7 @@
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "gpr_act": {
   "ok": true,
@@ -420,223 +420,223 @@
   "new_rows": 0,
   "last_date": "2026-11-02",
   "rows": 15281,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "fear_greed": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-13",
   "rows": 255,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "breadth50": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 456,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 457,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "breadth200": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 306,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 307,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "nh_nl": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 306,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 307,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "top_ps": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "top_pe": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "top_fcf_yield": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "ai_capex_ocf": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "stoxx50": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 4920,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 4921,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "dax": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 9831,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 9832,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "ftsemib": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7374,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7375,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "nikkei": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-13",
   "rows": 15206,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "eem": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5935,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5936,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xlk": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xlf": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xle": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xlv": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xly": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xlp": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xli": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xlu": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xlb": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 7016,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 7017,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xlre": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 2791,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 2792,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sec_xlc": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 2113,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 2114,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "umcsent": {
   "ok": true,
@@ -645,7 +645,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 677,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "philly": {
   "ok": true,
@@ -654,7 +654,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 702,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "empire": {
   "ok": true,
@@ -663,7 +663,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 304,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "dgorder": {
   "ok": true,
@@ -672,7 +672,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 416,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "neworder": {
   "ok": true,
@@ -681,7 +681,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 416,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "indpro": {
   "ok": true,
@@ -690,7 +690,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 1293,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "payems": {
   "ok": true,
@@ -699,7 +699,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 1054,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "retail": {
   "ok": true,
@@ -708,7 +708,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 417,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "walcl": {
   "ok": true,
@@ -717,7 +717,7 @@
   "new_rows": 0,
   "last_date": "2026-11-11",
   "rows": 1248,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "wresbal": {
   "ok": true,
@@ -726,16 +726,16 @@
   "new_rows": 0,
   "last_date": "2026-11-11",
   "rows": 1248,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "rrp": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 3366,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 3367,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "tga": {
   "ok": true,
@@ -744,61 +744,61 @@
   "new_rows": 0,
   "last_date": "2026-11-11",
   "rows": 1248,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "val_pe_vwce": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "val_ps_vwce": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "val_pe_sp500": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "val_ps_sp500": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "val_pe_ndx": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "val_ps_ndx": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 7,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-14",
+  "rows": 8,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "cot_lev_net": {
   "ok": true,
@@ -807,7 +807,7 @@
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 851,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "cot_am_net": {
   "ok": true,
@@ -816,7 +816,7 @@
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 851,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "cot_dealer_net": {
   "ok": true,
@@ -825,7 +825,7 @@
   "new_rows": 0,
   "last_date": "2026-11-03",
   "rows": 851,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "anfci": {
   "ok": true,
@@ -834,7 +834,7 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 2914,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sloos": {
   "ok": true,
@@ -843,7 +843,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 147,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "credit_ratio": {
   "ok": true,
@@ -852,334 +852,367 @@
   "new_rows": 0,
   "last_date": "2025-10-01",
   "rows": 321,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "iwm": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 6656,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 6657,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "smh": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 6651,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 6652,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "iyt": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5753,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5754,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "kre": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5131,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5132,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "copper": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 6581,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 6582,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "cp": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 318,
+  "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 318,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "delinq_biz": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 158,
+  "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 158,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "chargeoff_biz": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 166,
+  "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 166,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "delinq_cc": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 142,
+  "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 142,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "busloans": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 957,
-  "last_date": "2026-09-01",
-  "rows": 957,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "new_rows": 1,
+  "last_date": "2026-10-01",
+  "rows": 958,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "core_cpi": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 836,
-  "last_date": "2026-09-01",
-  "rows": 836,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "new_rows": 1,
+  "last_date": "2026-10-01",
+  "rows": 837,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "core_pce": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 813,
+  "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 813,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "infl5y5y": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 5967,
-  "last_date": "2026-11-06",
-  "rows": 5967,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "new_rows": 4,
+  "last_date": "2026-11-13",
+  "rows": 5971,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "cfnai": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 715,
+  "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 715,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "sahm_rt": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 802,
+  "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 802,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "ccsa": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 3121,
-  "last_date": "2026-10-24",
-  "rows": 3121,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "new_rows": 1,
+  "last_date": "2026-10-31",
+  "rows": 3122,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "permit": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 801,
+  "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 801,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "isratio": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 416,
+  "new_rows": 0,
   "last_date": "2026-08-01",
   "rows": 416,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "usrec": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 2063,
+  "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 2063,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "recprob": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 712,
+  "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 712,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "m2": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 813,
+  "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 813,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "nfci_credit": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 2913,
-  "last_date": "2026-10-30",
-  "rows": 2913,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-06",
+  "rows": 2914,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "nfci_leverage": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 2913,
-  "last_date": "2026-10-30",
-  "rows": 2913,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-06",
+  "rows": 2914,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "nfci_risk": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 2913,
-  "last_date": "2026-10-30",
-  "rows": 2913,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-06",
+  "rows": 2914,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "kcfsi": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 441,
+  "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 441,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "baa_m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1294,
+  "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 1294,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "aaa_m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1294,
+  "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 1294,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "gs10_m": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 883,
+  "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 883,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "tb3ms": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1114,
+  "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 1114,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "cpi_nsa": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1364,
-  "last_date": "2026-09-01",
-  "rows": 1364,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "new_rows": 1,
+  "last_date": "2026-10-01",
+  "rows": 1365,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "ciss": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-12",
   "rows": 12234,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "margin_debt": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 357,
-  "last_date": "2026-09-01",
-  "rows": 357,
-  "checked_at": "2026-11-08 02:44 UTC"
+  "new_rows": 1,
+  "last_date": "2026-10-01",
+  "rows": 358,
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "cape": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1713,
+  "new_rows": 0,
   "last_date": "2023-09-30",
   "rows": 1713,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "pe_trailing": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1830,
+  "new_rows": 0,
   "last_date": "2023-06-30",
   "rows": 1830,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "price_shiller": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1833,
+  "new_rows": 0,
   "last_date": "2023-09-30",
   "rows": 1833,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "div_shiller": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1830,
+  "new_rows": 0,
   "last_date": "2023-06-30",
   "rows": 1830,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "earn_shiller": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1830,
+  "new_rows": 0,
   "last_date": "2023-06-30",
   "rows": 1830,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "cpi_shiller": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1833,
+  "new_rows": 0,
   "last_date": "2023-09-30",
   "rows": 1833,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "gs10_shiller": {
   "ok": true,
+  "stato": "ok",
   "msg": "",
-  "new_rows": 1833,
+  "new_rows": 0,
   "last_date": "2023-09-30",
   "rows": 1833,
-  "checked_at": "2026-11-08 00:42 UTC"
+  "checked_at": "2026-11-14 03:28 UTC"
  },
  "vix6m": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 4747,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 4748,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "vix1y": {
   "ok": false,
@@ -1188,7 +1221,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "dexuseu": {
   "ok": true,
@@ -1197,97 +1230,97 @@
   "new_rows": 0,
   "last_date": "2026-11-06",
   "rows": 6984,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sp_open": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 9285,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 9286,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sp_high": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 9285,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 9286,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sp_low": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 9285,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 9286,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "vwce_ls": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 1707,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 1708,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "btc": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-12",
   "rows": 4440,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "eth": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 1,
+  "new_rows": 0,
   "last_date": "2026-11-12",
   "rows": 3291,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "silver": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 6578,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 6579,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "natgas": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 6582,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 6583,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "urth": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 3731,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 3732,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "stoxx600": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 5672,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 5673,
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "mweq": {
   "ok": true,
@@ -1296,7 +1329,7 @@
   "new_rows": 0,
   "last_date": "2026-11-12",
   "rows": 538,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "putcall_cboe": {
   "ok": true,
@@ -1305,7 +1338,7 @@
   "new_rows": 0,
   "last_date": "2019-10-04",
   "rows": 3253,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "mmf_assets": {
   "ok": true,
@@ -1314,15 +1347,15 @@
   "new_rows": 0,
   "last_date": "2026-10-05",
   "rows": 2436,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "checked_at": "2026-11-14 03:27 UTC"
  },
  "sp_vol": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-12",
-  "rows": 9284,
-  "checked_at": "2026-11-13 12:35 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-13",
+  "rows": 9285,
+  "checked_at": "2026-11-14 03:27 UTC"
  }
 }
