@@ -1082,7 +1082,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
               f"<h2 style='margin-top:22px'>Mappa dei segnali, settimana per settimana</h2>{map_intro}{map_small}"
               "<div class='topbtns' style='margin-top:10px'><button class='btn pri' data-cal='1'>Apri il calendario: previsto e reale</button><button class='btn' data-go='indici'>Mappa completa</button></div>"
               f"{more}")
-    p_indici = (hero_old + "<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
+    p_indici = ((cosa_html or "") + hero_old + "<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
                 "<div class='explain'><p>Ogni scheda mostra il valore di oggi, un <b>semaforo</b> (verde = tranquillo, giallo = attenzione, rosso = allarme), come si legge l'indice e quando preoccuparsi. "
                 "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>" +
                 (_safe(titan_schede.indici_html, 'Schede Titan') or armor_index.detail_html(aix)) + f"<div class='card'><h3 style='margin-top:0'>Coerenza dei segnali</h3>{insight.coherence_html(coh)}</div>" + semafori.html(sem)
