@@ -62,6 +62,7 @@ def calcola(minimi_usd: dict | None, minimi_eur: dict | None, fase: dict | None,
 
 CSS = """<style>
 .co{border:1px solid var(--bd);border-radius:18px;background:var(--card);padding:16px 18px;margin:0 0 14px}
+details.fold>.fb>.co{border:0;background:transparent;padding:0;margin:12px 0 0;border-radius:0}
 .co h3{margin:0 0 10px;font-size:17px}
 .co .rw{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;align-items:start;padding:9px 0;border-top:1px solid var(--bd)}
 .co .rw:first-of-type{border-top:0}
@@ -107,7 +108,7 @@ def html(minimi_usd: dict | None, minimi_eur: dict | None, fase: dict | None, re
             chips += f"<button class='chip {cl}' data-go='minimi' title='Apri il radar dei minimi'><b>{_h.escape(s['nome'])}</b> · {lab} · {s['q'] * 100:.0f}%</button>"
     fase_txt = f"Fase di lungo periodo: <b>{_h.escape(fase['nome'])}</b>. " if fase else ""
     mot = ("Motivi: " + "; ".join(ca["motivi"]) + ".") if ca["motivi"] else "Nessun segnale di allarme tra regime di tensione, valutazioni e distanza dal massimo."
-    return (CSS + "<div class='co'><h3>Cosa fare oggi</h3>"
+    corpo = ("<div class='co'>"
             "<div class='rw'><b>Versamento programmato</b><span class='t'>Continua come sempre: il piano di accumulo compra a prezzi diversi e non richiede di indovinare il momento.</span></div>"
             f"<div class='rw'><b>Versamento extra</b><span class='t'><span class='badge {ek}'>{en}</span> {_h.escape(e['testo'])}</span></div>"
             f"<div class='rw'><b>Livello di cautela</b><span class='t'><span class='badge {ca['classe']}'>{ca['livello']}</span> {_h.escape(mot)}</span></div>"
@@ -115,3 +116,6 @@ def html(minimi_usd: dict | None, minimi_eur: dict | None, fase: dict | None, re
             f"<div class='chips'>{contesto_chips()}</div>"
             f"<p class='small' style='margin:6px 0 0'>{fase_txt}{_h.escape(c['euro'] or '')} Chiave di lettura: «minimo probabile» = il prezzo è vicino al più basso di quella scala e la stima dice che da qui non scende molto di più. "
             "Quanto versare in più resta una tua decisione; non è un consiglio finanziario.</p></div>")
+    from . import pieghe
+    sub = f"{en} · cautela {ca['livello']}"
+    return CSS + pieghe.fold("Cosa fare oggi", corpo, sub)
