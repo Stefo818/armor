@@ -118,3 +118,9 @@ def test_pieghe_compatta_e_fold():
     k = pieghe.compatta("<h2>P</h2><div class='card'><h3>Uno</h3><p>a</p></div><div class='card'><h3>Due</h3><p>b</p></div>")
     assert k.count("<h3") == 0 and k.count("<details") == 2
     assert pieghe.fold("T", "") == "" and " open" in pieghe.fold("T", "<p>x</p>", aperto=True)
+
+
+def test_oggi_tendine_aperte_di_default():
+    from pathlib import Path
+    src = (Path(__file__).resolve().parents[1] / "src" / "armor" / "report.py").read_text(encoding="utf-8")
+    assert "p_oggi = p_oggi.replace(" in src and "details class='fold ' open" in src
