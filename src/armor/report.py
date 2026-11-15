@@ -1070,11 +1070,11 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     val_b5 = "<section class='b5'>" + parts.valuations_mini(vcards) + "</section>" + ui.next_event_html(today_d)
     aix_sub = f"Indice Armor {aix['value']:.0f}/100" if aix else ""
     p_oggi = (f"<a id='oggi'></a>{topbtns}{cosa_html}"
-              f"{F('Indice Armor e Super Armor', _safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index'), aix_sub)}"
-              f"{F('La bussola di oggi', _safe(occasione_ui.html, 'Bussola di oggi'), 'Salute del mercato, fase e occasioni per le entrate extra')}"
+              f"{F('Indice Armor e Super Armor', _safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index'), aix_sub, True)}"
+              f"{F('La bussola di oggi', _safe(occasione_ui.html, 'Bussola di oggi'), 'Salute del mercato, fase e occasioni per le entrate extra', True)}"
               f"{F('Guida agli indici', _safe(guida_indici.html, 'Guida agli indici'), 'Come leggere i numeri')}"
-              f"{F('Paura, protezioni e prezzi', kpi, 'VIX, put/call, S&P 500 e VWCE')}"
-              f"{F('Perché si muove oggi', _safe(lambda: perche.html(perche.carica()) + perche.JS, 'Perché si muove oggi'), 'Settori, aziende e notizie')}"
+              f"{F('Paura, protezioni e prezzi', kpi, 'VIX, put/call, S&P 500 e VWCE', True)}"
+              f"{F('Perché si muove oggi', _safe(lambda: perche.html(perche.carica()) + perche.JS, 'Perché si muove oggi'), 'Settori, aziende e notizie', True)}"
               f"{F('Il rischio nei prossimi mesi', cruscotto.armor_window(hz3, aix) + cruscotto.JS, 'Indice Armor a tre scadenze')}"
               f"{_safe(lambda: scadenze.banner(scadenze.elenco()), 'Scadenze')}"
               f"{F('Semafori di oggi', sem_new, 'Quanti indici sono verdi, gialli e rossi')}"
@@ -1090,7 +1090,6 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
               f"<h2 style='margin-top:22px'>Mappa dei segnali, settimana per settimana</h2>{map_intro}{map_small}"
               "<div class='topbtns' style='margin-top:10px'><button class='btn pri' data-cal='1'>Apri il calendario: previsto e reale</button><button class='btn' data-go='indici'>Mappa completa</button></div>"
               f"{more}", minimo=1, titolo_aperto=False))
-    p_oggi = p_oggi.replace("<details class='fold '>", "<details class='fold ' open>")   # su Oggi le sezioni partono aperte; l'utente le chiude con la freccetta
     p_indici = ((cosa_html or "") + hero_old + "<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
                 "<div class='explain'><p>Ogni scheda mostra il valore di oggi, un <b>semaforo</b> (verde = tranquillo, giallo = attenzione, rosso = allarme), come si legge l'indice e quando preoccuparsi. "
                 "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>" +

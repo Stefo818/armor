@@ -120,7 +120,10 @@ def test_pieghe_compatta_e_fold():
     assert pieghe.fold("T", "") == "" and " open" in pieghe.fold("T", "<p>x</p>", aperto=True)
 
 
-def test_oggi_tendine_aperte_di_default():
+def test_oggi_tendine_aperte_solo_le_principali():
     from pathlib import Path
     src = (Path(__file__).resolve().parents[1] / "src" / "armor" / "report.py").read_text(encoding="utf-8")
-    assert "p_oggi = p_oggi.replace(" in src and "details class='fold ' open" in src
+    assert "p_oggi = p_oggi.replace(" not in src
+    for t in ("Indice Armor e Super Armor", "La bussola di oggi", "Paura, protezioni e prezzi", "Perché si muove oggi"):
+        riga = [r for r in src.splitlines() if f"F('{t}'" in r][0]
+        assert riga.rstrip().rstrip(")}\"").endswith("True"), t
