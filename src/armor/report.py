@@ -10,7 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
-from . import minimi, minimi_ui, lungo_periodo, ribasso, pagella, cosa_oggi, stato_app, crescita, trend, flussi, opzioni, stress, segnali_ui
+from . import pieghe, minimi, minimi_ui, lungo_periodo, ribasso, pagella, cosa_oggi, stato_app, crescita, trend, flussi, opzioni, stress, segnali_ui
 from . import occasione_ui, soglie, titan_registro, titan_schede, titan_ui, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
@@ -914,10 +914,12 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     pages = [("oggi", "Oggi"), ("notizie", "Notizie"), ("mercati", "Mercati"), ("saldi", "Saldi"), ("opportunita", "Opportunità"), ("indici", "Indici"), ("regime", "Regime di tensione"), ("fondi", "Grandi fondi"), ("valutazioni", "Valutazioni"), ("aziende", "Aziende VWCE"), ("macro", "Economia e Fed"), ("grafici", "Grafici"), ("previsioni", "Previsioni"), ("modelli", "Modelli"), ("minimi", "Minimi e lungo periodo"), ("segnali", "Segnali di fondo"), ("stress", "Stress test"),
              ("fiducia", "Quanto fidarsi"), ("calendario", "Calendario"), ("contesto", "Contesto"), ("portafoglio", "Il mio VWCE e PAC"), ("storico", "Storico"), ("archivio", "Archivio dati"), ("allarmi", "Allarmi"), ("verifiche", "Verifiche e scadenze"), ("stato", "Stato dell'app")]
     from . import navigazione
-    nav = navigazione.html(pages)
+    nav = navigazione.html(pages) + pieghe.CSS + pieghe.JS
     lazy_pages: dict[str, str] = {}
 
     def page(k, inner):
+        if k != "oggi":
+            inner = pieghe.compatta(inner)
         if not lazy or k == "oggi":
             extra = (fondi_ui.JS if "id='fdroot'" in inner else "") + (modelli_ui.JS if "id='mdroot'" in inner else "")
             return f"<div class='pg' id='p-{k}'>{inner}{extra}</div>"
@@ -1063,25 +1065,31 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
                                             {"eur": minimi.carica_oggi("eur"), "ribasso": ribasso.carica(), "pagella": pagella.carica(), "cosa_oggi": cosa_html}), "Minimi e lungo periodo")
     p_segnali = _safe(lambda: segnali_ui.segnali_pagina(crescita.carica(), trend.carica(), flussi.carica(), opzioni.carica()), "Segnali di fondo")
     p_stress = _safe(lambda: segnali_ui.stress_pagina(stress.carica()), "Stress test")
+    F = pieghe.fold
+    hero_b5 = "<section class='b5'>" + armor_index.hero_html(aix, cruscotto.hero_trend(aix)) + "</section>"
+    val_b5 = "<section class='b5'>" + parts.valuations_mini(vcards) + "</section>" + ui.next_event_html(today_d)
+    aix_sub = f"Indice Armor {aix['value']:.0f}/100" if aix else ""
     p_oggi = (f"<a id='oggi'></a>{topbtns}{cosa_html}"
-              f"{_safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index')}"
-              f"{_safe(occasione_ui.html, 'Bussola di oggi')}"
-              f"{_safe(guida_indici.html, 'Guida agli indici')}"
-              f"{kpi}"
-              f"{_safe(lambda: perche.html(perche.carica()) + perche.JS, 'Perché si muove oggi')}"
-              f"{cruscotto.armor_window(hz3, aix)}{cruscotto.JS}"
-              f"{_safe(lambda: scadenze.banner(scadenze.elenco()), 'Scadenze')}{sem_new}"
-              f"{_safe(lambda: soglie.html(aix['value'] if aix else None, _sai_titan(p)), 'Zone di rischio')}"
-              f"<section class='b5'>{armor_index.hero_html(aix, cruscotto.hero_trend(aix))}</section>"
-              f"{reg_box}"
-              f"<section class='b5'>{parts.valuations_mini(vcards)}</section>{ui.next_event_html(today_d)}"
+              f"{F('Indice Armor e Super Armor', _safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index'), aix_sub)}"
+              f"{F('La bussola di oggi', _safe(occasione_ui.html, 'Bussola di oggi'), 'Salute del mercato, fase e occasioni per le entrate extra')}"
+              f"{F('Guida agli indici', _safe(guida_indici.html, 'Guida agli indici'), 'Come leggere i numeri')}"
+              f"{F('Paura, protezioni e prezzi', kpi, 'VIX, put/call, S&P 500 e VWCE')}"
+              f"{F('Perché si muove oggi', _safe(lambda: perche.html(perche.carica()) + perche.JS, 'Perché si muove oggi'), 'Settori, aziende e notizie')}"
+              f"{F('Il rischio nei prossimi mesi', cruscotto.armor_window(hz3, aix) + cruscotto.JS, 'Indice Armor a tre scadenze')}"
+              f"{_safe(lambda: scadenze.banner(scadenze.elenco()), 'Scadenze')}"
+              f"{F('Semafori di oggi', sem_new, 'Quanti indici sono verdi, gialli e rossi')}"
+              f"{F('Zone di rischio', _safe(lambda: soglie.html(aix['value'] if aix else None, _sai_titan(p)), 'Zone di rischio'))}"
+              f"{F('Il giudizio di Armor', hero_b5)}"
+              f"{F('Regime di tensione', reg_box, 'Quanta tensione c’è sui mercati')}"
+              f"{F('Valutazioni e prossimo evento', val_b5, 'P/E, P/S e calendario')}"
+              + pieghe.compatta(
               f"<h2 style='margin-top:22px'>Indice Armor contro i mercati, giorno per giorno</h2>{cf_intro}{cf_small}"
               f"<section class='b5'>{extra13.oggi_html(aix, div, [], n_pru)}{extra13.divergence_html(div)}</section>{_safe(diagnostica.banner, 'Avviso diario')}{_safe(affidabilita.html, 'Affidabilità')}"
               f"<section class='b5'>{titan_ui.bilancio_html() or chiaro.balance_html(pred, mat, FEAT_IT, n_neg, len(sigs))}</section>"
               f"{_safe(ciclico.box_rischio, 'Rischio ciclico')}{_safe(ciclico.box_simili, 'Mesi simili')}"
               f"<h2 style='margin-top:22px'>Mappa dei segnali, settimana per settimana</h2>{map_intro}{map_small}"
               "<div class='topbtns' style='margin-top:10px'><button class='btn pri' data-cal='1'>Apri il calendario: previsto e reale</button><button class='btn' data-go='indici'>Mappa completa</button></div>"
-              f"{more}")
+              f"{more}", minimo=1, titolo_aperto=False))
     p_indici = ((cosa_html or "") + hero_old + "<h2>Cruscotto degli indici: semafori e come leggerli</h2>"
                 "<div class='explain'><p>Ogni scheda mostra il valore di oggi, un <b>semaforo</b> (verde = tranquillo, giallo = attenzione, rosso = allarme), come si legge l'indice e quando preoccuparsi. "
                 "Tocca una scheda per aprire il grafico. Le soglie sono fisse e valgono per tutta la storia.</p></div>" +

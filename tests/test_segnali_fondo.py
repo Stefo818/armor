@@ -103,3 +103,18 @@ def test_avvisi_trend_e_crescita():
     assert "sotto la media a 200" in titoli and "semaforo rosso" in titoli
     m2, _ = alerts.detect(st, **base, segnali={"t1": True, "crescita": "verde"})
     assert not m2
+
+
+def test_pieghe_compatta_e_fold():
+    from armor import pieghe
+    h = pieghe.compatta("<h2>Titolo</h2><p>intro</p><h2>A</h2><p>1</p><div><b>x</b></div><h2>B</h2><p>2</p><script>1</script>")
+    assert h.startswith("<h2>Titolo</h2><p>intro</p>") and h.count("<details") == 2 and h.endswith("<script>1</script>")
+    assert "<h2>A</h2>" not in h and "<span class='fh'>A</span>" in h
+    # senza abbastanza titoli non cambia nulla
+    assert pieghe.compatta("<h2>Solo</h2><p>x</p>") == "<h2>Solo</h2><p>x</p>"
+    # contenitore: si scende dentro
+    assert pieghe.compatta("<div class='mn'><h3>A</h3><p>1</p><h3>B</h3><p>2</p></div>").count("<details") == 2
+    # scheda con titolo: il titolo passa nella tendina e non resta duplicato
+    k = pieghe.compatta("<h2>P</h2><div class='card'><h3>Uno</h3><p>a</p></div><div class='card'><h3>Due</h3><p>b</p></div>")
+    assert k.count("<h3") == 0 and k.count("<details") == 2
+    assert pieghe.fold("T", "") == "" and " open" in pieghe.fold("T", "<p>x</p>", aperto=True)
