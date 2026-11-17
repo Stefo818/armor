@@ -14,7 +14,7 @@
       "q_media": null
      },
      "possibile": {
-      "n": 0,
+      "n": 1,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -26,7 +26,7 @@
       "q_media": null
      }
     },
-    "ultimo": "non_ancora"
+    "ultimo": "possibile"
    },
    "1m": {
     "nome": "1 mese",
@@ -45,7 +45,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 2,
+      "n": 3,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -64,7 +64,7 @@
       "q_media": null
      },
      "possibile": {
-      "n": 2,
+      "n": 3,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -95,7 +95,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 2,
+      "n": 3,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
