@@ -31,4 +31,4 @@ jobs:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python -m armor ore --avvisi
       - name: Salva stato e diario (il file dei risultati lo ricostruisce il sito ogni 15 minuti)
-        run: bash scripts/salva.sh "Previsione a ore" data/ore_state.json data/ore_diario.csv
+        run: bash scripts/salva.sh "Previsione a ore" data/ore_state.json data/ore_diario.csv data/radar_analisti.json
