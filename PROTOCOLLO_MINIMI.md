@@ -86,3 +86,22 @@ Termometro di affollamento: media di percentili (storia nota fino a quella data,
 ### Chiarimenti scritti prima della consegna (solo su disponibilità dei dati)
 - Stress test: le crisi 2000-02 e 2008 usano l'S&P 500 convertito in euro, perché i dati del fondo mondiale (VT) iniziano a giugno 2008. La prova della simulazione riguarda il calo massimo (soglie 80% e 95%), non la perdita finale.
 - Le opzioni su SPY non hanno storia scaricabile: il diario parte dal primo giorno di raccolta e la verifica scatta dopo 60 giorni.
+
+## Parte L — Previsione del VWCE a 1, 3, 6 e 12 ore e avvisi di ribasso (scritta il 17 novembre 2026, dopo un calo del 2,2% non segnalato)
+
+**Perché.** Il 16-17 novembre il VWCE ha perso circa il 2,2%. La sera del 16 Wall Street aveva già chiuso a −1,9% con la paura (VIX) a +19%; l'app non aveva alcun orizzonte sotto i 10 giorni e mandava al massimo una notifica al giorno, a mezzanotte e mezza. Il segnale c'era, non era usato.
+
+**Cosa si misura.**
+1. *Salto in arrivo.* Il VWCE chiude alle 17:30 (Xetra) o alle 22-23 (sedi serali); i futures sull'S&P 500 e il cambio euro/dollaro continuano. Variazione attesa non ancora riflessa = 0,83 × (futures ora ÷ futures all'ultimo scambio del VWCE − 1) − 0,50 × (cambio ora ÷ cambio all'ultimo scambio − 1). Coefficienti tarati sulla prima metà di 570 notti (gennaio 2024 – novembre 2026, barre orarie di Yahoo).
+2. *Ampiezza.* Deviazione giornaliera dei futures = VIX ÷ 100 ÷ √252, ripartita sulle fasce orarie in proporzione alla varianza reale delle ultime due annate; la forma della distribuzione è quella empirica degli ultimi due anni (quantili standardizzati per durata 1, 3, 6, 12 ore).
+3. *Eventi.* Per le trimestrali dei grandi titoli del VWCE (Nvidia, Apple, Microsoft, Amazon, Alphabet, Broadcom, Meta, Tesla) si aggiunge, solo alle finestre che contengono l'ora di pubblicazione (16:20 a New York), un salto con deviazione = peso nel VWCE × contagio × 1,25 × mossa tipica. Contagio 1,6 per Nvidia (sulle ultime 12 trimestrali l'S&P 500 si è mosso 0,09 volte la mossa di Nvidia, circa 1,6 volte il suo peso); 1,0 per gli altri. La mossa tipica è quella implicita nelle opzioni quando disponibile, altrimenti la media storica. La direzione di una sorpresa non è prevista.
+
+**Prove (scritte prima dell'uso, risultati sotto).**
+- Salto all'apertura: R² = 0,86 sulla seconda metà (dati non usati per tarare). Con salto stimato ≤ −0,5% (64 notti su 570) il VWCE ha aperto almeno a −0,5% nel 91% dei casi; con ≤ −1% (22 notti) sempre.
+- Intervalli 80% e 90%: nella seconda metà i quantili tarati sulla prima coprono 81%/80%/80%/82% (80%) e 91%/91%/91%/93% (90%) a 1, 3, 6, 12 ore.
+- Dopo l'apertura, il salto rientra in media del 19% (correlazione −0,19): non incluso.
+- Verifica in avanti: ogni ora una riga in data/ore_diario.csv; dopo 30 righe si confronta il prezzo reale 3 e 12 ore dopo con l'intervallo previsto.
+
+**Soglie degli avvisi.** Calo atteso: salto stimato ≤ −0,5% (priorità alta); calo forte atteso: ≤ −1,0% (priorità massima). Movimento brusco: futures ≤ −1% in un'ora (27 giorni in due anni). Evento in arrivo: una volta per evento, entro 8 ore dalla pubblicazione. Mai lo stesso avviso entro 4 ore a meno di un peggioramento di 0,5 punti; al massimo 4 al giorno.
+**Onestà sulla soglia:** il primo disegno prevedeva −0,7%; guardando il caso del 17 novembre (salto stimato −0,6%, reale −1,2%) la soglia è stata portata a −0,5%. È una scelta fatta dopo aver visto un caso: va riguardata con i dati in avanti.
+**Limite dichiarato del caso 17 novembre:** il modello avrebbe stimato circa −0,6%/−0,7% all'apertura contro −1,2% reale (scarto di circa 1,8 deviazioni); la seconda parte del calo (−1% all'apertura di Wall Street) non era prevedibile con questi dati.

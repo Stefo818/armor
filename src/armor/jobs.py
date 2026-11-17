@@ -712,6 +712,12 @@ def main() -> None:
     elif cmd == "live":
         from . import live
         live.run()
+    elif cmd == "ore":   # previsione del VWCE a 1, 3, 6, 12 ore (PROTOCOLLO_MINIMI.md, parte L); con --avvisi manda anche le notifiche
+        from . import ore
+        if "--avvisi" in sys.argv:
+            ore.run_avvisi()
+        else:
+            ore.aggiorna()
     elif cmd == "dati-completi":
         stampa_stato(sources.update_all(full=True))
         fonti_nuove(force=True)
@@ -730,7 +736,7 @@ def main() -> None:
         from . import journal3
         print(journal3.verify())
     else:
-        print("Comandi: tutto | titan | occasione | occasione-verifica | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | minimi-storia | controlli | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
+        print("Comandi: tutto | ore | titan | occasione | occasione-verifica | valuta-modelli | rapporto-mensile | senza-download | diagnosi | valida | minimi-storia | controlli | sfide | migliora | live | notizie | sito | dati-completi | ricerca | report | verifica-diario")
 
 
 if __name__ == "__main__":

@@ -81,6 +81,11 @@ def contesto_chips() -> str:
     try:
         from . import crescita, flussi, opzioni, trend
         t, c, f, o = trend.carica(), crescita.carica(), flussi.carica(), opzioni.carica()
+        from . import ore
+        r = ore.carica()
+        if r:
+            cl = {"bad": "", "warn": "pw", "ok": "ok"}[r["giudizio"]["classe"]]
+            out += f"<button class='chip {cl}' data-go='oggi' title='Prossime ore'><b>Prossime ore</b> · {r['giudizio']['testo'].lower()}</button>"
         if t:
             out += f"<button class='chip {'ok' if t['punteggio'] >= 2 else 'pw'}' data-go='segnali' title='Segnali di fondo'><b>Trend</b> · {t['punteggio']} segnali su 3</button>"
         if c:

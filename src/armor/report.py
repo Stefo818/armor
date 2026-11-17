@@ -10,7 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
-from . import pieghe, minimi, minimi_ui, lungo_periodo, ribasso, pagella, cosa_oggi, stato_app, crescita, trend, flussi, opzioni, stress, segnali_ui
+from . import ore, ore_ui, pieghe, minimi, minimi_ui, lungo_periodo, ribasso, pagella, cosa_oggi, stato_app, crescita, trend, flussi, opzioni, stress, segnali_ui
 from . import occasione_ui, soglie, titan_registro, titan_schede, titan_ui, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
@@ -1066,10 +1066,12 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     p_segnali = _safe(lambda: segnali_ui.segnali_pagina(crescita.carica(), trend.carica(), flussi.carica(), opzioni.carica()), "Segnali di fondo")
     p_stress = _safe(lambda: segnali_ui.stress_pagina(stress.carica()), "Stress test")
     F = pieghe.fold
+    p_ore = _safe(lambda: ore_ui.html(ore.carica()), 'Prossime ore')
     hero_b5 = "<section class='b5'>" + armor_index.hero_html(aix, cruscotto.hero_trend(aix)) + "</section>"
     val_b5 = "<section class='b5'>" + parts.valuations_mini(vcards) + "</section>" + ui.next_event_html(today_d)
     aix_sub = f"Indice Armor {aix['value']:.0f}/100" if aix else ""
     p_oggi = (f"<a id='oggi'></a>{topbtns}{cosa_html}"
+              f"{F('Cosa aspettarsi nelle prossime ore', p_ore, ore_ui.sub(ore.carica()), True)}"
               f"{F('Indice Armor e Super Armor', _safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index'), aix_sub, True)}"
               f"{F('La bussola di oggi', _safe(occasione_ui.html, 'Bussola di oggi'), 'Salute del mercato, fase e occasioni per le entrate extra', True)}"
               f"{F('Guida agli indici', _safe(guida_indici.html, 'Guida agli indici'), 'Come leggere i numeri')}"

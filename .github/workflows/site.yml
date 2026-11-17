@@ -34,6 +34,12 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m armor live
+      - name: Previsione del VWCE a 1, 3, 6, 12 ore
+        continue-on-error: true
+        timeout-minutes: 5
+        env:
+          PYTHONPATH: src
+        run: python -m armor ore
       - name: Perché si muove oggi (settori, aziende, notizie)
         continue-on-error: true
         timeout-minutes: 5
