@@ -40,12 +40,33 @@ def _barra(a: dict, scala: float = 0.03) -> str:
     return f"<div class='rng'><u></u><b style='left:{lo:.1f}%;width:{max(hi - lo, 1):.1f}%'></b><i style='left:{md:.1f}%'></i></div>"
 
 
+def _direzione(a: dict) -> tuple[str, str]:
+    """Etichetta di direzione dalla probabilità di stare sopra o sotto il prezzo attuale."""
+    su = a["p_su"]
+    if su >= 0.58:
+        return "Più probabile un rialzo", "pos"
+    if su >= 0.53:
+        return "Lieve tendenza al rialzo", "pos"
+    if su <= 0.42:
+        return "Più probabile un calo", "neg"
+    if su <= 0.47:
+        return "Lieve tendenza al calo", "neg"
+    return "Direzione indecisa", ""
+
+
 def _scheda(nome: str, a: dict, t0: datetime) -> str:
     fine = (t0 + timedelta(hours=a["ore"])).astimezone(ROMA).strftime("%H:%M")
-    cl = "neg" if a["mediana"] <= -0.004 else ("pos" if a["mediana"] >= 0.004 else "")
+    testo, cl = _direzione(a)
     ev = f"<span class='tag'>{_h.escape(', '.join(a['eventi']))}</span>" if a["eventi"] else ""
-    return (f"<div class='kpi'><div class='k'>Tra {nome} (alle {fine}){ev}</div><div class='v2 {cl}'>{_p(a['p10'])} … {_p(a['p90'])}</div>{_barra(a)}"
-            f"<div class='s'>8 casi su 10 dentro questo intervallo. Probabilità di −1% o peggio: <b>{_n(a['p_meno1'] * 100, 0)}%</b>; di −2% o peggio: <b>{_n(a['p_meno2'] * 100, 1)}%</b>.</div></div>")
+    rimb = "<div class='s'>Dopo un calo forte il mercato tende a rimbalzare un po' più spesso che a scendere ancora: segnale debole, già incluso nei numeri.</div>" if a.get("rimbalzo") else ""
+    return (f"<div class='kpi'><div class='k'>Tra {nome} (alle {fine}){ev}</div>"
+            f"<div class='v2 {cl}'>{testo}</div>"
+            f"<div class='s'><b>{_n(a['p_su'] * 100, 0)}%</b> di probabilità di essere sopra il prezzo di ora, <b>{_n((1 - a['p_su']) * 100, 0)}%</b> sotto. Valore centrale: <b>{_p(a['mediana'], 2)}</b>.</div>"
+            f"{_barra(a)}"
+            f"<div class='s'>Caso normale: da <b>{_p(a['p10'], 2)}</b> a <b>{_p(a['p90'], 2)}</b> (8 casi su 10).<br>"
+            f"Se scende, in media <b>{_p(a['giu_medio'], 2)}</b>; se sale, <b>{_p(a['su_medio'], 2)}</b>.<br>"
+            f"Peggio 1 volta su 20: <b>{_p(a['p05'], 2)}</b> · meglio 1 volta su 20: <b>{_p(a['p95'], 2)}</b>.<br>"
+            f"Probabilità di −1% o peggio: <b>{_n(a['p_meno1'] * 100, 0)}%</b> · di +1% o meglio: <b>{_n(a['p_piu1'] * 100, 0)}%</b> · di −2% o peggio: <b>{_n(a['p_meno2'] * 100, 1)}%</b>.</div>{rimb}</div>")
 
 
 def _evento(e: dict) -> str:
@@ -74,13 +95,15 @@ def _prova(r: dict) -> str:
             "<p class='small'><b>Prova.</b> Su 570 notti (2024-2026) la variazione tra chiusura e apertura del VWCE è stata stimata per l'86% da futures e cambio; l'86% vale anche sulla seconda metà dei dati, non usata per tarare. "
             "Quando il salto stimato era −0,5% o peggio (64 notti su 570), il VWCE ha aperto davvero almeno a −0,5% nel 91% dei casi; con −1% o peggio (22 notti) sempre, in media −1,8%. Gli intervalli a 1, 3, 6 e 12 ore coprono l'80% dei casi nella seconda metà dei dati (81%, 80%, 80%, 82%).</p>"
             f"<p class='small'>{fw}</p>"
-            "<p class='small'><b>Limiti.</b> Non prevede la direzione di una notizia a sorpresa e non sa nulla di ciò che accade dopo l'ultimo aggiornamento (ogni 15 minuti). Dopo l'apertura il salto tende in parte a rientrare (in media del 19%): non è incluso. "
+            "<p class='small'><b>Limiti.</b> La direzione dei prossimi movimenti non è prevedibile dalla sola storia dei prezzi: su 5.500 ore provate, né l'andamento delle ore precedenti né la paura del mercato indicano con costanza se si sale o si scende. Fa eccezione il «salto in arrivo» (futures e cambio mossi dopo l'ultimo scambio), che è misurabile, e un piccolo rimbalzo dopo i cali forti, qui incluso ma debole. Per questo le probabilità «sopra/sotto» restano spesso vicine a 50 e 50: è un'informazione, non una mancanza. Non prevede la direzione di una notizia a sorpresa e non sa nulla di ciò che accade dopo l'ultimo aggiornamento (ogni 15 minuti). Dopo l'apertura il salto tende in parte a rientrare (in media del 19%): non è incluso. "
             "La soglia di −0,5% è stata scelta dopo il calo del 17 novembre, che con −0,7% non sarebbe scattato: va riguardata fra qualche mese. Non è un consiglio finanziario.</p>")
 
 
 def html(r: dict | None) -> str:
     if not r:
         return "<p class='mu'>La previsione a ore sarà disponibile dopo il prossimo aggiornamento.</p>"
+    if not all("p_su" in x for x in r["orizzonti"].values()):
+        return "<p class='mu'>La previsione a ore si sta aggiornando al nuovo formato: tra pochi minuti sarà qui.</p>"
     t0 = datetime.strptime(r["ora"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=timezone.utc)
     g, v = r["giudizio"], r["vwce"]
     cls = {"bad": "b", "warn": "w", "ok": ""}[g["classe"]]
@@ -101,15 +124,15 @@ def html(r: dict | None) -> str:
     return (CSS + "<div class='mn ore'>"
             f"<div class='hero {cls}'><span class='small'>Aggiornata alle {_ora(r['ora'])} (ora italiana) · si rinnova ogni 15 minuti</span><b class='big'>{_h.escape(g['testo'])}</b>{riga}</div>"
             f"<div class='pills'>{''.join(chips)}</div>"
-            "<p class='sub'>Chiave di lettura: ogni scheda dice dove dovrebbe trovarsi il VWCE rispetto a ora (variazione percentuale) con l'intervallo che copre 8 casi su 10; la linea nera è il valore più probabile. "
-            "Più la barra è larga, più è incerto. Se un salto è già in arrivo, tutte le barre sono spostate.</p>"
+            "<p class='sub'>Chiave di lettura: guarda prima la direzione e le percentuali «sopra / sotto»: se sono vicine a 50 e 50, il mercato non ha una direzione e conta solo quanto può muoversi. "
+            "Se sono molto sbilanciate (per esempio 70 e 30), c'è già un movimento in arrivo da una parte. «Peggio 1 volta su 20» è lo scenario cattivo realistico, non il peggiore possibile.</p>"
             f"<div class='g3'>{schede}</div>{ev}"
             + pieghe.fold("Come funziona e quanto è affidabile", _prova(r)) + "</div>")
 
 
 def sub(r: dict | None) -> str:
     """Riga breve per la tendina chiusa."""
-    if not r:
+    if not r or "p_su" not in r["orizzonti"]["6 ore"]:
         return ""
     a = r["orizzonti"]["6 ore"]
-    return f"{r['giudizio']['testo']} · 6 ore: {_p(a['p10'], 1)} … {_p(a['p90'], 1)}"
+    return f"{r['giudizio']['testo']} · 6 ore: {_direzione(a)[0].lower()} ({_n(a['p_su'] * 100, 0)}% su) · peggio 1 su 20 {_p(a['p05'], 1)}"

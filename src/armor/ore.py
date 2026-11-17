@@ -25,6 +25,10 @@ SOGLIA_CALO = -0.005       # salto atteso da cui parte l'avviso «calo atteso» 
 SOGLIA_CALO_FORTE = -0.010  # «calo forte atteso»: 22 notti su 570, sempre confermato
 SOGLIA_SHOCK_ES = -0.010   # futures giù di almeno l'1% in un'ora: «movimento brusco in corso»
 SOGLIA_FORTE = -0.015      # «forte ribasso» = -1,5% o più
+# Rimbalzo statistico debole: dopo un calo dei futures di almeno 1% nelle ultime 24 ore, su 5.500 ore (2024-2026) il VWCE-equivalente è salito dopo 3/6/12 ore un po' più spesso che sceso (54-60%, mediana +0,04/+0,07/+0,11%), in entrambe le metà dei dati.
+# Segnale debole e poco indipendente tra un'ora e l'altra: lo si aggiunge piccolo e lo si dichiara.
+DERIVA_RIMBALZO = {1.0: 0.0002, 3.0: 0.0004, 6.0: 0.0007, 12.0: 0.0011}
+SOGLIA_RIMBALZO = -0.010
 # eventi: ticker -> (nome, peso approssimato nel VWCE %, moltiplicatore di contagio, mossa tipica %, ora di pubblicazione ET o None = dopo la chiusura 16:20)
 # contagio 1,6 per Nvidia: sulle ultime 12 trimestrali l'S&P 500 si è mosso 0,09 volte la mossa di Nvidia, circa 1,6 volte il suo peso nell'indice mondiale
 EVENTI = {"NVDA": ("Nvidia", 3.7, 1.6, 5.6), "AAPL": ("Apple", 4.3, 1.0, 3.0), "MSFT": ("Microsoft", 3.1, 1.0, 4.0), "AMZN": ("Amazon", 2.0, 1.0, 6.0), "GOOGL": ("Alphabet", 1.7, 1.0, 5.0),
@@ -103,6 +107,9 @@ def previsione(t0: datetime, vwce: dict, mercato: dict, eventi: list[dict], sims
         scala = BETA_ES * sd_giorno * math.sqrt(q)
         x = gap + scala * _mc_z(h, sims, rng)
         x = x + rng.normal(0, (SD_TRACK * math.sqrt(h)) if aperto else SD_RESIDUO, sims)
+        rimb = mercato.get("es_24h") is not None and mercato["es_24h"] <= SOGLIA_RIMBALZO
+        if rimb:
+            x = x + DERIVA_RIMBALZO[h]
         ev_h = []
         for e in eventi:
             r = datetime.strptime(e["quando"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=timezone.utc)
@@ -111,7 +118,9 @@ def previsione(t0: datetime, vwce: dict, mercato: dict, eventi: list[dict], sims
                 x = x + e["k"] * sd_n * rng.standard_t(5, sims) * math.sqrt(3.0 / 5.0)
                 ev_h.append(e["nome"])
         p = np.quantile(x, [0.05, 0.10, 0.50, 0.90, 0.95])
-        res[nome] = {"ore": h, "atteso": float(gap), "mediana": float(p[2]), "p10": float(p[1]), "p90": float(p[3]), "p05": float(p[0]), "p95": float(p[4]),
+        giu, su = x[x < 0], x[x > 0]
+        res[nome] = {"ore": h, "atteso": float(gap), "mediana": float(p[2]), "media": float(x.mean()), "p_su": float((x > 0).mean()), "rimbalzo": bool(rimb),
+                     "giu_medio": float(giu.mean()) if len(giu) else 0.0, "su_medio": float(su.mean()) if len(su) else 0.0, "p10": float(p[1]), "p90": float(p[3]), "p05": float(p[0]), "p95": float(p[4]),
                      "p_meno1": float((x <= -0.01).mean()), "p_meno15": float((x <= SOGLIA_FORTE).mean()), "p_meno2": float((x <= -0.02).mean()), "p_piu1": float((x >= 0.01).mean()),
                      "eventi": ev_h, "quota_varianza": round(q, 3)}
     return {"gap": float(gap), "aperto": aperto, "orizzonti": res}
@@ -185,6 +194,9 @@ def leggi_mercato(vwce_t: datetime) -> dict:
     unora = es[es.index <= ora - pd.Timedelta(minutes=58)]
     if len(unora):
         rec["es_1h"] = float(es.iloc[-1] / unora.iloc[-1] - 1.0)
+    ventiquattro = es[es.index <= ora - pd.Timedelta(hours=24)]
+    if len(ventiquattro) and (ora - ventiquattro.index[-1]) < pd.Timedelta(hours=30):
+        rec["es_24h"] = float(es.iloc[-1] / ventiquattro.iloc[-1] - 1.0)
     vun = vx[vx.index <= ora - pd.Timedelta(minutes=58)]
     if len(vun):
         rec["vix_1h"] = float(vx.iloc[-1] / vun.iloc[-1] - 1.0)

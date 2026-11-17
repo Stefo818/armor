@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import numpy as np
 
@@ -121,3 +121,16 @@ def test_html_sezione():
     p.feed(h)
     assert p.n == 0 and p.neg == 0 and "Calo forte probabile" in h and "Tra 3 ore" in h and "Come funziona" in h
     assert isinstance(ore_ui.html(None), str) and ore_ui.sub(None) == ""
+
+
+def test_asimmetria_e_rimbalzo():
+    t0 = datetime(2026, 11, 17, 18, 43, tzinfo=timezone.utc)
+    v = {"prezzo": 100.0, "ora": t0, "aperto": True}
+    m = {"es_ora": 100.0, "es_ancora": 100.0, "fx_ora": 1.1, "fx_ancora": 1.1, "vix": 22.0}
+    a = ore.previsione(t0, v, m, [], seed=3)["orizzonti"]["6 ore"]
+    b = ore.previsione(t0, v, {**m, "es_24h": -0.02}, [], seed=3)["orizzonti"]["6 ore"]
+    assert 0.45 <= a["p_su"] <= 0.55 and not a["rimbalzo"]
+    assert b["rimbalzo"] and b["p_su"] > a["p_su"] and b["mediana"] > a["mediana"]
+    assert a["giu_medio"] < 0 < a["su_medio"] and a["p05"] < a["p10"] < a["p90"] < a["p95"]
+    c = ore.previsione(t0, {**v, "aperto": False, "ora": t0 - timedelta(hours=3)}, {**m, "es_ora": 98.0}, [], seed=3)["orizzonti"]["3 ore"]
+    assert c["p_su"] < 0.2 and abs(c["giu_medio"]) > abs(c["su_medio"])
