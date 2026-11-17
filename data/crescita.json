@@ -1,5 +1,5 @@
 {
- "data": "2026-11-14",
+ "data": "2026-11-17",
  "trimestre": "2026 T4",
  "stima": 3.481,
  "banda": "forte",
@@ -15,7 +15,7 @@
  },
  "sahm": 0.0,
  "recessione": 0.4,
- "curva": 0.83,
+ "curva": 0.78,
  "prova": {
   "tutto": {
    "n": 61,

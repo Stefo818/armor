@@ -1,10 +1,10 @@
 {
- "asof": "2026-11-13",
+ "asof": "2026-11-16",
  "segnali": [
   {
    "id": "disaccordo",
    "acceso": true,
-   "dettaglio": "3 mesi: calo ≥10% → A1 7%, sfidante 17%"
+   "dettaglio": "3 mesi: calo ≥10% → A1 8%, sfidante 22%"
   },
   {
    "id": "dati",
@@ -14,9 +14,9 @@
   {
    "id": "mai_visto",
    "acceso": false,
-   "dettaglio": "distanza dalla norma 3.8, limite 8.9 (superato solo dall'1% dei 9285 giorni di storia)",
-   "valore": 3.8149276918039017,
-   "soglia": 8.941056438253765
+   "dettaglio": "distanza dalla norma 3.5, limite 8.9 (superato solo dall'1% dei 9286 giorni di storia)",
+   "valore": 3.508707964636238,
+   "soglia": 8.940206114996599
   },
   {
    "id": "errori",
@@ -26,55 +26,55 @@
   },
   {
    "id": "instabilita",
-   "acceso": true,
-   "dettaglio": "a 3 mesi la probabilità va da 19% a 26% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)",
+   "acceso": false,
+   "dettaglio": "a 1 mese la probabilità va da 11% a 13% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)",
    "per_finestra": {
     "dal 1950": {
-     "1m": 0.09466666666666666,
-     "3m": 0.22133333333333333
+     "1m": 0.10533333333333333,
+     "3m": 0.23333333333333334
     },
     "dal 1990": {
-     "1m": 0.11233333333333333,
-     "3m": 0.25633333333333336
+     "1m": 0.13,
+     "3m": 0.25366666666666665
     },
     "ultimi 15 anni": {
-     "1m": 0.09633333333333334,
-     "3m": 0.19066666666666668
+     "1m": 0.13133333333333333,
+     "3m": 0.239
     }
    }
   }
  ],
- "livello": "bassa",
- "n_accesi": 2,
- "avviso": "Stima poco affidabile: disaccordo tra i modelli (3 mesi: calo ≥10% → A1 7%, sfidante 17%); stima instabile (a 3 mesi la probabilità va da 19% a 26% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)).",
+ "livello": "media",
+ "n_accesi": 1,
+ "avviso": "",
  "orizzonti": [
   {
    "hz": "10g",
    "soglia": 5,
-   "a1": 0.043018873787345854,
-   "sfidante": 0.0828,
-   "normale": 0.062078765732846125
+   "a1": 0.05291733554229496,
+   "sfidante": 0.1054,
+   "normale": 0.0620762453818359
   },
   {
    "hz": "1m",
    "soglia": 10,
-   "a1": 0.026078349710530746,
-   "sfidante": 0.0602,
-   "normale": 0.05179558011049724
+   "a1": 0.03312262319144039,
+   "sfidante": 0.0792,
+   "normale": 0.051793476053134016
   },
   {
    "hz": "3m",
    "soglia": 10,
-   "a1": 0.072211032470559,
-   "sfidante": 0.174,
-   "normale": 0.15211198828029623
+   "a1": 0.08218318864873274,
+   "sfidante": 0.2156,
+   "normale": 0.1521057985757884
   },
   {
    "hz": "6m",
    "soglia": 10,
-   "a1": 0.13380009381068123,
-   "sfidante": 0.2544,
-   "normale": 0.2542123944351516
+   "a1": 0.1513488737997196,
+   "sfidante": 0.2862,
+   "normale": 0.25420202349869453
   }
  ]
 }

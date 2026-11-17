@@ -1,51 +1,51 @@
 {
- "data": "2026-11-13",
- "armor_index": 41.4,
- "super_armor": 41.2,
- "radar_decennio": 78.3,
+ "data": "2026-11-16",
+ "armor_index": 43.0,
+ "super_armor": 46.0,
+ "radar_decennio": 78.5,
  "pilastri": {
-  "p1": 41.3,
-  "p2": 41.7,
-  "p3": 40.1,
-  "p4": 40.4,
-  "p5": 33.3,
-  "p6": 50.5
+  "p1": 46.1,
+  "p2": 40.3,
+  "p3": 58.8,
+  "p4": 45.6,
+  "p5": 35.0,
+  "p6": 50.0
  },
  "previsioni": {
   "1 settimana": {
-   "calo": 0.066,
-   "rialzo": 0.5414,
+   "calo": 0.0915,
+   "rialzo": 0.4949,
    "soglia_calo": 0.05,
-   "normale": 0.0619,
-   "data": "2026-11-13"
+   "normale": 0.062,
+   "data": "2026-11-16"
   },
   "1 mese": {
-   "calo": 0.0449,
-   "rialzo": 0.7353,
+   "calo": 0.0571,
+   "rialzo": 0.7323,
    "soglia_calo": 0.1,
    "normale": 0.0519,
-   "data": "2026-11-13"
+   "data": "2026-11-16"
   },
   "3 mesi": {
-   "calo": 0.1608,
-   "rialzo": 0.6052,
+   "calo": 0.1818,
+   "rialzo": 0.5974,
    "soglia_calo": 0.1,
    "normale": 0.1526,
-   "data": "2026-11-13"
+   "data": "2026-11-16"
   },
   "6 mesi": {
-   "calo": 0.2703,
-   "rialzo": 0.6062,
+   "calo": 0.2856,
+   "rialzo": 0.5984,
    "soglia_calo": 0.1,
    "normale": 0.255,
-   "data": "2026-11-13"
+   "data": "2026-11-16"
   },
   "12 mesi": {
-   "calo": 0.417,
-   "rialzo": 0.6086,
+   "calo": 0.4253,
+   "rialzo": 0.6016,
    "soglia_calo": 0.1,
    "normale": 0.375,
-   "data": "2026-11-13"
+   "data": "2026-11-16"
   }
  },
  "versione": "titan-v47"
