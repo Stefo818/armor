@@ -1,0 +1,30 @@
+{
+ "NVDA": {
+  "eps": 2.47071,
+  "eps_basso": 2.25754,
+  "eps_alto": 2.7,
+  "eps_anno_fa": 1.3,
+  "eps_cresc": 0.90050006,
+  "n": 40,
+  "ricavi": 108710527430.0,
+  "ricavi_cresc": 0.90699995,
+  "ricavi_prox": 124886883170.0,
+  "ricavi_prox_cresc": 0.83309996,
+  "rev30": -0.001026988779945448,
+  "su30": 0,
+  "giu30": 1,
+  "obiettivo": 267.6463,
+  "prezzo": 152.6,
+  "compra": 0.7580645161290323,
+  "ultimo": {
+   "trim": "2026-07-31",
+   "reale": 2.22,
+   "stima": 2.09113,
+   "sorpresa": 0.0616
+  },
+  "battuti4": 4,
+  "n4": 4,
+  "media_sorpresa4": 0.05120000075,
+  "_ora": "2026-11-17T19:58Z"
+ }
+}
