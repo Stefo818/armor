@@ -712,3 +712,11 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - Dati nuovi in `data/series`: `sloos_piccole` (DRTSCIS), `sloos_carte` (DRTSCLCC), `delinq_mut` (DRSFRMACBS), `tdsp`, `psavert`, `mortgage30` (aggiornati da `terreno.scarica`); schede nel glossario.
 - Output: `data/terreno.json` (stato di oggi), `data/terreno_prova.json` (esito delle prove, letto dalla scheda), `data/terreno_registro.csv` (una riga al mese, per il giudizio futuro).
 - Test: `tests/test_terreno.py`. Non verificato dal vivo: il download FRED delle 6 serie nuove dal job giornaliero (da questa sessione Python non raggiungeva FRED; curl sì). Controllare nel log «[terreno]».
+
+## Crisi lente (18 novembre 2026): mesi e anni di sofferenza, non shock
+- Richiesta dell'utente: uno strumento che avvisi delle crisi lente (2000-2014, liquidità, economia in sofferenza) e non dei cali da shock esterni (Covid, dazi, guerre). Protocollo scritto prima: `PROTOCOLLO_CRISI_LENTE.md`; esito: `ESITO_CRISI_LENTE.md`; prove: `scratch/crisi_lente_prova.py` (+ `crisi_lente_esplorativa.py`, solo ipotesi).
+- Bersaglio: calo ≥20% in 2 anni e prezzo ancora sotto quello di partenza dopo 4 anni. Punteggio da 4 gruppi (valutazioni, credito, liquidità e tassi, economia); allarme sopra l'80° percentile della propria storia.
+- **Esito per regola: non superata** (AUC 0,58 in taratura 1953-89 contro 0,89 in conferma 1990-2022; poggia su 2 episodi per periodo; controllo di specificità fallito). Peso zero. Funziona su 2000 e 2007-09 (allarme 24 e 13 mesi prima), non prima.
+- Scoperta: prima delle crisi lente prestiti, moneta e produzione crescevano forte (boom, poi crollo). Ipotesi da verificare in avanti, non adottata.
+- Codice: `src/armor/crisi_lente.py` (`calcola`, `aggiorna`, `registra`, `carica`); scheda «4 · Crisi lente» in `segnali_ui.crisi_lente_html` (pagina «Segnali di fondo», prima di «5 · Terreno»); job in `jobs.py` (passo «crisi_lente»); stato in `stato_app.py`. Dati: `data/crisi_lente.json`, `data/crisi_lente_prova.json`, `data/crisi_lente_registro.csv` (una riga al mese).
+- Test: `tests/test_terreno.py` (riferimenti storici stabili, nessun dato dal futuro, registro, pagina).

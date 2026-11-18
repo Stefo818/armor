@@ -1,0 +1,96 @@
+{
+ "stato": "non superata",
+ "data_prove": "2026-11-18",
+ "protocollo": "PROTOCOLLO_CRISI_LENTE.md",
+ "auc_terreno_lento": {
+  "retro 1928-1952": 0.71,
+  "taratura 1953-1989": 0.58,
+  "conferma 1990-2022": 0.89
+ },
+ "auc_cape_solo": {
+  "retro 1928-1952": 0.95,
+  "taratura 1953-1989": 0.56,
+  "conferma 1990-2022": 0.78
+ },
+ "ic90_conferma": [
+  0.74,
+  0.99
+ ],
+ "sosia_p95": {
+  "retro 1928-1952": 0.78,
+  "taratura 1953-1989": 0.86,
+  "conferma 1990-2022": 0.79
+ },
+ "allarme_conferma": {
+  "sensibilita": 0.82,
+  "falsi_allarmi": 0.22,
+  "freq_L_con_allarme": 0.28,
+  "freq_L_senza": 0.02,
+  "quota_mesi_allarme": 0.28
+ },
+ "allarme_taratura": {
+  "sensibilita": 0.36,
+  "falsi_allarmi": 0.3,
+  "freq_L_con_allarme": 0.07,
+  "freq_L_senza": 0.05,
+  "quota_mesi_allarme": 0.3
+ },
+ "episodi": [
+  {
+   "nome": "Grande crisi (1929-32)",
+   "inizio": "1928-10-31",
+   "allarme": false,
+   "anticipo_mesi": null,
+   "mesi_allarme": 0
+  },
+  {
+   "nome": "Ricaduta del 1934",
+   "inizio": "1934-01-31",
+   "allarme": false,
+   "anticipo_mesi": null,
+   "mesi_allarme": 0
+  },
+  {
+   "nome": "Recessione del 1937 e anni 40",
+   "inizio": "1935-11-29",
+   "allarme": false,
+   "anticipo_mesi": null,
+   "mesi_allarme": 0
+  },
+  {
+   "nome": "Dopoguerra 1946",
+   "inizio": "1945-12-31",
+   "allarme": false,
+   "anticipo_mesi": null,
+   "mesi_allarme": 0
+  },
+  {
+   "nome": "Calo del 1966",
+   "inizio": "1965-10-29",
+   "allarme": true,
+   "anticipo_mesi": 24,
+   "mesi_allarme": 11
+  },
+  {
+   "nome": "Crisi del petrolio (1973-74)",
+   "inizio": "1972-05-31",
+   "allarme": true,
+   "anticipo_mesi": 23,
+   "mesi_allarme": 1
+  },
+  {
+   "nome": "Bolla internet (2000-02)",
+   "inizio": "1999-09-30",
+   "allarme": true,
+   "anticipo_mesi": 24,
+   "mesi_allarme": 25
+  },
+  {
+   "nome": "Crisi finanziaria (2007-09)",
+   "inizio": "2006-10-31",
+   "allarme": true,
+   "anticipo_mesi": 13,
+   "mesi_allarme": 14
+  }
+ ]
+}

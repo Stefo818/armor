@@ -367,12 +367,41 @@ def terreno_html(t: dict | None) -> str:
     return "".join(h)
 
 
-def segnali_pagina(c, t, f, o, cosa: str = "", ter=None) -> str:
+def crisi_lente_html(c: dict | None) -> str:
+    """Scheda «Crisi lente»: quanto il terreno somiglia a quello prima dei crolli senza recupero in 4 anni (PROTOCOLLO_CRISI_LENTE.md)."""
+    if not c:
+        return "<p class='mu'>La lettura sulle crisi lente sarà disponibile dopo il prossimo aggiornamento giornaliero.</p>"
+    d = c["data"]; acc = c["allarme"]; pc = c.get("percentile")
+    h = [f"<div class='hero {'b' if acc else ''}'><span class='small'>Lettura a fine {d[8:]}/{d[5:7]}/{d[:4]}</span><b class='big'>Attenzione {'ACCESA' if acc else 'spenta'}" + (f" · {pc:.0f}° percentile" if pc is not None else "") + "</b>"
+         "Misura quanto oggi somiglia al periodo che ha preceduto i crolli da cui il mercato non si è ripreso per anni (1929, 1973, 2000, 2007). Si accende sopra l'80° percentile della sua storia. Non guarda gli shock improvvisi come Covid, dazi o guerre.</div>"]
+    righe = []
+    for g in c["gruppi"]:
+        z = g["z"]; pos = 50 if z is None else max(0, min(100, (z + 2) / 4 * 100))
+        vv = "".join(f"<li>{_h.escape(v['nome'])}: {_h.escape(v['testo'])}</li>" for v in g["variabili"])
+        righe.append(f"<details class='mrow' style='display:block'><summary style='cursor:pointer;display:flex;gap:8px;align-items:center'><div style='flex:1'>{_h.escape(g['nome'])}<div class='small'>{_h.escape(g['testo'])}</div></div>"
+                     f"<div class='mtr' style='flex:1'><i style='left:calc({pos:.0f}% - 2px)'></i></div></summary><p class='small' style='margin:6px 0 2px'>{_h.escape(g['spiega'])}</p><ul class='small' style='margin:2px 0 6px;padding-left:18px'>{vv}</ul></details>")
+    h.append("<div class='card'>" + "".join(righe) + "<p class='small' style='margin:8px 0 0'>A sinistra = più tranquillo del solito, al centro = nella norma, a destra = più rischio. Tocca un gruppo per vedere i dati.</p></div>")
+    pr = c.get("prova") or {}
+    if pr:
+        ac, at = pr.get("allarme_conferma", {}), pr.get("allarme_taratura", {})
+        auc = pr.get("auc_terreno_lento", {})
+        ep = "".join(f"<tr><td>{_h.escape(e['nome'])}</td><td>{('sì, ' + str(e['anticipo_mesi']) + ' mesi prima') if e['allarme'] else 'no'}</td></tr>" for e in pr.get("episodi", []))
+        h.append("<div class='card' style='margin-top:10px'><b>Ha funzionato?</b> " + _badge("warn", "prova non superata") +
+                 f"<p class='small' style='margin:8px 0 0'>Nel periodo 1953-1989 distingueva poco i mesi prima di una crisi lenta ({_fmt(auc.get('taratura 1953-1989'), 2)} su 1; 0,50 = tirare una moneta), quindi la regola scritta prima non è stata superata. "
+                 f"Dal 1990 invece sì ({_fmt(auc.get('conferma 1990-2022'), 2)}): l'allarme era acceso prima della bolla internet e prima della crisi finanziaria, con {_pc(ac.get('sensibilita'))} dei mesi giusti segnalati e {_pc(ac.get('falsi_allarmi'))} di falsi allarmi. "
+                 "Ma sono solo due crisi: troppo poche per fidarsi. Usalo come contesto, non come ordine di vendere.</p>"
+                 "<table class='tb' style='margin-top:8px'><tr><th>Crisi lenta</th><th>Allarme acceso prima?</th></tr>" + ep + "</table>"
+                 "<p class='small'>Le crisi precedenti al 1950 hanno pochi dati di credito: leggile con più cautela. Regole e numeri in PROTOCOLLO_CRISI_LENTE.md e ESITO_CRISI_LENTE.md.</p></div>")
+    return "".join(h)
+
+
+def segnali_pagina(c, t, f, o, cosa: str = "", ter=None, cl=None) -> str:
     return _shell("<h2>Segnali di fondo</h2>" + cosa + "<p class='sub'>Strumenti usati dai grandi gestori, adattati a un piano di accumulo: <b>la crescita dell'economia in tempo reale</b>, <b>il trend del mercato</b>, <b>quanto il mercato è affollato</b> e <b>le pressioni lente su credito e famiglie</b>. Ognuno ha la sua prova storica e dichiara i propri limiti.</p>"
                   "<h2 style='margin-top:18px'>1 · Crescita in tempo reale</h2>" + crescita_html(c) +
                   "<h2 style='margin-top:34px'>2 · Trend e momentum</h2>" + trend_html(t) +
                   "<h2 style='margin-top:34px'>3 · Flussi e posizionamento</h2>" + flussi_html(f, o) +
-                  "<h2 style='margin-top:34px'>4 · Terreno: le pressioni lente</h2>" + terreno_html(ter) +
+                  "<h2 style='margin-top:34px'>4 · Crisi lente: mesi e anni difficili</h2>" + crisi_lente_html(cl) +
+                  "<h2 style='margin-top:34px'>5 · Terreno: le pressioni lente</h2>" + terreno_html(ter) +
                   "<h3>Limiti, detti chiaramente</h3><div class='card'><ul class='small' style='margin:0;padding-left:18px;line-height:1.6'><li>Nessuno di questi segnali prevede il prossimo mese: descrivono lo stato del mercato e dell'economia.</li>"
                   "<li>La stima di crescita riguarda gli Stati Uniti; VWCE è un fondo mondiale.</li><li>Il trend è provato sull'S&amp;P 500 senza dividendi, costi e tasse: i cambi di posizione costerebbero nella realtà.</li>"
                   "<li>Il termometro ha pochi casi estremi dal 2011; le opzioni non hanno ancora storia, solo un registro che parte da oggi.</li><li>Non è un consiglio finanziario. Le regole sono scritte in PROTOCOLLO_MINIMI.md (parti H-K).</li></ul></div>")
