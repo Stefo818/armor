@@ -6,7 +6,7 @@
   "6m": "Normale"
  },
  "regime": "Calma",
- "vix": "attenzione",
+ "vix": "stress",
  "aix_band": "moderato",
  "divergence": false,
  "event": "2026-11-10",
@@ -17,7 +17,7 @@
   "1a": "non_ancora"
  },
  "fase": "Rischio di contrazione lunga",
- "t1": true,
+ "t1": false,
  "crescita": "verde",
- "sent_day": null
+ "sent_day": "2026-11-18"
 }
