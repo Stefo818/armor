@@ -720,3 +720,8 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - Scoperta: prima delle crisi lente prestiti, moneta e produzione crescevano forte (boom, poi crollo). Ipotesi da verificare in avanti, non adottata.
 - Codice: `src/armor/crisi_lente.py` (`calcola`, `aggiorna`, `registra`, `carica`); scheda «4 · Crisi lente» in `segnali_ui.crisi_lente_html` (pagina «Segnali di fondo», prima di «5 · Terreno»); job in `jobs.py` (passo «crisi_lente»); stato in `stato_app.py`. Dati: `data/crisi_lente.json`, `data/crisi_lente_prova.json`, `data/crisi_lente_registro.csv` (una riga al mese).
 - Test: `tests/test_terreno.py` (riferimenti storici stabili, nessun dato dal futuro, registro, pagina).
+
+## Crisi lente 2 (due chiavi, dal 1990) — 18 novembre 2026
+- crisi_lente.py riscritto: Chiave 1 = min(Boom, Shock), Chiave 2 = Stretta, punteggio = max, percentili dal 1990, nessun parametro stimato. Soglie 65 (attenzione) e 80 (allarme).
+- Esito: "non coerente" (allarme 80 mai acceso; AUC 0,78 sopra i sosia). Vedi ESITO_CRISI_LENTE_2.md. Oggi 72°: attenzione.
+- Scheda in "Segnali di fondo" sezione 4; registro mensile data/crisi_lente_registro.csv. Test: tests/test_terreno.py (251 passati).

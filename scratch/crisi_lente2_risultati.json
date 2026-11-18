@@ -1,0 +1,79 @@
+{
+ "n_mesi_validi": 252,
+ "mesi_RL": 55,
+ "auc": {
+  "Punteggio (max delle due chiavi)": 0.7786802030456853,
+  "Chiave 1 (credito facile + tassi)": 0.7168435625288417,
+  "Chiave 2 (stretta)": 0.527555346208196,
+  "Boom da solo": 0.77544993077988,
+  "Shock da solo": 0.6359944623904015,
+  "Valutazioni (CAPE) da sole": 0.5990770650669128,
+  "Tendenza (sotto media 10 mesi)": 0.4310106137517305
+ },
+ "episodi": [
+  {
+   "nome": "Bolla internet (2000-02)",
+   "primo_mese": "1998-03-31",
+   "ultimo_mese": "2000-03-31",
+   "mesi": 16,
+   "allarme_prima": false,
+   "anticipo_mesi": null,
+   "mesi_allarme_su_25": 0,
+   "chiave_prima": null,
+   "punteggio_massimo_prima": 0.7157352941176469,
+   "k1_max": 0.7157352941176469,
+   "k2_max": 0.4560112953989446
+  },
+  {
+   "nome": "Crisi finanziaria (2007-09)",
+   "primo_mese": "2005-10-31",
+   "ultimo_mese": "2007-10-31",
+   "mesi": 23,
+   "allarme_prima": false,
+   "anticipo_mesi": null,
+   "mesi_allarme_su_25": 0,
+   "chiave_prima": null,
+   "punteggio_massimo_prima": 0.7012750455373405,
+   "k1_max": 0.7012750455373405,
+   "k2_max": 0.42307948618891245
+  },
+  {
+   "nome": "Tassi e inflazione (2022)",
+   "primo_mese": "2020-01-31",
+   "ultimo_mese": "2021-12-31",
+   "mesi": 16,
+   "allarme_prima": false,
+   "anticipo_mesi": null,
+   "mesi_allarme_su_25": 0,
+   "chiave_prima": null,
+   "punteggio_massimo_prima": 0.5931842052806712,
+   "k1_max": 0.5931842052806712,
+   "k2_max": 0.5704254847433279
+  }
+ ],
+ "allarme": {
+  "falsi_allarmi": 0.005076142131979695,
+  "sensibilita": 0.0,
+  "quota_tempo_allarme": 0.003968253968253968,
+  "P_RL_con_allarme": 0.0,
+  "P_RL_senza": 0.21912350597609562,
+  "moderata_o_piu_falsi": 0.116751269035533,
+  "n": 252
+ },
+ "ci_score": [
+  0.6642631721522416,
+  0.8881088788905571
+ ],
+ "sosia": {
+  "p50": 0.4938855560682972,
+  "p95": 0.7132325796031379,
+  "max": 0.788878634056299
+ },
+ "regola": {
+  "allarme_prima_di_tutti": false,
+  "falsi_allarmi_ok": true,
+  "auc_ok": true,
+  "sopra_sosia": true
+ },
+ "etichetta": "non coerente"
+}
