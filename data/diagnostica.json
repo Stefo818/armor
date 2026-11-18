@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-18T04:40:26Z",
+ "data_utc": "2026-11-18T13:27:47Z",
  "oggi": "2026-11-18",
  "ultima_previsione": "2026-11-17",
  "giorni_da_ultima": 1,
@@ -36,8 +36,8 @@
   {
    "nome": "armor_index",
    "chiave": false,
-   "ultima_data": "2026-11-16",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-17",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -85,8 +85,8 @@
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-16",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-17",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -307,6 +307,13 @@
    "stato": "ok"
   },
   {
+   "nome": "delinq_mut",
+   "chiave": false,
+   "ultima_data": "2026-04-01",
+   "giorni_ritardo": 231,
+   "stato": "ok"
+  },
+  {
    "nome": "dexuseu",
    "chiave": false,
    "ultima_data": "2026-11-13",
@@ -414,8 +421,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-16",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-17",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -428,8 +435,8 @@
   {
    "nome": "fear_greed",
    "chiave": false,
-   "ultima_data": "2026-11-17",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-18",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -657,6 +664,13 @@
    "stato": "ok"
   },
   {
+   "nome": "mortgage30",
+   "chiave": false,
+   "ultima_data": "2026-11-12",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
    "nome": "move",
    "chiave": false,
    "ultima_data": "2026-11-17",
@@ -666,8 +680,8 @@
   {
    "nome": "mweq",
    "chiave": false,
-   "ultima_data": "2026-11-16",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-17",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -743,8 +757,8 @@
   {
    "nome": "nikkei",
    "chiave": false,
-   "ultima_data": "2026-11-17",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-18",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -822,6 +836,13 @@
    "chiave": true,
    "ultima_data": "2026-11-17",
    "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "psavert",
+   "chiave": false,
+   "ultima_data": "2026-09-01",
+   "giorni_ritardo": 78,
    "stato": "ok"
   },
   {
@@ -1063,6 +1084,20 @@
    "stato": "ok"
   },
   {
+   "nome": "sloos_carte",
+   "chiave": false,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 48,
+   "stato": "ok"
+  },
+  {
+   "nome": "sloos_piccole",
+   "chiave": false,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 48,
+   "stato": "ok"
+  },
+  {
    "nome": "smh",
    "chiave": false,
    "ultima_data": "2026-11-17",
@@ -1151,6 +1186,13 @@
    "chiave": false,
    "ultima_data": "2026-10-01",
    "giorni_ritardo": 48,
+   "stato": "ok"
+  },
+  {
+   "nome": "tdsp",
+   "chiave": false,
+   "ultima_data": "2026-04-01",
+   "giorni_ritardo": 231,
    "stato": "ok"
   },
   {
@@ -1303,8 +1345,8 @@
   {
    "nome": "vwce_de",
    "chiave": false,
-   "ultima_data": "2026-11-16",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-17",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {

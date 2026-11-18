@@ -14,7 +14,7 @@
       "q_media": null
      },
      "possibile": {
-      "n": 1,
+      "n": 2,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -45,7 +45,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 3,
+      "n": 4,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -70,13 +70,13 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 0,
+      "n": 1,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
      }
     },
-    "ultimo": "possibile"
+    "ultimo": "non_ancora"
    },
    "1a": {
     "nome": "1 anno",
@@ -95,7 +95,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 3,
+      "n": 4,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
