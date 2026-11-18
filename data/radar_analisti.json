@@ -26,5 +26,33 @@
   "n4": 4,
   "media_sorpresa4": 0.05120000075,
   "_ora": "2026-11-17T19:58Z"
+ },
+ "WMT": {
+  "eps": 0.63627,
+  "eps_basso": 0.61,
+  "eps_alto": 0.66,
+  "eps_anno_fa": 0.62,
+  "eps_cresc": 0.026199998,
+  "n": 36,
+  "ricavi": 187254274740.0,
+  "ricavi_cresc": 0.053400002,
+  "ricavi_prox": 200283599870.0,
+  "ricavi_prox_cresc": 0.0602,
+  "rev30": 0.0007077474757006819,
+  "su30": 1,
+  "giu30": 1,
+  "obiettivo": 131.90244,
+  "prezzo": 127.52,
+  "compra": 0.8863636363636364,
+  "ultimo": {
+   "trim": "2026-07-31",
+   "reale": 0.81,
+   "stima": 0.74126,
+   "sorpresa": 0.092700005
+  },
+  "battuti4": 4,
+  "n4": 4,
+  "media_sorpresa4": 0.03590000125,
+  "_ora": "2026-11-18T13:32Z"
  }
 }
