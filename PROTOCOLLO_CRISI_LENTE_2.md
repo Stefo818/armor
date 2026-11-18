@@ -33,3 +33,13 @@ In entrambi i casi la scheda nell'app dice che non è provata e riporta il numer
 
 ## Limiti
 Tre episodi in trent'anni: nessuna statistica regge. Dati «come oggi». Il 2022 è un caso di tassi e inflazione: se la chiave 1 non lo vede, l'idea del credito facile + tassi in salita non è sostenuta.
+
+---
+# Emendamento 1 (18 novembre 2026, stesso giorno, scritto dopo aver visto che la definizione del bersaglio era degenerata e PRIMA di leggere AUC e allarme su un bersaglio valido)
+
+**Cosa è successo.** Alla prima esecuzione il bersaglio RL, come scritto sopra («il prezzo di t non viene più raggiunto per 378 sedute»), dava 1 solo mese positivo su 231: per qualunque mese prima del massimo il prezzo viene ritoccato salendo, quindi la condizione non era mai vera. Non misurava «l'inizio di un ribasso lento», che era l'intenzione. Il risultato di quell'esecuzione (AUC non calcolabili, 1 caso) non dice nulla sull'ipotesi.
+**Definizione corretta (stessa intenzione, soglie invariate: 15% e 18 mesi).**
+- Si individuano gli **episodi di ribasso lento** nelle chiusure dell'S&P 500: dal massimo (peak) fino al ritorno a quel massimo (recupero), con calo massimo ≥ 15% e durata dal massimo al recupero ≥ 378 sedute (18 mesi). Un episodio non ancora recuperato conta se dura già da ≥ 378 sedute.
+- **RL(t) = 1** per i fine-mese da 504 sedute prima del massimo fino alla prima seduta in cui il calo dal massimo raggiunge −10%. Vale ancora la restrizione «solo mesi entro il 5% dal massimo di 252 sedute».
+- Il resto del protocollo (punteggio, allarme, prove, etichetta) non cambia.
+**Limite dichiarato:** la nuova definizione è stata scritta conoscendo i tre episodi; è guidata dall'intenzione, non da un esito del punteggio.
