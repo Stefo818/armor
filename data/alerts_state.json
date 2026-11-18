@@ -18,5 +18,6 @@
  },
  "fase": "Rischio di contrazione lunga",
  "t1": true,
- "crescita": "verde"
+ "crescita": "verde",
+ "sent_day": null
 }
