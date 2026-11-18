@@ -1,0 +1,25 @@
+{
+ "stato": "non utile",
+ "data_prove": "2026-11-18",
+ "protocollo": "PROTOCOLLO_TERRENO.md",
+ "auc": {
+  "6 mesi": {
+   "taratura": 0.83,
+   "conferma": 0.49,
+   "ic90_conferma": [
+    0.36,
+    0.67
+   ],
+   "sosia_p95_conferma": 0.59
+  },
+  "12 mesi": {
+   "taratura": 0.85,
+   "conferma": 0.47,
+   "ic90_conferma": [
+    0.3,
+    0.69
+   ],
+   "sosia_p95_conferma": 0.7
+  }
+ }
+}

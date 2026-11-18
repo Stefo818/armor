@@ -338,11 +338,41 @@ def flussi_html(f: dict | None, o: dict | None) -> str:
     return "".join(h)
 
 
-def segnali_pagina(c, t, f, o, cosa: str = "") -> str:
-    return _shell("<h2>Segnali di fondo</h2>" + cosa + "<p class='sub'>Tre strumenti usati dai grandi gestori, adattati a un piano di accumulo: <b>la crescita dell'economia in tempo reale</b>, <b>il trend del mercato</b> e <b>quanto il mercato è affollato</b>. Ognuno ha la sua prova storica e dichiara i propri limiti.</p>"
+def terreno_html(t: dict | None) -> str:
+    """Scheda «Terreno»: pressioni lente su credito, famiglie, alternative sicure, flussi e imprese. Solo informativa (PROTOCOLLO_TERRENO.md: non ha superato la conferma)."""
+    if not t:
+        return "<p class='mu'>Il «Terreno» sarà disponibile dopo il prossimo aggiornamento giornaliero.</p>"
+    cl = {"b": "b", "w": "w", "ok": "", "": ""}.get(t.get("classe", ""), "")
+    d = t["data"]
+    h = [f"<div class='hero {cl}'><span class='small'>Terreno a fine {d[8:]}/{d[5:7]}/{d[:4]}</span><b class='big'>{_h.escape(t['testo'].capitalize())} · {t['percentile']:.0f}° percentile</b>"
+         "Misura se credito, famiglie, tassi e flussi di denaro sono più tesi o più tranquilli del solito. 50° = situazione tipica degli ultimi trent'anni.</div>"]
+    h.append("<p class='sub'>Chiave di lettura: un terreno teso è come un bosco molto secco, brucia più facilmente ma da solo non dice quando partirà una scintilla. <b>Non è una previsione di calo.</b></p>")
+    righe = []
+    for g in t["gruppi"]:
+        z = g["z"]
+        pos = 50 if z is None else max(0, min(100, (z + 2) / 4 * 100))
+        vv = "".join(f"<li>{_h.escape(v['nome'])}: {_h.escape(v['testo'])}</li>" for v in g["variabili"])
+        righe.append(f"<details class='mrow' style='display:block'><summary style='cursor:pointer;display:flex;gap:8px;align-items:center'><div style='flex:1'>{_h.escape(g['nome'])}<div class='small'>{_h.escape(g['testo'])}</div></div>"
+                     f"<div class='mtr' style='flex:1'><i style='left:calc({pos:.0f}% - 2px)'></i></div></summary><p class='small' style='margin:6px 0 2px'>{_h.escape(g['spiega'])}</p><ul class='small' style='margin:2px 0 6px;padding-left:18px'>{vv}</ul></details>")
+    h.append("<div class='card'>" + "".join(righe) + "<p class='small' style='margin:8px 0 0'>A sinistra = più tranquillo del solito, al centro = nella norma, a destra = sotto pressione. Tocca un gruppo per vedere i dati.</p></div>")
+    pr = t.get("prova") or {}
+    a = pr.get("auc") or {}
+    if a:
+        a6, a12 = a.get("6 mesi", {}), a.get("12 mesi", {})
+        ver = (_badge("warn", "non utile per prevedere") + f" Fino al 2009 distingueva bene i mesi prima di un calo (punteggio {_fmt(a6.get('taratura'), 2)} su 1 a 6 mesi, {_fmt(a12.get('taratura'), 2)} a 12 mesi; 0,50 = tirare una moneta). "
+               f"Dal 2010 in poi no: {_fmt(a6.get('conferma'), 2)} e {_fmt(a12.get('conferma'), 2)}.")
+        h.append("<div class='card' style='margin-top:10px'><b>Ha funzionato?</b> " + ver +
+                 "<p class='small' style='margin:8px 0 0'>Perché: il credito teso ha preceduto le crisi lente (2000-02, 2008), ma i cali più recenti (2015, 2018, 2020, 2022) sono arrivati da shock improvvisi o dai tassi, con le banche e le famiglie ancora tranquille. "
+                 "Per questo il Terreno non entra nelle previsioni dell'app: resta una scheda per capire il contesto. Regole e numeri in PROTOCOLLO_TERRENO.md.</p></div>")
+    return "".join(h)
+
+
+def segnali_pagina(c, t, f, o, cosa: str = "", ter=None) -> str:
+    return _shell("<h2>Segnali di fondo</h2>" + cosa + "<p class='sub'>Strumenti usati dai grandi gestori, adattati a un piano di accumulo: <b>la crescita dell'economia in tempo reale</b>, <b>il trend del mercato</b>, <b>quanto il mercato è affollato</b> e <b>le pressioni lente su credito e famiglie</b>. Ognuno ha la sua prova storica e dichiara i propri limiti.</p>"
                   "<h2 style='margin-top:18px'>1 · Crescita in tempo reale</h2>" + crescita_html(c) +
                   "<h2 style='margin-top:34px'>2 · Trend e momentum</h2>" + trend_html(t) +
                   "<h2 style='margin-top:34px'>3 · Flussi e posizionamento</h2>" + flussi_html(f, o) +
+                  "<h2 style='margin-top:34px'>4 · Terreno: le pressioni lente</h2>" + terreno_html(ter) +
                   "<h3>Limiti, detti chiaramente</h3><div class='card'><ul class='small' style='margin:0;padding-left:18px;line-height:1.6'><li>Nessuno di questi segnali prevede il prossimo mese: descrivono lo stato del mercato e dell'economia.</li>"
                   "<li>La stima di crescita riguarda gli Stati Uniti; VWCE è un fondo mondiale.</li><li>Il trend è provato sull'S&amp;P 500 senza dividendi, costi e tasse: i cambi di posizione costerebbero nella realtà.</li>"
                   "<li>Il termometro ha pochi casi estremi dal 2011; le opzioni non hanno ancora storia, solo un registro che parte da oggi.</li><li>Non è un consiglio finanziario. Le regole sono scritte in PROTOCOLLO_MINIMI.md (parti H-K).</li></ul></div>")

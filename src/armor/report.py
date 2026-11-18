@@ -10,7 +10,7 @@ import json
 from . import marchio
 from . import analysis, journal, live as livemod, outlook, parts, registry, semafori, sitedata, store, valuations
 from . import agenda, archivio_dati, economia, inclinazione, previsioni_hub, infobox, mondo, novita, opportunita, saldi, perche, scadenze, armor_lungo, guida_indici, modelli_ui, classifica, tensione, regime_analoghi, livefeed, diagnostica, vrp, pacsim, affidabilita, percorsi, serie_eur, verifica, armor_index, aziende, campioni, chiaro, ciclico, forza, confronto, cruscotto, extra13, learning, mappa, rapporto, salute, spiega, ui
-from . import ore, ore_ui, pieghe, minimi, minimi_ui, lungo_periodo, ribasso, pagella, cosa_oggi, stato_app, crescita, trend, flussi, opzioni, stress, segnali_ui
+from . import ore, ore_ui, pieghe, minimi, minimi_ui, lungo_periodo, ribasso, pagella, cosa_oggi, stato_app, crescita, trend, flussi, opzioni, stress, segnali_ui, terreno
 from . import occasione_ui, soglie, titan_registro, titan_schede, titan_ui, titan_vista
 from .config import (BACKTEST_RET, CALIBRATION, DATA, HORIZONS, HZ_LABEL, OUTCOMES, PRIMARY, REPORT_HTML, RISK_HISTORY,
                      TARGETS, VALIDATION, VERDICT)
@@ -1063,7 +1063,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
     cosa_html = _safe(_cosa, "Cosa fare oggi")
     p_minimi = _safe(lambda: minimi_ui.html(minimi.carica_oggi(), p, lungo_periodo.carica(), None,
                                             {"eur": minimi.carica_oggi("eur"), "ribasso": ribasso.carica(), "pagella": pagella.carica(), "cosa_oggi": cosa_html}), "Minimi e lungo periodo")
-    p_segnali = _safe(lambda: segnali_ui.segnali_pagina(crescita.carica(), trend.carica(), flussi.carica(), opzioni.carica()), "Segnali di fondo")
+    p_segnali = _safe(lambda: segnali_ui.segnali_pagina(crescita.carica(), trend.carica(), flussi.carica(), opzioni.carica(), ter=terreno.carica()), "Segnali di fondo")
     p_stress = _safe(lambda: segnali_ui.stress_pagina(stress.carica()), "Stress test")
     F = pieghe.fold
     p_ore = _safe(lambda: ore_ui.html(ore.carica()), 'Prossime ore')
