@@ -37,6 +37,11 @@ MACRO = {
             "cosa": "Posti di lavoro creati e disoccupazione. Dati troppo forti o troppo deboli muovono i tassi e quindi le azioni."},
 }
 ALTRI = {"es": 0.20, "cosa": "Dato americano di rilievo medio. L'ampiezza è una stima prudente, non misurata."}
+# nomi in italiano per i dati del feed (parola chiave nel titolo inglese -> nome)
+NOMI_ITA = {"minutes": "Verbali della riunione della Fed", "core pce": "Inflazione PCE (la preferita dalla Fed)", "pce price": "Inflazione PCE (la preferita dalla Fed)", "gdp": "Crescita economica USA (PIL)",
+            "retail sales": "Vendite al dettaglio USA", "ism manufacturing": "Indice ISM della manifattura", "ism services": "Indice ISM dei servizi", "ppi": "Prezzi alla produzione USA",
+            "jolts": "Offerte di lavoro USA (JOLTS)", "consumer confidence": "Fiducia dei consumatori USA", "jobless claims": "Richieste di sussidi di disoccupazione"}
+COSA_VERBALI = "Resoconto dell'ultima riunione della Fed: può muovere i mercati se mostra più o meno fretta di tagliare i tassi, ma di solito meno della decisione stessa."
 TIPI_CAL = {"FOMC": "FOMC", "CPI": "CPI", "Lavoro USA": "NFP"}
 
 # parole chiave per classificare le notizie in temi che possono scuotere il mercato (sul titolo in inglese)
@@ -74,7 +79,8 @@ def _evento_macro(chiave: str, quando: datetime, t0: datetime, attese: list[str]
     es = d["es"] if d else ALTRI["es"]
     return {"tipo": "macro", "ticker": chiave, "nome": nome or (d["nome"] if d else chiave), "corto": d["corto"] if d else (nome or chiave)[:14],
             "quando": quando.strftime("%Y-%m-%dT%H:%MZ"), "gia_uscita": bool(quando <= t0), "sd": round(BETA_ES * es / 100.0, 5),
-            "es_eccesso": es, "n_misura": d["n"] if d else 0, "cosa": d["cosa"] if d else ALTRI["cosa"], "attese": attese or [], "misurato": bool(d)}
+            "es_eccesso": es, "n_misura": d["n"] if d else 0,
+            "cosa": d["cosa"] if d else (COSA_VERBALI if nome and "verbali" in nome.lower() else ALTRI["cosa"]), "attese": attese or [], "misurato": bool(d)}
 
 
 def macro_da_calendario(t0: datetime, calendario: list[dict], entro_ore: float = 40.0) -> list[dict]:
@@ -101,7 +107,9 @@ def parse_ff(righe: list[dict], t0: datetime, entro_ore: float = 40.0) -> list[d
                 continue
             t = (r.get("title") or "").strip()
             tl = t.lower()
-            if "fomc" in tl or "federal funds" in tl:
+            if "minutes" in tl:                                   # verbali: NON sono la decisione sui tassi
+                k, nome = "ALTRO:" + t, NOMI_ITA["minutes"]
+            elif "fomc" in tl or "federal funds" in tl:
                 k, nome = "FOMC", None
             elif "cpi" in tl:
                 k, nome = "CPI", None
@@ -110,7 +118,7 @@ def parse_ff(righe: list[dict], t0: datetime, entro_ore: float = 40.0) -> list[d
             elif "speaks" in tl or "speech" in tl:
                 continue
             else:
-                k, nome = "ALTRO:" + t, t
+                k, nome = "ALTRO:" + t, next((v for p, v in NOMI_ITA.items() if p in tl), t)
             att = f"{t}: previsto {r.get('forecast') or 'n.d.'}, precedente {r.get('previous') or 'n.d.'}"
             g = gruppi.setdefault((k, q.strftime("%Y-%m-%d")), {"q": q, "att": [], "nome": nome})
             g["att"].append(att)

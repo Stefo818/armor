@@ -203,3 +203,20 @@ def test_html_con_radar():
     h = ore_ui.html(p)
     assert "Cosa può scuotere il mercato" in h and "Nvidia" in h and "Inflazione USA" in h and "Notizie che possono scuotere" in h and h.count("<details") == h.count("</details>")
     assert h.count("<div") == h.count("</div>") and "Tutti i numeri" in h
+
+
+def test_verbali_fed_non_sono_la_decisione():
+    from armor import radar
+    t0 = _t("2026-11-18 09:14")
+    righe = [{"title": "FOMC Meeting Minutes", "country": "USD", "impact": "High", "date": "2026-11-18T14:00:00-05:00"}]
+    ev = radar.parse_ff(righe, t0)
+    assert len(ev) == 1 and ev[0]["ticker"] == "ALTRO" and "Verbali" in ev[0]["nome"] and ev[0]["sd"] < 0.003 and not ev[0]["misurato"]
+    assert ev[0]["quando"] == "2026-11-18T19:00Z"
+
+
+def test_barra_probabilita_su_giu():
+    t0, p = _prev(0.0)
+    p.update({"ora": t0.strftime("%Y-%m-%dT%H:%MZ"), "vwce": {"prezzo": 100.0, "ora": "2026-11-16T16:30Z", "sede": "Xetra"}, "mercato": {"vix": 22.0}, "eventi": [], "scenari": [], "es_1h": 0.0, "vix_1h": 0.0})
+    p["giudizio"] = ore.giudizio(p)
+    h = ore_ui.html(p)
+    assert h.count("class='pb'") == 4 and "▼" in h and "▲" in h and "Come leggere" in h

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """Sezione «Prossime ore» della pagina Oggi: previsione del VWCE a 1, 3, 6 e 12 ore, radar degli eventi (Fed, inflazione, lavoro, trimestrali) con le attese degli analisti, notizie e prova.
-Dati: ore.py (data/ore.json) e radar.py. Impaginazione compatta: un solo prospetto con quattro righe, eventi e notizie in tendine."""
+Dati: ore.py (data/ore.json) e radar.py. Impaginazione: per ogni orizzonte UNA barra divisa in rosso (scende) e verde (sale) con le percentuali scritte dentro; tutto il resto in tendine."""
 import html as _h
-import math
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -11,23 +10,19 @@ from .segnali_ui import CSS as SG_CSS
 
 ROMA = ZoneInfo("Europe/Rome")
 CSS = SG_CSS + """<style>
-.ore .ohd{border:1px solid var(--bd);border-left-width:4px;border-radius:12px;padding:9px 12px;background:var(--card);margin:0 0 8px}
+.ore .ohd{border:1px solid var(--bd);border-left-width:4px;border-radius:12px;padding:8px 12px;background:var(--card);margin:0 0 8px}
 .ore .ohd.b{border-left-color:var(--bad)}.ore .ohd.w{border-left-color:var(--warn,#f59e0b)}.ore .ohd.ok{border-left-color:var(--ok)}
-.ore .ohd b{font-size:16px}.ore .ohd .t{font-size:12px;color:var(--mu);margin-left:6px}.ore .ohd .os{font-size:13px;color:var(--mu);margin-top:2px;line-height:1.35}
-.ore .pills{margin:6px 0 8px;gap:6px}.ore .pill{padding:3px 10px;font-size:12px}
-.ore .hz{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:4px 12px}
-.ore .hr{padding:8px 0;border-bottom:1px solid var(--bd)}.ore .hr:last-child{border-bottom:0}
-.ore .hl{display:grid;grid-template-columns:54px 1fr 58px;gap:8px;align-items:center}
-.ore .hl .lb{font-size:13px;font-weight:700;line-height:1.15}.ore .hl .lb small{display:block;font-weight:400;color:var(--mu);font-size:11px}
-.ore .hl .ch{text-align:center;white-space:nowrap;font-size:12.5px;font-weight:700;border-radius:8px;padding:3px 0;border:1px solid var(--bd)}
-.ore .ch.pos{color:var(--ok);background:var(--okbg);border-color:var(--ok)}.ore .ch.neg{color:var(--bad);background:var(--badbg);border-color:var(--bad)}
-.ore .hs{font-size:12.5px;color:var(--mu);margin:3px 0 0 62px;line-height:1.35}.ore .hs b{color:var(--tx);font-weight:600}
-.ore .hs .tg,.ore .en .tg{display:inline-block;border-radius:999px;padding:0 7px;font-size:11px;border:1px solid var(--bd);margin-left:4px}
-.ore .rng{position:relative;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--badbg),var(--card) 40%,var(--card) 60%,var(--okbg));border:1px solid var(--bd)}
-.ore .rng .w{position:absolute;top:4px;height:4px;border-radius:3px;background:var(--mu);opacity:.35}
-.ore .rng .b{position:absolute;top:2px;height:8px;border-radius:4px;background:var(--ac);opacity:.75}
-.ore .rng .m{position:absolute;top:-2px;width:3px;height:16px;border-radius:2px;background:var(--tx)}
-.ore .rng .z{position:absolute;top:-3px;left:50%;width:1px;height:18px;background:var(--mu);opacity:.7}
+.ore .ohd b.v{font-size:16px}.ore .ohd .t{font-size:12px;color:var(--mu);margin-left:6px}.ore .ohd .os{font-size:13px;color:var(--mu);margin-top:3px;line-height:1.35}.ore .ohd .os b{color:var(--tx)}
+.ore .ctx{font-size:12px;color:var(--mu);margin:0 2px 8px;line-height:1.5}.ore .ctx b{color:var(--tx);font-weight:600}.ore .ctx .r{color:var(--bad);font-weight:600}
+.ore .hz{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:2px 12px 4px}
+.ore .hk{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mu);padding:7px 0 0 54px}
+.ore .hr{display:grid;grid-template-columns:46px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd)}.ore .hr:last-of-type{border-bottom:0}
+.ore .lb{font-size:14px;font-weight:700;line-height:1.1;padding-top:5px}.ore .lb small{display:block;font-weight:400;color:var(--mu);font-size:11px;margin-top:2px}
+.ore .pb{display:flex;height:28px;border-radius:8px;overflow:hidden;font-size:14px;font-weight:800;color:#fff}
+.ore .pb span{display:flex;align-items:center;min-width:58px;padding:0 10px;white-space:nowrap}
+.ore .pb .dn{background:#b4373f}.ore .pb .up{background:#1d9a68;justify-content:flex-end}
+.ore .hs{font-size:12px;color:var(--mu);margin-top:3px;line-height:1.4}.ore .hs b{color:var(--tx);font-weight:600}
+.ore .hs .tg{display:inline-block;border-radius:999px;padding:0 7px;font-size:11px;border:1px solid var(--bd);margin-left:4px;color:var(--tx)}
 .ore .esec{font-size:12px;color:var(--mu);margin:12px 2px 4px;text-transform:uppercase;letter-spacing:.04em}
 .ore details.ev{border:1px solid var(--bd);border-radius:12px;background:var(--card);margin:0 0 6px}
 .ore details.ev>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:78px 1fr auto;gap:8px;align-items:center;padding:8px 10px;font-size:13px}
@@ -36,7 +31,6 @@ CSS = SG_CSS + """<style>
 .ore .ei{font-size:12px;font-weight:700;border-radius:8px;padding:2px 8px;border:1px solid var(--bd);white-space:nowrap}
 .ore .ei.hi{color:var(--bad);background:var(--badbg);border-color:var(--bad)}.ore .ei.me{color:var(--warn,#f59e0b);border-color:var(--warn,#f59e0b)}
 .ore .eb{padding:2px 12px 10px;font-size:13px;line-height:1.45}.ore .eb p{margin:6px 0}.ore .eb ul{margin:6px 0 0 16px;padding:0}.ore .eb li{margin:3px 0}
-.ore .eb li.warn{color:var(--tx)}.ore .eb li.ok{color:var(--tx)}
 .ore .cp{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;border:0;padding:0;background:none}.ore .cp span{border:1px solid var(--bd);border-radius:8px;padding:2px 8px;font-size:12px}
 .ore .nt a{color:var(--tx);text-decoration:none}.ore .nt li{margin:5px 0;font-size:13px}.ore .nt small{color:var(--mu)}
 .ore table.tb{width:100%;border-collapse:collapse;font-size:12.5px}.ore .tb th,.ore .tb td{padding:5px 4px;border-bottom:1px solid var(--bd);text-align:right}.ore .tb th:first-child,.ore .tb td:first-child{text-align:left;color:var(--mu)}
@@ -49,6 +43,13 @@ def _n(x, d=1, segno=False):
 
 def _p(x, d=1, segno=True):
     return _n(x * 100, d, segno) + "%"
+
+
+def _sd(e: dict) -> float:
+    """Scossa tipica sul VWCE (frazione): dato macro misurato, oppure peso × contagio × 1,25 × mossa tipica del titolo."""
+    if e.get("tipo") == "macro":
+        return float(e["sd"])
+    return e["k"] * 1.25 * e["mossa_tipica"] / 100.0
 
 
 def _ora(s: str, giorno: bool = False) -> str:
@@ -77,26 +78,27 @@ def _direzione(a: dict) -> tuple[str, str]:
     return "Direzione indecisa", ""
 
 
-def _scala(orizzonti: dict) -> float:
-    m = max(max(abs(a["p05"]), abs(a["p95"])) for a in orizzonti.values())
-    return max(0.01, math.ceil(m * 1.08 * 200) / 200)
-
-
-def _barra(a: dict, scala: float) -> str:
-    f = lambda v: max(0.0, min(100.0, 50 + 50 * v / scala))
-    l5, h5, l1, h1, md = f(a["p05"]), f(a["p95"]), f(a["p10"]), f(a["p90"]), f(a["mediana"])
-    return (f"<div class='rng'><span class='z'></span><span class='w' style='left:{l5:.1f}%;width:{max(h5 - l5, 1):.1f}%'></span>"
-            f"<span class='b' style='left:{l1:.1f}%;width:{max(h1 - l1, 1):.1f}%'></span><span class='m' style='left:{md:.1f}%'></span></div>")
-
-
-def _riga(nome: str, a: dict, t0: datetime, scala: float) -> str:
+def _riga(nome: str, a: dict, t0: datetime) -> str:
     fine = (t0 + timedelta(hours=a["ore"])).astimezone(ROMA).strftime("%H:%M")
-    testo, cl = _direzione(a)
-    su = _n(a["p_su"] * 100, 0)
+    su = max(1, min(99, round(a["p_su"] * 100)))
+    giu = 100 - su
     ev = "".join(f"<span class='tg'>{_h.escape(x)}</span>" for x in a["eventi"])
-    return (f"<div class='hr'><div class='hl'><div class='lb'>{nome}<small>{fine}</small></div>{_barra(a, scala)}"
-            f"<div class='ch {cl}' title='{_h.escape(testo)}'>{'▲' if cl == 'pos' else ('▼' if cl == 'neg' else '◆')} {su}%</div></div>"
-            f"<div class='hs'><b>{_h.escape(testo)}</b>{ev}<br>{_p(a['p10'], 2)} … {_p(a['p90'], 2)} · peggio 1 su 20: <b>{_p(a['p05'], 2)}</b></div></div>")
+    return (f"<div class='hr'><div class='lb'>{nome}<small>{fine}</small></div><div>"
+            f"<div class='pb'><span class='dn' style='flex:{giu}'>▼ {giu}%</span><span class='up' style='flex:{su}'>{su}% ▲</span></div>"
+            f"<div class='hs'>Scende ≈ <b>{_p(a['giu_medio'], 2)}</b> · sale ≈ <b>{_p(a['su_medio'], 2)}</b>{ev}</div>"
+            f"<div class='hs'>Normale <b>{_p(a['p10'], 2)}</b> … <b>{_p(a['p90'], 2)}</b> · brutto <b>{_p(a['p05'], 2)}</b></div></div></div>")
+
+
+def _sintesi(r: dict) -> str:
+    """Una frase: quanto è netta la direzione sulle quattro fasce."""
+    o = r["orizzonti"]
+    ps = [a["p_su"] for a in o.values()]
+    lo, hi = min(ps), max(ps)
+    a12 = o["12 ore"]
+    if hi < 0.53 and lo > 0.47:
+        return f"<b>Nessuna direzione chiara</b>: su {_n(lo * 100, 0)}-{_n(hi * 100, 0)} casi su 100 il prezzo sarà più alto di ora, negli altri più basso."
+    testo, _ = _direzione(a12)
+    return f"<b>{_h.escape(testo)}</b> a 12 ore: {_n(a12['p_su'] * 100, 0)} casi su 100 più alto di ora, {_n((1 - a12['p_su']) * 100, 0)} più basso."
 
 
 def _tabella(r: dict) -> str:
@@ -117,8 +119,8 @@ def _impatto(sd: float) -> tuple[str, str]:
     return "basso", ""
 
 
-def _evento(e: dict, t0: datetime, sd_fn) -> str:
-    sd = sd_fn(e)
+def _evento(e: dict, t0: datetime) -> str:
+    sd = _sd(e)
     liv, cl = _impatto(sd)
     macro = e.get("tipo") == "macro"
     sottotitolo = "dato economico" if macro else "conti trimestrali"
@@ -142,20 +144,19 @@ def _evento(e: dict, t0: datetime, sd_fn) -> str:
         if e.get("righe"):
             corpo += "<div class='cp'>" + "".join(f"<span>titolo {_n(x['titolo'], 0, True)}% → VWCE <b>{_n(x['vwce'], 2, True)}%</b></span>" for x in e["righe"]) + "</div>"
         if e.get("lettura"):
-            corpo += "<p><b>Cosa dicono gli analisti</b></p><ul>" + "".join(f"<li class='{x['c']}'>{_h.escape(x['t'])}</li>" for x in e["lettura"]) + "</ul>"
+            corpo += "<p><b>Cosa dicono gli analisti</b></p><ul>" + "".join(f"<li>{_h.escape(x['t'])}</li>" for x in e["lettura"]) + "</ul>"
         corpo += "<p class='small mu'>La direzione non si può prevedere: nei dati degli ultimi anni né la sorpresa passata né la rincorsa del titolo spiegano la reazione. Conta quanto si discosta dalle attese.</p>"
     return f"<details class='ev'>{testa}<div class='eb'>{corpo}</div></details>"
 
 
 def _eventi(r: dict, t0: datetime) -> str:
-    from .ore import sd_evento
     scen = {s["ticker"]: s["righe"] for s in r.get("scenari", [])}
     evs = [{**e, "righe": scen.get(e["ticker"], [])} for e in r.get("eventi", [])]
-    evs = [e for e in evs if (sd_evento(e) >= 0.0005 or e.get("tipo") == "macro")]
+    evs = [e for e in evs if (_sd(e) >= 0.0005 or e.get("tipo") == "macro")]
     if not evs:
         return ""
     ordine = sorted(evs, key=lambda e: (e.get("gia_uscita", False), e["quando"]))
-    return "<div class='esec'>Cosa può scuotere il mercato nelle prossime ore</div>" + "".join(_evento(e, t0, sd_evento) for e in ordine[:7])
+    return "<div class='esec'>Cosa può scuotere il mercato nelle prossime ore</div>" + "".join(_evento(e, t0) for e in ordine[:7])
 
 
 def _notizie(r: dict) -> str:
@@ -195,7 +196,9 @@ def _prova(r: dict) -> str:
         fw = "Verifica in avanti (dal diario di Armor): " + "; ".join(parti) + ". L'intervallo dichiarato è l'80%."
     else:
         fw = f"Verifica in avanti: il diario delle previsioni a ore è appena partito ({v.get('n', 0)} righe); dopo 30 righe confronta ogni previsione con il prezzo reale 3 e 12 ore dopo."
-    return ("<p class='small'><b>Come funziona.</b> Il VWCE chiude alle 17:30 (o alle 22-23 sulle sedi serali), ma Wall Street e i futures sull'S&amp;P 500 continuano a muoversi. "
+    return ("<p class='small'><b>Come si legge.</b> Ogni barra dice quante possibilità su 100 ci sono che, a quell'ora, il VWCE valga di più (verde) o di meno (rosso) di adesso. "
+            "Se le due metà sono quasi uguali, il mercato non ha una direzione: conta solo quanto può muoversi, scritto sotto («in media» se scende o se sale, e il caso brutto che capita 1 volta su 20).</p>"
+            "<p class='small'><b>Come funziona.</b> Il VWCE chiude alle 17:30 (o alle 22-23 sulle sedi serali), ma Wall Street e i futures sull'S&amp;P 500 continuano a muoversi. "
             "Armor misura quanto i futures e il cambio euro/dollaro si sono mossi dall'ultimo scambio del VWCE: quella è la parte del movimento che il prezzo non ha ancora seguito (il «salto in arrivo»). "
             "L'ampiezza delle oscillazioni viene dalla paura del mercato (VIX) e dalla forma reale dei movimenti degli ultimi due anni. Agli eventi in calendario si aggiunge la loro scossa tipica, "
             "misurata sui futures per Fed, inflazione e lavoro, e dalle reazioni passate dei titoli per le trimestrali, pesata per quanto il titolo conta nel VWCE.</p>"
@@ -225,22 +228,22 @@ def html(r: dict | None) -> str:
     else:
         riga = f"Ultimo scambio <b>{_n(v['prezzo'], 2)} €</b> alle {_ora(v['ora'])} · valore equo all'apertura circa <b>{_n(equo, 2)} €</b> (<b>{_p(gap, 2)}</b>)."
     m = r.get("mercato") or {}
-    chips = []
+    ctx = []
     if m.get("vix"):
-        chips.append(f"<span class='pill'>Paura (VIX) {_n(m['vix'])}" + (f" · {_p(m['vix_1h'], 0)} in 1 ora" if m.get("vix_1h") is not None else "") + "</span>")
+        ctx.append(f"Paura (VIX) <b>{_n(m['vix'])}</b>")
     if r.get("es_1h") is not None:
-        chips.append(f"<span class='pill {'off' if r['es_1h'] <= -0.01 else ''}'>Futures S&amp;P 500 {_p(r['es_1h'], 2)} in 1 ora</span>")
+        ctx.append(f"futures S&amp;P 500 <span class='{'r' if r['es_1h'] <= -0.01 else ''}'><b>{_p(r['es_1h'], 2)}</b></span> in 1 ora")
     if m.get("es_24h") is not None:
-        chips.append(f"<span class='pill {'off' if m['es_24h'] <= -0.01 else ''}'>{_p(m['es_24h'], 1)} in 24 ore</span>")
-    sc = _scala(r["orizzonti"])
-    righe = "".join(_riga(k, a, t0, sc) for k, a in r["orizzonti"].items())
+        ctx.append(f"<span class='{'r' if m['es_24h'] <= -0.01 else ''}'><b>{_p(m['es_24h'], 1)}</b></span> in 24 ore")
     rimb = " Incluso un piccolo rimbalzo atteso dopo i cali forti (segnale debole)." if any(a.get("rimbalzo") for a in r["orizzonti"].values()) else ""
-    asse = (f"<div class='hs' style='margin:4px 2px 6px'>% in alto = probabilità di essere sopra il prezzo di ora. Barra: scala ±{_n(sc * 100, 1)}%, linea scura = valore centrale, tratto pieno = 8 casi su 10, "
-            f"traccia chiara = 19 su 20.{rimb}</div>")
+    righe = "".join(_riga(k, a, t0) for k, a in r["orizzonti"].items())
     return (CSS + "<div class='mn ore'>"
-            f"<div class='ohd {cls}'><b>{_h.escape(g['testo'])}</b><span class='t'>aggiornata alle {_ora(r['ora'])} · ogni 15 min</span><div class='os'>{riga}</div></div>"
-            f"<div class='pills'>{''.join(chips)}</div>"
-            f"<div class='hz'>{righe}</div>{asse}"
+            f"<div class='ohd {cls}'><b class='v'>{_h.escape(g['testo'])}</b><span class='t'>ore {_ora(r['ora'])}</span><div class='os'>{riga}</div><div class='os'>{_sintesi(r)}</div></div>"
+            f"<div class='ctx'>{' · '.join(ctx)}</div>"
+            "<div class='hz'><div class='hk'><span>▼ prezzo più basso di ora</span><span>più alto ▲</span></div>"
+            f"{righe}</div>"
+            f"<div class='ctx' style='margin-top:6px'><b>Come leggere:</b> le percentuali sono i casi su 100 in cui, a quell'ora, il prezzo è sotto (rosso) o sopra (verde) quello di adesso. "
+            f"«Scende / sale» = variazione media nei due casi. «Normale» = 8 casi su 10. «Brutto» = peggio che capita 1 volta su 20.{rimb}</div>"
             + pieghe.fold("Tutti i numeri", _tabella(r))
             + _eventi(r, t0) + _notizie(r)
             + pieghe.fold("Come funziona e quanto è affidabile", _prova(r)) + "</div>")
@@ -251,4 +254,4 @@ def sub(r: dict | None) -> str:
     if not r or "p_su" not in r["orizzonti"]["6 ore"]:
         return ""
     a = r["orizzonti"]["6 ore"]
-    return f"{r['giudizio']['testo']} · 6 ore: {_direzione(a)[0].lower()} ({_n(a['p_su'] * 100, 0)}% su) · peggio 1 su 20 {_p(a['p05'], 1)}"
+    return f"{r['giudizio']['testo']} · 6 ore: {_n(a['p_su'] * 100, 0)}% su, {_n((1 - a['p_su']) * 100, 0)}% giù · peggio 1 su 20 {_p(a['p05'], 1)}"
