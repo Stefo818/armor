@@ -126,7 +126,15 @@ def extra_venues(errors: list, get_json=None) -> list:
     return out
 
 
-def best_vwce(get, errors: list, extra: list | None = None) -> dict:
+def sede_preferita() -> str:
+    """Sede di riferimento per il prezzo del VWCE (data/live_worker.json, «sede»): quella su cui Trade Republic esegue gli ordini, di norma Lang & Schwarz (LS Exchange)."""
+    try:
+        return str(json.loads((DATA / "live_worker.json").read_text(encoding="utf-8")).get("sede") or "")
+    except Exception:  # noqa: BLE001
+        return ""
+
+
+def best_vwce(get, errors: list, extra: list | None = None, sede: str | None = None) -> dict:
     """Legge tutte le sedi (Yahoo + fonti serali) e sceglie l'ultimo scambio (a parità, la prima della lista: Xetra)."""
     found = []
     for sym, venue in VWCE_VENUES:
@@ -150,6 +158,11 @@ def best_vwce(get, errors: list, extra: list | None = None) -> dict:
     from datetime import datetime as _d
     recent = [q for q in ok if (_d.fromisoformat(t_max[:-1]) - _d.fromisoformat(q["time"][:-1])).total_seconds() <= 300]
     best = recent[0]
+    pref = (sede if sede is not None else sede_preferita()).lower().replace("francoforte", "frankfurt")
+    if pref:   # la sede scelta vince se ha scambiato negli ultimi 20 minuti rispetto all'ultimo scambio in assoluto
+        cand = [q for q in ok if pref in q["venue"].lower() and (_d.fromisoformat(t_max[:-1]) - _d.fromisoformat(q["time"][:-1])).total_seconds() <= 1200]
+        if cand:
+            best = max(cand, key=lambda q: q["time"])
     if "_pts" not in best:   # ha vinto una sede serale (L&S, Tradegate...): senza storico i grafici 1 ora / 6 ore / 1 giorno restavano spenti
         con_storia = [q for q in found if q.get("_pts")]
         if con_storia:

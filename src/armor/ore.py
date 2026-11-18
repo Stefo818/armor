@@ -136,7 +136,8 @@ def previsione(t0: datetime, vwce: dict, mercato: dict, eventi: list[dict], sims
                     ev_h.append(e.get("corto") or e["nome"])
         p = np.quantile(x, [0.05, 0.10, 0.50, 0.90, 0.95])
         giu, su = x[x < 0], x[x > 0]
-        res[nome] = {"ore": h, "atteso": float(gap), "mediana": float(p[2]), "media": float(x.mean()), "p_su": float((x > 0).mean()), "rimbalzo": bool(rimb),
+        qz = np.quantile(x - gap, np.arange(1, 100) / 100.0)   # forma della distribuzione senza il salto: la pagina la rimette in gioco con i prezzi in diretta
+        res[nome] = {"qz": [round(float(v), 5) for v in qz], "ore": h, "atteso": float(gap), "mediana": float(p[2]), "media": float(x.mean()), "p_su": float((x > 0).mean()), "rimbalzo": bool(rimb),
                      "giu_medio": float(giu.mean()) if len(giu) else 0.0, "su_medio": float(su.mean()) if len(su) else 0.0, "p10": float(p[1]), "p90": float(p[3]), "p05": float(p[0]), "p95": float(p[4]),
                      "p_meno1": float((x <= -0.01).mean()), "p_meno15": float((x <= SOGLIA_FORTE).mean()), "p_meno2": float((x <= -0.02).mean()), "p_piu1": float((x >= 0.01).mean()),
                      "eventi": ev_h, "quota_varianza": round(q, 3)}
@@ -270,7 +271,8 @@ def calcola(adesso: datetime | None = None, con_opzioni: bool = True) -> dict:
             pass
     r = previsione(t0, v, m, ev)
     r.update({"ora": t0.strftime("%Y-%m-%dT%H:%MZ"), "vwce": {"prezzo": v["prezzo"], "ora": v["ora"].strftime("%Y-%m-%dT%H:%MZ"), "sede": v.get("sede")}, "mercato": m, "eventi": ev,
-              "scenari": scenari(ev), "notizie": _notizie(t0), "giudizio": giudizio(r), "es_1h": m.get("es_1h"), "vix_1h": m.get("vix_1h")})
+              "scenari": scenari(ev), "notizie": _notizie(t0), "giudizio": giudizio(r), "es_1h": m.get("es_1h"), "vix_1h": m.get("vix_1h"),
+              "live": {"beta_es": BETA_ES, "beta_fx": BETA_FX, "s_calo": SOGLIA_CALO, "s_calo_forte": SOGLIA_CALO_FORTE, "s_forte": SOGLIA_FORTE}})
     return r
 
 

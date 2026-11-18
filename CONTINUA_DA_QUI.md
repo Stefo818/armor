@@ -725,3 +725,11 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - crisi_lente.py riscritto: Chiave 1 = min(Boom, Shock), Chiave 2 = Stretta, punteggio = max, percentili dal 1990, nessun parametro stimato. Soglie 65 (attenzione) e 80 (allarme).
 - Esito: "non coerente" (allarme 80 mai acceso; AUC 0,78 sopra i sosia). Vedi ESITO_CRISI_LENTE_2.md. Oggi 72°: attenzione.
 - Scheda in "Segnali di fondo" sezione 4; registro mensile data/crisi_lente_registro.csv. Test: tests/test_terreno.py (251 passati).
+
+## Prossime ore in diretta (18 novembre 2026)
+- Richiesta: sezione «Cosa aspettarsi nelle prossime ore» e prezzo aggiornati ogni 15 secondi.
+- worker/armor-live.js: servizio gratuito Cloudflare (da creare a mano dall'utente). Legge VWCE (sede da data/live_worker.json, predefinita LS Exchange = sede di Trade Republic; poi Tradegate, Xetra), futures S&P 500, cambio e VIX; risposta con CORS, cache 5 s.
+- ore.py: ogni orizzonte salva «qz» (99 quantili della distribuzione senza il salto) e ore.json ha «live» (coefficienti e soglie). ore_live.js (inserito da ore_ui._live) ricalcola salto, barre, giudizio e intestazione nel browser con i prezzi in diretta. Prova di coerenza JS/Python: scratch/ore_live_prova.py (differenze < 0,5%).
+- Attivo solo quando data/live_worker.json ha «url» compilato; altrimenti pagina statica come prima.
+- Limiti: futures e VIX da Yahoo arrivano con 9-15 minuti di ritardo; la forma delle oscillazioni (VIX, eventi) resta quella dell'ultimo calcolo (ogni 15 minuti); onvista/Tradegate non verificabili dal sandbox.
+- live.py: la sede preferita vince se ha scambiato negli ultimi 20 minuti (anche per live.json).

@@ -2,10 +2,13 @@
 """Sezione «Prossime ore» della pagina Oggi: previsione del VWCE a 1, 3, 6 e 12 ore, radar degli eventi (Fed, inflazione, lavoro, trimestrali) con le attese degli analisti, notizie e prova.
 Dati: ore.py (data/ore.json) e radar.py. Impaginazione: per ogni orizzonte UNA barra divisa in rosso (scende) e verde (sale) con le percentuali scritte dentro; tutto il resto in tendine."""
 import html as _h
+import json
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from . import pieghe
+from .config import DATA
 from .segnali_ui import CSS as SG_CSS
 
 ROMA = ZoneInfo("Europe/Rome")
@@ -83,7 +86,7 @@ def _riga(nome: str, a: dict, t0: datetime) -> str:
     su = max(1, min(99, round(a["p_su"] * 100)))
     giu = 100 - su
     ev = "".join(f"<span class='tg'>{_h.escape(x)}</span>" for x in a["eventi"])
-    return (f"<div class='hr'><div class='lb'>{nome}<small>{fine}</small></div><div>"
+    return (f"<div class='hr' data-h='{nome}'><div class='lb'>{nome}<small>{fine}</small></div><div>"
             f"<div class='pb'><span class='dn' style='flex:{giu}'>▼ {giu}%</span><span class='up' style='flex:{su}'>{su}% ▲</span></div>"
             f"<div class='hs'>Scende ≈ <b>{_p(a['giu_medio'], 2)}</b> · sale ≈ <b>{_p(a['su_medio'], 2)}</b>{ev}</div>"
             f"<div class='hs'>Normale <b>{_p(a['p10'], 2)}</b> … <b>{_p(a['p90'], 2)}</b> · brutto <b>{_p(a['p05'], 2)}</b></div></div></div>")
@@ -213,6 +216,20 @@ def _prova(r: dict) -> str:
             "La soglia di −0,5% è stata scelta dopo il calo del 17 novembre, che con −0,7% non sarebbe scattato: va riguardata fra qualche mese. Non è un consiglio finanziario.</p>")
 
 
+def _live(r: dict) -> str:
+    """Aggiornamento in diretta ogni 15 secondi: serve l'indirizzo del servizio Cloudflare (data/live_worker.json, «url») e la griglia di quantili calcolata da ore.py."""
+    try:
+        cfg = json.loads((DATA / "live_worker.json").read_text(encoding="utf-8"))
+        if not cfg.get("url") or not r.get("live") or not all("qz" in a for a in r["orizzonti"].values()):
+            return ""
+        d = {"url": cfg["url"], "sede": cfg.get("sede") or "", "live": r["live"], "vix": (r.get("mercato") or {}).get("vix"),
+             "orizzonti": {k: {"qz": a["qz"], "eventi": bool(a["eventi"])} for k, a in r["orizzonti"].items()}}
+        js = (Path(__file__).parent / "ore_live.js").read_text(encoding="utf-8")
+        return "<script>window.ORE_LIVE=" + json.dumps(d, ensure_ascii=False).replace("</", "<\\/") + ";" + js + "</script>"
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def html(r: dict | None) -> str:
     if not r:
         return "<p class='mu'>La previsione a ore sarà disponibile dopo il prossimo aggiornamento.</p>"
@@ -238,15 +255,15 @@ def html(r: dict | None) -> str:
     rimb = " Incluso un piccolo rimbalzo atteso dopo i cali forti (segnale debole)." if any(a.get("rimbalzo") for a in r["orizzonti"].values()) else ""
     righe = "".join(_riga(k, a, t0) for k, a in r["orizzonti"].items())
     return (CSS + "<div class='mn ore'>"
-            f"<div class='ohd {cls}'><b class='v'>{_h.escape(g['testo'])}</b><span class='t'>ore {_ora(r['ora'])}</span><div class='os'>{riga}</div><div class='os'>{_sintesi(r)}</div></div>"
-            f"<div class='ctx'>{' · '.join(ctx)}</div>"
+            f"<div class='ohd {cls}' id='ore-h'><b class='v' id='ore-v'>{_h.escape(g['testo'])}</b><span class='t' id='ore-t'>ore {_ora(r['ora'])}</span><div class='os' id='ore-riga'>{riga}</div><div class='os' id='ore-sint'>{_sintesi(r)}</div></div>"
+            f"<div class='ctx' id='ore-ctx'>{' · '.join(ctx)}</div><div class='ctx' id='ore-st'></div>"
             "<div class='hz'><div class='hk'><span>▼ prezzo più basso di ora</span><span>più alto ▲</span></div>"
             f"{righe}</div>"
             f"<div class='ctx' style='margin-top:6px'><b>Come leggere:</b> le percentuali sono i casi su 100 in cui, a quell'ora, il prezzo è sotto (rosso) o sopra (verde) quello di adesso. "
             f"«Scende / sale» = variazione media nei due casi. «Normale» = 8 casi su 10. «Brutto» = peggio che capita 1 volta su 20.{rimb}</div>"
             + pieghe.fold("Tutti i numeri", _tabella(r))
             + _eventi(r, t0) + _notizie(r)
-            + pieghe.fold("Come funziona e quanto è affidabile", _prova(r)) + "</div>")
+            + pieghe.fold("Come funziona e quanto è affidabile", _prova(r)) + "</div>" + _live(r))
 
 
 def sub(r: dict | None) -> str:

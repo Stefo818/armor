@@ -2806,3 +2806,32 @@ def test_sec_posizioni_roster_pacchetto_finto():
         z.writestr("SUBMISSION.tsv", sub); z.writestr("COVERPAGE.tsv", cov); z.writestr("INFOTABLE.tsv", info)
     df = sec_dati.posizioni_roster(zipfile.ZipFile(io.BytesIO(b.getvalue())))
     assert set(df["fondo"]) == {"berkshire"} and len(df) == 2 and float(df.loc[df["putcall"] == "", "value"].iloc[0]) == 1000.0 and float(df["tot"].iloc[0]) == 1050.0
+
+
+# ---- aggiornamento in diretta della sezione «Prossime ore» ----
+def test_ore_previsione_ha_griglia_quantili_e_pagina_live(tmp_path, monkeypatch):
+    from datetime import datetime, timezone
+    from armor import ore, ore_ui
+    t0 = datetime(2026, 11, 18, 15, 40, tzinfo=timezone.utc)
+    m = {"es_ora": 7300.0, "es_ancora": 7300.0, "fx_ora": 1.1, "fx_ancora": 1.1, "vix": 25.0}
+    r = ore.previsione(t0, {"prezzo": 165.0, "ora": t0, "aperto": True}, m, [], sims=4000, seed=1)
+    for a in r["orizzonti"].values():
+        assert len(a["qz"]) == 99 and a["qz"] == sorted(a["qz"])
+    r.update({"ora": "2026-11-18T15:40Z", "vwce": {"prezzo": 165.0, "ora": "2026-11-18T15:30Z"}, "mercato": m, "eventi": [], "scenari": [], "notizie": {"n": 0}, "giudizio": ore.giudizio(r),
+              "es_1h": 0.0, "live": {"beta_es": 0.83, "beta_fx": -0.5, "s_calo": -0.005, "s_calo_forte": -0.01, "s_forte": -0.015}})
+    cfg = tmp_path / "live_worker.json"
+    monkeypatch.setattr(ore_ui, "DATA", tmp_path)
+    cfg.write_text('{"url": "", "sede": "LS Exchange"}')
+    assert "ORE_LIVE" not in ore_ui.html(r) and "id='ore-h'" in ore_ui.html(r)       # senza indirizzo: pagina statica
+    cfg.write_text('{"url": "https://armor-live.example.workers.dev", "sede": "LS Exchange"}')
+    h = ore_ui.html(r)
+    assert "ORE_LIVE" in h and "armor-live.example.workers.dev" in h and "data-h='1 ora'" in h and "id='ore-st'" in h
+
+
+def test_vwce_sede_preferita_vince_se_ha_scambiato_da_poco():
+    from armor import live
+    xet = {"chart": {"result": [{"meta": {"gmtoffset": 3600, "regularMarketPrice": 165.9, "regularMarketTime": 1795015775, "currentTradingPeriod": {"regular": {"start": 0, "end": 1}}}, "timestamp": [1795015715, 1795015775], "indicators": {"quote": [{"close": [165.8, 165.9]}]}}]}}
+    extra = [{"price": 166.0, "time": "2026-11-18T15:36:20Z", "venue": "Tradegate", "prev": 165.0}, {"price": 165.74, "time": "2026-11-18T15:36:00Z", "venue": "LS Exchange", "prev": 165.0}]
+    get = lambda s: xet if s == "VWCE.DE" else (_ for _ in ()).throw(RuntimeError("no"))
+    assert live.best_vwce(get, [], extra, sede="LS Exchange")["venue"] == "LS Exchange"
+    assert live.best_vwce(get, [], extra, sede="")["venue"] == "Tradegate"
