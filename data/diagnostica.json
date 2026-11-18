@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-18T13:27:47Z",
+ "data_utc": "2026-11-18T14:00:35Z",
  "oggi": "2026-11-18",
  "ultima_previsione": "2026-11-17",
  "giorni_da_ultima": 1,
@@ -29,8 +29,8 @@
   {
    "nome": "anfci",
    "chiave": false,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
@@ -148,8 +148,8 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-16",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-17",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -722,8 +722,8 @@
   {
    "nome": "nfci",
    "chiave": true,
-   "ultima_data": "2026-11-06",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-13",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
