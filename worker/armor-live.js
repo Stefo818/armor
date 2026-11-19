@@ -116,9 +116,9 @@ function allerta(es, vx, gd, vd) {
   try { if (gd && gd.now && vx.now && vd) fragile = rilevaFragile(gd.pts.map(x => x[1]).slice(0, -1), gd.now[1], vd.pts.map(x => x[1]).slice(0, -1), vx.now[1]); } catch (e) {}
   return { rapido: rilevaRapido(es.pts, vx.pts), fragile, es15: m15(es.pts), vix15: m15(vx.pts), vix: vx.now ? vx.now[1] : null, tes: es.now ? es.now[0] : null };
 }
-async function giaInviato(topic, titolo, secondi) {
+async function giaInviato(topic, titolo, durata) {
   try {
-    const r = await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}/json?poll=1&since=${secondi}s`);
+    const r = await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}/json?poll=1&since=${durata}`);
     if (!r.ok) return true;
     return (await r.text()).split('\n').some(l => { try { return JSON.parse(l).title === titolo; } catch (e) { return false; } });
   } catch (e) { return true; }   // nel dubbio non mando: meglio un avviso in meno che uno ogni minuto
@@ -136,14 +136,14 @@ async function controlla(env, prova = false) {
   if (prova) return res;   // /sentinella: solo lettura, non manda nulla
   for (const r of res.rapido) {
     const titolo = r.tipo === 'calo' ? 'Armor: vendite forti in corso' : 'Armor: paura in forte salita';
-    if (await giaInviato(env.NTFY_TOPIC, titolo, 3600)) continue;
+    if (await giaInviato(env.NTFY_TOPIC, titolo, '1h')) continue;
     const t = r.tipo === 'calo'
       ? `Futures S&P 500 ${pc(r.valore, 2)} in 15 minuti. Dopo giornate con cali oltre l'1,2%, dal 1990 la mediana a 20 sedute è stata +2% (64% positive): vendere nel panico spesso blocca la perdita. Decidi con calma.`
       : `Paura (VIX) salita a ${r.vix.toFixed(1).replace('.', ',')} (${pc(r.valore, 0)} in 15 minuti): il mercato si sta spaventando.`;
     await ntfy(env.NTFY_TOPIC, titolo, t + ' I prezzi gratuiti hanno 9-15 minuti di ritardo.', 5);
     res.inviati.push(r.tipo);
   }
-  if (res.fragile && !(await giaInviato(env.NTFY_TOPIC, 'Armor: terreno fragile', 43200))) {
+  if (res.fragile && !(await giaInviato(env.NTFY_TOPIC, 'Armor: terreno fragile', '12h'))) {
     const f = res.fragile, why = [f.B ? `paura a ${f.vix.toFixed(1).replace('.', ',')} e salita del ${(f.salita5g * 100).toFixed(0)}% in 5 giorni` : null, f.A ? "l'indice è appena sceso sotto la media dei 200 giorni" : null].filter(Boolean).join('; ');
     await ntfy(env.NTFY_TOPIC, 'Armor: terreno fragile', `Oggi: ${why}. Dal 1990, in giorni così il mercato ha perso oltre l'1,2% il giorno dopo 1 volta su 5 circa (di norma 1 su 11). Non è una previsione: è un invito a non aggiungere capitale in fretta.`, 4);
     res.inviati.push('fragile');
