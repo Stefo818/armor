@@ -738,3 +738,4 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - PROTOCOLLO_FRAGILITA.md: regole A, B e vendite in corso, prova 1990-2026, replay sul calo di oggi.
 - worker/armor-live.js: aggiunta la sentinella (cron ogni minuto, ntfy da variabile NTFY_TOPIC); /sentinella = solo lettura per controllare.
 - Da fare nell'app: scheda «Terreno fragile» sulla pagina Oggi; avvisi sulle notizie forti (solo come attenzione).
+- 19/11 sera: la notifica «terreno fragile» non arrivava. Worker: anti-ripetizione ora basata su ntfy (la Cache API non funziona su workers.dev), aggiunta pagina /prova-notifica (manda un messaggio subito e mostra stato e lunghezza del nome canale), errori della sentinella nei registri. Canale ntfy dell'utente: armor-u4k04pkrkdpw1gpuvzsb (26 caratteri).

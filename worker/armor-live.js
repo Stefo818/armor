@@ -108,14 +108,17 @@ function rilevaFragile(chiusure, prezzoOra, vixChiusure, vixOra) {
   return A || B ? { A, B, vix: vixOra, salita5g: v5 ? vixOra / v5 - 1 : null } : null;
 }
 const pc = (x, d = 1, sg = true) => ((sg && x >= 0 ? '+' : '') + (x * 100).toFixed(d)).replace('.', ',') + '%';
-async function giaInviato(chiave, secondi) {
-  const cache = caches.default, req = new Request('https://armor.local/' + chiave);
-  if (await cache.match(req)) return true;
-  await cache.put(req, new Response('1', { headers: { 'Cache-Control': 'max-age=' + secondi } }));
-  return false;
+// Anti-ripetizione senza memoria propria: guardo se ntfy ha già un messaggio con lo stesso titolo nel periodo (ntfy tiene i messaggi 12 ore).
+async function giaInviato(topic, titolo, secondi) {
+  try {
+    const r = await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}/json?poll=1&since=${secondi}s`);
+    if (!r.ok) return true;
+    return (await r.text()).split('\n').some(l => { try { return JSON.parse(l).title === titolo; } catch (e) { return false; } });
+  } catch (e) { return true; }   // nel dubbio non mando: meglio un avviso in meno che uno ogni minuto
 }
 async function ntfy(topic, titolo, testo, priorita) {
-  await fetch('https://ntfy.sh/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic, title: titolo, message: testo, priority: priorita, tags: ['chart_with_downwards_trend'] }) });
+  const r = await fetch('https://ntfy.sh/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic, title: titolo, message: testo, priority: priorita, tags: ['chart_with_downwards_trend'] }) });
+  return { stato: r.status, risposta: (await r.text()).slice(0, 200) };
 }
 async function controlla(env, prova = false) {
   if (!prova && !env.NTFY_TOPIC) return { errore: 'manca NTFY_TOPIC' };
@@ -125,14 +128,15 @@ async function controlla(env, prova = false) {
   if (gd.now && vx.now) res.fragile = rilevaFragile(chiusure, gd.now[1], vixCh, vx.now[1]);
   if (prova) return res;   // /sentinella: solo lettura, non manda nulla
   for (const r of res.rapido) {
-    if (await giaInviato('rapido-' + r.tipo, 3600)) continue;
+    const titolo = r.tipo === 'calo' ? 'Armor: vendite forti in corso' : 'Armor: paura in forte salita';
+    if (await giaInviato(env.NTFY_TOPIC, titolo, 3600)) continue;
     const t = r.tipo === 'calo'
       ? `Futures S&P 500 ${pc(r.valore, 2)} in 15 minuti. Dopo giornate con cali oltre l'1,2%, dal 1990 la mediana a 20 sedute è stata +2% (64% positive): vendere nel panico spesso blocca la perdita. Decidi con calma.`
       : `Paura (VIX) salita a ${r.vix.toFixed(1).replace('.', ',')} (${pc(r.valore, 0)} in 15 minuti): il mercato si sta spaventando.`;
-    await ntfy(env.NTFY_TOPIC, r.tipo === 'calo' ? 'Armor: vendite forti in corso' : 'Armor: paura in forte salita', t + ' I prezzi gratuiti hanno 9-15 minuti di ritardo.', 5);
+    await ntfy(env.NTFY_TOPIC, titolo, t + ' I prezzi gratuiti hanno 9-15 minuti di ritardo.', 5);
     res.inviati.push(r.tipo);
   }
-  if (res.fragile && !(await giaInviato('fragile', 43200))) {
+  if (res.fragile && !(await giaInviato(env.NTFY_TOPIC, 'Armor: terreno fragile', 43200))) {
     const f = res.fragile, why = [f.B ? `paura a ${f.vix.toFixed(1).replace('.', ',')} e salita del ${(f.salita5g * 100).toFixed(0)}% in 5 giorni` : null, f.A ? "l'indice è appena sceso sotto la media dei 200 giorni" : null].filter(Boolean).join('; ');
     await ntfy(env.NTFY_TOPIC, 'Armor: terreno fragile', `Oggi: ${why}. Dal 1990, in giorni così il mercato ha perso oltre l'1,2% il giorno dopo 1 volta su 5 circa (di norma 1 su 11). Non è una previsione: è un invito a non aggiungere capitale in fretta.`, 4);
     res.inviati.push('fragile');
@@ -141,9 +145,14 @@ async function controlla(env, prova = false) {
 }
 
 export default {
-  async scheduled(event, env, ctx) { ctx.waitUntil(controlla(env).catch(() => {})); },
-  async fetch(req) {
+  async scheduled(event, env, ctx) { ctx.waitUntil(controlla(env).then(r => console.log(JSON.stringify(r))).catch(e => console.error('sentinella: ' + e))); },
+  async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
+    if (new URL(req.url).pathname === '/prova-notifica') {   // manda subito una notifica di prova e mostra la risposta di ntfy
+      if (!env.NTFY_TOPIC) return new Response(JSON.stringify({ ok: false, errore: 'variabile NTFY_TOPIC non trovata nel servizio' }), { headers: { ...CORS, 'Content-Type': 'application/json' } });
+      const r = await ntfy(env.NTFY_TOPIC, 'Armor: prova notifica', 'Se leggi questo messaggio, la sentinella può avvisarti.', 3).catch(e => ({ errore: String(e) }));
+      return new Response(JSON.stringify({ ok: r.stato === 200, lunghezza_nome_canale: env.NTFY_TOPIC.length, inizio_nome_canale: env.NTFY_TOPIC.slice(0, 8), ...r }), { headers: { ...CORS, 'Content-Type': 'application/json' } });
+    }
     if (new URL(req.url).pathname === '/sentinella') return new Response(JSON.stringify(await controlla({}, true).catch(e => ({ errore: String(e) }))), { headers: { ...CORS, 'Content-Type': 'application/json' } });
     const sede = new URL(req.url).searchParams.get('sede') || 'LS Exchange';
     try {
