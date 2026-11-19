@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-19T04:23:13Z",
+ "data_utc": "2026-11-19T13:53:55Z",
  "oggi": "2026-11-19",
  "ultima_previsione": "2026-11-18",
  "giorni_da_ultima": 1,
@@ -36,8 +36,8 @@
   {
    "nome": "armor_index",
    "chiave": false,
-   "ultima_data": "2026-11-17",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-18",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -85,8 +85,8 @@
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-17",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-18",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -148,15 +148,15 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-17",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-18",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "claims_up",
    "chiave": false,
-   "ultima_data": "2026-11-07",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-14",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
@@ -421,8 +421,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-17",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-18",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -435,8 +435,8 @@
   {
    "nome": "fear_greed",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -540,8 +540,8 @@
   {
    "nome": "icsa",
    "chiave": true,
-   "ultima_data": "2026-11-07",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-14",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
@@ -680,8 +680,8 @@
   {
    "nome": "mweq",
    "chiave": false,
-   "ultima_data": "2026-11-17",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-18",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -757,8 +757,8 @@
   {
    "nome": "nikkei",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -806,8 +806,8 @@
   {
    "nome": "philly",
    "chiave": false,
-   "ultima_data": "2026-10-01",
-   "giorni_ritardo": 49,
+   "ultima_data": "2026-11-01",
+   "giorni_ritardo": 18,
    "stato": "ok"
   },
   {
@@ -1345,8 +1345,8 @@
   {
    "nome": "vwce_de",
    "chiave": false,
-   "ultima_data": "2026-11-17",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-18",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
