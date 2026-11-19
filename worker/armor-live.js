@@ -80,9 +80,71 @@ function scegli(trovate, sede) {
   return { ...best, alts: Object.fromEntries(ok.map(v => [v.venue, [Math.round(v.price * 100) / 100, v.time]])), scelta_preferita: cand.length > 0 };
 }
 
+// ---------- Sentinella (PROTOCOLLO_FRAGILITA.md): controlla ogni minuto e manda un avviso con ntfy ----------
+const REGOLE = { calo15: -0.008, vixSalto15: 0.10, vixMin: 20, vixAlto: 22, vixSalto5g: 0.10, bandaMedia: 3 };
+const dopo = (pts, t) => { let v = null; for (const [a, b] of pts) { if (a <= t) v = b; else break; } return v; };
+// Vendite in corso: futures giù di almeno 0,8% in 15 minuti, oppure paura su di almeno 10% in 15 minuti (con paura già da 20 in su).
+function rilevaRapido(es, vix) {
+  const out = [];
+  if (es.length) {
+    const [t, p] = es[es.length - 1], p0 = dopo(es, t - 900);
+    if (p0 && p / p0 - 1 <= REGOLE.calo15) out.push({ tipo: 'calo', valore: p / p0 - 1, t });
+  }
+  if (vix.length) {
+    const [t, p] = vix[vix.length - 1], p0 = dopo(vix, t - 900);
+    if (p0 && p >= REGOLE.vixMin && p / p0 - 1 >= REGOLE.vixSalto15) out.push({ tipo: 'paura', valore: p / p0 - 1, vix: p, t });
+  }
+  return out;
+}
+// Terreno fragile: (A) indice appena sceso sotto la media dei 200 giorni (ultime 3 sedute) oppure (B) paura >= 22 e salita >= 10% in 5 sedute.
+function rilevaFragile(chiusure, prezzoOra, vixChiusure, vixOra) {
+  const c = chiusure.concat([prezzoOra]);
+  if (c.length < 205) return null;
+  const sotto = [];
+  for (let k = c.length - 4; k < c.length; k++) { const m = c.slice(k - 199, k + 1).reduce((x, y) => x + y, 0) / 200; sotto.push(c[k] < m); }
+  const A = sotto.slice(1).some((v, i) => v && !sotto[i]);
+  const v5 = vixChiusure.length >= 5 ? vixChiusure[vixChiusure.length - 5] : null;
+  const B = vixOra >= REGOLE.vixAlto && v5 && vixOra / v5 - 1 >= REGOLE.vixSalto5g;
+  return A || B ? { A, B, vix: vixOra, salita5g: v5 ? vixOra / v5 - 1 : null } : null;
+}
+const pc = (x, d = 1, sg = true) => ((sg && x >= 0 ? '+' : '') + (x * 100).toFixed(d)).replace('.', ',') + '%';
+async function giaInviato(chiave, secondi) {
+  const cache = caches.default, req = new Request('https://armor.local/' + chiave);
+  if (await cache.match(req)) return true;
+  await cache.put(req, new Response('1', { headers: { 'Cache-Control': 'max-age=' + secondi } }));
+  return false;
+}
+async function ntfy(topic, titolo, testo, priorita) {
+  await fetch('https://ntfy.sh/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic, title: titolo, message: testo, priority: priorita, tags: ['chart_with_downwards_trend'] }) });
+}
+async function controlla(env, prova = false) {
+  if (!prova && !env.NTFY_TOPIC) return { errore: 'manca NTFY_TOPIC' };
+  const [es, vx, gd, vd] = await Promise.all([J(yh('ES=F', '5m', '1d')).then(serie), J(yh('^VIX', '5m', '1d')).then(serie), J(yh('^GSPC', '1d', '1y')).then(serie), J(yh('^VIX', '1d', '1mo')).then(serie)]);
+  const res = { rapido: rilevaRapido(es.pts, vx.pts), fragile: null, inviati: [] };
+  const chiusure = gd.pts.map(x => x[1]).slice(0, -1), vixCh = vd.pts.map(x => x[1]).slice(0, -1);
+  if (gd.now && vx.now) res.fragile = rilevaFragile(chiusure, gd.now[1], vixCh, vx.now[1]);
+  if (prova) return res;   // /sentinella: solo lettura, non manda nulla
+  for (const r of res.rapido) {
+    if (await giaInviato('rapido-' + r.tipo, 3600)) continue;
+    const t = r.tipo === 'calo'
+      ? `Futures S&P 500 ${pc(r.valore, 2)} in 15 minuti. Dopo giornate con cali oltre l'1,2%, dal 1990 la mediana a 20 sedute è stata +2% (64% positive): vendere nel panico spesso blocca la perdita. Decidi con calma.`
+      : `Paura (VIX) salita a ${r.vix.toFixed(1).replace('.', ',')} (${pc(r.valore, 0)} in 15 minuti): il mercato si sta spaventando.`;
+    await ntfy(env.NTFY_TOPIC, r.tipo === 'calo' ? 'Armor: vendite forti in corso' : 'Armor: paura in forte salita', t + ' I prezzi gratuiti hanno 9-15 minuti di ritardo.', 5);
+    res.inviati.push(r.tipo);
+  }
+  if (res.fragile && !(await giaInviato('fragile', 43200))) {
+    const f = res.fragile, why = [f.B ? `paura a ${f.vix.toFixed(1).replace('.', ',')} e salita del ${(f.salita5g * 100).toFixed(0)}% in 5 giorni` : null, f.A ? "l'indice è appena sceso sotto la media dei 200 giorni" : null].filter(Boolean).join('; ');
+    await ntfy(env.NTFY_TOPIC, 'Armor: terreno fragile', `Oggi: ${why}. Dal 1990, in giorni così il mercato ha perso oltre l'1,2% il giorno dopo 1 volta su 5 circa (di norma 1 su 11). Non è una previsione: è un invito a non aggiungere capitale in fretta.`, 4);
+    res.inviati.push('fragile');
+  }
+  return res;
+}
+
 export default {
+  async scheduled(event, env, ctx) { ctx.waitUntil(controlla(env).catch(() => {})); },
   async fetch(req) {
     if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
+    if (new URL(req.url).pathname === '/sentinella') return new Response(JSON.stringify(await controlla({}, true).catch(e => ({ errore: String(e) }))), { headers: { ...CORS, 'Content-Type': 'application/json' } });
     const sede = new URL(req.url).searchParams.get('sede') || 'LS Exchange';
     try {
       const [es, fx, vx, sd] = await Promise.all([

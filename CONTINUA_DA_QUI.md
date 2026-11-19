@@ -733,3 +733,8 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - Attivo solo quando data/live_worker.json ha «url» compilato; altrimenti pagina statica come prima.
 - Limiti: futures e VIX da Yahoo arrivano con 9-15 minuti di ritardo; la forma delle oscillazioni (VIX, eventi) resta quella dell'ultimo calcolo (ogni 15 minuti); onvista/Tradegate non verificabili dal sandbox.
 - live.py: la sede preferita vince se ha scambiato negli ultimi 20 minuti (anche per live.json).
+
+## Fragilità e sentinella (19 novembre 2026)
+- PROTOCOLLO_FRAGILITA.md: regole A, B e vendite in corso, prova 1990-2026, replay sul calo di oggi.
+- worker/armor-live.js: aggiunta la sentinella (cron ogni minuto, ntfy da variabile NTFY_TOPIC); /sentinella = solo lettura per controllare.
+- Da fare nell'app: scheda «Terreno fragile» sulla pagina Oggi; avvisi sulle notizie forti (solo come attenzione).
