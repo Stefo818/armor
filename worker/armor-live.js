@@ -109,6 +109,13 @@ function rilevaFragile(chiusure, prezzoOra, vixChiusure, vixOra) {
 }
 const pc = (x, d = 1, sg = true) => ((sg && x >= 0 ? '+' : '') + (x * 100).toFixed(d)).replace('.', ',') + '%';
 // Anti-ripetizione senza memoria propria: guardo se ntfy ha già un messaggio con lo stesso titolo nel periodo (ntfy tiene i messaggi 12 ore).
+// Dati per la scheda «Allerta vendite» della pagina Oggi (stesse regole della sentinella).
+function allerta(es, vx, gd, vd) {
+  const m15 = pts => { if (!pts.length) return null; const [t, p] = pts[pts.length - 1], p0 = dopo(pts, t - 900); return p0 ? p / p0 - 1 : null; };
+  let fragile = null;
+  try { if (gd && gd.now && vx.now && vd) fragile = rilevaFragile(gd.pts.map(x => x[1]).slice(0, -1), gd.now[1], vd.pts.map(x => x[1]).slice(0, -1), vx.now[1]); } catch (e) {}
+  return { rapido: rilevaRapido(es.pts, vx.pts), fragile, es15: m15(es.pts), vix15: m15(vx.pts), vix: vx.now ? vx.now[1] : null, tes: es.now ? es.now[0] : null };
+}
 async function giaInviato(topic, titolo, secondi) {
   try {
     const r = await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}/json?poll=1&since=${secondi}s`);
@@ -156,8 +163,9 @@ export default {
     if (new URL(req.url).pathname === '/sentinella') return new Response(JSON.stringify(await controlla({}, true).catch(e => ({ errore: String(e) }))), { headers: { ...CORS, 'Content-Type': 'application/json' } });
     const sede = new URL(req.url).searchParams.get('sede') || 'LS Exchange';
     try {
-      const [es, fx, vx, sd] = await Promise.all([
-        J(yh('ES=F', '5m', '2d')).then(serie), J(yh('EURUSD=X', '5m', '1d')).then(serie), J(yh('^VIX', '5m', '1d')).then(serie), sedi()]);
+      const [es, fx, vx, sd, gd, vd] = await Promise.all([
+        J(yh('ES=F', '5m', '2d')).then(serie), J(yh('EURUSD=X', '5m', '1d')).then(serie), J(yh('^VIX', '5m', '1d')).then(serie), sedi(),
+        J(yh('^GSPC', '1d', '1y')).then(serie).catch(() => null), J(yh('^VIX', '1d', '1mo')).then(serie).catch(() => null)]);
       const vw = scegli(sd.trovate, sede);
       if (!vw || !es.now || !fx.now) throw new Error('dati non disponibili ' + sd.errori.join('; '));
       const tn = es.now[0];
@@ -167,6 +175,7 @@ export default {
         es: { p: es.now[1], time: es.now[0], h1: before(es.pts, tn - 3600), h24: before(es.pts, tn - 86400), serie: es.pts.filter(p => p[0] >= tn - 21600) },
         fx: { p: fx.now[1], time: fx.now[0], serie: fx.pts.filter(p => p[0] >= fx.now[0] - 21600) },
         vix: vx.now ? { p: vx.now[1], time: vx.now[0], h1: before(vx.pts, vx.now[0] - 3600) } : null,
+        allerta: allerta(es, vx, gd, vd),
       };
       return new Response(JSON.stringify(out), { headers: { ...CORS, 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=5' } });
     } catch (e) {

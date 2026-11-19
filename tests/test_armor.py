@@ -2835,3 +2835,14 @@ def test_vwce_sede_preferita_vince_se_ha_scambiato_da_poco():
     get = lambda s: xet if s == "VWCE.DE" else (_ for _ in ()).throw(RuntimeError("no"))
     assert live.best_vwce(get, [], extra, sede="LS Exchange")["venue"] == "LS Exchange"
     assert live.best_vwce(get, [], extra, sede="")["venue"] == "Tradegate"
+
+
+def test_scheda_allerta_vendite(tmp_path, monkeypatch):
+    from armor import allerta_ui
+    monkeypatch.setattr(allerta_ui, "DATA", tmp_path)
+    assert allerta_ui.html() == ""                                   # senza file di configurazione: niente scheda
+    (tmp_path / "live_worker.json").write_text('{"url": ""}')
+    assert allerta_ui.html() == ""
+    (tmp_path / "live_worker.json").write_text('{"url": "https://armor-live.example.workers.dev"}')
+    h = allerta_ui.html()
+    assert "id='allerta'" in h and "ALLERTA_LIVE" in h and "armor-live.example.workers.dev" in h and "Vendite forti in corso" in h
