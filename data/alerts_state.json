@@ -1,12 +1,12 @@
 {
  "levels": {
-  "10g": "Elevato",
-  "1m": "Elevato",
+  "10g": "Alto",
+  "1m": "Alto",
   "3m": "Elevato",
   "6m": "Normale"
  },
  "regime": "Calma",
- "vix": "attenzione",
+ "vix": "stress",
  "aix_band": "moderato",
  "divergence": false,
  "event": "2026-11-10",
