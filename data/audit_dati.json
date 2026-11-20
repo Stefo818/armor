@@ -1,5 +1,5 @@
 {
- "generato": "2026-11-20T04:10Z",
+ "generato": "2026-11-20T13:33Z",
  "ok": true,
  "n_controlli": 15,
  "n_falliti": 0,
@@ -55,7 +55,7 @@
   {
    "controllo": "VWCE: L&S vs Xetra (ultimi 60 giorni)",
    "ok": true,
-   "dettaglio": "scarto massimo 1.48%",
+   "dettaglio": "scarto massimo 1.63%",
    "grave": false
   },
   {

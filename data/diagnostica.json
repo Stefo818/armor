@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-20T04:11:12Z",
+ "data_utc": "2026-11-20T13:36:57Z",
  "oggi": "2026-11-20",
  "ultima_previsione": "2026-11-19",
  "giorni_da_ultima": 1,
@@ -36,8 +36,8 @@
   {
    "nome": "armor_index",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -85,8 +85,8 @@
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -421,8 +421,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -435,8 +435,8 @@
   {
    "nome": "fear_greed",
    "chiave": false,
-   "ultima_data": "2026-11-19",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -680,8 +680,8 @@
   {
    "nome": "mweq",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -757,8 +757,8 @@
   {
    "nome": "nikkei",
    "chiave": false,
-   "ultima_data": "2026-11-19",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -995,8 +995,8 @@
   {
    "nome": "sec_xlc",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -1037,8 +1037,8 @@
   {
    "nome": "sec_xlre",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -1345,8 +1345,8 @@
   {
    "nome": "vwce_de",
    "chiave": false,
-   "ultima_data": "2026-11-18",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-19",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {

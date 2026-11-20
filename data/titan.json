@@ -1,7 +1,7 @@
 {
  "data": "2026-11-19",
- "armor_index": 47.2,
- "super_armor": 51.2,
+ "armor_index": 47.4,
+ "super_armor": 51.5,
  "radar_decennio": 78.3,
  "pilastri": {
   "p1": 53.8,
@@ -9,40 +9,40 @@
   "p3": 69.4,
   "p4": 55.1,
   "p5": 37.0,
-  "p6": 50.8
+  "p6": 52.7
  },
  "previsioni": {
   "1 settimana": {
    "calo": 0.1197,
-   "rialzo": 0.3284,
+   "rialzo": 0.328,
    "soglia_calo": 0.05,
    "normale": 0.062,
    "data": "2026-11-19"
   },
   "1 mese": {
    "calo": 0.0709,
-   "rialzo": 0.7244,
+   "rialzo": 0.7243,
    "soglia_calo": 0.1,
    "normale": 0.0519,
    "data": "2026-11-19"
   },
   "3 mesi": {
-   "calo": 0.2124,
-   "rialzo": 0.5765,
+   "calo": 0.2125,
+   "rialzo": 0.5758,
    "soglia_calo": 0.1,
    "normale": 0.1526,
    "data": "2026-11-19"
   },
   "6 mesi": {
-   "calo": 0.3185,
-   "rialzo": 0.5776,
+   "calo": 0.3186,
+   "rialzo": 0.5769,
    "soglia_calo": 0.1,
    "normale": 0.255,
    "data": "2026-11-19"
   },
   "12 mesi": {
-   "calo": 0.4551,
-   "rialzo": 0.5828,
+   "calo": 0.4555,
+   "rialzo": 0.5821,
    "soglia_calo": 0.1,
    "normale": 0.3749,
    "data": "2026-11-19"
