@@ -116,8 +116,8 @@ def forecast(write: bool = True) -> dict:
         except Exception as e:  # noqa: BLE001
             print("[minimi] non aggiornato:", str(e)[:100])
         try:   # crescita, trend, flussi, opzioni, stress test: PROTOCOLLO_MINIMI.md, parti H-K (ogni passo è protetto)
-            from . import crescita, crisi_lente, flussi, opzioni, stress, terreno, trend
-            for nome, fn in (("crisi_lente", crisi_lente.aggiorna), ("terreno", terreno.aggiorna), ("crescita", crescita.aggiorna), ("trend", trend.aggiorna), ("flussi", flussi.aggiorna), ("opzioni", opzioni.aggiorna), ("stress", stress.aggiorna)):
+            from . import crescita, crisi_lente, flussi, modello_sistemico, opzioni, stress, terreno, trend
+            for nome, fn in (("sistemico", modello_sistemico.aggiorna), ("crisi_lente", crisi_lente.aggiorna), ("terreno", terreno.aggiorna), ("crescita", crescita.aggiorna), ("trend", trend.aggiorna), ("flussi", flussi.aggiorna), ("opzioni", opzioni.aggiorna), ("stress", stress.aggiorna)):
                 try:
                     fn()
                 except Exception as e:  # noqa: BLE001

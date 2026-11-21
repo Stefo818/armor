@@ -23,3 +23,9 @@ Il calo improvviso non si prevede: il segnale migliore (B) raddoppia la probabil
 ## Prova della sentinella sui prezzi del 19 novembre (scratch/sentinella_prova.mjs)
 - Avviso «vendite forti» alle 18:04 ora italiana (futures −0,83% in 15 minuti), avviso «paura in salita» alle 18:09.
 - «Terreno fragile» attivo già il 17 novembre (A e B vere; paura +31% in 5 sedute).
+
+---
+# Emendamento 1 (21 novembre 2026) — discesa a gradini, scritto PRIMA di contare i giorni di allarme
+**Cosa è successo.** Venerdì 20 novembre l'S&P 500 ha perso il 3,7% ma senza un singolo movimento da 0,8% in 15 minuti (il massimo è stato −0,78%, per 0,02 punti sotto la soglia): la discesa è arrivata a gradini (−1,3% nell'ora delle 16:00 UTC, poi −0,5%, −0,5%, −0,9%, −0,5%). La paura è salita del 15,5% in un'ora ma non del 10% in 15 minuti. La sentinella non ha mandato un nuovo avviso di «vendite forti» (era già partito «terreno fragile» il 19).
+**Regola aggiunta (scelta guardando venerdì: ammesso, è una taratura su un caso).** «Discesa a gradini» = futures S&P 500 −1,2% in 60 minuti, oppure paura +12% in 60 minuti con paura ≥ 22. Stesso blocco di un'ora per tipo.
+**Regola di accettazione fissata ora, prima del conteggio.** Si conta in quanti giorni distinti degli ultimi 60 giorni di dati a 5 minuti (limite di Yahoo) la nuova regola sarebbe scattata. Se sono **al massimo 6** si adotta così; se sono di più si passa UNA volta a futures −1,5% / paura +15% e si adotta quella versione senza altri ritocchi.

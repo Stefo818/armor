@@ -1,0 +1,299 @@
+{
+ "campione": {
+  "sedute_primario": 4164,
+  "Y3_primario": 494,
+  "frequenza_base_Y3": 0.1186359269932757,
+  "sedute_tutte": 4370,
+  "Y3_tutte": 632,
+  "Y6_primario": 633
+ },
+ "auc": {
+  "Radar 1-3 mesi (score_3m)": {
+   "Y3_primario": 0.6987807366876634,
+   "Y3_tutte": 0.6888043850024721,
+   "Y6_primario": 0.675150763515028,
+   "Y3_1997-2011": 0.665749877078491,
+   "Y3_2012-2026": 0.7307654158010157,
+   "Y3_2008-2026": 0.6542717213858154
+  },
+  "Radar 6 mesi (score_6m)": {
+   "Y3_primario": 0.6840246445079372,
+   "Y3_tutte": 0.6788717567100798,
+   "Y6_primario": 0.7173441909013508,
+   "Y3_1997-2011": 0.6699780976220275,
+   "Y3_2012-2026": 0.6985190154662974,
+   "Y3_2008-2026": 0.6187886712215571
+  },
+  "Indice Armor": {
+   "Y3_primario": 0.7298533353925581,
+   "Y3_tutte": 0.6986191255054148,
+   "Y6_primario": 0.7229861622827916,
+   "Y3_1997-2011": 0.7303395427319864,
+   "Y3_2012-2026": 0.7035298721722069,
+   "Y3_2008-2026": 0.6794602908277405
+  },
+  "Super Armor": {
+   "Y3_primario": 0.6760259352006089,
+   "Y3_tutte": 0.6661123612437437,
+   "Y6_primario": 0.7254911698371856,
+   "Y3_1997-2011": 0.6754564857858036,
+   "Y3_2012-2026": 0.680957121421976,
+   "Y3_2008-2026": 0.5938860420823509
+  },
+  "Percentile del VIX": {
+   "Y3_primario": 0.6315679158071242,
+   "Y3_tutte": 0.6314671082485049,
+   "Y6_primario": 0.6014154478299405,
+   "Y3_1997-2011": 0.6641253575898445,
+   "Y3_2012-2026": 0.5586153912742382,
+   "Y3_2008-2026": 0.5549534433762622
+  },
+  "Regola paura in salita (B)": {
+   "Y3_primario": 0.5042830036735099,
+   "Y3_tutte": 0.5049766848853039,
+   "Y6_primario": 0.5042460750482188,
+   "Y3_1997-2011": 0.5036150098337208,
+   "Y3_2012-2026": 0.5038701812096029,
+   "Y3_2008-2026": 0.5029935556361731
+  }
+ },
+ "ic90_Y3_radar3m": [
+  0.5870067652668459,
+  0.7991028621884512
+ ],
+ "ic90_Y3_armor": [
+  0.6409108531026446,
+  0.8159127288511145
+ ],
+ "riferimento_caso_p95": 0.6194695887433948,
+ "riferimento_caso_p50": 0.4944177541947512,
+ "allerta": {
+  "quota_sedute": 0.1299231508165226,
+  "precisione": 0.3179297597042514,
+  "frequenza_base": 0.1186359269932757,
+  "sedute": 541
+ },
+ "episodi": [
+  {
+   "inizio": "1997-02-12",
+   "giorno_meno5": "1997-03-27",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 60,
+   "massimo_prima": 73.1,
+   "regime": "CARO_TASSI_LIQ"
+  },
+  {
+   "inizio": "1998-06-02",
+   "giorno_meno5": "1998-07-29",
+   "shock_esterno": true,
+   "intercettato": true,
+   "anticipo_sedute": 126,
+   "massimo_prima": 76.4,
+   "regime": "CARO_TASSI_LIQ"
+  },
+  {
+   "inizio": "1999-07-01",
+   "giorno_meno5": "1999-07-26",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 126,
+   "massimo_prima": 72.3,
+   "regime": "CARO_TASSI_LIQ"
+  },
+  {
+   "inizio": "2007-05-30",
+   "giorno_meno5": "2007-07-27",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 94,
+   "massimo_prima": 62.7,
+   "regime": "SHOCK_OFFERTA"
+  },
+  {
+   "inizio": "2010-01-19",
+   "giorno_meno5": "2010-01-22",
+   "shock_esterno": false,
+   "intercettato": false,
+   "anticipo_sedute": null,
+   "massimo_prima": 59.7,
+   "regime": "RECES_DOMANDA"
+  },
+  {
+   "inizio": "2011-05-05",
+   "giorno_meno5": "2011-06-06",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 57,
+   "massimo_prima": 66.1,
+   "regime": "STRETTA_CREDITO"
+  },
+  {
+   "inizio": "2012-03-13",
+   "giorno_meno5": "2012-05-14",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 126,
+   "massimo_prima": 71.7,
+   "regime": "STRETTA_CREDITO"
+  },
+  {
+   "inizio": "2015-05-26",
+   "giorno_meno5": "2015-08-21",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 106,
+   "massimo_prima": 86.5,
+   "regime": "STRETTA_CREDITO"
+  },
+  {
+   "inizio": "2018-01-19",
+   "giorno_meno5": "2018-02-05",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 97,
+   "massimo_prima": 67.3,
+   "regime": "SHOCK_OFFERTA"
+  },
+  {
+   "inizio": "2018-08-24",
+   "giorno_meno5": "2018-10-11",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 126,
+   "massimo_prima": 69.6,
+   "regime": "CALMA_STRUTTURALE"
+  },
+  {
+   "inizio": "2019-12-05",
+   "giorno_meno5": "2020-02-25",
+   "shock_esterno": true,
+   "intercettato": false,
+   "anticipo_sedute": null,
+   "massimo_prima": 58.7,
+   "regime": "CALMA_STRUTTURALE"
+  },
+  {
+   "inizio": "2020-09-01",
+   "giorno_meno5": "2020-09-08",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 126,
+   "massimo_prima": 98.5,
+   "regime": "RECES_DOMANDA"
+  },
+  {
+   "inizio": "2021-11-18",
+   "giorno_meno5": "2022-01-19",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 106,
+   "massimo_prima": 76.0,
+   "regime": "SHOCK_OFFERTA"
+  },
+  {
+   "inizio": "2023-07-28",
+   "giorno_meno5": "2023-09-21",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 126,
+   "massimo_prima": 75.6,
+   "regime": "RECES_DOMANDA"
+  },
+  {
+   "inizio": "2024-07-16",
+   "giorno_meno5": "2024-08-02",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 77,
+   "massimo_prima": 79.4,
+   "regime": "RECES_DOMANDA"
+  },
+  {
+   "inizio": "2025-12-24",
+   "giorno_meno5": "2026-03-18",
+   "shock_esterno": false,
+   "intercettato": true,
+   "anticipo_sedute": 119,
+   "massimo_prima": 80.5,
+   "regime": "SHOCK_OFFERTA"
+  }
+ ],
+ "sensori_inizio": {
+  "vix3m": "2006-07",
+  "vvix": "2007-01",
+  "move": "2002-11",
+  "hyg": "2007-04",
+  "kre": "2006-06",
+  "rsp": "2003-05",
+  "real10y": "2003-01",
+  "iyt": "2004-01",
+  "net_liq_13w": "2003-03"
+ },
+ "oggi": {
+  "data": "2026-11-20",
+  "regime": "CARO_TASSI_LIQ",
+  "score_3m": 85.9,
+  "score_6m": 85.9,
+  "dd252": -11.62,
+  "ultimi": [
+   [
+    "2026-11-11",
+    "SHOCK_OFFERTA",
+    "60.0",
+    "59.3"
+   ],
+   [
+    "2026-11-12",
+    "SHOCK_OFFERTA",
+    "56.9",
+    "54.8"
+   ],
+   [
+    "2026-11-13",
+    "SHOCK_OFFERTA",
+    "65.4",
+    "61.9"
+   ],
+   [
+    "2026-11-16",
+    "CARO_TASSI_LIQ",
+    "78.9",
+    "75.8"
+   ],
+   [
+    "2026-11-17",
+    "CARO_TASSI_LIQ",
+    "81.4",
+    "79.1"
+   ],
+   [
+    "2026-11-18",
+    "CARO_TASSI_LIQ",
+    "81.0",
+    "80.3"
+   ],
+   [
+    "2026-11-19",
+    "CARO_TASSI_LIQ",
+    "76.6",
+    "80.4"
+   ],
+   [
+    "2026-11-20",
+    "CARO_TASSI_LIQ",
+    "85.9",
+    "85.9"
+   ]
+  ]
+ },
+ "regola": {
+  "auc>=0.65": true,
+  "ic_basso>=0.55": true,
+  "meta_e_2008>=0.60": true,
+  "sopra_caso_p95": true,
+  "sopra_armor+0.02": false,
+  "precisione>=2xbase": true
+ },
+ "etichetta": "Non coerente"
+}

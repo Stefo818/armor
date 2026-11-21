@@ -252,7 +252,12 @@ def html() -> str:
     t = carica()
     css = {"Verde": "ok", "Giallo": "wa", "Arancione": "or", "Rosso": "ba", "Grigio": "nd"}
     from . import previsione_ui
-    out = ["<div class='explain'><p><b>Che cos'è.</b> Il semaforo risponde a una domanda: oggi è più o meno probabile del solito un calo importante della Borsa americana? "
+    grigio = ""
+    if o and o.get("grezzo") == "Grigio" and o.get("r_a1") and o.get("r_fhs"):
+        m = max(o["r_a1"], o["r_fhs"])
+        grigio = ("<div class='explain'><p><b>Attenzione, i due modelli non concordano.</b> Il colore resta grigio, ma il modello più prudente (quello che guarda anche la paura del mercato) "
+                  f"indicherebbe <b>{colore(m, m)}</b> ({m:.2f} volte il rischio normale). Non ignorarlo solo perché il semaforo è grigio.</p></div>")
+    out = [grigio + "<div class='explain'><p><b>Che cos'è.</b> Il semaforo risponde a una domanda: oggi è più o meno probabile del solito un calo importante della Borsa americana? "
            "Due modelli stimano la probabilità e il colore riassume la loro media. Non è un segnale per comprare o vendere.</p></div>", previsione_ui.html(o, t, variazione(o))]
     try:
         from . import semaforo_mercati
