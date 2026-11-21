@@ -2,10 +2,10 @@
  "levels": {
   "10g": "Alto",
   "1m": "Alto",
-  "3m": "Elevato",
-  "6m": "Normale"
+  "3m": "Alto",
+  "6m": "Elevato"
  },
- "regime": "Calma",
+ "regime": "Tensione",
  "vix": "panico",
  "aix_band": "moderato",
  "divergence": false,
@@ -19,5 +19,6 @@
  "fase": "Rischio di contrazione lunga",
  "t1": false,
  "crescita": "verde",
- "sent_day": "2026-11-20"
+ "sent_day": "2026-11-21",
+ "move_day": "2026-11-21"
 }

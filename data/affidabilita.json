@@ -1,10 +1,10 @@
 {
- "asof": "2026-11-19",
+ "asof": "2026-11-20",
  "segnali": [
   {
    "id": "disaccordo",
    "acceso": true,
-   "dettaglio": "1 mese: calo ≥10% → A1 5%, sfidante 11%; 3 mesi: calo ≥10% → A1 10%, sfidante 24%"
+   "dettaglio": "10 giorni: calo ≥5% → A1 10%, sfidante 22%; 1 mese: calo ≥10% → A1 7%, sfidante 17%; 3 mesi: calo ≥10% → A1 13%, sfidante 32%"
   },
   {
    "id": "dati",
@@ -14,9 +14,9 @@
   {
    "id": "mai_visto",
    "acceso": false,
-   "dettaglio": "distanza dalla norma 3.6, limite 8.9 (superato solo dall'1% dei 9289 giorni di storia)",
-   "valore": 3.645569095307449,
-   "soglia": 8.939151677186763
+   "dettaglio": "distanza dalla norma 4.5, limite 8.9 (superato solo dall'1% dei 9290 giorni di storia)",
+   "valore": 4.503818801540246,
+   "soglia": 8.9389780286408
   },
   {
    "id": "errori",
@@ -26,55 +26,55 @@
   },
   {
    "id": "instabilita",
-   "acceso": false,
-   "dettaglio": "a 3 mesi la probabilità va da 23% a 26% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)",
+   "acceso": true,
+   "dettaglio": "a 1 mese la probabilità va da 18% a 24% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)",
    "per_finestra": {
     "dal 1950": {
-     "1m": 0.11433333333333333,
-     "3m": 0.24533333333333332
+     "1m": 0.176,
+     "3m": 0.33766666666666667
     },
     "dal 1990": {
-     "1m": 0.12266666666666666,
-     "3m": 0.258
+     "1m": 0.204,
+     "3m": 0.3373333333333333
     },
     "ultimi 15 anni": {
-     "1m": 0.12433333333333334,
-     "3m": 0.231
+     "1m": 0.238,
+     "3m": 0.33366666666666667
     }
    }
   }
  ],
- "livello": "media",
- "n_accesi": 1,
- "avviso": "",
+ "livello": "bassa",
+ "n_accesi": 2,
+ "avviso": "Stima poco affidabile: disaccordo tra i modelli (10 giorni: calo ≥5% → A1 10%, sfidante 22%; 1 mese: calo ≥10% → A1 7%, sfidante 17%; 3 mesi: calo ≥10% → A1 13%, sfidante 32%); stima instabile (a 1 mese la probabilità va da 18% a 24% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)).",
  "orizzonti": [
   {
    "hz": "10g",
    "soglia": 5,
-   "a1": 0.07015498343163917,
-   "sfidante": 0.135,
-   "normale": 0.06206868555654786
+   "a1": 0.10434468309593198,
+   "sfidante": 0.219,
+   "normale": 0.06210675867667952
   },
   {
    "hz": "1m",
    "soglia": 10,
-   "a1": 0.0459148243046847,
-   "sfidante": 0.1102,
-   "normale": 0.051787164906580016
+   "a1": 0.07039813614100358,
+   "sfidante": 0.1726,
+   "normale": 0.05178506153283782
   },
   {
    "hz": "3m",
    "soglia": 10,
-   "a1": 0.1001278055770093,
-   "sfidante": 0.241,
-   "normale": 0.1520872324843356
+   "a1": 0.12813100659844592,
+   "sfidante": 0.3234,
+   "normale": 0.15208104479433662
   },
   {
    "hz": "6m",
    "soglia": 10,
-   "a1": 0.1818655597414254,
-   "sfidante": 0.312,
-   "normale": 0.25417091576585765
+   "a1": 0.2288342733395754,
+   "sfidante": 0.3944,
+   "normale": 0.25416054821341166
   }
  ]
 }
