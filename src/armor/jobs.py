@@ -712,6 +712,9 @@ def main() -> None:
     elif cmd == "live":
         from . import live
         live.run()
+    elif cmd == "sistemico":   # Radar di fondo (PROTOCOLLO_SISTEMICO.md)
+        from . import modello_sistemico
+        modello_sistemico.aggiorna()
     elif cmd == "ore":   # previsione del VWCE a 1, 3, 6, 12 ore (PROTOCOLLO_MINIMI.md, parte L); con --avvisi manda anche le notifiche
         from . import ore
         if "--avvisi" in sys.argv:

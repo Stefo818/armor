@@ -7,7 +7,7 @@ function paint(W){
   var cls='ok', tit='Nessun segnale di vendite forti', det='Futures S&amp;P 500 <b>'+(A.es15==null?'-':pct(A.es15,2,true))+'</b> in 15 minuti · paura (VIX) <b>'+(A.vix==null?'-':A.vix.toFixed(1).replace('.',','))+'</b>';
   if(A.rapido&&A.rapido.length){
     cls='b'; tit='Vendite forti in corso'; var d=[];
-    A.rapido.forEach(function(r){ d.push(r.tipo==='calo'?'futures S&amp;P 500 <b>'+pct(r.valore,2,true)+'</b> in 15 minuti':'paura salita del <b>'+pct(r.valore,0,false)+'</b> in 15 minuti (VIX '+r.vix.toFixed(1).replace('.',',')+')')});
+    A.rapido.forEach(function(r){ var q=(r.tipo==='calo60'||r.tipo==='paura60')?'60 minuti':'15 minuti'; d.push((r.tipo==='calo'||r.tipo==='calo60')?'futures S&amp;P 500 <b>'+pct(r.valore,2,true)+'</b> in '+q:'paura salita del <b>'+pct(r.valore,0,false)+'</b> in '+q+' (VIX '+r.vix.toFixed(1).replace('.',',')+')')});
     det=d.join(' · ')+'. Dopo giorni così, nei 20 giorni seguenti il mercato è salito in media del 2%: decidi con calma.';
   } else if(A.fragile){
     cls='w'; tit='Attenzione: vendite forti più probabili del solito';

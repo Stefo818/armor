@@ -81,7 +81,7 @@ function scegli(trovate, sede) {
 }
 
 // ---------- Sentinella (PROTOCOLLO_FRAGILITA.md): controlla ogni minuto e manda un avviso con ntfy ----------
-const REGOLE = { calo15: -0.008, vixSalto15: 0.10, vixMin: 20, vixAlto: 22, vixSalto5g: 0.10, bandaMedia: 3 };
+const REGOLE = { calo60: -0.015, vixSalto60: 0.15, vixMin60: 22, calo15: -0.008, vixSalto15: 0.10, vixMin: 20, vixAlto: 22, vixSalto5g: 0.10, bandaMedia: 3 };
 const dopo = (pts, t) => { let v = null; for (const [a, b] of pts) { if (a <= t) v = b; else break; } return v; };
 // Vendite in corso: futures giù di almeno 0,8% in 15 minuti, oppure paura su di almeno 10% in 15 minuti (con paura già da 20 in su).
 function rilevaRapido(es, vix) {
@@ -94,6 +94,13 @@ function rilevaRapido(es, vix) {
     const [t, p] = vix[vix.length - 1], p0 = dopo(vix, t - 900);
     if (p0 && p >= REGOLE.vixMin && p / p0 - 1 >= REGOLE.vixSalto15) out.push({ tipo: 'paura', valore: p / p0 - 1, vix: p, t });
   }
+  return out;
+}
+// Discesa a gradini (PROTOCOLLO_FRAGILITA.md, emendamento 1): futures -1,5% in 60 minuti, oppure paura +15% in 60 minuti con paura già da 22 in su.
+function rilevaGradini(es, vix) {
+  const out = [];
+  if (es.length) { const [t, p] = es[es.length - 1], p0 = dopo(es, t - 3600); if (p0 && p / p0 - 1 <= REGOLE.calo60) out.push({ tipo: 'calo60', valore: p / p0 - 1, t }); }
+  if (vix.length) { const [t, p] = vix[vix.length - 1], p0 = dopo(vix, t - 3600); if (p0 && p >= REGOLE.vixMin60 && p / p0 - 1 >= REGOLE.vixSalto60) out.push({ tipo: 'paura60', valore: p / p0 - 1, vix: p, t }); }
   return out;
 }
 // Terreno fragile: (A) indice appena sceso sotto la media dei 200 giorni (ultime 3 sedute) oppure (B) paura >= 22 e salita >= 10% in 5 sedute.
@@ -114,7 +121,7 @@ function allerta(es, vx, gd, vd) {
   const m15 = pts => { if (!pts.length) return null; const [t, p] = pts[pts.length - 1], p0 = dopo(pts, t - 900); return p0 ? p / p0 - 1 : null; };
   let fragile = null;
   try { if (gd && gd.now && vx.now && vd) fragile = rilevaFragile(gd.pts.map(x => x[1]).slice(0, -1), gd.now[1], vd.pts.map(x => x[1]).slice(0, -1), vx.now[1]); } catch (e) {}
-  return { rapido: rilevaRapido(es.pts, vx.pts), fragile, es15: m15(es.pts), vix15: m15(vx.pts), vix: vx.now ? vx.now[1] : null, tes: es.now ? es.now[0] : null };
+  return { rapido: rilevaRapido(es.pts, vx.pts).concat(rilevaGradini(es.pts, vx.pts)), fragile, es15: m15(es.pts), vix15: m15(vx.pts), vix: vx.now ? vx.now[1] : null, tes: es.now ? es.now[0] : null };
 }
 async function giaInviato(topic, titolo, durata) {
   try {
@@ -130,16 +137,18 @@ async function ntfy(topic, titolo, testo, priorita) {
 async function controlla(env, prova = false) {
   if (!prova && !env.NTFY_TOPIC) return { errore: 'manca NTFY_TOPIC' };
   const [es, vx, gd, vd] = await Promise.all([J(yh('ES=F', '5m', '1d')).then(serie), J(yh('^VIX', '5m', '1d')).then(serie), J(yh('^GSPC', '1d', '1y')).then(serie), J(yh('^VIX', '1d', '1mo')).then(serie)]);
-  const res = { rapido: rilevaRapido(es.pts, vx.pts), fragile: null, inviati: [] };
+  const res = { rapido: rilevaRapido(es.pts, vx.pts).concat(rilevaGradini(es.pts, vx.pts)), fragile: null, inviati: [] };
   const chiusure = gd.pts.map(x => x[1]).slice(0, -1), vixCh = vd.pts.map(x => x[1]).slice(0, -1);
   if (gd.now && vx.now) res.fragile = rilevaFragile(chiusure, gd.now[1], vixCh, vx.now[1]);
   if (prova) return res;   // /sentinella: solo lettura, non manda nulla
   for (const r of res.rapido) {
-    const titolo = r.tipo === 'calo' ? 'Armor: vendite forti in corso' : 'Armor: paura in forte salita';
+    const TIT = { calo: 'Armor: vendite forti in corso', paura: 'Armor: paura in forte salita', calo60: 'Armor: discesa a gradini in corso', paura60: 'Armor: paura in salita da un\'ora' };
+    const titolo = TIT[r.tipo];
     if (await giaInviato(env.NTFY_TOPIC, titolo, '1h')) continue;
-    const t = r.tipo === 'calo'
-      ? `Futures S&P 500 ${pc(r.valore, 2)} in 15 minuti. Dopo giornate con cali oltre l'1,2%, dal 1990 la mediana a 20 sedute è stata +2% (64% positive): vendere nel panico spesso blocca la perdita. Decidi con calma.`
-      : `Paura (VIX) salita a ${r.vix.toFixed(1).replace('.', ',')} (${pc(r.valore, 0)} in 15 minuti): il mercato si sta spaventando.`;
+    const cal = r.tipo === 'calo' || r.tipo === 'calo60', quando = r.tipo.endsWith('60') ? '60 minuti' : '15 minuti';
+    const t = cal
+      ? `Futures S&P 500 ${pc(r.valore, 2)} in ${quando}. Dopo giornate con cali oltre l'1,2%, dal 1990 la mediana a 20 sedute è stata +2% (64% positive): vendere nel panico spesso blocca la perdita. Decidi con calma.`
+      : `Paura (VIX) salita a ${r.vix.toFixed(1).replace('.', ',')} (${pc(r.valore, 0)} in ${quando}): il mercato si sta spaventando.`;
     await ntfy(env.NTFY_TOPIC, titolo, t + ' I prezzi gratuiti hanno 9-15 minuti di ritardo.', 5);
     res.inviati.push(r.tipo);
   }
