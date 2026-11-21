@@ -20,13 +20,13 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 2,
-      "maturi": 1,
+      "n": 3,
+      "maturi": 2,
       "tenuto": 0.0,
-      "q_media": 0.635
+      "q_media": 0.638
      }
     },
-    "ultimo": "possibile"
+    "ultimo": "non_ancora"
    },
    "1m": {
     "nome": "1 mese",
@@ -45,7 +45,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 6,
+      "n": 7,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -70,7 +70,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 3,
+      "n": 4,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -95,7 +95,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 6,
+      "n": 7,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
