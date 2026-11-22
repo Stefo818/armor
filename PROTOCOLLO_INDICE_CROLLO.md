@@ -125,3 +125,64 @@ Gli episodi veri di crollo sono pochi: dal 1990 si contano poche decine di episo
 ogni numero ha un margine ampio. I dati gratuiti arrivano con ritardo. Le serie di ampiezza del mercato
 hanno meno di due anni e non entrano nella validazione. Un indice tarato sul passato può mancare un
 crollo di tipo nuovo.
+
+---
+# Emendamento 1 (22 novembre 2026) — solo crisi di natura finanziaria
+Richiesta dell'utente: l'indice deve funzionare sulle crisi di natura finanziaria, non su quelle causate
+da fatti esterni al mercato (dazi, guerre, pandemie, attentati).
+Scritto e pubblicato **prima** di ricalcolare qualunque risultato sul nuovo sottoinsieme.
+
+## A. Cosa avevo già visto, dichiarato
+Avevo già misurato il livello dell'Indice Armor al massimo precedente di ogni episodio: stava fra 33 e 43
+in **tutti** gli episodi misurabili, mediana 37, compreso quello di ottobre 2026. Essendo i valori
+praticamente uguali fra loro, la classificazione qui sotto non può spostare il risultato a favore:
+qualunque sottoinsieme si scelga, il livello di partenza resta lo stesso. Lo dichiaro perché la regola
+di questo progetto è non classificare dopo aver visto chi funziona.
+
+## B. Classificazione dei 16 episodi di calo di almeno il 10% dal 1990
+Causa documentata, decisa ora, senza guardare la prestazione dell'indice su ciascuno.
+| # | massimo | −10% il | causa documentata | natura |
+|---|---|---|---|---|
+| 1 | 1990-01-02 | 1990-01-30 | rialzo dei tassi, crollo delle obbligazioni spazzatura, crisi delle casse di risparmio | finanziaria |
+| 2 | 1990-07-16 | 1990-08-17 | invasione del Kuwait, shock del petrolio | esterna |
+| 3 | 1997-10-07 | 1997-10-27 | crisi finanziaria asiatica | finanziaria |
+| 4 | 1998-07-17 | 1998-08-14 | default russo e crollo del fondo LTCM | finanziaria |
+| 5 | 1999-07-16 | 1999-09-29 | stretta della banca centrale americana | finanziaria |
+| 6 | 2000-03-24 | 2000-04-14 | scoppio della bolla tecnologica | finanziaria |
+| 7 | 2000-03-24 | 2000-10-11 | seguito della bolla tecnologica | finanziaria |
+| 8 | 2007-10-09 | 2007-11-26 | crisi dei mutui subprime e del credito | finanziaria |
+| 9 | 2015-05-21 | 2015-08-24 | svalutazione cinese e crollo lampo | finanziaria |
+| 10 | 2015-05-21 | 2016-01-13 | crollo del petrolio con contagio sul credito energetico | mista |
+| 11 | 2018-01-26 | 2018-02-08 | scoppio dei prodotti scommessi sulla volatilità bassa | finanziaria |
+| 12 | 2018-09-20 | 2018-11-23 | stretta della banca centrale più guerra dei dazi | mista |
+| 13 | 2020-02-19 | 2020-02-27 | pandemia | esterna |
+| 14 | 2022-01-03 | 2022-02-22 | inflazione e stretta della banca centrale (il −10% arriva due giorni prima dell'invasione dell'Ucraina) | finanziaria |
+| 15 | 2025-02-19 | 2025-03-13 | dazi e guerra commerciale | esterna |
+| 16 | 2026-10-06 | 2026-11-20 | vendita dei titoli dell'intelligenza artificiale, inflazione e timori di stretta della banca centrale, rendimenti obbligazionari | finanziaria |
+Conteggio: 11 finanziarie, 2 miste, 3 esterne.
+
+## C. Come si esclude l'esterno dal conteggio, giorno per giorno
+Non basta togliere gli episodi: il bersaglio è definito su ogni singolo giorno. Si escludono quindi tutti
+i giorni di borsa che cadono in una **finestra di shock esterno**, definita come da 5 sedute prima a 60
+sedute dopo la data dell'evento. Elenco fissato ora:
+- 1990-08-02 invasione del Kuwait
+- 2001-09-11 attentati negli Stati Uniti
+- 2003-03-20 inizio della guerra in Iraq
+- 2020-02-21 pandemia
+- 2022-02-24 invasione dell'Ucraina
+- dazi: 2018-03-01, 2018-06-15, 2018-09-17, 2019-05-05, 2019-08-01, 2025-02-01, 2025-03-04, 2025-04-02
+L'analisi principale esclude anche le finestre delle due crisi **miste** (massimo 2015-05-21 e 2018-09-20).
+Si riporta però anche il risultato con le miste dentro, come verifica di robustezza: se le due versioni
+dicono cose diverse, va detto.
+
+## D. Regole di accettazione e etichette
+Restano quelle della parte 7, applicate al sottoinsieme finanziario. Si aggiunge una condizione:
+- **R5** il risultato non deve dipendere dall'esclusione delle miste: l'AUC con e senza le miste deve
+  stare dentro 0,03.
+Si riporta inoltre il conteggio degli episodi finanziari con e senza preavviso.
+
+## E. Limiti che questo emendamento introduce, dichiarati ora
+Togliendo gli shock esterni restano **meno** episodi, non più: 11 finanziari dal 1990, di cui 6 prima del
+2001. Con così pochi casi gli intervalli si allargano e un singolo episodio pesa molto. Quindi l'esclusione
+rende i numeri più pertinenti alla richiesta dell'utente ma **meno** precisi, non più precisi.
+Nessun indice potrà funzionare «alla perfezione» su 11 casi: questo va scritto anche nella scheda.
