@@ -76,3 +76,76 @@ una legge.
 Armor**, che è una trasformazione monotona — non cambia nulla di ciò che il modello sa, cambia solo dove
 cadono i confini. Allineando i percentili dell'Indice Armor a quelli del Super Armor, i confini 40 / 60 /
 80 cadrebbero intorno a 38,5 / 48,8 / 57 della scala grezza di oggi.
+
+---
+# Parte 4 — Tutti i cali forti degli ultimi 40 anni, e la causa di ciascuno
+Rilevati dai dati (calo di almeno l'8% dal massimo precedente, dal 1986): **23 episodi**. La causa di
+ognuno viene dalla cronaca e dalle fonti ufficiali, **non** dal comportamento del modello.
+
+| massimo | calo | natura | causa documentata |
+|---|---|---|---|
+| 1986-09-04 | −9,4% | finanziaria | timori su inflazione e tassi, vendite automatiche dei programmi |
+| 1987-08-25 | −33,5% | finanziaria | lunedì nero: assicurazione di portafoglio e vendite automatiche |
+| 1989-10-09 | −10,2% | finanziaria | crollo delle obbligazioni spazzatura, crisi delle casse di risparmio |
+| 1990-07-16 | −19,9% | **esterna** | invasione del Kuwait, shock del petrolio |
+| 1994-02-02 | −8,9% | finanziaria | rialzo a sorpresa dei tassi, l'anno del massacro delle obbligazioni |
+| 1997-02-18 | −9,6% | finanziaria | timori di stretta monetaria |
+| 1997-10-07 | −10,8% | finanziaria | crisi finanziaria asiatica |
+| 1998-07-17 | −19,3% | finanziaria | default russo e crollo del fondo a leva LTCM |
+| 1999-07-16 | −12,1% | finanziaria | stretta della banca centrale americana |
+| 1999-12-31 | −9,2% | finanziaria | tassi in salita e valutazioni tirate |
+| 2000-03-24 | −49,1% | finanziaria | scoppio della bolla tecnologica |
+| 2007-07-19 | −9,4% | finanziaria | prime perdite sui mutui, crisi dei fondi quantitativi |
+| 2007-10-09 | −56,8% | finanziaria | crisi dei mutui e del credito |
+| 2015-05-21 | −14,2% | mista | svalutazione cinese, crollo del petrolio con contagio sul credito |
+| 2018-01-26 | −10,2% | finanziaria | scoppio dei prodotti scommessi sulla volatilità bassa |
+| 2018-09-20 | −19,8% | mista | stretta della banca centrale più guerra dei dazi |
+| 2020-02-19 | −33,9% | **esterna** | pandemia |
+| 2020-09-02 | −9,6% | finanziaria | rientro delle scommesse a leva sulle opzioni dei titoli tecnologici |
+| 2022-01-03 | −25,4% | finanziaria | inflazione e stretta (il grosso del calo precede l'invasione dell'Ucraina) |
+| 2024-07-16 | −8,5% | finanziaria | rientro del carry trade sullo yen dopo il rialzo dei tassi giapponesi |
+| 2025-02-19 | −18,9% | **esterna** | dazi e guerra commerciale |
+| 2026-01-27 | −9,1% | **esterna** | attacchi USA-Israele contro l'Iran e blocco dello stretto di Hormuz |
+| 2026-10-06 | −11,6% | finanziaria | rivalutazione dei titoli dell'intelligenza artificiale, inflazione, rendimenti |
+
+**17 finanziarie, 4 esterne, 2 miste.**
+
+**Esclusione che mancava.** L'episodio di febbraio-marzo 2026 era dentro il campione «finanziario» per
+errore: le fonti lo attribuiscono all'escalation con l'Iran dopo gli attacchi di fine febbraio. È stato
+aggiunto alle finestre di shock esterno (2026-02-25) e tutti i conti sono stati rifatti.
+
+Due conferme utili dalla ricerca: agosto 2024 è **finanziaria** (rientro del carry trade sullo yen, cioè
+leva che si smonta) e il 2022 resta finanziaria perché il grosso del calo arriva prima dell'invasione
+dell'Ucraina.
+
+# Parte 5 — La scala dell'Indice Armor, tarata
+Trasformazione monotona: non cambia l'ordine dei giorni, quindi non cambia nessuna AUC, nessuna prova e
+nessun risultato pubblicato. Sposta solo i confini. Punti di aggancio: i percentili dell'Indice Armor
+sulle sole crisi finanziarie dal 1986 che corrispondono a 40, 60 e 80 del Super Armor, cioè **39,43**,
+**49,82** e **56,83** della scala vecchia.
+
+Frequenze misurate dopo la taratura (8.187 giorni, sole crisi finanziarie; base: calo al 10% entro 60
+sedute nel 26,8% dei casi, −5% entro 10 sedute nel 7,0%):
+
+| fascia | giorni | quota | il calo arriva al 10% | si perde il 5% entro 10 sedute |
+|---|---|---|---|---|
+| sotto 40 · tranquillo | 4.877 | 59,6% | 12,9% | 2,9% |
+| **40-60 · in difficoltà** | 2.792 | 34,1% | **39,8%** | 10,7% |
+| **60-80 · in pericolo** | 452 | 5,5% | **85,4%** | 23,0% |
+| **sopra 80 · rischio di crollo** | 66 | 0,8% | **100,0%** | 42,4% |
+
+Le etichette richieste dall'utente sono quindi **confermate dai dati**, con un avvertimento: i 66 giorni
+sopra 80 sono raggruppati in due o tre episodi, quindi quel 100% vale come «sempre, nei pochi casi
+visti», non come una legge.
+
+**Oggi l'Indice Armor passa da 50,2 a 61,0**, cioè entra in «pericolo». Il valore grezzo resta salvato
+nella colonna `armor_index` e continua ad alimentare i calcoli interni di probabilità, che erano tarati
+su quella scala: cambiare il numero a monte li avrebbe rotti in silenzio.
+
+# Parte 6 — L'articolo su P/E, CAPE e indice Buffett
+Nessuna integrazione necessaria: tutti e tre sono già nel modello. P/E (`pe_m`) e CAPE (`cape_m`) sono
+nella famiglia «Valutazioni» dell'Indice Armor da prima; l'indice Buffett è stato aggiunto oggi come
+candidata. Il limite che l'articolo stesso segnala — un CAPE alto non significa che il mercato crollerà
+domani, e può restare alto per anni — è esattamente ciò che le misure di questo progetto mostrano:
+l'indice Buffett ha la discriminazione più alta fra i segnali strutturali (0,6710) ma non migliora
+l'Indice Armor su nessuno dei tre eventi.

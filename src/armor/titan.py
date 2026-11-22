@@ -399,6 +399,11 @@ def build_titan(df: pd.DataFrame) -> pd.DataFrame:
     slow = (1.0 - w_mod) * dir_sec + w_mod * dir_mod
     bull = 0.30 * fast + 0.70 * slow
     df["armor_index"] = clean_series(np.clip(40.5 + (100.0 * (1.0 - bull) - 48.0) * 0.65, 1.0, 100.0), 40.0)
+    # Scala tarata per chi legge (PROTOCOLLO_PILASTRI_7_8.md, emendamento 1 parte C): trasformazione monotona,
+    # non cambia l'ordine dei giorni ne' alcun risultato gia' pubblicato, sposta solo i confini. I punti di
+    # aggancio sono i percentili dell'Indice Armor sulle sole crisi finanziarie dal 1986 corrispondenti a
+    # 40, 60 e 80 del Super Armor. La colonna grezza resta e continua ad alimentare i calcoli interni.
+    df["armor_tarato"] = np.interp(df["armor_index"].values, [1.0, 39.43, 49.82, 56.83, 100.0], [1.0, 40.0, 60.0, 80.0, 100.0])
     for n, tag in ((5, "1w"), (21, "1m"), (63, "3m"), (126, "6m")):
         df[f"armor_ma_{tag}"] = df["armor_index"].rolling(n, min_periods=1).mean()
         df[f"super_ma_{tag}"] = df["super_armor_index"].rolling(n, min_periods=1).mean()

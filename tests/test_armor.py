@@ -709,7 +709,7 @@ def test_semafori_e_candidati_coerenti():
     assert semafori.MONITORATI <= set(keys)
     assert not set(fondamentali.FRED_NUOVE) & set(sources.FRED) and not set(fondamentali.FRED_NUOVE.values()) & set(sources.FRED.values())
     for k, fam, kind, y, r in armor_index._new_items():
-        assert fam in armor_index.GROUPS and kind in ("hi", "lo")
+        assert fam in armor_index.GROUPS and kind in ("hi", "lo", "pct")   # «pct» = indicatore senza soglie, conta il percentile
 
 
 # ---------------------------------------------------------------- patch 22-23: aziende VWCE, ricerca Fase B, prova finale

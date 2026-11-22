@@ -1,0 +1,94 @@
+{
+ "fondi_breve": {
+  "TUTTE le crisi (prova originale)": {
+   "dettaglio": {
+    "dd10_63": {
+     "senza": 0.5837,
+     "con": 0.5953,
+     "diff": 0.0117
+    },
+    "dd5_21": {
+     "senza": 0.6193,
+     "con": 0.6234,
+     "diff": 0.0041
+    },
+    "vol25_21": {
+     "senza": 0.7914,
+     "con": 0.7911,
+     "diff": -0.0003
+    }
+   },
+   "migliorati": 1,
+   "peggiorati": 0,
+   "adottato": false
+  },
+  "SOLO crisi finanziarie (A-bis)": {
+   "dettaglio": {
+    "dd10_63": {
+     "senza": 0.6064,
+     "con": 0.6013,
+     "diff": -0.0051
+    },
+    "dd5_21": {
+     "senza": 0.6441,
+     "con": 0.6458,
+     "diff": 0.0017
+    },
+    "vol25_21": {
+     "senza": 0.7858,
+     "con": 0.7853,
+     "diff": -0.0005
+    }
+   },
+   "migliorati": 0,
+   "peggiorati": 0,
+   "adottato": false
+  }
+ },
+ "buffett": {
+  "TUTTE le crisi (prova originale)": {
+   "dettaglio": {
+    "dd10_63": {
+     "senza": 0.5837,
+     "con": 0.5871,
+     "diff": 0.0035
+    },
+    "dd5_21": {
+     "senza": 0.6193,
+     "con": 0.6211,
+     "diff": 0.0018
+    },
+    "vol25_21": {
+     "senza": 0.7914,
+     "con": 0.794,
+     "diff": 0.0026
+    }
+   },
+   "migliorati": 0,
+   "peggiorati": 0,
+   "adottato": false
+  },
+  "SOLO crisi finanziarie (A-bis)": {
+   "dettaglio": {
+    "dd10_63": {
+     "senza": 0.6064,
+     "con": 0.6059,
+     "diff": -0.0005
+    },
+    "dd5_21": {
+     "senza": 0.6441,
+     "con": 0.6449,
+     "diff": 0.0008
+    },
+    "vol25_21": {
+     "senza": 0.7858,
+     "con": 0.7852,
+     "diff": -0.0006
+    }
+   },
+   "migliorati": 0,
+   "peggiorati": 0,
+   "adottato": false
+  }
+ }
+}

@@ -45,7 +45,8 @@ def calcola() -> dict:
 def esegui() -> dict:
     oggi, df = calcola()
     OUT_JSON.write_text(json.dumps(oggi, ensure_ascii=False, indent=1), encoding="utf-8")
-    cols = ["armor_index", "super_armor_index", "lost_decade_radar"] + [f"p{i}_stress" for i in range(1, 7)]
+    cols = ["armor_index", "armor_tarato", "super_armor_index", "lost_decade_radar"] + [f"p{i}_stress" for i in range(1, 7)]
+    cols = [c for c in cols if c in df]
     out = df.loc["1990-01-01":, cols].round(2)
     out.index.name = "date"
     out.to_csv(OUT_CSV)

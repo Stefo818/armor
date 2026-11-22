@@ -24,7 +24,7 @@ def test_schede_titan_fresche_e_vecchie(tmp_path, monkeypatch):
     monkeypatch.setattr(tv, "FILE", tmp_path / "t.csv")
     h = ts.super_html()
     assert "Super Armor" in h and "Indice Armor" in h and h.count("class='ts-t'") == 6 and h.count("class='ts-d2'") == 6 and "Liquidità" in h and "Credito" in h
-    assert "soglia di stress" in h and ts.indici_html() == h
+    assert "rischio di crollo" in h and ts.indici_html() == h   # scala tarata: 40 difficolta, 60 pericolo, 80 crollo
     assert "Super Armor" in ts.guida_html()
     _csv(tmp_path, pd.Timestamp("2020-01-10"))
     assert ts.super_html() == "" and ts.indici_html() == "" and ts.guida_html() == ""   # file vecchio: schede di prima

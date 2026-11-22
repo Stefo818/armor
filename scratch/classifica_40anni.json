@@ -1,0 +1,179 @@
+{
+ "classifica": [
+  {
+   "massimo": "1986-09-04",
+   "calo": -9.4,
+   "natura": "finanziaria",
+   "causa": "timori su inflazione e tassi, vendite automatiche dei programmi"
+  },
+  {
+   "massimo": "1987-08-25",
+   "calo": -33.5,
+   "natura": "finanziaria",
+   "causa": "lunedi nero: assicurazione di portafoglio e vendite automatiche, dopo mesi di rialzo dei tassi"
+  },
+  {
+   "massimo": "1989-10-09",
+   "calo": -10.2,
+   "natura": "finanziaria",
+   "causa": "crollo delle obbligazioni spazzatura (salta il riacquisto di UAL) e crisi delle casse di risparmio"
+  },
+  {
+   "massimo": "1990-07-16",
+   "calo": -19.9,
+   "natura": "esterna",
+   "causa": "invasione del Kuwait, shock del petrolio"
+  },
+  {
+   "massimo": "1994-02-02",
+   "calo": -8.9,
+   "natura": "finanziaria",
+   "causa": "rialzo a sorpresa dei tassi: l'anno del massacro delle obbligazioni"
+  },
+  {
+   "massimo": "1997-02-18",
+   "calo": -9.6,
+   "natura": "finanziaria",
+   "causa": "timori di stretta monetaria, poi confermata a marzo"
+  },
+  {
+   "massimo": "1997-10-07",
+   "calo": -10.8,
+   "natura": "finanziaria",
+   "causa": "crisi finanziaria asiatica, attacco al cambio di Hong Kong"
+  },
+  {
+   "massimo": "1998-07-17",
+   "calo": -19.3,
+   "natura": "finanziaria",
+   "causa": "default russo e crollo del fondo a leva LTCM"
+  },
+  {
+   "massimo": "1999-07-16",
+   "calo": -12.1,
+   "natura": "finanziaria",
+   "causa": "stretta della banca centrale americana"
+  },
+  {
+   "massimo": "1999-12-31",
+   "calo": -9.2,
+   "natura": "finanziaria",
+   "causa": "tassi in salita e valutazioni tirate"
+  },
+  {
+   "massimo": "2000-03-24",
+   "calo": -49.1,
+   "natura": "finanziaria",
+   "causa": "scoppio della bolla tecnologica"
+  },
+  {
+   "massimo": "2007-07-19",
+   "calo": -9.4,
+   "natura": "finanziaria",
+   "causa": "prime perdite sui mutui subprime e crisi dei fondi quantitativi di agosto"
+  },
+  {
+   "massimo": "2007-10-09",
+   "calo": -56.8,
+   "natura": "finanziaria",
+   "causa": "crisi dei mutui e del credito, poi fallimento di Lehman"
+  },
+  {
+   "massimo": "2015-05-21",
+   "calo": -14.2,
+   "natura": "mista",
+   "causa": "svalutazione cinese, crollo del petrolio con contagio sul credito energetico"
+  },
+  {
+   "massimo": "2018-01-26",
+   "calo": -10.2,
+   "natura": "finanziaria",
+   "causa": "scoppio dei prodotti scommessi sulla volatilita' bassa"
+  },
+  {
+   "massimo": "2018-09-20",
+   "calo": -19.8,
+   "natura": "mista",
+   "causa": "stretta della banca centrale piu' guerra dei dazi con la Cina"
+  },
+  {
+   "massimo": "2020-02-19",
+   "calo": -33.9,
+   "natura": "esterna",
+   "causa": "pandemia"
+  },
+  {
+   "massimo": "2020-09-02",
+   "calo": -9.6,
+   "natura": "finanziaria",
+   "causa": "rientro delle scommesse a leva sulle opzioni dei titoli tecnologici"
+  },
+  {
+   "massimo": "2022-01-03",
+   "calo": -25.4,
+   "natura": "finanziaria",
+   "causa": "inflazione e stretta monetaria (il grosso del calo precede l'invasione dell'Ucraina)"
+  },
+  {
+   "massimo": "2024-07-16",
+   "calo": -8.5,
+   "natura": "finanziaria",
+   "causa": "rientro del carry trade sullo yen dopo il rialzo dei tassi giapponesi"
+  },
+  {
+   "massimo": "2025-02-19",
+   "calo": -18.9,
+   "natura": "esterna",
+   "causa": "dazi e guerra commerciale"
+  },
+  {
+   "massimo": "2026-01-27",
+   "calo": -9.1,
+   "natura": "esterna",
+   "causa": "attacchi USA-Israele contro l'Iran e blocco dello stretto di Hormuz"
+  },
+  {
+   "massimo": "2026-10-06",
+   "calo": -11.6,
+   "natura": "finanziaria",
+   "causa": "rivalutazione dei titoli dell'intelligenza artificiale, inflazione e timori di stretta, rendimenti in salita"
+  }
+ ],
+ "ancore": {
+  "a40": 39.43,
+  "a60": 49.82,
+  "a80": 56.83
+ },
+ "oggi_grezzo": 50.2,
+ "oggi_nuovo": 61.0,
+ "fasce": {
+  "sotto 40": {
+   "giorni": 4877,
+   "quota": 59.6,
+   "m10": 12.9,
+   "m5": 2.9
+  },
+  "40-60": {
+   "giorni": 2792,
+   "quota": 34.1,
+   "m10": 39.8,
+   "m5": 10.7
+  },
+  "60-80": {
+   "giorni": 452,
+   "quota": 5.5,
+   "m10": 85.4,
+   "m5": 23.0
+  },
+  "sopra 80": {
+   "giorni": 66,
+   "quota": 0.8,
+   "m10": 100.0,
+   "m5": 42.4
+  }
+ },
+ "base": {
+  "m10": 26.8,
+  "m5": 7.0
+ }
+}

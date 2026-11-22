@@ -31,7 +31,10 @@ def dati() -> pd.DataFrame | None:
     if ok is None:
         return None
     try:
-        return pd.read_csv(FILE, index_col=0, parse_dates=True).dropna(subset=["armor_index", "super_armor_index"])
+        d = pd.read_csv(FILE, index_col=0, parse_dates=True).dropna(subset=["armor_index", "super_armor_index"])
+        if "armor_tarato" in d:   # scala tarata: 40 difficolta', 60 pericolo, 80 rischio di crollo
+            d["armor_index"] = d["armor_tarato"]
+        return d
     except Exception:  # noqa: BLE001
         return None
 
@@ -105,7 +108,7 @@ def combo_html() -> str:
     tiles = "".join(_tile(i, k, x) for i, (k, x) in enumerate(rig))
     dett = "".join(_dett(i, k, x) for i, (k, x) in enumerate(rig))
     return (CSS + "<section class='b5'><div class='ts'><div class='ts-g'>"
-            + _mini("Indice Armor", "armor", a, "Giudizio rapido: 40 è la soglia di stress.")
+            + _mini("Indice Armor", "armor", a, "Da 40 mercato in difficoltà, da 60 in pericolo, da 80 rischio di crollo.")
             + _mini("Super Armor", "super", sa, f"Media dei sei pilastri: spinge di più <b>{E(PIL[top[0]][0])}</b> ({_it(float(top[1].iloc[-1]))}), il più tranquillo è <b>{E(PIL[low[0]][0])}</b> ({_it(float(low[1].iloc[-1]))}).")
             + "</div><div class='ts-ph'>I sei pilastri del Super Armor <small>(tocca un pilastro per i dettagli)</small></div>"
             f"<div class='ts-tg'>{tiles}</div>{dett}"
@@ -134,7 +137,9 @@ def guida_html() -> str:
             "<p class='gi-lead'>Sono due <b>termometri del rischio</b> dell'S&amp;P 500 (le 500 maggiori aziende americane, il mercato che guida le Borse del mondo, VWCE compreso). "
             "Vanno da <b>1 (mercato sano)</b> a <b>100 (pericolo massimo)</b>. Dicono <b>quanto oggi i segnali sono preoccupanti</b>, non quando scenderà la Borsa e non cosa comprare o vendere.</p>"
             "<div class='gi-cols'><div class='gi-c' style='border-top:4px solid hsl(265,75%,68%)'><h4>Indice Armor</h4><p>Un giudizio <b>rapido e sensibile</b>: mescola una parte veloce (paura, liquidità, rimbalzi) e una lenta (prezzi, credito, valutazioni). "
-            "<b>40 è la soglia di stress.</b> Zone: sotto 35 tranquillo, 35-40 neutro, 40-45 allarme, da 45 pericolo.</p></div>"
+            "<b>Le zone, tarate sulle sole crisi finanziarie dal 1986.</b> Sotto 40 tranquillo: il calo al 10% è poi arrivato nel 12,9% dei casi. "
+            "Da 40 mercato in difficoltà: 39,8%. Da 60 in pericolo: 85,4%. Da 80 rischio di crollo: in tutti i 66 giorni visti, che però sono due o tre episodi soli. "
+            "La scala non cambia cosa sa il modello, sposta solo dove cadono i confini.</p></div>"
             f"<div class='gi-c' style='border-top:4px solid hsl(35,90%,55%)'><h4>Super Armor</h4><p>La <b>media di sei pilastri</b> con lo stesso peso:</p><ul>{pil}</ul>"
             "<p>Zone: sotto 35 tranquillo, 35-45 neutro, 45-55 allarme, da 55 pericolo.</p></div></div>"
             "<div class='gi-diff'><b>La differenza in una riga:</b> l'Indice Armor è il termometro veloce; il Super Armor mostra <b>da quali pilastri</b> arriva il rischio.</div>"
