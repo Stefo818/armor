@@ -712,6 +712,17 @@ def main() -> None:
     elif cmd == "live":
         from . import live
         live.run()
+    elif cmd == "storico":   # recupero di tutta la storia delle serie FRED (serve FRED_API_KEY)
+        import os
+        if not os.environ.get("FRED_API_KEY", "").strip():
+            raise SystemExit("Manca FRED_API_KEY: senza chiave FRED restituisce solo 3 anni.")
+        prima = {k: len(store.load(k)) for k in sources.FRED}
+        stampa_stato(sources.update_all(full=True, only=list(sources.FRED)))
+        for k in sources.FRED:
+            dopo = len(store.load(k))
+            if dopo > prima[k]:
+                s = store.load(k)
+                print(f"[storico] {k}: +{dopo - prima[k]} righe, ora dal {s.index[0].date()}")
     elif cmd == "crollo":   # Indice crollo (PROTOCOLLO_INDICE_CROLLO.md)
         from . import indice_crollo
         indice_crollo.aggiorna()

@@ -757,3 +757,8 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
   2007, 2026; manca 2015, 2018, 2022) e serviva 4 su 6. Corretto un errore mio su R11 (era circolare).
   Aggiunta la riga «Settore piu' in difficolta'» alla scheda. DA FARE: chiave FRED_API_KEY nei segreti
   GitHub per avere hy_oas/ig_oas dal 1996 (ora solo dal 2023-11) e poter provare il canale credito.
+- 2026-11-22 (3): trovato il motivo per cui hy_oas/ig_oas avevano solo 3 anni pur essendoci FRED_API_KEY:
+  in sources.update_all il parametro full era onorato per Yahoo ma NON per FRED (riga 400 passava sempre
+  _fred_start). Corretto. Aggiunti il comando `python -m armor storico` e il workflow «Recupero storico
+  dati FRED» (workflow_dispatch) che riscarica tutta la storia FRED. upsert unisce, non sovrascrive.
+  DOPO che l'utente lo lancia: rifare la prova del canale credito su tutti e 6 gli episodi.

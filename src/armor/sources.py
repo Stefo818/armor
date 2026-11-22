@@ -397,7 +397,7 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
             store.set_status(st, sid, False, "FRED non raggiungibile: saltata (si aggiorna dal PC)")
             continue
         try:
-            store.set_status(st, sid, True, "", store.upsert(sid, fetch_fred(code, _fred_start(sid))))
+            store.set_status(st, sid, True, "", store.upsert(sid, fetch_fred(code, None if full else _fred_start(sid))))
             fred_fails = 0
         except Exception as e:  # noqa: BLE001
             fred_fails += 1

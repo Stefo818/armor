@@ -1,0 +1,37 @@
+name: Recupero storico dati FRED
+# Da lanciare a mano, una volta. Con la chiave FRED le serie vengono riscaricate dall'inizio:
+# i dati vecchi vengono aggiunti, quelli esistenti non si perdono (store.upsert unisce).
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
+jobs:
+  storico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Scarica tutta la storia delle serie FRED
+        env:
+          PYTHONPATH: src
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        timeout-minutes: 25
+        run: python -m armor storico
+      - name: Controlli prima di salvare
+        id: controlli
+        if: always()
+        env:
+          PYTHONPATH: src
+        run: python -m armor controlli
+      - name: Salva i dati nel repository
+        if: always() && steps.controlli.outcome != 'failure'
+        run: bash scripts/salva.sh "Recupero storico serie FRED" data
