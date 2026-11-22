@@ -775,3 +775,11 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
   5% dai massimi: sotto l'indice completo (0,7095). I dati ICE non avrebbero cambiato nulla.
   Non preso: excess bond premium della Federal Reserve Board (dal 1973) - sito non raggiungibile dalla
   sandbox, lo sarebbe dai workflow GitHub.
+- 2026-11-22 (6): audit esterno (GPT/Gemini) verificato. Due critiche al nostro codice CONFERMATE:
+  (a) pesi M2 ambigui nel protocollo - calcolate entrambe le letture, differenza 0,0001, nessuna
+  conclusione cambia; (b) bootstrap di per_fascia() rotto - rifatto a blocchi annuali: gli IC veri sono
+  molto piu' larghi (fascia rossa 14,0% con IC [0,0-20,5]). R2 resta non superata.
+  Aggiunte metriche operative (giallo: 26,2% dei giorni in allarme, precisione 11,3%, richiamo 68,1%,
+  500 giorni di falso allarme) e il PREAVVISO: mediana 25 sedute, 9 episodi su 11, nel 2026 il 16 ottobre
+  (26 sedute prima). Nuovo data/indice_crollo_registro.csv append-only per la verifica prospettica.
+  NON fatta la v5 a tre livelli: il livello strutturale e' debole e serve prima la prova in avanti.

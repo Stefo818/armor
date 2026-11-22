@@ -302,3 +302,95 @@ nulla:** ora lo so per misura e non per congettura, perché la storia lunga ce l
 Correzioni tecniche fatte nel passaggio: tempo di attesa su FRED portato da 25 a 60 secondi (le serie
 Moody's giornaliere sono grandi e andavano in timeout) e spiegazioni aggiunte al glossario per le cinque
 serie nuove.
+
+---
+# Parte 12 — Correzioni dopo l'audit esterno (documento GPT/Gemini del 22 novembre 2026)
+L'audit solleva due critiche precise al codice di questo progetto. **Hanno ragione entrambe.** Sotto, la
+verifica e i numeri corretti. Le conclusioni pubblicate non cambiano, ma l'incertezza sì: era sottostimata.
+
+## 1. I pesi di M2: il protocollo era ambiguo, il codice ha scelto una lettura
+Il protocollo scrive «paura e curva della paura 0,30; credito 0,15; tendenza e perdita in corso 0,25;
+rotazione difensiva 0,15; tassi 0,15 (normalizzati a 1)». Letta per **gruppo** la somma fa esattamente
+**1,00**, il che spiega la nota «normalizzati a 1»; letta per **variabile** fa 1,55. Il codice aveva usato
+la seconda. L'audit legge la prima ed è la lettura più probabile.
+
+| lettura | AUC scelta 1990-2014 | AUC verifica 2015-2026 | fascia viola |
+|---|---|---|---|
+| A, un peso per variabile (codice pubblicato) | 0,7759 | **0,7545** | 5,5% su 55 giorni |
+| B, il peso è del gruppo (lettura dell'audit) | 0,7719 | **0,7546** | 4,9% su 41 giorni |
+
+**La differenza è di 0,0001.** L'ambiguità non ha spostato nulla e nessuna conclusione cambia. Restano
+pubblicate entrambe, come chiede l'audit; il risultato già registrato non viene sostituito.
+
+## 2. Il bootstrap della tabella per fascia era rotto
+Confermato. Con 41 giorni in fascia viola, `per_fascia()` estraeva blocchi di 21 osservazioni partendo
+solo dalla prima metà dell'array: restituiva frequenza 7,3% e intervallo [9,5 – 14,3], che non contiene
+nemmeno la stima. Numero impossibile, già segnalato nella parte 2 di questo esito e ora corretto alla
+radice: ricampionamento ad **anni interi** su tutto il campione, con la frequenza di fascia ricalcolata
+dentro ogni ricampionamento.
+
+| fascia | giorni | anni con dati | crollo poi | intervallo 90% corretto |
+|---|---|---|---|---|
+| verde | 1.467 | 12 | 1,8% | [0,6 – 3,9] |
+| grigio | 119 | 10 | 2,5% | [0,0 – 6,4] |
+| giallo | 331 | 11 | 10,9% | [4,1 – 17,6] |
+| rosso | 178 | 9 | 14,0% | **[0,0 – 20,5]** |
+| viola | 55 | 5 | 5,5% | [0,0 – 6,4] |
+
+Gli intervalli veri sono molto più larghi di quelli pubblicati: per la fascia rossa il limite inferiore è
+**zero**. R2 resta non superata (servirebbe 10,9% in viola) e l'etichetta «Non coerente» regge, ora su
+basi più solide.
+
+## 3. Quante osservazioni indipendenti ci sono davvero
+L'audit avverte che 8.253 sedute non sono 8.253 osservazioni. Misurato: i blocchi contigui di bersaglio
+vero sono **145** dal 1990 e **27** nel periodo di verifica. La dimensione effettiva del problema è
+quella, non il numero di righe.
+
+## 4. Le metriche operative che mancavano (verifica 2015-2026)
+| soglia | giorni in allarme | quota dei giorni | precisione | richiamo | giorni di falso allarme |
+|---|---|---|---|---|---|
+| giallo o peggio | 564 | 26,2% | 11,3% | **68,1%** | **500** |
+| rosso o viola | 233 | 10,8% | 12,0% | 29,8% | 205 |
+| solo viola | 55 | 2,6% | 5,5% | 3,2% | 52 |
+
+Il quadro onesto in una riga: con la soglia gialla l'indice **prende due terzi dei cali veri** ma sta in
+allarme un giorno su quattro e accumula 500 giorni di falso allarme in undici anni.
+
+## 5. Il preavviso, misurato per la prima volta
+È la metrica che l'audit chiede («lead time per episodio») ed è anche la domanda iniziale dell'utente.
+Quante sedute prima che il calo arrivasse al 10% l'indice è entrato in giallo:
+
+| episodio | primo giallo | sedute di anticipo |
+|---|---|---|
+| 1990 | mai prima | 0 |
+| 1997 | 7 ottobre | 15 |
+| 1998 | 21 luglio | 19 |
+| 1999 | 20 luglio | 51 |
+| 2000 (aprile) | 24 marzo | 16 |
+| 2000 (ottobre) | 24 marzo | 140 |
+| 2007 | 19 ottobre | 26 |
+| 2015 | mai prima | 0 |
+| 2018 | 2 febbraio | 5 |
+| 2022 | 18 gennaio | 25 |
+| **2026** | **16 ottobre** | **26** |
+
+**Mediana 25 sedute, con preavviso in 9 episodi su 11.** Va letto insieme ai 500 giorni di falso allarme
+della tabella sopra: prende quasi tutti i cali veri proprio perché si accende spesso. Questo numero è
+sensibilità, non precisione.
+
+## 6. Cosa è stato fatto, e cosa no
+**Fatto:** corretti bootstrap e pesi, aggiunte le metriche operative e il preavviso alla scheda (sempre
+accanto al suo costo), e introdotto `data/indice_crollo_registro.csv`, un **registro che non si riscrive
+mai**: ogni giorno salva indice, fascia, zona, settore rotto, le dodici spinte e la firma della versione
+dei pesi.
+
+Il registro è la raccomandazione più importante dell'audit ed è anche la conclusione a cui portano queste
+sei analisi: sugli stessi undici episodi il passato ha detto tutto quello che poteva dire, e ogni nuovo
+tentativo aumenta solo la probabilità di trovare qualcosa per caso. **L'unica prova non inquinata è in
+avanti, a formula ferma.**
+
+**Non fatto, di proposito:** nessuna architettura «v5» a tre livelli. L'audit la propone, ma le misure di
+questo progetto dicono che il livello strutturale è debole vicino ai massimi (0,52-0,62 contro 0,71
+dell'indice intero) e l'audit stesso vieta di promuovere qualunque cosa senza verifica prospettica.
+Costruire ora un sistema più grande significherebbe aggiungere complessità prima di avere le prove per
+sceglierla. La mossa corretta è tenere ferma la formula e lasciare che il registro accumuli mesi.

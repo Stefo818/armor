@@ -23,6 +23,7 @@ SETTORI = {"sec_xlk": "tecnologia", "sec_xlf": "finanza", "sec_xle": "energia", 
 
 FILE = DATA / "indice_crollo.json"
 STORIA = DATA / "indice_crollo_storia.csv"
+REGISTRO = DATA / "indice_crollo_registro.csv"   # append-only: la prova pulita si fa in avanti, non sul passato
 MIN_STORIA = 500
 
 # protocollo parte 6: percentile del punteggio -> numero da 1 a 100
@@ -189,10 +190,42 @@ def aggiorna(log=print) -> dict:
     if pd.notna(ult.get("settore_giu")) and isinstance(ult.get("settore_quale"), str):
         res["settore"] = {"nome": SETTORI[ult["settore_quale"]], "giu": round(float(ult["settore_giu"]), 0),
                           "rotto": bool(float(ult["settore_giu"]) <= -15)}
+    _registra(res, ult)
     FILE.write_text(json.dumps(res, ensure_ascii=False), encoding="utf-8")
     df[["indice", "punteggio", "sotto_massimo"]].tail(2520).round(2).to_csv(STORIA, index_label="date")
     log(f"[indice_crollo] {res['data']} · {res['indice']:.0f} su 100 · {nome}")
     return res
+
+
+def _registra(res: dict, ult) -> None:
+    """Riga giornaliera che non si riscrive mai: serve per la verifica prospettica.
+
+    Sei analisi sugli stessi undici episodi hanno esaurito quello che il passato può dire. Da qui in poi
+    l'unica prova non inquinata è in avanti, a formula ferma. Il registro la rende possibile.
+    """
+    import csv
+    import hashlib
+    firma = hashlib.sha1(json.dumps({k: round(v, 4) for k, v in sorted(PESI.items())}).encode()).hexdigest()[:8]
+    riga = {"data": res["data"], "scritto_il": pd.Timestamp.utcnow().strftime("%Y-%m-%d %H:%M"),
+            "indice": res["indice"], "fascia": res["fascia"], "sotto_massimo": res["sotto_massimo"],
+            "zona": res["situazione"]["zona"], "settore_rotto": (res.get("settore") or {}).get("nome", ""),
+            "settore_giu": (res.get("settore") or {}).get("giu", ""), "versione_pesi": firma,
+            **{c: (round(float(ult[c]), 1) if pd.notna(ult.get(c)) else "") for c in NOMI}}
+    try:
+        viste = set()
+        if REGISTRO.exists():
+            with REGISTRO.open(encoding="utf-8") as f:
+                viste = {r["data"] for r in csv.DictReader(f)}
+        if riga["data"] in viste:
+            return
+        nuovo = not REGISTRO.exists()
+        with REGISTRO.open("a", encoding="utf-8", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(riga))
+            if nuovo:
+                w.writeheader()
+            w.writerow(riga)
+    except Exception:  # noqa: BLE001
+        pass   # il registro non deve mai bloccare il giro giornaliero
 
 
 def carica() -> dict | None:
@@ -249,6 +282,10 @@ def oggi_html() -> str:
         f"{_settore_html(d)}"
         f"<div class='ic-m'><b>Come usarlo.</b> {_h.escape(d.get('situazione', {}).get('usare', ''))} "
         "Nella prova, vendere quando l'indice entrava in rosso avrebbe reso il 143% invece del 236% restando investito, senza ridurre la perdita peggiore.</div>"
+        "<div class='ic-m'><b>Quanto preavviso ha dato in passato.</b> Nelle crisi finanziarie dal 1990 è entrato in giallo "
+        "in mediana 25 sedute prima che il calo arrivasse al 10%, in 9 episodi su 11 (in questo, il 16 ottobre, 26 sedute prima). "
+        "Ma nello stesso periodo è stato giallo o peggio per 500 giorni senza che seguisse nulla: prende quasi tutti i cali veri "
+        "proprio perché si accende spesso.</div>"
         "<div class='ic-m'>Prova fatta una volta sola sulle 11 crisi finanziarie dal 1990, escluse quelle da dazi, guerre e pandemia. "
         "Non ha superato la prova sulla fascia viola, quindi è un termometro e non una previsione: dal 1990 ci sono stati 229 periodi di "
         "allarme, 61 seguiti da un calo del 10% e 168 no. Al massimo di tutti gli 11 episodi l'indice era basso: i crolli non si vedono dalla cima.</div>"

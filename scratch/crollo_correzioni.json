@@ -1,0 +1,207 @@
+{
+ "A: un peso per variabile (come nel codice)": {
+  "auc_scelta": 0.7759,
+  "auc_verifica": 0.7545,
+  "fasce": {
+   "verde": {
+    "giorni": 1467,
+    "quota_giorni": 68.2,
+    "frequenza": 1.8,
+    "ic90": [
+     0.6,
+     3.9
+    ],
+    "anni_con_dati": 12
+   },
+   "grigio": {
+    "giorni": 119,
+    "quota_giorni": 5.5,
+    "frequenza": 2.5,
+    "ic90": [
+     0.0,
+     6.4
+    ],
+    "anni_con_dati": 10
+   },
+   "giallo": {
+    "giorni": 331,
+    "quota_giorni": 15.4,
+    "frequenza": 10.9,
+    "ic90": [
+     4.1,
+     17.6
+    ],
+    "anni_con_dati": 11
+   },
+   "rosso": {
+    "giorni": 178,
+    "quota_giorni": 8.3,
+    "frequenza": 14.0,
+    "ic90": [
+     0.0,
+     20.5
+    ],
+    "anni_con_dati": 9
+   },
+   "viola": {
+    "giorni": 55,
+    "quota_giorni": 2.6,
+    "frequenza": 5.5,
+    "ic90": [
+     0.0,
+     6.4
+    ],
+    "anni_con_dati": 5
+   }
+  }
+ },
+ "B: il peso è del gruppo (come legge l'audit)": {
+  "auc_scelta": 0.7719,
+  "auc_verifica": 0.7546,
+  "fasce": {
+   "verde": {
+    "giorni": 1474,
+    "quota_giorni": 68.6,
+    "frequenza": 1.9,
+    "ic90": [
+     0.6,
+     4.0
+    ],
+    "anni_con_dati": 12
+   },
+   "grigio": {
+    "giorni": 117,
+    "quota_giorni": 5.4,
+    "frequenza": 3.4,
+    "ic90": [
+     0.0,
+     8.1
+    ],
+    "anni_con_dati": 11
+   },
+   "giallo": {
+    "giorni": 337,
+    "quota_giorni": 15.7,
+    "frequenza": 10.4,
+    "ic90": [
+     3.8,
+     17.1
+    ],
+    "anni_con_dati": 11
+   },
+   "rosso": {
+    "giorni": 181,
+    "quota_giorni": 8.4,
+    "frequenza": 13.8,
+    "ic90": [
+     0.0,
+     18.8
+    ],
+    "anni_con_dati": 9
+   },
+   "viola": {
+    "giorni": 41,
+    "quota_giorni": 1.9,
+    "frequenza": 4.9,
+    "ic90": [
+     0.0,
+     6.1
+    ],
+    "anni_con_dati": 4
+   }
+  }
+ },
+ "base_verifica": 4.4,
+ "soglia_R2": 10.9,
+ "episodi_indipendenti": {
+  "1990_2026": 145,
+  "2015_2026": 27,
+  "giorni_1990_2026": 8253,
+  "giorni_2015_2026": 2150
+ },
+ "metriche_operative": {
+  "giallo o peggio": {
+   "giorni_allarme": 564,
+   "quota_giorni": 26.2,
+   "precisione": 11.3,
+   "richiamo": 68.1,
+   "giorni_falso_allarme": 500
+  },
+  "rosso o viola": {
+   "giorni_allarme": 233,
+   "quota_giorni": 10.8,
+   "precisione": 12.0,
+   "richiamo": 29.8,
+   "giorni_falso_allarme": 205
+  },
+  "solo viola": {
+   "giorni_allarme": 55,
+   "quota_giorni": 2.6,
+   "precisione": 5.5,
+   "richiamo": 3.2,
+   "giorni_falso_allarme": 52
+  }
+ },
+ "anticipo": {
+  "per_episodio": [
+   {
+    "episodio": "1990-01-02",
+    "primo_giallo": null,
+    "sedute_prima_del_meno10": 0
+   },
+   {
+    "episodio": "1997-10-07",
+    "primo_giallo": "1997-10-07",
+    "sedute_prima_del_meno10": 15
+   },
+   {
+    "episodio": "1998-07-17",
+    "primo_giallo": "1998-07-21",
+    "sedute_prima_del_meno10": 19
+   },
+   {
+    "episodio": "1999-07-16",
+    "primo_giallo": "1999-07-20",
+    "sedute_prima_del_meno10": 51
+   },
+   {
+    "episodio": "2000-03-24",
+    "primo_giallo": "2000-03-24",
+    "sedute_prima_del_meno10": 16
+   },
+   {
+    "episodio": "2000-03-24",
+    "primo_giallo": "2000-03-24",
+    "sedute_prima_del_meno10": 140
+   },
+   {
+    "episodio": "2007-10-09",
+    "primo_giallo": "2007-10-19",
+    "sedute_prima_del_meno10": 26
+   },
+   {
+    "episodio": "2015-05-21",
+    "primo_giallo": null,
+    "sedute_prima_del_meno10": 0
+   },
+   {
+    "episodio": "2018-01-26",
+    "primo_giallo": "2018-02-02",
+    "sedute_prima_del_meno10": 5
+   },
+   {
+    "episodio": "2022-01-03",
+    "primo_giallo": "2022-01-18",
+    "sedute_prima_del_meno10": 25
+   },
+   {
+    "episodio": "2026-10-06",
+    "primo_giallo": "2026-10-16",
+    "sedute_prima_del_meno10": 26
+   }
+  ],
+  "mediana_sedute": 25,
+  "episodi_con_anticipo": 9,
+  "episodi_totali": 11
+ }
+}

@@ -69,3 +69,24 @@ def test_riga_settore_dichiara_i_limiti():
     assert "correzione iniziata" in ic._settore_html(d2)
     d3 = {"settore": {"nome": "energia", "giu": -8.0, "rotto": False}, "sotto_massimo": -1.0, "indice": 20}
     assert "Nessun settore è rotto" in ic._settore_html(d3)
+
+
+def test_registro_append_only(tmp_path, monkeypatch):
+    """Correzione dall'audit esterno: la prova pulita si fa in avanti, serve un registro che non si riscriva."""
+    import csv
+    monkeypatch.setattr(ic, "FILE", tmp_path / "ic.json")
+    monkeypatch.setattr(ic, "STORIA", tmp_path / "ic.csv")
+    monkeypatch.setattr(ic, "REGISTRO", tmp_path / "reg.csv")
+    ic.aggiorna(log=lambda *_: None)
+    ic.aggiorna(log=lambda *_: None)          # due giri lo stesso giorno: una riga sola
+    righe = list(csv.DictReader((tmp_path / "reg.csv").open(encoding="utf-8")))
+    assert len(righe) == 1
+    r = righe[0]
+    assert r["fascia"] in {f[1] for f in ic.FASCE} and r["versione_pesi"] and r["zona"]
+    assert all(c in r for c in ic.NOMI)       # le spinte vanno congelate con il punteggio
+
+
+def test_scheda_dice_anticipo_e_costo():
+    h = ic.oggi_html()
+    assert "25 sedute" in h and "9 episodi su 11" in h
+    assert "500 giorni" in h                   # il preavviso non si mostra senza il suo costo
