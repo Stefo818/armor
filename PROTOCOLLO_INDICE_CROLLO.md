@@ -186,3 +186,76 @@ Togliendo gli shock esterni restano **meno** episodi, non più: 11 finanziari da
 2001. Con così pochi casi gli intervalli si allargano e un singolo episodio pesa molto. Quindi l'esclusione
 rende i numeri più pertinenti alla richiesta dell'utente ma **meno** precisi, non più precisi.
 Nessun indice potrà funzionare «alla perfezione» su 11 casi: questo va scritto anche nella scheda.
+
+---
+# Emendamento 2 (22 novembre 2026) — segnali strutturali vicino ai massimi
+Scritto e pubblicato **prima** di qualunque calcolo su queste nuove variabili.
+
+## A. Ipotesi da provare, nelle parole dell'utente
+In ogni crisi di natura finanziaria c'è un settore guida — il più forte, il più indebitato, il più caro —
+che inizia a cedere **mentre l'indice è ancora sui massimi**: banche d'investimento e immobiliare nel 2008,
+tecnologia nel 2000, tecnologia e intelligenza artificiale oggi. Nvidia perdeva da settimane mentre
+l'indice teneva. Se è vero, la **divergenza fra il settore guida e l'indice** deve parlare prima dei
+segnali di stress, che invece arrivano a discesa iniziata.
+
+## B. Cosa ho già visto, dichiarato
+Ho già visto che l'Indice crollo attuale, entro il 2% dai massimi, distingue 11,7% contro 5,5%, e il
+livello dell'indice al massimo di ogni episodio (basso in tutti). **Non** ho ancora guardato il
+comportamento di settori, valutazioni, leva, credito, liquidità o oro vicino ai massimi: questa è una
+prova nuova su dati non ancora osservati per questo scopo.
+
+## C. Zona e bersaglio
+- **Zona:** solo i giorni in cui l'indice sta **entro il 5%** dal suo massimo a 12 mesi, escluse le
+  finestre di shock esterno e le crisi miste dell'emendamento 1.
+- **Bersaglio (Y60):** il minimo delle 60 sedute successive sta almeno il **10% sotto il massimo a 12 mesi**.
+- Si riporta anche Y10 dell'emendamento 1 come controllo.
+
+## D. Le dodici famiglie strutturali, costruzione fissata ora
+Ogni famiglia diventa un percentile su storia crescente (almeno 500 osservazioni precedenti), mai
+guardando il futuro. Ritardi di pubblicazione come nella parte 2, e in più: mensili 30 giorni,
+trimestrali 90 giorni, settimanali 7 giorni.
+1. **Divergenza del settore guida.** Settore guida = fra i nove settori con storia dal 1998, quello con il
+   rendimento relativo a 24 mesi più alto. Segnale = quanto il settore guida è sotto il suo massimo a
+   6 mesi.
+2. **Ampiezza della guida.** Quanti dei nove settori stanno sopra la propria media a 200 giorni
+   (percentile invertito: meno settori = peggio).
+3. **Tecnologia contro il resto.** Rapporto Nasdaq 100 su S&P 500, scostamento dalla sua media a
+   200 giorni (dal 1985).
+4. **Valutazione tirata.** Media dei percentili di CAPE mensile e prezzo su utili mensile.
+5. **Premio per il rischio azionario** (invertito: premio basso = mercato caro).
+6. **Leva degli investitori.** Crescita annua del debito a margine e debito a margine su valore di borsa.
+7. **Creazione di credito alle imprese.** Crescita a 6 mesi dei prestiti alle imprese e standard di
+   prestito delle banche.
+8. **Liquidità.** Variazione a 13 settimane della liquidità netta (invertita). Dal 2003.
+9. **Tassi reali e curva.** Tasso reale a 10 anni, livello e variazione a 60 sedute; curva 10 meno 2 anni
+   e sua variazione.
+10. **Fuga verso l'oro.** Rapporto oro su S&P 500, variazione a 60 sedute. Dal 2000.
+11. **Deterioramento del credito.** Variazione annua di insolvenze e perdite su crediti alle imprese.
+12. **La guida smette di guidare.** Rendimento a 3 mesi del settore guida meno quello dell'indice
+    (invertito).
+
+## E. Modelli
+- **N1** media dei percentili disponibili.
+- **N2** regressione logistica con **esclusione di un episodio alla volta**: il modello che valuta un
+  episodio non lo ha mai visto. Con pochi episodi questa è la verifica corretta, non la divisione per date.
+- **N3** solo le tre famiglie migliori, scelte sempre con l'esclusione di un episodio alla volta.
+- **Riferimento:** l'Indice crollo attuale nella stessa zona (11,7%).
+
+## F. Regole di accettazione, fissate ora
+Nella zona entro il 5% dai massimi, sul bersaglio Y60:
+- **R6** nel quinto più alto del segnale la precisione è almeno **20%**, con limite inferiore
+  dell'intervallo al 90% sopra la frequenza di base della zona.
+- **R7** con l'esclusione di un episodio alla volta la precisione del quinto più alto resta almeno **15%**.
+- **R8** placebo: 200 spostamenti circolari del bersaglio; il 95° percentile sotto la precisione vera.
+- **R9** batte l'indice attuale nella stessa zona di almeno **5 punti** di precisione.
+Tutte: **«Coerente con i casi osservati»** e il segnale entra nella scheda come secondo numero.
+Anche una sola mancante: **«Non coerente»**, si mostra al massimo come contesto e si dichiara.
+
+## G. Limiti dichiarati prima
+I nove settori partono dal dicembre 1998: nell'era dei settori ci sono **sei** episodi finanziari (2000,
+2007, 2015, 2018, 2022, 2026). Sei episodi sono pochissimi e un solo episodio può spostare tutto: per
+questo la verifica è a esclusione di un episodio alla volta e per questo un risultato positivo andrà
+comunque chiamato indizio, non prova.
+Le misure citate dall'utente — valutazione dei primi dieci titoli, rapporto fra investimenti e flusso di
+cassa delle aziende di intelligenza artificiale — nell'archivio partono dal 7 novembre 2026 (13 giorni):
+**non sono validabili** e non entrano nel punteggio. Possono comparire solo come informazione.
