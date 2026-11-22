@@ -46,3 +46,34 @@ I dati dei fondi partono dal 20 luglio 2010: 16 anni, con sole 4 crisi finanziar
 2022, 2026). Su quattro episodi nessun risultato può essere definitivo. L'indice Buffett ha storia lunga
 (dal 1945) ma esce una volta al trimestre con dieci settimane di ritardo: per un segnale di crollo a
 poche settimane è quasi fermo, e questo va detto qualunque sia il risultato.
+
+---
+# Emendamento 1 (22 novembre 2026) — la prova va fatta solo sulle crisi finanziarie
+Scritto **prima** di rifare i calcoli.
+
+## A. L'errore di perimetro, dichiarato
+La Prova A usa `test_new_indicators`, la regola già scritta nel progetto. Quella regola valuta i tre
+eventi su **tutti** i giorni dal 2013, quindi dentro ci sono la pandemia del 2020 e le due ondate di dazi
+del 2018 e del 2025. L'utente ha chiesto fin dall'inizio che il modello sia giudicato **solo** sulle crisi
+di natura finanziaria: mercato troppo caro, tassi in salita, credito e liquidità che si stringono. La
+Prova A come è scritta non rispetta quel perimetro, e una candidata che aiuta solo sulle crisi finanziarie
+può essere bocciata da episodi che non dovrebbero contare.
+
+## B. Prova A-bis, identica tranne il perimetro
+Stessa regola di accettazione, stessi tre eventi, stesso periodo dal 2013, ma **escludendo** le finestre
+di shock esterno già fissate nell'emendamento 1 di `PROTOCOLLO_INDICE_CROLLO.md` (pandemia, guerre,
+attentati, dazi) e le due crisi miste. Si adotta se migliora di almeno 0,01 in almeno 2 eventi su 3 e
+nessuno peggiora di più di 0,01.
+Si riportano **entrambe** le prove, con e senza shock esterni: se dicono cose diverse, è un'informazione,
+non un motivo per scegliere quella che conviene.
+
+## C. Taratura della scala dell'Indice Armor, fissata ora
+L'Indice Armor non supera mai 56,4 (99° percentile): le fasce sopra 60 e sopra 80 sono irraggiungibili.
+Si applica una **trasformazione monotona**, che non cambia l'ordine dei giorni e quindi non cambia
+nessuna AUC, nessuna prova e nessun risultato già pubblicato: cambia solo dove cadono i confini.
+Regola fissata ora: i percentili dell'Indice Armor, calcolati **solo sulle crisi finanziarie** dal 1990,
+vengono portati sui confini del Super Armor, che i dati già confermano (sopra 60 il calo al 10% è arrivato
+nel 90,4% dei casi, sopra 80 nel 100%). I tre confini della nuova scala sono quindi il 59,6°, il 93,8° e
+il 99,2° percentile dell'Indice Armor, che diventano 40, 60 e 80.
+Dopo la trasformazione si **ri-misurano** le frequenze per fascia: se non corrispondono alle etichette
+«difficoltà», «pericolo», «rischio crollo imminente», si cambiano le etichette, non i dati.
