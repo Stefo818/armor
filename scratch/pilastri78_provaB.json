@@ -1,0 +1,62 @@
+{
+ "dal 2011 (dove arrivano i dati dei fondi)": {
+  "C1 fondi a breve in uscita": {
+   "giorni": 1978,
+   "auc": 0.5414,
+   "quinto": 21.5,
+   "base": 9.3,
+   "P2": true
+  },
+  "C2 divergenza breve contro lungo": {
+   "giorni": 1862,
+   "auc": 0.5239,
+   "quinto": 9.9,
+   "base": 9.3,
+   "P2": false
+  },
+  "C3 indice Buffett": {
+   "giorni": 2546,
+   "auc": 0.671,
+   "quinto": 13.5,
+   "base": 9.3,
+   "P2": false
+  },
+  "(gia' nel modello) fondi a lungo in uscita": {
+   "giorni": 1978,
+   "auc": 0.4579,
+   "quinto": 13.4,
+   "base": 9.3,
+   "P2": false
+  }
+ },
+ "dal 1999 (solo Buffett ha storia)": {
+  "C1 fondi a breve in uscita": {
+   "giorni": 1978,
+   "auc": 0.5414,
+   "quinto": 21.5,
+   "base": 9.3,
+   "P2": true
+  },
+  "C2 divergenza breve contro lungo": {
+   "giorni": 1862,
+   "auc": 0.5239,
+   "quinto": 9.9,
+   "base": 9.3,
+   "P2": false
+  },
+  "C3 indice Buffett": {
+   "giorni": 4048,
+   "auc": 0.6559,
+   "quinto": 20.0,
+   "base": 9.3,
+   "P2": true
+  },
+  "(gia' nel modello) fondi a lungo in uscita": {
+   "giorni": 1978,
+   "auc": 0.4579,
+   "quinto": 13.4,
+   "base": 9.3,
+   "P2": false
+  }
+ }
+}

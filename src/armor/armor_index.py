@@ -38,6 +38,10 @@ NEW_IND_FOND = {
     "chargeoff_biz": ("Economia reale", "hi", 0.6, 1.0), "busloans_g6": ("Economia reale", "lo", 0, -3),
     "cfnai": ("Economia reale", "lo", -0.35, -0.7), "claims_up": ("Economia reale", "hi", 15, 25),
     "ccsa_yoy": ("Economia reale", "hi", 10, 20), "permit_yoy": ("Economia reale", "lo", -10, -20),
+    # richiesta dell'utente (PROTOCOLLO_PILASTRI_7_8.md): i fondi a breve termine non erano nel modello
+    # (titan_job passa solo cot_am_net, cioe' i fondi a lungo), e l'indice Buffett non c'era
+    "fondi_breve": ("Sentimento e ampiezza", "pct", None, None),
+    "buffett": ("Valutazioni", "pct", None, None),
     "cpi_yoy": ("Tassi e obbligazioni", "hi", 3, 4.5), "core_yoy": ("Tassi e obbligazioni", "hi", 3, 4),
     "real_ff": ("Tassi e obbligazioni", "hi", 1.5, 2.5),
     "net_liq_13w": ("Credito e liquidità", "lo", 0, -4), "m2_yoy": ("Credito e liquidità", "lo", 2, 0),
@@ -92,6 +96,8 @@ def color(v: float) -> str:
 
 
 def _thresh_score(x: pd.Series, kind: str, y: float, r: float) -> pd.Series:
+    if kind == "pct" or y is None or r is None:   # indicatore senza soglie: conta solo il percentile
+        return pd.Series(np.nan, index=x.index)
     if kind == "hi":
         xp, fp = [y - (r - y), y, r, r + (r - y)], [0, .35, .7, 1]
     else:  # lo: più basso = peggio, y > r
@@ -599,7 +605,8 @@ def test_new_indicators(sp: pd.Series, force: bool = False) -> dict:
             a.index = a.index + pd.Timedelta(days=0)
             a = a.reindex(a.index.union(idx_s)).ffill(limit=_limit(key) + lag).reindex(idx_s).shift(lag if lag > 5 else 1)
             pr = a.rolling(WINDOW, min_periods=250).rank(pct=True)
-            sc = (0.6 * _thresh_score(a, kind, y, r) + 0.4 * pr).fillna(_thresh_score(a, kind, y, r))
+            ts = _thresh_score(a, kind, y, r)
+            sc = pr if ts.isna().all() else (0.6 * ts + 0.4 * pr).fillna(ts)
             S2 = S.copy()
             S2[key] = sc
             GROUPS[fam][1].append((key, kind, y, r))

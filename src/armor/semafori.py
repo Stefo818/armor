@@ -217,6 +217,14 @@ def series_of(key: str, sp: pd.Series | None = None) -> pd.Series:
         return (a / b.reindex(a.index)).dropna() if len(a) and len(b) else pd.Series(dtype=float)
     if key == "pc_oi":
         return _arch_series("pc_open_interest")
+    if key == "fondi_breve":   # fondi con leva (a breve termine) in uscita: piu' alto = piu' scappano
+        s = store.load("cot_lev_net")
+        return (-s).dropna()
+    if key == "buffett":       # valore di Borsa diviso prodotto interno lordo, in percento
+        ev, gd = store.load("equity_value"), store.load("gdp")
+        if ev.empty or gd.empty:
+            return pd.Series(dtype=float)
+        return (ev / gd.reindex(ev.index).ffill() / 10).dropna()
     if key == "credit_gap":
         return credit_gap(store.load("credit_ratio"))
     if key == "sahm":

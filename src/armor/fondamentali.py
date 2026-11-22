@@ -73,6 +73,9 @@ DERIV_IN = {
 # del trimestre, quindi il dato di un mese era davvero noto fino a ~5 mesi dopo. Prova di sensibilità (nov 2026, calo ≥10% entro 6 mesi,
 # 2000-2018): ritardo 60 gg AUC 0,75; 120 gg 0,66; 180 gg 0,63. Si usa 150 giorni (prudente): con meno, parte dell'abilità sarebbe sguardo al futuro.
 LAG.update({"eps_sp": 150, "eps_g12": 150, "eps_g3": 150, "margin_sp": 150})
+# PROTOCOLLO_PILASTRI_7_8: i dati dei fondi escono il venerdi sui dati del martedi; i conti finanziari
+# (indice Buffett) circa dieci settimane dopo il trimestre
+LAG.update({"fondi_breve": 6, "buffett": 90})
 for _k, _ins in DERIV_IN.items():
     LAG.setdefault(_k, max(LAG.get(i, 1) for i in _ins))
 
