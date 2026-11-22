@@ -301,3 +301,32 @@ l'ipotesi del settore che si rompe non ha trovato conferma in due tentativi.
 
 ## E. Limite che non si può togliere
 Sei episodi. Anche superando tutte le regole, con sei casi il risultato va chiamato **indizio**.
+
+---
+# Emendamento 4 (22 novembre 2026) — ultimo tentativo: due chiavi
+Pubblicato prima del calcolo. **È il quarto sguardo sugli stessi sei episodi.** Con quattro tentativi la
+probabilità di trovare qualcosa per caso è alta: questo è dichiarato qui e vale per l'interpretazione.
+Dopo questo calcolo si smette, qualunque sia il risultato.
+
+## A. Correzione di un errore mio nell'emendamento 3
+La regola R11 era stata calcolata misurando la precisione **solo nei giorni vicini all'episodio escluso**,
+dove il bersaglio è vero quasi per costruzione. Era circolare e i valori (42-87%) sono annullati.
+Ricalcolata come doveva essere — soglia presa senza l'episodio, precisione misurata su tutta la zona —
+dà **18,2%**. R10 e R13 restano non superate, quindi l'etichetta «Non coerente» dell'emendamento 3 non
+cambia.
+
+## B. Le due regole da provare, fissate ora
+- **D1** allarme se: l'Indice crollo attuale è nel suo quinto più alto della zona **e** almeno un settore
+  sta almeno il 15% sotto il proprio massimo a 6 mesi (soglia economica fissa, non un percentile).
+- **D2** allarme se: l'Indice crollo attuale è nel suo quinto più alto della zona **e** le valutazioni
+  (famiglia g4) sono nel loro quinto più alto.
+Niente altre varianti, niente ritocchi delle soglie.
+
+## C. Regole di accettazione
+Zona entro il 5% dai massimi, bersaglio Y60, base 9,3%, riferimento l'indice attuale da solo: 21,5%.
+- **R15** precisione almeno **30%**, con limite inferiore dell'intervallo al 90% sopra **21,5%**.
+- **R16** almeno 4 dei 6 episodi devono avere un giorno di allarme nei 120 giorni prima del calo al 10%.
+- **R17** l'allarme deve scattare in almeno 150 giorni sulla zona: una regola che scatta dieci volte in
+  ventotto anni non è utilizzabile e non sarebbe verificabile.
+Tutte: «Coerente con i casi osservati». Anche una sola mancante: «Non coerente», si chiude la ricerca e
+si dichiara che quattro tentativi non hanno migliorato l'indice esistente.
