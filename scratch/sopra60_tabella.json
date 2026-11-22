@@ -1,0 +1,278 @@
+{
+ "una settimana (-3%)": {
+  "Indice Armor": {
+   "5 sedute (una settimana)": {
+    "giorni": 514,
+    "episodi": 26,
+    "crollo": 28.6,
+    "base": 9.7,
+    "volte_la_base": 2.9
+   },
+   "21 sedute (un mese)": {
+    "giorni": 510,
+    "episodi": 11,
+    "crollo": 30.0,
+    "base": 9.7,
+    "volte_la_base": 3.1
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 480,
+    "episodi": 9,
+    "crollo": 26.9,
+    "base": 9.7,
+    "volte_la_base": 2.8
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 408,
+    "episodi": 5,
+    "crollo": 31.6,
+    "base": 9.7,
+    "volte_la_base": 3.2
+   }
+  },
+  "Super Armor": {
+   "5 sedute (una settimana)": {
+    "giorni": 515,
+    "episodi": 17,
+    "crollo": 28.3,
+    "base": 9.7,
+    "volte_la_base": 2.9
+   },
+   "21 sedute (un mese)": {
+    "giorni": 501,
+    "episodi": 13,
+    "crollo": 30.3,
+    "base": 9.7,
+    "volte_la_base": 3.1
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 487,
+    "episodi": 7,
+    "crollo": 30.0,
+    "base": 9.7,
+    "volte_la_base": 3.1
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 522,
+    "episodi": 6,
+    "crollo": 30.1,
+    "base": 9.7,
+    "volte_la_base": 3.1
+   }
+  },
+  "Indice crollo": {
+   "5 sedute (una settimana)": {
+    "giorni": 1524,
+    "episodi": 68,
+    "crollo": 24.4,
+    "base": 9.7,
+    "volte_la_base": 2.5
+   },
+   "21 sedute (un mese)": {
+    "giorni": 1441,
+    "episodi": 33,
+    "crollo": 23.8,
+    "base": 9.7,
+    "volte_la_base": 2.4
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 1348,
+    "episodi": 12,
+    "crollo": 26.9,
+    "base": 9.7,
+    "volte_la_base": 2.8
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 1412,
+    "episodi": 11,
+    "crollo": 23.5,
+    "base": 9.7,
+    "volte_la_base": 2.4
+   }
+  }
+ },
+ "un mese (-5%)": {
+  "Indice Armor": {
+   "5 sedute (una settimana)": {
+    "giorni": 514,
+    "episodi": 26,
+    "crollo": 37.0,
+    "base": 15.4,
+    "volte_la_base": 2.4
+   },
+   "21 sedute (un mese)": {
+    "giorni": 510,
+    "episodi": 11,
+    "crollo": 38.8,
+    "base": 15.4,
+    "volte_la_base": 2.5
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 480,
+    "episodi": 9,
+    "crollo": 36.5,
+    "base": 15.4,
+    "volte_la_base": 2.4
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 408,
+    "episodi": 5,
+    "crollo": 44.9,
+    "base": 15.4,
+    "volte_la_base": 2.9
+   }
+  },
+  "Super Armor": {
+   "5 sedute (una settimana)": {
+    "giorni": 515,
+    "episodi": 17,
+    "crollo": 43.5,
+    "base": 15.4,
+    "volte_la_base": 2.8
+   },
+   "21 sedute (un mese)": {
+    "giorni": 501,
+    "episodi": 13,
+    "crollo": 42.7,
+    "base": 15.4,
+    "volte_la_base": 2.8
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 487,
+    "episodi": 7,
+    "crollo": 43.1,
+    "base": 15.4,
+    "volte_la_base": 2.8
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 522,
+    "episodi": 6,
+    "crollo": 40.8,
+    "base": 15.4,
+    "volte_la_base": 2.7
+   }
+  },
+  "Indice crollo": {
+   "5 sedute (una settimana)": {
+    "giorni": 1524,
+    "episodi": 68,
+    "crollo": 33.5,
+    "base": 15.4,
+    "volte_la_base": 2.2
+   },
+   "21 sedute (un mese)": {
+    "giorni": 1441,
+    "episodi": 33,
+    "crollo": 35.7,
+    "base": 15.4,
+    "volte_la_base": 2.3
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 1348,
+    "episodi": 12,
+    "crollo": 37.3,
+    "base": 15.4,
+    "volte_la_base": 2.4
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 1412,
+    "episodi": 11,
+    "crollo": 32.9,
+    "base": 15.4,
+    "volte_la_base": 2.1
+   }
+  }
+ },
+ "tre mesi (-8%)": {
+  "Indice Armor": {
+   "5 sedute (una settimana)": {
+    "giorni": 514,
+    "episodi": 26,
+    "crollo": 44.7,
+    "base": 16.8,
+    "volte_la_base": 2.7
+   },
+   "21 sedute (un mese)": {
+    "giorni": 510,
+    "episodi": 11,
+    "crollo": 47.3,
+    "base": 16.8,
+    "volte_la_base": 2.8
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 480,
+    "episodi": 9,
+    "crollo": 46.9,
+    "base": 16.8,
+    "volte_la_base": 2.8
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 408,
+    "episodi": 5,
+    "crollo": 64.2,
+    "base": 16.8,
+    "volte_la_base": 3.8
+   }
+  },
+  "Super Armor": {
+   "5 sedute (una settimana)": {
+    "giorni": 515,
+    "episodi": 17,
+    "crollo": 54.8,
+    "base": 16.8,
+    "volte_la_base": 3.3
+   },
+   "21 sedute (un mese)": {
+    "giorni": 501,
+    "episodi": 13,
+    "crollo": 53.9,
+    "base": 16.8,
+    "volte_la_base": 3.2
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 487,
+    "episodi": 7,
+    "crollo": 49.5,
+    "base": 16.8,
+    "volte_la_base": 2.9
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 522,
+    "episodi": 6,
+    "crollo": 48.5,
+    "base": 16.8,
+    "volte_la_base": 2.9
+   }
+  },
+  "Indice crollo": {
+   "5 sedute (una settimana)": {
+    "giorni": 1524,
+    "episodi": 68,
+    "crollo": 39.2,
+    "base": 16.8,
+    "volte_la_base": 2.3
+   },
+   "21 sedute (un mese)": {
+    "giorni": 1441,
+    "episodi": 33,
+    "crollo": 41.0,
+    "base": 16.8,
+    "volte_la_base": 2.4
+   },
+   "63 sedute (tre mesi)": {
+    "giorni": 1348,
+    "episodi": 12,
+    "crollo": 40.7,
+    "base": 16.8,
+    "volte_la_base": 2.4
+   },
+   "126 sedute (sei mesi)": {
+    "giorni": 1412,
+    "episodi": 11,
+    "crollo": 43.3,
+    "base": 16.8,
+    "volte_la_base": 2.6
+   }
+  }
+ }
+}

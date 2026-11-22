@@ -1,0 +1,212 @@
+{
+ "orizzonti": {
+  "una settimana": {
+   "vincitore": {
+    "candidato": "Indice crollo · media 5 sedute",
+    "auc_scelta": 0.7493,
+    "auc_verifica": 0.7493,
+    "ic90_verifica": [
+     0.6505,
+     0.8014
+    ],
+    "precisione_quinto": 18.0,
+    "base": 6.7,
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "promosso": true
+   },
+   "classifica_scelta": [
+    {
+     "candidato": "Indice crollo · media 5 sedute",
+     "auc_scelta": 0.7493,
+     "auc_verifica": 0.7493,
+     "ic90_verifica": [
+      0.6505,
+      0.8014
+     ],
+     "precisione_quinto": 18.0,
+     "base": 6.7,
+     "G1": true,
+     "G2": true,
+     "G3": true,
+     "promosso": true
+    },
+    {
+     "candidato": "Indice crollo · livello di oggi",
+     "auc_scelta": 0.7449,
+     "auc_verifica": 0.7483
+    },
+    {
+     "candidato": "Indice crollo · media 21 sedute",
+     "auc_scelta": 0.7437,
+     "auc_verifica": 0.7021
+    },
+    {
+     "candidato": "Indice crollo · sedute sopra 60 su 63",
+     "auc_scelta": 0.7312,
+     "auc_verifica": 0.6437
+    },
+    {
+     "candidato": "Indice crollo · sedute sopra 60 su 126",
+     "auc_scelta": 0.7267,
+     "auc_verifica": 0.6214
+    },
+    {
+     "candidato": "Indice crollo · media 63 sedute",
+     "auc_scelta": 0.7263,
+     "auc_verifica": 0.6779
+    },
+    {
+     "candidato": "Indice crollo · sedute sopra 60 su 21",
+     "auc_scelta": 0.7174,
+     "auc_verifica": 0.65
+    },
+    {
+     "candidato": "Indice crollo · media 126 sedute",
+     "auc_scelta": 0.7162,
+     "auc_verifica": 0.6562
+    }
+   ]
+  },
+  "un mese": {
+   "vincitore": {
+    "candidato": "Indice Armor · media 63 sedute",
+    "auc_scelta": 0.7377,
+    "auc_verifica": 0.5443,
+    "ic90_verifica": [
+     0.2839,
+     0.7127
+    ],
+    "precisione_quinto": 22.3,
+    "base": 11.0,
+    "G1": false,
+    "G2": false,
+    "G3": true,
+    "promosso": false
+   },
+   "classifica_scelta": [
+    {
+     "candidato": "Indice Armor · media 63 sedute",
+     "auc_scelta": 0.7377,
+     "auc_verifica": 0.5443,
+     "ic90_verifica": [
+      0.2839,
+      0.7127
+     ],
+     "precisione_quinto": 22.3,
+     "base": 11.0,
+     "G1": false,
+     "G2": false,
+     "G3": true,
+     "promosso": false
+    },
+    {
+     "candidato": "Indice crollo · sedute sopra 60 su 63",
+     "auc_scelta": 0.735,
+     "auc_verifica": 0.5625
+    },
+    {
+     "candidato": "Indice Armor · media 126 sedute",
+     "auc_scelta": 0.7348,
+     "auc_verifica": 0.5921
+    },
+    {
+     "candidato": "Indice crollo · media 21 sedute",
+     "auc_scelta": 0.7335,
+     "auc_verifica": 0.6691
+    },
+    {
+     "candidato": "Indice crollo · media 5 sedute",
+     "auc_scelta": 0.7332,
+     "auc_verifica": 0.6837
+    },
+    {
+     "candidato": "Indice crollo · livello di oggi",
+     "auc_scelta": 0.7287,
+     "auc_verifica": 0.6859
+    },
+    {
+     "candidato": "Indice crollo · sedute sopra 60 su 126",
+     "auc_scelta": 0.7285,
+     "auc_verifica": 0.5504
+    },
+    {
+     "candidato": "Indice crollo · media 63 sedute",
+     "auc_scelta": 0.7231,
+     "auc_verifica": 0.5971
+    }
+   ]
+  },
+  "tre mesi": {
+   "vincitore": {
+    "candidato": "Indice Armor · media 126 sedute",
+    "auc_scelta": 0.8123,
+    "auc_verifica": 0.5404,
+    "ic90_verifica": [
+     0.2993,
+     0.7115
+    ],
+    "precisione_quinto": 20.4,
+    "base": 13.9,
+    "G1": false,
+    "G2": false,
+    "G3": false,
+    "promosso": false
+   },
+   "classifica_scelta": [
+    {
+     "candidato": "Indice Armor · media 126 sedute",
+     "auc_scelta": 0.8123,
+     "auc_verifica": 0.5404,
+     "ic90_verifica": [
+      0.2993,
+      0.7115
+     ],
+     "precisione_quinto": 20.4,
+     "base": 13.9,
+     "G1": false,
+     "G2": false,
+     "G3": false,
+     "promosso": false
+    },
+    {
+     "candidato": "Indice Armor · media 63 sedute",
+     "auc_scelta": 0.8072,
+     "auc_verifica": 0.5206
+    },
+    {
+     "candidato": "Indice crollo · sedute sopra 60 su 126",
+     "auc_scelta": 0.7941,
+     "auc_verifica": 0.4918
+    },
+    {
+     "candidato": "Indice crollo · media 63 sedute",
+     "auc_scelta": 0.7889,
+     "auc_verifica": 0.5309
+    },
+    {
+     "candidato": "Indice crollo · sedute sopra 60 su 63",
+     "auc_scelta": 0.788,
+     "auc_verifica": 0.4684
+    },
+    {
+     "candidato": "Indice crollo · media 126 sedute",
+     "auc_scelta": 0.7874,
+     "auc_verifica": 0.5121
+    },
+    {
+     "candidato": "Indice Armor · media 21 sedute",
+     "auc_scelta": 0.7843,
+     "auc_verifica": 0.5662
+    },
+    {
+     "candidato": "Indice Armor · media 5 sedute",
+     "auc_scelta": 0.7718,
+     "auc_verifica": 0.594
+    }
+   ]
+  }
+ },
+ "soglia_caso_95": 0.746
+}

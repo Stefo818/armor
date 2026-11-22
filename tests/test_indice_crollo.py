@@ -92,3 +92,16 @@ def test_scheda_dice_anticipo_e_costo():
     h = ic.oggi_html()
     assert "25 sedute" in h and "9 episodi su 11" in h
     assert "500 giorni" in h                   # il preavviso non si mostra senza il suo costo
+
+
+def test_quadro_di_oggi():
+    """Gara fra gli indici (PROTOCOLLO_GARA_INDICI.md): un solo segnale promosso, gli altri vanno dichiarati assenti."""
+    from armor import quadro
+    d = quadro.leggi()
+    assert d and 1 <= d["armor"] <= 100 and 1 <= d["super"] <= 100 and 1 <= d["crollo"] <= 100
+    assert all(0 <= v <= 5 for v in d["sopra60_5sedute"].values())
+    h = quadro.html()
+    assert "Quadro di oggi" in h and "Indice crollo" in h
+    assert "non c'è un segnale affidabile" in h      # a un mese e tre mesi
+    assert "0,7460" in h                              # la soglia del caso va dichiarata
+    assert "molto probabile" not in h
