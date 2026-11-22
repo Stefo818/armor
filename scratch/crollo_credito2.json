@@ -1,0 +1,66 @@
+{
+ "dal 1999, come i settori": {
+  "scarto Baa meno Aaa (livello)": {
+   "giorni": 4048,
+   "auc": 0.4227,
+   "quinto": 3.1
+  },
+  "scarto Baa meno Aaa (variazione 20 sedute)": {
+   "giorni": 4048,
+   "auc": 0.6104,
+   "quinto": 10.2
+  },
+  "scarto Baa meno Aaa (variazione 60 sedute)": {
+   "giorni": 4048,
+   "auc": 0.5376,
+   "quinto": 7.9
+  },
+  "fondo credito rischioso contro sicuro (60 sedute)": {
+   "giorni": 4048,
+   "auc": 0.5932,
+   "quinto": 16.0
+  },
+  "fondo credito rischioso contro sicuro (120 sedute)": {
+   "giorni": 4048,
+   "auc": 0.6002,
+   "quinto": 13.5
+  },
+  "fondo credito rischioso, caduta dal suo massimo a 1 anno": {
+   "giorni": 4048,
+   "auc": 0.6216,
+   "quinto": 16.3
+  }
+ },
+ "dal 1990, tutti gli episodi": {
+  "scarto Baa meno Aaa (livello)": {
+   "giorni": 5599,
+   "auc": 0.4826,
+   "quinto": 6.0
+  },
+  "scarto Baa meno Aaa (variazione 20 sedute)": {
+   "giorni": 5579,
+   "auc": 0.5786,
+   "quinto": 7.7
+  },
+  "scarto Baa meno Aaa (variazione 60 sedute)": {
+   "giorni": 5539,
+   "auc": 0.4841,
+   "quinto": 5.1
+  },
+  "fondo credito rischioso contro sicuro (60 sedute)": {
+   "giorni": 5540,
+   "auc": 0.5924,
+   "quinto": 14.2
+  },
+  "fondo credito rischioso contro sicuro (120 sedute)": {
+   "giorni": 5482,
+   "auc": 0.5702,
+   "quinto": 11.1
+  },
+  "fondo credito rischioso, caduta dal suo massimo a 1 anno": {
+   "giorni": 5483,
+   "auc": 0.5787,
+   "quinto": 11.2
+  }
+ }
+}

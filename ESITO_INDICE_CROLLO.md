@@ -267,3 +267,38 @@ mentre i differenziali ICE partono comunque solo dal 1996. Misurato nella zona e
 Il credito che si allarga in fretta è il miglior singolo segnale strutturale trovato finora (0,6251,
 più di valutazioni e oro), ma da solo resta sotto l'indice completo, che lo contiene già come una delle
 dodici famiglie. Conclusione: avere i differenziali ICE dal 1996 non avrebbe cambiato l'esito.
+
+---
+# Parte 11 — Il buco del credito, chiuso da altre fonti. La conclusione non cambia.
+Domanda: esistono altri posti da cui prendere la storia lunga del credito rischioso? Sì, tre.
+
+| fonte | cosa dà | storia | preso? |
+|---|---|---|---|
+| Yahoo, fondo Vanguard High-Yield Corporate (VWEHX) | il prezzo di un vero fondo che presta alle aziende rischiose | **dal 1980**, giornaliera | **sì** |
+| FRED, Moody's giornaliero Baa e Aaa (DBAA, DAAA) | rischio di credito puro, senza la parte dei tassi | dal 1986 e 1983 | **sì** |
+| Federal Reserve Board, «excess bond premium» di Gilchrist e Zakrajšek | la misura che usano gli studiosi per questa esatta domanda | dal 1973, mensile | non presa: il sito non è raggiungibile da questo ambiente, lo sarebbe dai workflow |
+
+Aggiunte all'archivio cinque serie nuove: `hy_fondo` (11.819 righe dal 1980), `gov_fondo` (11.695 dal
+1980), `ig_fondo` (11.819 dal 1980), `baa_d` (10.257 dal 1986), `aaa_d` (11.016 dal 1983). Il fondo
+rischioso dal 1980 copre **tutti** gli episodi finanziari, cioè più degli indici ICE, che partirebbero
+comunque dal 1996.
+
+Risultato nella zona entro il 5% dai massimi (sesto sguardo, esplorativo):
+
+| segnale di credito | dal 1999, base 9,3% | dal 1990, base 8,0% |
+|---|---|---|
+| fondo rischioso, caduta dal massimo a 1 anno | 0,6216 (quinto 16,3%) | 0,5787 (11,2%) |
+| scarto Baa meno Aaa, variazione a 20 sedute | 0,6104 (10,2%) | 0,5786 (7,7%) |
+| fondo rischioso contro sicuro, 120 sedute | 0,6002 (13,5%) | 0,5702 (11,1%) |
+| fondo rischioso contro sicuro, 60 sedute | 0,5932 (16,0%) | 0,5924 (14,2%) |
+| scarto Baa meno Aaa, livello | 0,4227 (3,1%) | 0,4826 (6,0%) |
+| **riferimento: Indice crollo attuale** | **0,7095 (21,5%)** | **0,6844 (15,8%)** |
+
+Quattro misure di credito indipendenti — Baa meno Stato, Baa meno Aaa, fondo contro fondo, caduta del
+fondo rischioso — cadono tutte fra 0,58 e 0,62. Il credito è un segnale vero ma di quella forza, e
+l'indice completo, che lo contiene già, resta sopra. **Avere i dati ICE dal 1996 non avrebbe cambiato
+nulla:** ora lo so per misura e non per congettura, perché la storia lunga ce l'ho da un'altra porta.
+
+Correzioni tecniche fatte nel passaggio: tempo di attesa su FRED portato da 25 a 60 secondi (le serie
+Moody's giornaliere sono grandi e andavano in timeout) e spiegazioni aggiunte al glossario per le cinque
+serie nuove.

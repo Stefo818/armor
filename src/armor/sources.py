@@ -27,6 +27,9 @@ YF = {
     "nasdaq100": ("^NDX", "America/New_York", "16:30"),
     "vt": ("VT", "America/New_York", "16:30"),
     "hyg": ("HYG", "America/New_York", "16:30"),
+    "hy_fondo": ("VWEHX", "America/New_York", "16:30"),    # Vanguard High-Yield Corporate, dal 1980: surrogato lungo del credito rischioso
+    "gov_fondo": ("VFIIX", "America/New_York", "16:30"),   # Vanguard GNMA, dal 1980: termine di paragone sicuro
+    "ig_fondo": ("VWESX", "America/New_York", "16:30"),    # Vanguard Long-Term Investment Grade, dal 1980
     "ief": ("IEF", "America/New_York", "16:30"),
     "rsp": ("RSP", "America/New_York", "16:30"),
     "spy": ("SPY", "America/New_York", "16:30"),
@@ -69,7 +72,8 @@ YF = {
 # id -> codice FRED (CSV pubblico, nessuna chiave necessaria)
 FRED = {
     "baa10y": "BAA10Y", "t10y2y": "T10Y2Y", "t10y3m": "T10Y3M",
-    "hy_oas": "BAMLH0A0HYM2", "ig_oas": "BAMLC0A0CM",
+    "hy_oas": "BAMLH0A0HYM2", "ig_oas": "BAMLC0A0CM",   # ICE: FRED ne pubblica solo 3 anni (licenza)
+    "baa_d": "DBAA", "aaa_d": "DAAA",                   # Moody's giornaliero dal 1983-1986, storia piena
     "nfci": "NFCI", "stlfsi": "STLFSI4", "anfci": "ANFCI", "sloos": "DRTSCILM", "credit_ratio": "CRDQUSAPABIS",
     "real10y": "DFII10", "be10y": "T10YIE", "dgs10": "DGS10", "dgs2": "DGS2", "fedfunds": "DFF",
     "usd_broad": "DTWEXBGS", "epu": "USEPUINDXD",
@@ -200,10 +204,10 @@ def fetch_fred(code: str, start: str | None = None) -> pd.Series:
             url = f"https://api.stlouisfed.org/fred/series/observations?series_id={code}&api_key={key}&file_type=json"
             if start:
                 url += f"&observation_start={start}"
-            return parse_fred_json(_get(url, tries=2, timeout=25).text)
+            return parse_fred_json(_get(url, tries=2, timeout=60).text)
         except Exception as e:  # noqa: BLE001
             print(f"[dati] FRED API non riuscita per {code}: {str(e)[:60].replace(key, '***')}; provo il CSV", flush=True)
-    r = _get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}", tries=2, timeout=25)
+    r = _get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}", tries=2, timeout=60)
     return parse_fred_csv(r.text)
 
 

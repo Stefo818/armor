@@ -769,3 +769,9 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
   Scheda Indice crollo: numero colorato per fascia, tolta la scritta della fascia. Ordine in Oggi:
   «Cosa aspettarsi nelle prossime ore» dopo «Paura, protezioni e prezzi»; «Cosa fare oggi» dopo
   «Perche' si muove oggi».
+- 2026-11-22 (5): chiuso il buco del credito da altre fonti. Nuove serie: hy_fondo (VWEHX dal 1980),
+  gov_fondo (VFIIX), ig_fondo (VWESX), baa_d (DBAA dal 1986), aaa_d (DAAA dal 1983), con glossario.
+  Timeout FRED 25->60s. Quattro misure di credito indipendenti stanno fra 0,58 e 0,62 nella zona entro il
+  5% dai massimi: sotto l'indice completo (0,7095). I dati ICE non avrebbero cambiato nulla.
+  Non preso: excess bond premium della Federal Reserve Board (dal 1973) - sito non raggiungibile dalla
+  sandbox, lo sarebbe dai workflow GitHub.

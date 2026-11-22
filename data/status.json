@@ -1375,5 +1375,50 @@
   "last_date": "2026-07-01",
   "rows": 318,
   "checked_at": "2026-11-22 15:28 UTC"
+ },
+ "hy_fondo": {
+  "ok": false,
+  "stato": "mai scaricata",
+  "msg": "No module named 'yfinance'",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-22 15:44 UTC"
+ },
+ "gov_fondo": {
+  "ok": false,
+  "stato": "mai scaricata",
+  "msg": "No module named 'yfinance'",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-22 15:44 UTC"
+ },
+ "ig_fondo": {
+  "ok": false,
+  "stato": "mai scaricata",
+  "msg": "No module named 'yfinance'",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-22 15:44 UTC"
+ },
+ "baa_d": {
+  "ok": false,
+  "stato": "mai scaricata",
+  "msg": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=25)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-22 15:45 UTC"
+ },
+ "aaa_d": {
+  "ok": false,
+  "stato": "mai scaricata",
+  "msg": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=25)",
+  "new_rows": 0,
+  "last_date": null,
+  "rows": 0,
+  "checked_at": "2026-11-22 15:46 UTC"
  }
 }
