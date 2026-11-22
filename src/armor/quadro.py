@@ -57,9 +57,9 @@ def html() -> str:
     if not d:
         return ""
     tre = "".join(
-        f"<div class='qd-c'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}</div><div class='qd-l'>{_h.escape(n)}</div>"
+        f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}</div><div class='qd-l'>{_h.escape(n)}</div>"
         f"<div class='qd-s'>{d['sopra60_5sedute'][n]}/5 sedute sopra 60</div></div>"
-        for n, v in (("Indice Armor", d["armor"]), ("Super Armor", d["super"]), ("Indice crollo", d["crollo"])))
+        for n, v, g in (("Indice Armor", d["armor"], "armor"), ("Super Armor", d["super"], "super"), ("Indice crollo", d["crollo"], "crollo")))
     m5 = d["crollo_m5"]
     acceso = m5 >= 60
     cls = "bad" if acceso else "ok"
@@ -90,7 +90,7 @@ details.qdd[open]>summary::after{transform:rotate(225deg)}
 .qd-x{font-size:12.5px;color:var(--mu);line-height:1.5}
 .qd-x p{margin:8px 0 0}.qd-x b{color:var(--tx)}.qd-x ul{margin:5px 0 0;padding-left:18px}
 </style>""" +
-        f"<div class='qd'><div class='qd-h'>Quadro di oggi · {_h.escape(d['data'])}</div>"
+        f"<div class='qd'><div class='qd-h'>Quadro di oggi · {_h.escape(d['data'])} · tocca un numero per il grafico</div>"
         f"<div class='qd-g'>{tre}</div>"
         f"<div class='qd-b {cls}'><div class='qd-t'>{tit}</div><div class='qd-d'>{det}</div></div>"
         "<details class='qdd'><summary>Cosa è stato provato, e cosa non funziona</summary><div class='qd-x'>"

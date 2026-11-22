@@ -309,7 +309,7 @@ def oggi_html() -> str:
     ]
     return (
         CSS +
-        f"<div class='ic' style='border-left:6px solid {col}'>"
+        f"<div class='ic' data-gi='crollo' style='border-left:6px solid {col}'>"
         f"<div class='ic-top'><div class='ic-n' style='color:{col}'>{v}</div><div class='ic-su'>su 100</div>"
         f"<div class='ic-tt' style='color:{col}'>{_h.escape(d['titolo'])}</div></div>"
         f"<div class='ic-wrap'>{BARRA}<div class='ic-m' style='left:calc({v}% - 1.5px)'></div></div>"

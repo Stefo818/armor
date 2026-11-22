@@ -74,7 +74,7 @@ def _mini(nome: str, k: str, s: pd.Series, nota: str) -> str:
     i = soglie.zona(k, v)
     c = soglie.COL[i]
     prev = " · ".join(f"{lab} <b>{_it(float(s.iloc[-1 - n]))}</b>" for lab, n in (("ieri", 1), ("1 sett. fa", 5), ("1 mese fa", 21)) if len(s) > n)
-    return (f"<div class='ts-c'><div class='ts-ct'><span class='ts-k'>{E(nome)}</span><span class='ts-chip' style='--c:{c}'>{soglie.NOMI[i]}</span></div>"
+    return (f"<div class='ts-c' data-gi='{k}'><div class='ts-ct'><span class='ts-k'>{E(nome)}</span><span class='ts-chip' style='--c:{c}'>{soglie.NOMI[i]}</span></div>"
             f"<div class='ts-cb'><div class='ts-v' style='color:{c}'>{_it(v)}<small>/100</small></div>"
             f"<div class='ts-cs'>{_spark([float(x) for x in s.iloc[-120:]], c, 40 if k == 'armor' else 45, 150, 38)}</div></div>"
             f"<div class='ts-cm'>{_freccia(_delta(s, 5))}<span class='ts-pv2'>{prev}</span></div><div class='ts-nt'>{nota}</div></div>")
