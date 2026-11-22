@@ -1,0 +1,230 @@
+{
+ "nota": "Esplorativo, scelto dopo i risultati. Nessuna etichetta.",
+ "per_stato": {
+  "entro 1% dal massimo (tutto calmo)": {
+   "giorni": 2966,
+   "crolli": 88,
+   "base": 3.0,
+   "auc_armor": 0.6526,
+   "auc_m2": 0.5849
+  },
+  "fra -1% e -3% dal massimo": {
+   "giorni": 2160,
+   "crolli": 95,
+   "base": 4.4,
+   "auc_armor": 0.7498,
+   "auc_m2": 0.6322
+  },
+  "fra -3% e -7% dal massimo": {
+   "giorni": 1862,
+   "crolli": 139,
+   "base": 7.5,
+   "auc_armor": 0.7051,
+   "auc_m2": 0.7041
+  },
+  "oltre -7% dal massimo": {
+   "giorni": 2243,
+   "crolli": 413,
+   "base": 18.4,
+   "auc_armor": 0.6506,
+   "auc_m2": 0.6316
+  }
+ },
+ "famiglie_a_mercato_calmo": {
+  "f1_paura": 0.6465,
+  "f2_salto": 0.5271,
+  "f3_curva": 0.5741,
+  "f4_protez": 0.4367,
+  "f5_credito": 0.4763,
+  "f6_tassi": 0.5645,
+  "f7_tendenza": 0.4411,
+  "f8_perdita": 0.55,
+  "f9_volat": 0.5901,
+  "f10_rotaz": 0.5004,
+  "f11_bond": 0.5139,
+  "f12_armor": 0.6556
+ },
+ "segnali_lenti_a_mercato_calmo": {
+  "erp": {
+   "giorni": 4237,
+   "crolli": 137,
+   "auc": 0.5396
+  },
+  "margin_yoy": {
+   "giorni": 3152,
+   "crolli": 120,
+   "auc": 0.5319
+  },
+  "margin_sp": {
+   "giorni": 2916,
+   "crolli": 94,
+   "auc": 0.5145
+  },
+  "baa10y": {
+   "giorni": 4237,
+   "crolli": 137,
+   "auc": 0.476
+  },
+  "t10y2y": {
+   "giorni": 4237,
+   "crolli": 137,
+   "auc": 0.6057
+  },
+  "real10y": {
+   "giorni": 2916,
+   "crolli": 94,
+   "auc": 0.5319
+  },
+  "net_liq_13w": {
+   "giorni": 2916,
+   "crolli": 94,
+   "auc": 0.5546
+  },
+  "m2_yoy": {
+   "giorni": 4237,
+   "crolli": 137,
+   "auc": 0.4311
+  },
+  "sahm": {
+   "giorni": 4237,
+   "crolli": 137,
+   "auc": 0.4521
+  },
+  "recprob": {
+   "giorni": 4237,
+   "crolli": 137,
+   "auc": 0.5352
+  }
+ },
+ "episodi_anticipo": [
+  {
+   "massimo": "1990-01-02",
+   "meno10pc": "1990-01-30",
+   "armor_al_massimo": null,
+   "armor_a_meno2pc": null,
+   "armor_a_meno5pc": null,
+   "giorni_dal_massimo_a_meno10": 21
+  },
+  {
+   "massimo": "1990-07-16",
+   "meno10pc": "1990-08-17",
+   "armor_al_massimo": null,
+   "armor_a_meno2pc": null,
+   "armor_a_meno5pc": null,
+   "giorni_dal_massimo_a_meno10": 25
+  },
+  {
+   "massimo": "1997-10-07",
+   "meno10pc": "1997-10-27",
+   "armor_al_massimo": null,
+   "armor_a_meno2pc": null,
+   "armor_a_meno5pc": null,
+   "giorni_dal_massimo_a_meno10": 15
+  },
+  {
+   "massimo": "1998-07-17",
+   "meno10pc": "1998-08-14",
+   "armor_al_massimo": null,
+   "armor_a_meno2pc": null,
+   "armor_a_meno5pc": null,
+   "giorni_dal_massimo_a_meno10": 21
+  },
+  {
+   "massimo": "1999-07-16",
+   "meno10pc": "1999-09-29",
+   "armor_al_massimo": null,
+   "armor_a_meno2pc": null,
+   "armor_a_meno5pc": null,
+   "giorni_dal_massimo_a_meno10": 53
+  },
+  {
+   "massimo": "2000-03-24",
+   "meno10pc": "2000-04-14",
+   "armor_al_massimo": 43.2,
+   "armor_a_meno2pc": 46.3,
+   "armor_a_meno5pc": 51.6,
+   "giorni_dal_massimo_a_meno10": 16
+  },
+  {
+   "massimo": "2000-03-24",
+   "meno10pc": "2000-10-11",
+   "armor_al_massimo": 43.2,
+   "armor_a_meno2pc": 46.3,
+   "armor_a_meno5pc": 51.6,
+   "giorni_dal_massimo_a_meno10": 140
+  },
+  {
+   "massimo": "2007-10-09",
+   "meno10pc": "2007-11-26",
+   "armor_al_massimo": 42.3,
+   "armor_a_meno2pc": 49.4,
+   "armor_a_meno5pc": 49.0,
+   "giorni_dal_massimo_a_meno10": 34
+  },
+  {
+   "massimo": "2015-05-21",
+   "meno10pc": "2015-08-24",
+   "armor_al_massimo": 36.1,
+   "armor_a_meno2pc": 39.9,
+   "armor_a_meno5pc": 53.4,
+   "giorni_dal_massimo_a_meno10": 66
+  },
+  {
+   "massimo": "2015-05-21",
+   "meno10pc": "2016-01-13",
+   "armor_al_massimo": 36.1,
+   "armor_a_meno2pc": 39.9,
+   "armor_a_meno5pc": 53.4,
+   "giorni_dal_massimo_a_meno10": 164
+  },
+  {
+   "massimo": "2018-01-26",
+   "meno10pc": "2018-02-08",
+   "armor_al_massimo": 33.3,
+   "armor_a_meno2pc": 40.6,
+   "armor_a_meno5pc": 47.8,
+   "giorni_dal_massimo_a_meno10": 10
+  },
+  {
+   "massimo": "2018-09-20",
+   "meno10pc": "2018-11-23",
+   "armor_al_massimo": 37.2,
+   "armor_a_meno2pc": 46.2,
+   "armor_a_meno5pc": 48.5,
+   "giorni_dal_massimo_a_meno10": 46
+  },
+  {
+   "massimo": "2020-02-19",
+   "meno10pc": "2020-02-27",
+   "armor_al_massimo": 37.0,
+   "armor_a_meno2pc": 46.0,
+   "armor_a_meno5pc": 50.3,
+   "giorni_dal_massimo_a_meno10": 7
+  },
+  {
+   "massimo": "2022-01-03",
+   "meno10pc": "2022-02-22",
+   "armor_al_massimo": 39.8,
+   "armor_a_meno2pc": 41.1,
+   "armor_a_meno5pc": 46.0,
+   "giorni_dal_massimo_a_meno10": 35
+  },
+  {
+   "massimo": "2025-02-19",
+   "meno10pc": "2025-03-13",
+   "armor_al_massimo": 36.5,
+   "armor_a_meno2pc": 38.1,
+   "armor_a_meno5pc": 43.8,
+   "giorni_dal_massimo_a_meno10": 17
+  },
+  {
+   "massimo": "2026-10-06",
+   "meno10pc": "2026-11-20",
+   "armor_al_massimo": 35.5,
+   "armor_a_meno2pc": 43.7,
+   "armor_a_meno5pc": 47.4,
+   "giorni_dal_massimo_a_meno10": 34
+  }
+ ],
+ "armor_al_massimo_mediana": 37.0
+}

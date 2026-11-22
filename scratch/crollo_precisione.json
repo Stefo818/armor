@@ -1,0 +1,158 @@
+{
+ "nota": "Solo crisi finanziarie. 'arriva al -10%' = il minimo delle 60 sedute successive sta almeno il 10% sotto il massimo a 12 mesi.",
+ "precisione": {
+  "mercato entro -2% dal massimo, indice verde/grigio": {
+   "giorni": 3569,
+   "poi_meno10": 196,
+   "precisione": 5.5,
+   "ic90": [
+    3.2,
+    7.6
+   ]
+  },
+  "mercato entro -2% dal massimo, indice giallo o peggio": {
+   "giorni": 299,
+   "poi_meno10": 35,
+   "precisione": 11.7,
+   "ic90": [
+    3.4,
+    21.1
+   ]
+  },
+  "mercato fra -2% e -7%, indice verde/grigio": {
+   "giorni": 1227,
+   "poi_meno10": 80,
+   "precisione": 6.5,
+   "ic90": [
+    2.7,
+    10.1
+   ]
+  },
+  "mercato fra -2% e -7%, indice giallo (41-60)": {
+   "giorni": 644,
+   "poi_meno10": 148,
+   "precisione": 23.0,
+   "ic90": [
+    13.5,
+    31.3
+   ]
+  },
+  "mercato fra -2% e -7%, indice rosso o viola (61+)": {
+   "giorni": 378,
+   "poi_meno10": 106,
+   "precisione": 28.0,
+   "ic90": [
+    16.7,
+    41.0
+   ]
+  },
+  "tutti i giorni, indice giallo o peggio": {
+   "giorni": 2907,
+   "poi_meno10": 1726,
+   "precisione": 59.4,
+   "ic90": [
+    53.2,
+    66.0
+   ]
+  },
+  "tutti i giorni, indice verde": {
+   "giorni": 4355,
+   "poi_meno10": 268,
+   "precisione": 6.2,
+   "ic90": [
+    3.8,
+    8.4
+   ]
+  },
+  "tutti i giorni (riferimento)": {
+   "giorni": 7820,
+   "poi_meno10": 2093,
+   "precisione": 26.8,
+   "ic90": [
+    22.9,
+    30.3
+   ]
+  }
+ },
+ "sensibilita_giallo": 82.5,
+ "giorni_allarme_per_crollo": 1.7,
+ "episodi_di_allarme": {
+  "totale": 229,
+  "veri": 61,
+  "falsi": 168
+ },
+ "elenco_allarmi": [
+  {
+   "da": "2024-12-18",
+   "a": "2024-12-19",
+   "sedute": 2,
+   "poi_meno10": false
+  },
+  {
+   "da": "2025-01-10",
+   "a": "2025-01-14",
+   "sedute": 3,
+   "poi_meno10": true
+  },
+  {
+   "da": "2025-10-16",
+   "a": "2025-10-16",
+   "sedute": 1,
+   "poi_meno10": false
+  },
+  {
+   "da": "2025-11-17",
+   "a": "2025-11-24",
+   "sedute": 6,
+   "poi_meno10": false
+  },
+  {
+   "da": "2026-03-02",
+   "a": "2026-04-08",
+   "sedute": 27,
+   "poi_meno10": false
+  },
+  {
+   "da": "2026-06-10",
+   "a": "2026-06-10",
+   "sedute": 1,
+   "poi_meno10": false
+  },
+  {
+   "da": "2026-07-23",
+   "a": "2026-07-29",
+   "sedute": 5,
+   "poi_meno10": false
+  },
+  {
+   "da": "2026-10-16",
+   "a": "2026-10-16",
+   "sedute": 1,
+   "poi_meno10": true
+  },
+  {
+   "da": "2026-10-23",
+   "a": "2026-10-23",
+   "sedute": 1,
+   "poi_meno10": true
+  },
+  {
+   "da": "2026-10-30",
+   "a": "2026-11-03",
+   "sedute": 3,
+   "poi_meno10": true
+  },
+  {
+   "da": "2026-11-05",
+   "a": "2026-11-10",
+   "sedute": 4,
+   "poi_meno10": true
+  },
+  {
+   "da": "2026-11-12",
+   "a": "2026-11-19",
+   "sedute": 6,
+   "poi_meno10": true
+  }
+ ]
+}

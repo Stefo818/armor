@@ -1,0 +1,78 @@
+{
+ "episodi": [
+  {
+   "massimo": "1990-01-02",
+   "minimo": "1990-10-11",
+   "calo_massimo": -17.9,
+   "arrivata_20": false,
+   "indice_a_meno7": null
+  },
+  {
+   "massimo": "1997-10-07",
+   "minimo": "1997-10-27",
+   "calo_massimo": -10.8,
+   "arrivata_20": false,
+   "indice_a_meno7": 91.0
+  },
+  {
+   "massimo": "1998-07-17",
+   "minimo": "1998-08-31",
+   "calo_massimo": -19.3,
+   "arrivata_20": false,
+   "indice_a_meno7": 94.0
+  },
+  {
+   "massimo": "1999-07-16",
+   "minimo": "1999-10-15",
+   "calo_massimo": -12.1,
+   "arrivata_20": false,
+   "indice_a_meno7": 89.0
+  },
+  {
+   "massimo": "2000-03-24",
+   "minimo": "2001-04-04",
+   "calo_massimo": -27.8,
+   "arrivata_20": true,
+   "indice_a_meno7": 91.0
+  },
+  {
+   "massimo": "2007-10-09",
+   "minimo": "2008-10-27",
+   "calo_massimo": -45.8,
+   "arrivata_20": true,
+   "indice_a_meno7": 68.0
+  },
+  {
+   "massimo": "2015-05-21",
+   "minimo": "2016-02-11",
+   "calo_massimo": -14.2,
+   "arrivata_20": false,
+   "indice_a_meno7": 78.0
+  },
+  {
+   "massimo": "2018-01-26",
+   "minimo": "2018-12-24",
+   "calo_massimo": -18.2,
+   "arrivata_20": false,
+   "indice_a_meno7": 71.0
+  },
+  {
+   "massimo": "2022-01-03",
+   "minimo": "2022-10-12",
+   "calo_massimo": -25.4,
+   "arrivata_20": true,
+   "indice_a_meno7": 67.0
+  },
+  {
+   "massimo": "2026-10-06",
+   "minimo": "2026-11-20",
+   "calo_massimo": -11.6,
+   "arrivata_20": false,
+   "indice_a_meno7": 73.0
+  }
+ ],
+ "superato_meno7": 9,
+ "arrivati_meno20": 3,
+ "quota_episodi": 33.0,
+ "nota": "conteggio per episodio, non per giorno; l'ultimo e' in corso"
+}

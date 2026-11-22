@@ -1,0 +1,240 @@
+{
+ "scelta_1990_2014": {
+  "M1 media": {
+   "auc_Y10": 0.7692,
+   "auc_Y5": 0.8099,
+   "viola_freq": 27.1,
+   "viola_giorni": 362
+  },
+  "M2 pesi": {
+   "auc_Y10": 0.7699,
+   "auc_Y5": 0.8132,
+   "viola_freq": 29.0,
+   "viola_giorni": 552
+  },
+  "M3 logistica": {
+   "auc_Y10": 0.7321,
+   "auc_Y5": 0.7776,
+   "viola_freq": 25.7,
+   "viola_giorni": 292
+  },
+  "M4 alberi": {
+   "auc_Y10": 0.6199,
+   "auc_Y5": 0.6491,
+   "viola_freq": 9.4,
+   "viola_giorni": 372
+  },
+  "M5 due chiavi": {
+   "auc_Y10": 0.7646,
+   "auc_Y5": 0.8091,
+   "viola_freq": 23.2,
+   "viola_giorni": 629
+  },
+  "Indice Armor": {
+   "auc_Y10": 0.7759,
+   "auc_Y5": 0.7931,
+   "viola_freq": 40.5,
+   "viola_giorni": 121
+  }
+ },
+ "verifica_2015_2026": {
+  "modello": "M2 pesi",
+  "auc": 0.714,
+  "ic90": [
+   0.6338,
+   0.7792
+  ],
+  "placebo_p95": 0.5908,
+  "placebo_mediana": 0.4898,
+  "auc_armor": 0.7411,
+  "frequenza_base": 7.5,
+  "fasce": {
+   "verde": {
+    "giorni": 1828,
+    "quota_giorni": 61.2,
+    "frequenza": 3.6,
+    "ic90": [
+     1.9,
+     5.5
+    ]
+   },
+   "grigio": {
+    "giorni": 197,
+    "quota_giorni": 6.6,
+    "frequenza": 4.6,
+    "ic90": [
+     1.1,
+     7.9
+    ]
+   },
+   "giallo": {
+    "giorni": 501,
+    "quota_giorni": 16.8,
+    "frequenza": 14.4,
+    "ic90": [
+     8.5,
+     20.7
+    ]
+   },
+   "rosso": {
+    "giorni": 336,
+    "quota_giorni": 11.2,
+    "frequenza": 14.6,
+    "ic90": [
+     8.6,
+     20.5
+    ]
+   },
+   "viola": {
+    "giorni": 127,
+    "quota_giorni": 4.2,
+    "frequenza": 22.8,
+    "ic90": [
+     13.5,
+     39.7
+    ]
+   }
+  },
+  "auc_2015_2020": 0.6691,
+  "auc_2021_2026": 0.7686,
+  "auc_dal_2020": 0.7567
+ },
+ "vincente": "M2 pesi",
+ "regole": {
+  "R1": true,
+  "R2": true,
+  "R3": true,
+  "R4": false
+ },
+ "etichetta": "Non coerente",
+ "falsi_allarmi": {
+  "1990-2026": {
+   "giorni_allarme": 3432,
+   "senza_crollo": 2912,
+   "quota_senza_crollo": 84.8
+  },
+  "2015-2026": {
+   "giorni_allarme": 964,
+   "senza_crollo": 814,
+   "quota_senza_crollo": 84.4
+  }
+ },
+ "episodi_10pc": [
+  {
+   "inizio_calo": "1990-01-30",
+   "indice_max_10gg_prima": null,
+   "preavviso": null
+  },
+  {
+   "inizio_calo": "1990-08-17",
+   "indice_max_10gg_prima": null,
+   "preavviso": null
+  },
+  {
+   "inizio_calo": "1997-10-27",
+   "indice_max_10gg_prima": 90.8,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "1998-08-14",
+   "indice_max_10gg_prima": 95.9,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "1999-09-29",
+   "indice_max_10gg_prima": 90.6,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2000-04-14",
+   "indice_max_10gg_prima": 91.4,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2000-10-11",
+   "indice_max_10gg_prima": 88.9,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2007-11-26",
+   "indice_max_10gg_prima": 72.9,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2015-08-24",
+   "indice_max_10gg_prima": 88.7,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2016-01-13",
+   "indice_max_10gg_prima": 84.0,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2018-02-08",
+   "indice_max_10gg_prima": 75.4,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2018-11-23",
+   "indice_max_10gg_prima": 77.5,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2020-02-27",
+   "indice_max_10gg_prima": 91.7,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2022-02-22",
+   "indice_max_10gg_prima": 79.5,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2025-03-13",
+   "indice_max_10gg_prima": 78.3,
+   "preavviso": true
+  },
+  {
+   "inizio_calo": "2026-11-20",
+   "indice_max_10gg_prima": 78.9,
+   "preavviso": true
+  }
+ ],
+ "episodi_riassunto": {
+  "totale": 16,
+  "con_preavviso": 14
+ },
+ "replay": {
+  "2026-11-05": {
+   "indice": 72.3,
+   "fascia": "rosso",
+   "Y10": 0
+  },
+  "2026-11-18": {
+   "indice": 66.2,
+   "fascia": "rosso",
+   "Y10": 1
+  },
+  "2026-11-19": {
+   "indice": 73.4,
+   "fascia": "rosso",
+   "Y10": 0
+  },
+  "2026-11-20": {
+   "indice": 78.9,
+   "fascia": "rosso",
+   "Y10": null
+  },
+  "2026-10-30": {
+   "indice": 41.3,
+   "fascia": "giallo",
+   "Y10": 0
+  },
+  "2026-11-13": {
+   "indice": 42.7,
+   "fascia": "giallo",
+   "Y10": 1
+  }
+ }
+}

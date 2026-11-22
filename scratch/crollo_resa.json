@@ -1,0 +1,287 @@
+{
+ "nota": "Rendimenti successivi dell'S&P 500 in percento. Periodo di verifica dal 2015.",
+ "armor_rimappato": {
+  "auc": 0.7411,
+  "ic90": [
+   0.6649,
+   0.8002
+  ],
+  "placebo_p95": 0.5983,
+  "frequenza_base": 7.5,
+  "fasce": {
+   "verde": {
+    "giorni": 1681,
+    "quota_giorni": 56.2,
+    "frequenza": 2.8,
+    "ic90": [
+     1.4,
+     4.5
+    ]
+   },
+   "grigio": {
+    "giorni": 337,
+    "quota_giorni": 11.3,
+    "frequenza": 6.5,
+    "ic90": [
+     3.0,
+     10.1
+    ]
+   },
+   "giallo": {
+    "giorni": 604,
+    "quota_giorni": 20.2,
+    "frequenza": 13.2,
+    "ic90": [
+     8.0,
+     17.7
+    ]
+   },
+   "rosso": {
+    "giorni": 269,
+    "quota_giorni": 9.0,
+    "frequenza": 18.6,
+    "ic90": [
+     10.3,
+     28.2
+    ]
+   },
+   "viola": {
+    "giorni": 98,
+    "quota_giorni": 3.3,
+    "frequenza": 26.5,
+    "ic90": [
+     14.2,
+     52.4
+    ]
+   }
+  },
+  "R1": true,
+  "R2": true,
+  "R3": true
+ },
+ "miscela_esplorativa": {
+  "auc": 0.7439,
+  "nota": "scelta dopo i risultati, non validata"
+ },
+ "rendimento_per_fascia": {
+  "verde": {
+   "giorni": 1681,
+   "5sed": {
+    "media": 0.24,
+    "mediana": 0.34,
+    "quota_positivi": 61.2,
+    "peggiore": -8.5
+   },
+   "10sed": {
+    "media": 0.44,
+    "mediana": 0.63,
+    "quota_positivi": 64.5,
+    "peggiore": -12.4
+   },
+   "21sed": {
+    "media": 0.88,
+    "mediana": 1.25,
+    "quota_positivi": 66.9,
+    "peggiore": -29.3
+   },
+   "63sed": {
+    "media": 2.62,
+    "mediana": 3.63,
+    "quota_positivi": 77.1,
+    "peggiore": -30.2
+   }
+  },
+  "grigio": {
+   "giorni": 337,
+   "5sed": {
+    "media": 0.11,
+    "mediana": 0.47,
+    "quota_positivi": 59.1,
+    "peggiore": -11.7
+   },
+   "10sed": {
+    "media": 0.42,
+    "mediana": 0.67,
+    "quota_positivi": 62.4,
+    "peggiore": -10.9
+   },
+   "21sed": {
+    "media": 0.99,
+    "mediana": 1.54,
+    "quota_positivi": 73.8,
+    "peggiore": -33.0
+   },
+   "63sed": {
+    "media": 3.6,
+    "mediana": 4.65,
+    "quota_positivi": 77.9,
+    "peggiore": -14.7
+   }
+  },
+  "giallo": {
+   "giorni": 604,
+   "5sed": {
+    "media": 0.24,
+    "mediana": 0.52,
+    "quota_positivi": 59.6,
+    "peggiore": -11.5
+   },
+   "10sed": {
+    "media": 0.5,
+    "mediana": 0.94,
+    "quota_positivi": 61.0,
+    "peggiore": -14.9
+   },
+   "21sed": {
+    "media": 0.9,
+    "mediana": 1.84,
+    "quota_positivi": 63.6,
+    "peggiore": -24.1
+   },
+   "63sed": {
+    "media": 3.25,
+    "mediana": 3.96,
+    "quota_positivi": 69.5,
+    "peggiore": -17.8
+   }
+  },
+  "rosso": {
+   "giorni": 270,
+   "5sed": {
+    "media": 0.13,
+    "mediana": 0.47,
+    "quota_positivi": 56.0,
+    "peggiore": -12.4
+   },
+   "10sed": {
+    "media": 0.33,
+    "mediana": 1.1,
+    "quota_positivi": 59.7,
+    "peggiore": -23.4
+   },
+   "21sed": {
+    "media": 0.9,
+    "mediana": 1.96,
+    "quota_positivi": 62.2,
+    "peggiore": -20.9
+   },
+   "63sed": {
+    "media": 2.82,
+    "mediana": 4.15,
+    "quota_positivi": 66.3,
+    "peggiore": -17.7
+   }
+  },
+  "viola": {
+   "giorni": 98,
+   "5sed": {
+    "media": 0.98,
+    "mediana": 1.38,
+    "quota_positivi": 62.2,
+    "peggiore": -18.0
+   },
+   "10sed": {
+    "media": 1.82,
+    "mediana": 3.2,
+    "quota_positivi": 73.5,
+    "peggiore": -22.8
+   },
+   "21sed": {
+    "media": 4.89,
+    "mediana": 6.12,
+    "quota_positivi": 77.6,
+    "peggiore": -17.7
+   },
+   "63sed": {
+    "media": 8.89,
+    "mediana": 9.23,
+    "quota_positivi": 71.4,
+    "peggiore": -12.4
+   }
+  }
+ },
+ "strategia": {
+  "esco su rosso e viola": {
+   "soglia": 61,
+   "rendimento_strategia": 199.2,
+   "rendimento_restando_investito": 235.6,
+   "giorni_fuori_mercato": 12.3,
+   "peggior_perdita_strategia": -24.4,
+   "peggior_perdita_investito": -33.9
+  },
+  "esco solo su viola": {
+   "soglia": 81,
+   "rendimento_strategia": 186.4,
+   "rendimento_restando_investito": 235.6,
+   "giorni_fuori_mercato": 3.3,
+   "peggior_perdita_strategia": -29.3,
+   "peggior_perdita_investito": -33.9
+  },
+  "esco su giallo o peggio": {
+   "soglia": 41,
+   "rendimento_strategia": 147.1,
+   "rendimento_restando_investito": 235.6,
+   "giorni_fuori_mercato": 32.5,
+   "peggior_perdita_strategia": -13.5,
+   "peggior_perdita_investito": -33.9
+  }
+ },
+ "replay": {
+  "2026-11-05": {
+   "indice_armor_rimappato": 63.9,
+   "fascia": "rosso",
+   "crollo_poi": 0,
+   "famiglie": {
+    "f1_paura": 89.0,
+    "f2_salto": 99.0,
+    "f3_curva": 98.0,
+    "f4_protez": 97.0,
+    "f5_credito": 39.0,
+    "f6_tassi": 76.0,
+    "f7_tendenza": 64.0,
+    "f8_perdita": 59.0,
+    "f9_volat": 86.0,
+    "f10_rotaz": 45.0,
+    "f11_bond": 69.0,
+    "f12_armor": 87.0
+   }
+  },
+  "2026-11-18": {
+   "indice_armor_rimappato": 56.0,
+   "fascia": "giallo",
+   "crollo_poi": 1,
+   "famiglie": {
+    "f1_paura": 81.0,
+    "f2_salto": 98.0,
+    "f3_curva": 91.0,
+    "f4_protez": 95.0,
+    "f5_credito": 43.0,
+    "f6_tassi": 49.0,
+    "f7_tendenza": 76.0,
+    "f8_perdita": 61.0,
+    "f9_volat": 88.0,
+    "f10_rotaz": 38.0,
+    "f11_bond": 69.0,
+    "f12_armor": 81.0
+   }
+  }
+ },
+ "serie_corte_esplorative": {
+  "breadth200": {
+   "righe": 311,
+   "auc": 0.5691
+  },
+  "nh_nl": {
+   "righe": 311,
+   "auc": 0.5569
+  },
+  "hy_oas": {
+   "righe": 762,
+   "auc": 0.6242
+  },
+  "fear_greed": {
+   "righe": 260,
+   "auc": 0.2965
+  }
+ }
+}

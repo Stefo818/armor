@@ -13,7 +13,7 @@ from .config import DATA
 CALCOLI = [("Radar dei minimi (S&P 500)", "minimi_oggi.json", ("json", "data"), 5), ("Radar dei minimi (VWCE in euro)", "minimi_eur_oggi.json", ("json", "data"), 5),
            ("Tipo di ribasso", "ribasso.json", ("json", "data"), 5), ("Lungo periodo", "lungo_periodo.json", ("json", "asof"), 5),
            ("Pagella dei segnali", "pagella_minimi.json", ("json", "fine"), 5), ("Crescita in tempo reale", "crescita.json", ("json", "data"), 8), ("Trend dell'S&P 500", "trend.json", ("json", "data"), 5),
-           ("Termometro dei flussi", "flussi.json", ("json", "data"), 9), ("Terreno (pressioni lente)", "terreno.json", ("json", "data"), 45), ("Crisi lente", "crisi_lente.json", ("json", "data"), 45), ("Radar di fondo", "modello_sistemico.json", ("json", "data"), 5), ("Opzioni su SPY", "opzioni_spy.json", ("json", "data"), 5), ("Stress test", "stress.json", ("json", "data"), 5), ("Previsione a ore", "ore.json", ("json", "ora"), 4), ("Indice Occasione", "occasione.json", ("json", "data"), 5),
+           ("Termometro dei flussi", "flussi.json", ("json", "data"), 9), ("Terreno (pressioni lente)", "terreno.json", ("json", "data"), 45), ("Crisi lente", "crisi_lente.json", ("json", "data"), 45), ("Radar di fondo", "modello_sistemico.json", ("json", "data"), 5), ("Indice crollo", "indice_crollo.json", ("json", "data"), 5), ("Opzioni su SPY", "opzioni_spy.json", ("json", "data"), 5), ("Stress test", "stress.json", ("json", "data"), 5), ("Previsione a ore", "ore.json", ("json", "ora"), 4), ("Indice Occasione", "occasione.json", ("json", "data"), 5),
            ("Semaforo del rischio", "semaforo_rischio_oggi.json", ("json", "data"), 7), ("Valutazione dei modelli", "model_eval.json", ("mtime", None), 45)]
 
 

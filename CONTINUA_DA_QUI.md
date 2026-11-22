@@ -742,3 +742,12 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - 19/11 sera: scheda compatta «Allerta vendite» in cima a Oggi (allerta_ui.py + allerta_live.js), aggiornata ogni 15 secondi dal worker (campo «allerta» nella risposta). Tre stati: verde nessun segnale, arancio terreno fragile, rosso vendite forti in corso. Serve il worker aggiornato su Cloudflare e il lavoro «Sito Armor».
 
 - 2026-11-21: Radar di fondo (modello_sistemico.py, etichetta «Non coerente», solo contesto) + regola «discesa a gradini» nel Worker (−1,5% futures o paura +15% in 60 min). Vedi ESITO_SISTEMICO.md. Da fare dall'utente: incollare nuovo worker/armor-live.js in Cloudflare; lanciare «Aggiornamento giornaliero Armor» poi «Sito Armor».
+
+- 2026-11-22: Indice crollo (src/armor/indice_crollo.py), scheda in cima a Oggi con le fasce richieste
+  dall'utente. Protocollo PROTOCOLLO_INDICE_CROLLO.md + emendamento 1 (solo crisi finanziarie),
+  esito ESITO_INDICE_CROLLO.md. Etichetta «Non coerente» (cade R2: fascia viola con soli 41 giorni).
+  Risultati chiave: nessuno dei 5 modelli nuovi batte l'Indice Armor in scelta; l'uso solido e' la zona
+  fra -2% e -7% dal massimo (23-28% contro 6,5%); vendere sul rosso avrebbe reso +143% invece di +236%
+  senza ridurre la perdita peggiore; al massimo di tutti gli 11 episodi l'indice era basso.
+  Comando: python -m armor.jobs crollo. Da fare dall'utente: workflow «Aggiornamento giornaliero Armor»
+  poi «Sito Armor».

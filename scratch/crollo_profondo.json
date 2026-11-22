@@ -1,0 +1,52 @@
+{
+ "indice verde o grigio (<=40)": {
+  "giorni": 117,
+  "poi_meno20": 45.3,
+  "ic90": [
+   7.6,
+   80.0
+  ],
+  "rend21_mediana": 2.6,
+  "rend21_positivi": 65.8
+ },
+ "indice giallo (41-60)": {
+  "giorni": 399,
+  "poi_meno20": 47.4,
+  "ic90": [
+   32.8,
+   65.9
+  ],
+  "rend21_mediana": 0.25,
+  "rend21_positivi": 51.4
+ },
+ "indice rosso (61-80)": {
+  "giorni": 656,
+  "poi_meno20": 68.0,
+  "ic90": [
+   57.8,
+   82.0
+  ],
+  "rend21_mediana": -0.1,
+  "rend21_positivi": 49.2
+ },
+ "indice viola (81-100)": {
+  "giorni": 531,
+  "poi_meno20": 59.3,
+  "ic90": [
+   44.9,
+   74.9
+  ],
+  "rend21_mediana": 2.44,
+  "rend21_positivi": 62.5
+ },
+ "tutti": {
+  "giorni": 1703,
+  "poi_meno20": 58.9,
+  "ic90": [
+   51.2,
+   68.7
+  ],
+  "rend21_mediana": 0.82,
+  "rend21_positivi": 55.0
+ }
+}
