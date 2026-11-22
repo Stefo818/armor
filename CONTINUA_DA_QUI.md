@@ -762,3 +762,10 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
   _fred_start). Corretto. Aggiunti il comando `python -m armor storico` e il workflow «Recupero storico
   dati FRED» (workflow_dispatch) che riscarica tutta la storia FRED. upsert unisce, non sovrascrive.
   DOPO che l'utente lo lancia: rifare la prova del canale credito su tutti e 6 gli episodi.
+- 2026-11-22 (4): hy_oas/ig_oas restano a 3 anni per licenza ICE, non per la chiave FRED ne' per il bug
+  (che c'era ed e' corretto). Diagnostica: `python -m armor fred_test`. Il canale credito e' gia' coperto
+  da baa10y dal 1986: variazione a 20 sedute AUC 0,6251 nella zona entro il 5% dai massimi, miglior
+  singolo segnale strutturale ma sotto l'indice completo (0,7095).
+  Scheda Indice crollo: numero colorato per fascia, tolta la scritta della fascia. Ordine in Oggi:
+  «Cosa aspettarsi nelle prossime ore» dopo «Paura, protezioni e prezzi»; «Cosa fare oggi» dopo
+  «Perche' si muove oggi».

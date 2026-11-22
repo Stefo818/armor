@@ -20,6 +20,11 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt tzdata
+      - name: Diagnosi FRED (cosa risponde davvero)
+        env:
+          PYTHONPATH: src
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python -m armor fred_test
       - name: Scarica tutta la storia delle serie FRED
         env:
           PYTHONPATH: src

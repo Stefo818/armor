@@ -712,6 +712,40 @@ def main() -> None:
     elif cmd == "live":
         from . import live
         live.run()
+    elif cmd == "fred_test":   # diagnosi: cosa risponde davvero FRED per le serie sospette
+        import os
+
+        import requests
+        chiave = os.environ.get("FRED_API_KEY", "").strip()
+        print(f"chiave presente: {'si' if chiave else 'NO'}  lunghezza: {len(chiave)}")
+        for sid, code in (("hy_oas", "BAMLH0A0HYM2"), ("ig_oas", "BAMLC0A0CM"), ("mortgage30", "MORTGAGE30US")):
+            print(f"--- {sid} ({code})")
+            if chiave:
+                u = f"https://api.stlouisfed.org/fred/series/observations?series_id={code}&api_key={chiave}&file_type=json"
+                try:
+                    r = requests.get(u, timeout=30)
+                    print(f"    API  http {r.status_code}  byte {len(r.content)}")
+                    if r.ok:
+                        s = sources.parse_fred_json(r.text)
+                        print(f"    API  righe {len(s)}  dal {s.index[0].date()} al {s.index[-1].date()}")
+                    else:
+                        print(f"    API  risposta: {r.text[:200].replace(chiave, '***')}")
+                except Exception as e:
+                    print(f"    API  errore: {str(e)[:160].replace(chiave, '***')}")
+                # la stessa chiamata con la data di inizio esplicita
+                try:
+                    r2 = requests.get(u + "&observation_start=1990-01-01", timeout=30)
+                    if r2.ok:
+                        s2 = sources.parse_fred_json(r2.text)
+                        print(f"    API con data inizio 1990: righe {len(s2)}  dal {s2.index[0].date()}")
+                except Exception as e:
+                    print(f"    API con data inizio: errore {str(e)[:120].replace(chiave, '***')}")
+            try:
+                s3 = sources.parse_fred_csv(requests.get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}", timeout=30).text)
+                print(f"    CSV  righe {len(s3)}  dal {s3.index[0].date()}")
+            except Exception as e:
+                print(f"    CSV  errore: {str(e)[:120]}")
+            print(f"    in archivio: righe {len(store.load(sid))}")
     elif cmd == "storico":   # recupero di tutta la storia delle serie FRED (serve FRED_API_KEY)
         import os
         if not os.environ.get("FRED_API_KEY", "").strip():

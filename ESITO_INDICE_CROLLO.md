@@ -231,3 +231,39 @@ gratuita FRED messa fra i segreti di GitHub (`FRED_API_KEY`): i due workflow la 
 Le misure citate dall'utente — valutazione dei primi dieci titoli, investimenti contro flusso di cassa
 delle aziende di intelligenza artificiale — partono dal 7 novembre 2026 e restano non verificabili: i
 bilanci storici si prendono dalla SEC, raggiungibile dai workflow su GitHub ma non da questo ambiente.
+
+---
+# Parte 10 — Il canale credito: perché i dati non ci sono e cosa c'è al loro posto
+**Non è un bug e non è la chiave mancante.** La chiave FRED era già configurata da due settimane. Il
+recupero storico è stato lanciato e ha funzionato per tutte le altre serie, ma i due differenziali del
+credito sono rimasti a tre anni.
+
+La diagnosi (comando `python -m armor fred_test`): senza chiave FRED restituisce i mutui a 30 anni
+**dal 1971** (2.904 righe) ma i differenziali ICE BofA solo **dal 21 novembre 2023** (786 righe). Non è
+un limite generale di FRED: è una **restrizione di licenza di ICE**, che consente a FRED di ridistribuire
+pubblicamente solo gli ultimi tre anni di quegli indici. Da quella fonte la storia lunga non esiste, con
+o senza chiave.
+
+**Un bug però c'era davvero, ed è stato corretto.** In `sources.update_all` l'opzione «scarica tutto
+dall'inizio» era rispettata per le serie di borsa ma non per quelle FRED: queste chiedevano sempre gli
+ultimi 14 mesi se la serie era già presente. Ora è corretta, è stato aggiunto il comando
+`python -m armor storico` e il workflow «Recupero storico dati FRED». Serve per il futuro, non per questo
+caso.
+
+**Il canale credito era già nel modello, con una storia più lunga.** Il differenziale Moody's Baa meno
+titoli di Stato è in archivio **dal 1986** (10.221 righe) e copre tutti e 11 gli episodi finanziari,
+mentre i differenziali ICE partono comunque solo dal 1996. Misurato nella zona entro il 5% dai massimi
+(quinto sguardo, esplorativo):
+
+| segnale di credito | storia | AUC | precisione nel quinto più alto |
+|---|---|---|---|
+| differenziale Baa, variazione a 20 sedute | dal 1986 | 0,6251 | 17,2% |
+| differenziale Baa, variazione a 60 sedute | dal 1986 | 0,6066 | 15,2% |
+| differenziale Baa, livello | dal 1986 | 0,5002 | 14,0% |
+| obbligazioni rischiose contro sicure, 60 sedute | dal 2007 | 0,5283 | 12,6% |
+| obbligazioni rischiose contro sicure, 120 sedute | dal 2007 | 0,4779 | 6,4% |
+| **riferimento: Indice crollo attuale** | | **0,7095** | **21,5%** |
+
+Il credito che si allarga in fretta è il miglior singolo segnale strutturale trovato finora (0,6251,
+più di valutazioni e oro), ma da solo resta sotto l'indice completo, che lo contiene già come una delle
+dodici famiglie. Conclusione: avere i differenziali ICE dal 1996 non avrebbe cambiato l'esito.

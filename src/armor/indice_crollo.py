@@ -28,11 +28,11 @@ MIN_STORIA = 500
 # protocollo parte 6: percentile del punteggio -> numero da 1 a 100
 TRATTI = ((0.00, 0.55, 1, 35), (0.55, 0.65, 36, 40), (0.65, 0.85, 41, 60), (0.85, 0.96, 61, 80), (0.96, 1.01, 81, 100))
 FASCE = (
-    (35, "verde", "Nessuna tensione particolare", "ok"),
-    (40, "grigio", "Zona di passaggio", "ok"),
-    (60, "giallo", "Mercato teso", "warn"),
-    (80, "rosso", "Mercato molto teso", "bad"),
-    (100, "viola", "Mercato in panico", "bad"),
+    (35, "verde", "Nessuna tensione particolare", "ok", "var(--ok)"),
+    (40, "grigio", "Zona di passaggio", "ok", "#9ca3af"),
+    (60, "giallo", "Mercato teso", "warn", "#f59e0b"),
+    (80, "rosso", "Mercato molto teso", "bad", "#ef4444"),
+    (100, "viola", "Mercato in panico", "bad", "#8b5cf6"),
 )
 # protocollo parte 4, modello M2: pesi fissati prima dei risultati
 PESI = {"f1_paura": 0.30, "f3_curva": 0.30, "f5_credito": 0.15, "f7_tendenza": 0.25, "f8_perdita": 0.25,
@@ -127,10 +127,10 @@ def calcola_serie(sp_override: pd.Series | None = None) -> pd.DataFrame:
 
 
 def _fascia(v: float):
-    for lim, nome, titolo, classe in FASCE:
+    for lim, nome, titolo, classe, colore in FASCE:
         if v <= lim:
-            return nome, titolo, classe
-    return FASCE[-1][1], FASCE[-1][2], FASCE[-1][3]
+            return nome, titolo, classe, colore
+    return FASCE[-1][1], FASCE[-1][2], FASCE[-1][3], FASCE[-1][4]
 
 
 def situazione(indice: float, sotto_massimo: float) -> dict:
@@ -175,11 +175,11 @@ def aggiorna(log=print) -> dict:
     df = calcola_serie()
     ult = df.dropna(subset=["indice"]).iloc[-1]
     v = float(ult["indice"])
-    nome, titolo, classe = _fascia(v)
+    nome, titolo, classe, colore = _fascia(v)
     fam = sorted(((c, float(ult[c])) for c in NOMI if pd.notna(ult.get(c))), key=lambda x: -x[1])
     res = {
         "data": str(df.dropna(subset=["indice"]).index[-1].date()),
-        "indice": round(v, 0), "fascia": nome, "titolo": titolo, "classe": classe,
+        "indice": round(v, 0), "fascia": nome, "titolo": titolo, "classe": classe, "colore": colore,
         "sotto_massimo": round(float(ult["sotto_massimo"]), 1),
         "situazione": situazione(v, float(ult["sotto_massimo"])),
         "spinte": [{"nome": NOMI[c], "valore": round(p, 0)} for c, p in fam[:3]],
@@ -233,14 +233,13 @@ def oggi_html() -> str:
         "<style>.ic{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:12px 14px;margin:10px 0}"
         ".ic.ok{border-left:6px solid var(--ok)}.ic.warn{border-left:6px solid var(--warn,#f59e0b)}.ic.bad{border-left:6px solid var(--bad)}"
         ".ic-top{display:flex;align-items:baseline;gap:10px}.ic-n{font-size:40px;font-weight:800;line-height:1}"
-        ".ic-b{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:999px;border:1px solid var(--bd)}"
-        ".ic-t{font-size:16px;font-weight:700;margin-top:6px}.ic-p{font-size:13px;line-height:1.5;margin-top:6px;color:var(--fg)}"
+                ".ic-t{font-size:16px;font-weight:700;margin-top:6px}.ic-p{font-size:13px;line-height:1.5;margin-top:6px;color:var(--fg)}"
         ".ic-m{font-size:12px;line-height:1.45;margin-top:8px;color:var(--mu)}.ic ul{margin:4px 0 0;padding-left:18px;font-size:13px}"
         ".ic-s{display:flex;height:8px;border-radius:999px;overflow:hidden;margin:10px 0 4px}.ic-s i{display:block;height:100%}"
         ".ic-k{font-size:11px;color:var(--mu);display:flex;justify-content:space-between}</style>"
         f"<div class='ic {d['classe']}'>"
-        f"<div class='ic-top'><div class='ic-n'>{v}</div><div style='font-size:13px;color:var(--mu)'>su 100</div>"
-        f"<div class='ic-b'>{_h.escape(d['fascia'])}</div></div>"
+        f"<div class='ic-top'><div class='ic-n' style='color:{d.get('colore', 'inherit')}'>{v}</div>"
+        f"<div style='font-size:13px;color:var(--mu)'>su 100</div></div>"
         f"<div class='ic-t'>Indice crollo · {_h.escape(d['titolo'])}</div>"
         "<div class='ic-s'><i style='flex:35;background:var(--ok)'></i><i style='flex:5;background:#9ca3af'></i>"
         "<i style='flex:20;background:#f59e0b'></i><i style='flex:20;background:#ef4444'></i><i style='flex:20;background:#8b5cf6'></i></div>"

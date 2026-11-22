@@ -1,0 +1,27 @@
+{
+ "credito Baa (livello)": {
+  "giorni": 4048,
+  "auc": 0.5002,
+  "precisione_quinto": 14.0
+ },
+ "credito Baa (variazione 20 sedute)": {
+  "giorni": 4048,
+  "auc": 0.6251,
+  "precisione_quinto": 17.2
+ },
+ "credito Baa (variazione 60 sedute)": {
+  "giorni": 4048,
+  "auc": 0.6066,
+  "precisione_quinto": 15.2
+ },
+ "obbligazioni rischiose contro sicure (60 sedute)": {
+  "giorni": 2743,
+  "auc": 0.5283,
+  "precisione_quinto": 12.6
+ },
+ "obbligazioni rischiose contro sicure (120 sedute)": {
+  "giorni": 2743,
+  "auc": 0.4779,
+  "precisione_quinto": 6.4
+ }
+}
