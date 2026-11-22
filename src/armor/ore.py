@@ -28,8 +28,15 @@ SOGLIA_SHOCK_ES = -0.010   # futures giù di almeno l'1% in un'ora: «movimento 
 SOGLIA_FORTE = -0.015      # «forte ribasso» = -1,5% o più
 # Rimbalzo statistico debole: dopo un calo dei futures di almeno 1% nelle ultime 24 ore, su 5.500 ore (2024-2026) il VWCE-equivalente è salito dopo 3/6/12 ore un po' più spesso che sceso (54-60%, mediana +0,04/+0,07/+0,11%), in entrambe le metà dei dati.
 # Segnale debole e poco indipendente tra un'ora e l'altra: lo si aggiunge piccolo e lo si dichiara.
-DERIVA_RIMBALZO = {1.0: 0.0002, 3.0: 0.0004, 6.0: 0.0007, 12.0: 0.0011}
+# La deriva è espressa in frazione dello scarto tipico, non in punti fissi: così sparisce da sola quando
+# i mercati sono chiusi e non può più muoversi nulla (prima restava intera e la probabilità di rialzo schizzava).
+DERIVA_RIMBALZO = {1.0: 0.095, 3.0: 0.111, 6.0: 0.134, 12.0: 0.149}
 SOGLIA_RIMBALZO = -0.010
+# Emendamento 1: su 13.710 ore (2024-2026) il rimbalzo dopo un calo dell'1% esiste solo con l'indice sopra
+# la media a 200 giorni (sale nel 55-57% dei casi, 1.111 ore). Sotto quella media si rovescia: 46-50%
+# (380 ore), e con il mercato oltre il 7% sotto il massimo 46-49% con mediana negativa. Sotto la media
+# la deriva viene quindi azzerata: si toglie una spinta che i dati contraddicono, senza scommettere al
+# contrario su un campione piccolo.
 # eventi: ticker -> (nome, peso approssimato nel VWCE %, moltiplicatore di contagio, mossa tipica %, ora di pubblicazione ET o None = dopo la chiusura 16:20)
 # contagio 1,6 per Nvidia: sulle ultime 12 trimestrali l'S&P 500 si è mosso 0,09 volte la mossa di Nvidia, circa 1,6 volte il suo peso nell'indice mondiale
 EVENTI = {"NVDA": ("Nvidia", 3.7, 1.6, 5.6), "AAPL": ("Apple", 4.3, 1.0, 3.0), "MSFT": ("Microsoft", 3.1, 1.0, 4.4), "AMZN": ("Amazon", 2.0, 1.0, 6.4), "GOOGL": ("Alphabet", 1.7, 1.0, 5.5),
@@ -123,9 +130,10 @@ def previsione(t0: datetime, vwce: dict, mercato: dict, eventi: list[dict], sims
         scala = BETA_ES * sd_giorno * math.sqrt(q)
         x = gap + scala * _mc_z(h, sims, rng)
         x = x + rng.normal(0, (SD_TRACK * math.sqrt(h)) if aperto else SD_RESIDUO, sims)
-        rimb = mercato.get("es_24h") is not None and mercato["es_24h"] <= SOGLIA_RIMBALZO
+        rimb = (mercato.get("es_24h") is not None and mercato["es_24h"] <= SOGLIA_RIMBALZO
+                and not mercato.get("sotto_ma200", False))
         if rimb:
-            x = x + DERIVA_RIMBALZO[h]
+            x = x + DERIVA_RIMBALZO[h] * scala
         ev_h = []
         for e in eventi:
             r = datetime.strptime(e["quando"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=timezone.utc)
@@ -215,6 +223,13 @@ def leggi_mercato(vwce_t: datetime) -> dict:
     ventiquattro = es[es.index <= ora - pd.Timedelta(hours=24)]
     if len(ventiquattro) and (ora - ventiquattro.index[-1]) < pd.Timedelta(hours=30):
         rec["es_24h"] = float(es.iloc[-1] / ventiquattro.iloc[-1] - 1.0)
+    try:   # tendenza di fondo: sotto la media a 200 giorni il rimbalzo dopo i cali non c'è (emendamento 1)
+        from . import store
+        sp = store.load("sp500").dropna()
+        if len(sp) > 200:
+            rec["sotto_ma200"] = bool(float(sp.iloc[-1]) < float(sp.rolling(200).mean().iloc[-1]))
+    except Exception:  # noqa: BLE001
+        pass
     vun = vx[vx.index <= ora - pd.Timedelta(minutes=58)]
     if len(vun):
         rec["vix_1h"] = float(vx.iloc[-1] / vun.iloc[-1] - 1.0)

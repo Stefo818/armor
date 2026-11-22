@@ -2846,3 +2846,44 @@ def test_scheda_allerta_vendite(tmp_path, monkeypatch):
     (tmp_path / "live_worker.json").write_text('{"url": "https://armor-live.example.workers.dev"}')
     h = allerta_ui.html()
     assert "id='allerta'" in h and "ALLERTA_LIVE" in h and "armor-live.example.workers.dev" in h and "Vendite forti in corso" in h
+
+
+def test_ore_rimbalzo_solo_in_tendenza_rialzista():
+    """PROTOCOLLO_MINIMI.md emendamento 1: la spinta di rimbalzo non va applicata sotto la media 200gg."""
+    from datetime import datetime, timezone
+
+    from armor import ore
+    t0 = datetime(2026, 11, 20, 16, 0, tzinfo=timezone.utc)
+    v = {"prezzo": 156.9, "ora": t0, "aperto": True}
+    base = {"es_ora": 6900.0, "es_ancora": 6900.0, "fx_ora": 1.08, "fx_ancora": 1.08, "vix": 35.9, "es_24h": -0.03}
+    su = ore.previsione(t0, v, dict(base, sotto_ma200=False), [], sims=30000, seed=1)["orizzonti"]["12 ore"]["p_su"]
+    giu = ore.previsione(t0, v, dict(base, sotto_ma200=True), [], sims=30000, seed=1)["orizzonti"]["12 ore"]["p_su"]
+    assert su > giu + 0.04, (su, giu)      # sopra la media la spinta c'e', sotto no
+    assert 0.47 < giu < 0.58, giu          # sotto la media resta vicino al normale, senza inclinazione aggiunta
+
+
+def test_ore_spinta_sparisce_a_mercati_chiusi():
+    """La spinta e' una frazione dello scarto: dove non puo' succedere nulla deve sparire del tutto.
+
+    Prima della correzione era una quantita' fissa: con la parte casuale quasi azzerata la probabilita'
+    di rialzo saliva verso il 100%. Sabato i futures sono fermi: deve restare esattamente indecisa.
+    """
+    from datetime import datetime, timezone
+
+    from armor import ore
+    sabato = datetime(2026, 11, 21, 12, 0, tzinfo=timezone.utc)
+    assert ore.quota_varianza(sabato, 12) == 0.0
+    # ancore uguali ai prezzi di adesso: nessun ritardo da recuperare, cosi' si vede solo l'effetto della spinta
+    v = {"prezzo": 156.9, "ora": sabato, "aperto": False}
+    m = {"es_ora": 6900.0, "es_ancora": 6900.0, "fx_ora": 1.08, "fx_ancora": 1.08, "vix": 35.9, "es_24h": -0.03, "sotto_ma200": False}
+    r = ore.previsione(sabato, v, m, [], sims=30000, seed=2)["orizzonti"]
+    for k, o in r.items():
+        assert 0.45 < o["p_su"] < 0.55, (k, o["p_su"])
+
+
+def test_ore_etichette_centrate_sul_normale():
+    from armor import ore_ui
+    assert ore_ui._direzione({"p_su": 0.53})[0] == "Come al solito"
+    assert ore_ui._direzione({"p_su": 0.56})[0] == "Come al solito"
+    assert "rialzo" in ore_ui._direzione({"p_su": 0.62})[0]
+    assert "calo" in ore_ui._direzione({"p_su": 0.42})[0]

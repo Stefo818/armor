@@ -1,0 +1,156 @@
+{
+ "tutte le ore": {
+  "1h": {
+   "ore": 13709,
+   "sale": 51.3,
+   "mediana": 0.004
+  },
+  "3h": {
+   "ore": 13707,
+   "sale": 53.0,
+   "mediana": 0.016
+  },
+  "6h": {
+   "ore": 13704,
+   "sale": 53.9,
+   "mediana": 0.032
+  },
+  "12h": {
+   "ore": 13698,
+   "sale": 54.2,
+   "mediana": 0.049
+  }
+ },
+ "dopo un calo dei futures >=1% in 24h": {
+  "1h": {
+   "ore": 1490,
+   "sale": 51.3,
+   "mediana": 0.007
+  },
+  "3h": {
+   "ore": 1488,
+   "sale": 53.0,
+   "mediana": 0.025
+  },
+  "6h": {
+   "ore": 1485,
+   "sale": 54.3,
+   "mediana": 0.054
+  },
+  "12h": {
+   "ore": 1479,
+   "sale": 54.9,
+   "mediana": 0.108
+  }
+ },
+ "   ...con l'indice sopra la media 200gg": {
+  "1h": {
+   "ore": 1111,
+   "sale": 52.6,
+   "mediana": 0.012
+  },
+  "3h": {
+   "ore": 1111,
+   "sale": 55.3,
+   "mediana": 0.044
+  },
+  "6h": {
+   "ore": 1111,
+   "sale": 57.2,
+   "mediana": 0.077
+  },
+  "12h": {
+   "ore": 1111,
+   "sale": 56.6,
+   "mediana": 0.124
+  }
+ },
+ "   ...con l'indice sotto la media 200gg": {
+  "1h": {
+   "ore": 379,
+   "sale": 47.8,
+   "mediana": -0.009
+  },
+  "3h": {
+   "ore": 377,
+   "sale": 46.2,
+   "mediana": -0.046
+  },
+  "6h": {
+   "ore": 374,
+   "sale": 45.7,
+   "mediana": -0.102
+  },
+  "12h": {
+   "ore": 368,
+   "sale": 49.7,
+   "mediana": -0.002
+  }
+ },
+ "   ...e il mercato oltre -7% dal massimo": {
+  "1h": {
+   "ore": 343,
+   "sale": 48.1,
+   "mediana": -0.005
+  },
+  "3h": {
+   "ore": 341,
+   "sale": 46.3,
+   "mediana": -0.042
+  },
+  "6h": {
+   "ore": 338,
+   "sale": 46.4,
+   "mediana": -0.074
+  },
+  "12h": {
+   "ore": 332,
+   "sale": 48.8,
+   "mediana": -0.077
+  }
+ },
+ "dopo un calo >=2% in 24h": {
+  "1h": {
+   "ore": 433,
+   "sale": 48.7,
+   "mediana": 0.0
+  },
+  "3h": {
+   "ore": 431,
+   "sale": 51.3,
+   "mediana": 0.017
+  },
+  "6h": {
+   "ore": 428,
+   "sale": 55.8,
+   "mediana": 0.136
+  },
+  "12h": {
+   "ore": 422,
+   "sale": 62.6,
+   "mediana": 0.391
+  }
+ },
+ "mercato oltre -7% dal massimo (sempre)": {
+  "1h": {
+   "ore": 1145,
+   "sale": 47.2,
+   "mediana": -0.013
+  },
+  "3h": {
+   "ore": 1143,
+   "sale": 48.5,
+   "mediana": -0.017
+  },
+  "6h": {
+   "ore": 1140,
+   "sale": 48.5,
+   "mediana": -0.022
+  },
+  "12h": {
+   "ore": 1134,
+   "sale": 47.6,
+   "mediana": -0.06
+  }
+ }
+}

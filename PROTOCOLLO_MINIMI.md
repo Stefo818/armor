@@ -118,3 +118,41 @@ Termometro di affollamento: media di percentili (storia nota fino a quella data,
 **Analisti (Yahoo, rinnovati ogni 6 ore):** stime di utile e ricavi, revisioni a 30 giorni, storico delle sorprese, obiettivi di prezzo. **Prova scritta prima di usarli:** su 288 trimestrali (12 titoli) i conti battono le stime l'82% delle volte ma il titolo sale solo il 48%; la sorpresa a conti fatti spiega poco la reazione (correlazione 0,17); la sorpresa del trimestre precedente (−0,12) e la rincorsa del titolo nel mese prima (0,01) non predicono la reazione, con segni instabili tra le due metà. Conseguenza: gli analisti NON spostano la direzione; servono a mostrare quanto è alta l'asticella, e a leggere l'esito appena escono i numeri.
 **Notizie:** titoli delle ultime 24 ore, classificati per tema da parole chiave, con segno e tono rispetto alla media recente. **Non entrano nei numeri:** nessuna prova che aggiungano precisione, e se muovono il mercato i prezzi lo mostrano subito.
 **Cosa non c'è:** previsione della direzione di una sorpresa; eventi non programmati prima che il mercato reagisca; verifica in avanti degli eventi (si accumula nel diario).
+
+---
+# Emendamento 1 (22 novembre 2026) — correzione delle previsioni a ore
+L'utente segnala che il riquadro dava alta probabilità di rialzo mentre il mercato scendeva pesantemente
+(62% a 12 ore la sera del 22 novembre, con l'indice all'11,6% sotto il massimo). Verificato: aveva
+ragione, e i difetti erano tre.
+
+## A. Tre difetti misurati
+1. **La spinta di rimbalzo non guardava la tendenza.** Su 13.710 ore di dati orari (2024-2026): dopo un
+   calo dei futures dell'1% in 24 ore il mercato sale nel 55-57% dei casi se l'indice è **sopra** la
+   media a 200 giorni (1.111 ore), ma solo nel **46-50%** se è **sotto** (380 ore), con mediana negativa.
+   Il 20 novembre la regola era accesa nel 100% delle ore mentre i futures perdevano il 3,5%.
+2. **La spinta era una quantità fissa, non proporzionale al movimento possibile.** A mercati chiusi la
+   parte casuale si riduce quasi a zero ma la spinta restava intera: da lì il 62% della domenica sera.
+3. **La forma della distribuzione era inclinata verso l'alto** (mediana da +0,027 a +0,061 in unità di
+   scarto, 52-54% di casi positivi), perché misurata sul 2024-2026, due anni di mercato in salita.
+
+## B. Cosa è stato corretto, e cosa no
+- La spinta di rimbalzo ora si applica **solo** con l'indice sopra la media a 200 giorni, e si azzera
+  sotto. Non si scommette al contrario: 380 ore sono poche per affermare che sotto la media il mercato
+  scende, si toglie soltanto una spinta che i dati contraddicono.
+- La spinta è ora espressa in **frazione dello scarto tipico** e non in punti fissi, quindi sparisce da
+  sola quando i mercati sono chiusi.
+- **L'inclinazione di fondo resta.** Su 9.290 giorni dal 1990 la Borsa sale nel 53,6% dei casi, e la cosa
+  vale in entrambi i regimi: 54,1% sopra la media a 200 giorni, **52,2% sotto**. Il 46-48% visto nelle ore
+  2024-2026 sotto la media è un campione piccolo di un solo episodio. Togliere l'inclinazione di fondo
+  sarebbe stato scambiare un errore con un altro.
+
+## C. Le parole
+Dal 1990 il 53% di probabilità di rialzo **è la normalità**, non una tendenza. Le etichette erano centrate
+sul 50% e chiamavano «lieve tendenza al rialzo» quello che è il comportamento normale del mercato. Ora
+sono centrate sul 53%: fra 48% e 56% la scheda dice «come al solito».
+
+## D. Limite che resta
+I dati orari disponibili sono due anni: non c'è modo di verificare queste regole su un mercato in discesa
+lungo. La correzione toglie un errore dimostrato, non garantisce che il riquadro indovini la direzione.
+Il riquadro dice che cosa è già successo e non ancora riflesso nel prezzo, e quanto il prezzo può
+oscillare: non prevede le sorprese.
