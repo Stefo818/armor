@@ -23,7 +23,7 @@ jobs:
       PYTHONUNBUFFERED: '1'
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url || steps.deploy2.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -50,9 +50,36 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m armor sito
+      # Controllo prima di spedire: se il sito e' vuoto o manca la pagina principale, meglio fermarsi
+      # qui con un messaggio chiaro che far fallire il deploy con «0 artifact» senza spiegazione.
+      - name: Controlla che il sito ci sia
+        run: |
+          test -f site/index.html || { echo "::error::site/index.html non esiste: la costruzione non ha prodotto il sito"; exit 1; }
+          n=$(find site -type f | wc -l)
+          kb=$(du -sk site | cut -f1)
+          echo "sito pronto: $n file, ${kb} KB"
+          test "$n" -ge 10 || { echo "::error::solo $n file nel sito: costruzione incompleta"; exit 1; }
+          test "$kb" -ge 200 || { echo "::error::sito di soli ${kb} KB: costruzione incompleta"; exit 1; }
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+      # Il deploy di GitHub Pages ogni tanto non trova il pacchetto appena caricato («Found 0 artifact(s)»):
+      # e' un intoppo temporaneo della piattaforma, che GitHub stessa invita a riprovare. Si riprova una volta.
       - id: deploy
         uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: Aspetta prima di riprovare
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          echo "::warning::primo tentativo di pubblicazione fallito, riprovo fra 60 secondi"
+          sleep 60
+      - id: deploy2
+        if: steps.deploy.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+      - name: Esito della pubblicazione
+        if: always()
+        run: |
+          if [ "${{ steps.deploy.outcome }}" = "success" ]; then echo "pubblicato al primo tentativo"
+          elif [ "${{ steps.deploy2.outcome }}" = "success" ]; then echo "pubblicato al secondo tentativo"
+          else echo "::error::pubblicazione non riuscita due volte: controllare githubstatus.com"; exit 1; fi

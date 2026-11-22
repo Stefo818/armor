@@ -783,3 +783,8 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
   500 giorni di falso allarme) e il PREAVVISO: mediana 25 sedute, 9 episodi su 11, nel 2026 il 16 ottobre
   (26 sedute prima). Nuovo data/indice_crollo_registro.csv append-only per la verifica prospettica.
   NON fatta la v5 a tre livelli: il livello strutturale e' debole e serve prima la prova in avanti.
+- 2026-11-22 (7): previsioni a ore corrette (PROTOCOLLO_MINIMI.md emendamento 1): la spinta di rimbalzo
+  ora solo sopra la media 200gg e proporzionale allo scarto (prima fissa: a mercati chiusi dava 62%);
+  etichette di direzione centrate sul 53% (la Borsa sale nel 53,6% dei giorni dal 1990).
+  Workflow «Sito Armor»: aggiunto il controllo che il sito esista prima di spedirlo e un secondo
+  tentativo di pubblicazione dopo 60 secondi (il deploy ogni tanto non trova l'artifact appena caricato).
