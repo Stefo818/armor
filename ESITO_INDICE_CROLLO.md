@@ -138,3 +138,96 @@ avidità hanno meno di due anni di storia nell'archivio e non sono entrati nella
 parte: area sotto la curva fra 0,56 e 0,62, e 0,30 per paura e avidità, cioè al contrario). I dati
 gratuiti arrivano con ritardo. Un indice tarato su undici casi non può funzionare «alla perfezione»: la
 cosa più onesta che può fare è distinguere il 23-28% dal 6,5% nella zona in cui serve.
+
+---
+# Parte 9 — Quattro tentativi di migliorare l'indice (emendamenti 2, 3, 4)
+Ipotesi dell'utente: in ogni crisi finanziaria il settore guida, il più forte e il più indebitato, cede
+**prima** che l'indice scenda. Provata sulla zona **entro il 5% dai massimi**, bersaglio: il calo arriva al
+10% sotto il massimo a 12 mesi entro 60 sedute. Frequenza di base della zona: **9,3%**.
+Riferimento da battere: l'Indice crollo attuale nella stessa zona fa **21,5%** (810 giorni, intervallo al
+90% [13,3 – 28,6], area sotto la curva 0,7095).
+
+## Tentativo 1 (emendamento 2) — il settore guida come «migliore a 24 mesi»: fallito
+| famiglia | AUC |
+|---|---|
+| valutazioni storicamente alte | 0,6157 |
+| premio per il rischio azionario basso | 0,6022 |
+| oro in fuga rispetto alle azioni | 0,5894 |
+| insolvenze delle imprese in peggioramento | 0,5887 |
+| tecnologia tirata rispetto al resto | 0,5678 |
+| pochi settori sopra la media a 200 giorni | 0,5611 |
+| tassi reali e curva | 0,5409 |
+| debito a margine degli investitori | 0,5354 |
+| **il settore guida cede mentre l'indice tiene** | **0,5185** |
+| liquidità del sistema in calo | 0,4615 |
+| credito alle imprese in espansione | 0,4138 |
+| **il settore guida smette di guidare** | **0,3570 (al contrario)** |
+La definizione era sbagliata: «migliore a 24 mesi» dava **materiali** nel 2007, mentre il settore che si è
+rotto era la **finanza**, che già perdeva da mesi. Per il 2000 non dava nessun settore.
+
+## Tentativo 2 (emendamento 3) — «un settore importante è già rotto»: fallito
+| segnale | AUC | precisione nel quinto più alto |
+|---|---|---|
+| dispersione fra settori | 0,6555 | 13,2% |
+| il settore più rotto | 0,6160 | 12,6% |
+| composito «assetto sistemico» | 0,6468 | **18,5%** |
+| **riferimento: indice attuale** | **0,7095** | **21,5%** |
+R10 (serviva 25%) e R13 (serviva battere di 8 punti) non superate → **«Non coerente»**.
+La regressione logistica con esclusione di un episodio alla volta è crollata a 0,2447, cioè peggio del
+caso e rovesciata: con dodici variabili e sei episodi il modello impara il rumore.
+
+**Errore mio, corretto.** Avevo calcolato R11 misurando la precisione solo nei giorni vicini all'episodio
+escluso, dove il bersaglio è vero quasi per costruzione: i valori 42-87% erano circolari e sono annullati.
+Rifatta come doveva (soglia senza l'episodio, precisione su tutta la zona): **18,2%**.
+
+**Però la descrizione dell'utente è esatta.** In **6 episodi su 6** un settore importante era già rotto
+nei 120 giorni prima che l'indice perdesse il 10%:
+| episodio | settore più rotto | quanto sotto il suo massimo a 6 mesi |
+|---|---|---|
+| 2000 | materiali | −27,9% |
+| 2007 | **finanza** | −24,6% |
+| 2015 | energia | −27,1% |
+| 2018 | servizi pubblici | −15,6% |
+| 2022 | consumi discrezionali | −17,4% |
+| 2026 | **tecnologia** | −26,2% |
+Ma è **sensibilità**, non precisione: la stessa condizione si presenta spesso senza che segua nulla.
+
+## Tentativo 3 (emendamento 4) — due chiavi: il risultato più interessante, e comunque non promosso
+| regola | giorni | precisione | intervallo 90% | episodi con preavviso |
+|---|---|---|---|---|
+| **D1: indice nel quinto più alto + un settore rotto oltre il 15%** | 165 | **42,4%** | [23,8 – 70,7] | **3 su 6** |
+| D2: indice nel quinto più alto + valutazioni nel quinto più alto | 404 | 20,5% | [9,8 – 34,3] | 1 su 6 |
+| riferimento: solo indice nel quinto più alto | 810 | 21,5% | [13,3 – 28,6] | 6 su 6 |
+
+D1 supera R15 (precisione sopra il 30% con limite inferiore sopra 21,5%) e R17, ma **cade su R16**:
+servivano 4 episodi su 6 e ne prende 3. Etichetta pre-registrata: **«Non coerente»**.
+
+I tre che prende sono **2000, 2007 e 2026**: esattamente i tre descritti dall'utente, le crisi in cui un
+settore gonfio e indebitato si rompe per primo. I tre che manca sono 2015 (svalutazione cinese), 2018
+(scoppio dei prodotti sulla volatilità) e 2022 (inflazione e tassi): crisi finanziarie che però **non**
+hanno quella forma. L'ipotesi è quindi più **stretta** e più **affilata** di come era stata posta: vale
+per un tipo di crisi, non per tutte.
+
+Da pesare con onestà: 165 giorni concentrati in tre episodi valgono come **tre** osservazioni, non 165.
+L'intervallo [23,8 – 70,7] lo dice. E questo è il **quarto** sguardo sugli stessi sei episodi: al quarto
+tentativo qualcosa si trova anche per caso. Per questo D1 entra nell'app solo come riga descrittiva, con
+il suo punto cieco scritto accanto, e la ricerca si chiude qui come previsto dal protocollo.
+
+## Cosa è stato aggiunto all'app
+Nella scheda Indice crollo una riga **«Settore più in difficoltà»** con il nome del settore e quanto sta
+sotto il suo massimo a sei mesi. Quando il settore è rotto oltre il 15% **e** il mercato è ancora entro il
+5% dai massimi **e** la tensione è alta, la riga dice che è l'assetto del 2000, 2007 e 2026, con il 42%
+misurato, i 165 giorni su tre episodi e le tre crisi mancate. Oggi il settore più rotto è la
+**tecnologia, 26% sotto il suo massimo a sei mesi**, ma il mercato è già all'11,6% sotto il suo: l'assetto
+delle due chiavi si valuta vicino ai massimi, quindi oggi non si applica.
+
+## Il dato che manca, e come si recupera
+Nell'archivio **differenziale del credito ad alto rendimento** e **investment grade** partono dal novembre
+2023: tre anni. È il taglio dell'accesso pubblico senza chiave di FRED, non un limite della fonte: la
+serie vera parte dal **dicembre 1996** e coprirebbe tutti e sei gli episodi. È il canale di cui parla
+l'utente — il debito delle aziende — e il glossario di Armor stesso lo chiama uno dei migliori segnali
+anticipatori. Con quella storia il canale credito diventa verificabile; senza, no. Serve una chiave
+gratuita FRED messa fra i segreti di GitHub (`FRED_API_KEY`): i due workflow la passano già.
+Le misure citate dall'utente — valutazione dei primi dieci titoli, investimenti contro flusso di cassa
+delle aziende di intelligenza artificiale — partono dal 7 novembre 2026 e restano non verificabili: i
+bilanci storici si prendono dalla SEC, raggiungibile dai workflow su GitHub ma non da questo ambiente.

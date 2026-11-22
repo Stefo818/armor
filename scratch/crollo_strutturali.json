@@ -1,0 +1,62 @@
+{
+ "zona_giorni": 4048,
+ "zona_positivi": 377,
+ "frequenza_base": 9.3,
+ "guida_episodi": {
+  "2007": "materiali",
+  "2015": "salute",
+  "2018": "finanza",
+  "2022": "tecnologia",
+  "2026": "tecnologia"
+ },
+ "famiglie": {
+  "g1_divergenza": {
+   "giorni": 3739,
+   "auc": 0.5185
+  },
+  "g2_ampiezza": {
+   "giorni": 4048,
+   "auc": 0.5611
+  },
+  "g3_tecnologia": {
+   "giorni": 4048,
+   "auc": 0.5678
+  },
+  "g4_valutazione": {
+   "giorni": 4048,
+   "auc": 0.6157
+  },
+  "g5_premio": {
+   "giorni": 4048,
+   "auc": 0.6022
+  },
+  "g6_leva": {
+   "giorni": 3739,
+   "auc": 0.5354
+  },
+  "g7_credito": {
+   "giorni": 4048,
+   "auc": 0.4138
+  },
+  "g8_liquidita": {
+   "giorni": 3337,
+   "auc": 0.4615
+  },
+  "g9_tassi": {
+   "giorni": 3333,
+   "auc": 0.5409
+  },
+  "g10_oro": {
+   "giorni": 3739,
+   "auc": 0.5894
+  },
+  "g11_insolvenze": {
+   "giorni": 4048,
+   "auc": 0.5887
+  },
+  "g12_guida": {
+   "giorni": 3739,
+   "auc": 0.357
+  }
+ }
+}

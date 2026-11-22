@@ -1,0 +1,166 @@
+{
+ "base_zona": 9.3,
+ "giorni_zona": 4048,
+ "nuove": {
+  "s1_rotto": {
+   "auc": 0.616,
+   "giorni": 748,
+   "precisione": 12.6,
+   "ic90": [
+    5.3,
+    17.7
+   ],
+   "soglia": 45.69
+  },
+  "s2_quanti": {
+   "auc": 0.5518,
+   "giorni": 810,
+   "precisione": 15.4,
+   "ic90": [
+    7.5,
+    22.8
+   ],
+   "soglia": 90.66
+  },
+  "s3_dispers": {
+   "auc": 0.6555,
+   "giorni": 748,
+   "precisione": 13.2,
+   "ic90": [
+    5.6,
+    18.8
+   ],
+   "soglia": 68.93
+  },
+  "s4_pochi": {
+   "auc": 0.5696,
+   "giorni": 810,
+   "precisione": 14.1,
+   "ic90": [
+    5.8,
+    20.7
+   ],
+   "soglia": 5.14
+  },
+  "assetto": {
+   "auc": 0.6468,
+   "giorni": 810,
+   "precisione": 18.5,
+   "ic90": [
+    10.2,
+    25.7
+   ],
+   "soglia": 61.98
+  }
+ },
+ "riferimento_indice_attuale": {
+  "auc": 0.7095,
+  "giorni": 810,
+  "precisione": 21.5,
+  "ic90": [
+   13.3,
+   28.6
+  ],
+  "soglia": 33.39
+ },
+ "N2_esclusione_episodio": {
+  "auc": 0.2447,
+  "giorni": 121,
+  "precisione": 12.4,
+  "ic90": [
+   2.9,
+   31.4
+  ],
+  "soglia": 0.11
+ },
+ "assetto_esclusione_episodio": [
+  {
+   "episodio": "2000",
+   "giorni": 148,
+   "precisione": 42.6
+  },
+  {
+   "episodio": "2007",
+   "giorni": 25,
+   "precisione": 76.0
+  },
+  {
+   "episodio": "2015",
+   "giorni": 17,
+   "precisione": 0.0
+  },
+  {
+   "episodio": "2026",
+   "giorni": 40,
+   "precisione": 87.5
+  }
+ ],
+ "assetto_loeo_media": 50.9,
+ "placebo_p95": 17.3,
+ "R14": {
+  "2000": {
+   "assetto_max": 93.7,
+   "soglia": 62.0,
+   "nel_quinto": true,
+   "settore_piu_rotto": "materiali",
+   "quanto_rotto": -27.9
+  },
+  "2007": {
+   "assetto_max": 78.4,
+   "soglia": 62.0,
+   "nel_quinto": true,
+   "settore_piu_rotto": "finanza",
+   "quanto_rotto": -24.6
+  },
+  "2015": {
+   "assetto_max": 72.6,
+   "soglia": 62.0,
+   "nel_quinto": true,
+   "settore_piu_rotto": "energia",
+   "quanto_rotto": -27.1
+  },
+  "2018": {
+   "assetto_max": 66.4,
+   "soglia": 62.0,
+   "nel_quinto": true,
+   "settore_piu_rotto": "servizi pubblici",
+   "quanto_rotto": -15.6
+  },
+  "2022": {
+   "assetto_max": 68.1,
+   "soglia": 62.0,
+   "nel_quinto": true,
+   "settore_piu_rotto": "consumi discrezionali",
+   "quanto_rotto": -17.4
+  },
+  "2026": {
+   "assetto_max": 73.4,
+   "soglia": 62.0,
+   "nel_quinto": true,
+   "settore_piu_rotto": "tecnologia",
+   "quanto_rotto": -26.2
+  }
+ },
+ "R14_episodi_ok": 6,
+ "regole": {
+  "R10": false,
+  "R11": true,
+  "R12": true,
+  "R13": false,
+  "R14": true
+ },
+ "etichetta": "Non coerente",
+ "oggi": {
+  "s1_rotto": 88.0,
+  "s2_quanti": 95.0,
+  "g4_valutazione": 94.0,
+  "g5_premio": 74.0,
+  "g11_insolvenze": 54.0,
+  "g10_oro": 3.0,
+  "assetto": 68.0,
+  "s3_dispers": 70.0,
+  "s4_pochi": 2.0,
+  "settore_piu_rotto": "tecnologia",
+  "quanto_rotto": -26.2
+ }
+}

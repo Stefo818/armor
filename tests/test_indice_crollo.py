@@ -49,3 +49,23 @@ def test_scheda(tmp_path, monkeypatch):
     assert "229 periodi" in h and "termometro" in h
     # la regola di onesta' della parte 8: mai «molto probabile»
     assert "molto probabile" not in h
+
+
+def test_settore_piu_rotto():
+    """Emendamento 3: il settore piu' rotto e' descrizione, non previsione."""
+    df = ic.calcola_serie()
+    u = df.dropna(subset=["settore_giu"]).iloc[-1]
+    assert -100 < float(u["settore_giu"]) <= 0
+    assert u["settore_quale"] in ic.SETTORI
+    # oggi la tecnologia e' il settore piu' rotto, verificato in ESITO_INDICE_CROLLO.md
+    assert ic.SETTORI[u["settore_quale"]] == "tecnologia"
+
+
+def test_riga_settore_dichiara_i_limiti():
+    d = {"settore": {"nome": "tecnologia", "giu": -26.0, "rotto": True}, "sotto_massimo": -2.0, "indice": 50}
+    h = ic._settore_html(d)
+    assert "42%" in h and "2015" in h and "quarto tentativo" in h
+    d2 = dict(d, sotto_massimo=-12.0)
+    assert "correzione iniziata" in ic._settore_html(d2)
+    d3 = {"settore": {"nome": "energia", "giu": -8.0, "rotto": False}, "sotto_massimo": -1.0, "indice": 20}
+    assert "Nessun settore è rotto" in ic._settore_html(d3)

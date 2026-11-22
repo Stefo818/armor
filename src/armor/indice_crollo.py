@@ -17,6 +17,10 @@ import pandas as pd
 from . import store
 from .config import DATA
 
+SETTORI = {"sec_xlk": "tecnologia", "sec_xlf": "finanza", "sec_xle": "energia", "sec_xli": "industria",
+           "sec_xlv": "salute", "sec_xlp": "beni di base", "sec_xly": "consumi discrezionali",
+           "sec_xlb": "materiali", "sec_xlu": "servizi pubblici"}
+
 FILE = DATA / "indice_crollo.json"
 STORIA = DATA / "indice_crollo_storia.csv"
 MIN_STORIA = 500
@@ -111,6 +115,14 @@ def calcola_serie(sp_override: pd.Series | None = None) -> pd.DataFrame:
     X["indice"] = idx.clip(1, 100)
     sp = X["sp500"]
     X["sotto_massimo"] = (sp / sp.rolling(252, min_periods=60).max() - 1) * 100
+    # settore piu' rotto: quanto il peggiore dei nove settori sta sotto il proprio massimo a 6 mesi
+    SP = pd.DataFrame({k: store.load(k).dropna().reindex(X.index).ffill() for k in SETTORI})
+    giu = SP / SP.rolling(126, min_periods=60).max() - 1
+    X["settore_giu"] = giu.min(axis=1) * 100
+    ok = giu.notna().any(axis=1)
+    quale = pd.Series(pd.NA, index=X.index, dtype=object)
+    quale[ok] = giu[ok].idxmin(axis=1)
+    X["settore_quale"] = quale
     return X[X.index >= "1990-01-02"]
 
 
@@ -174,6 +186,9 @@ def aggiorna(log=print) -> dict:
         "calme": [{"nome": NOMI[c], "valore": round(p, 0)} for c, p in fam[-2:]],
         "etichetta": "Non coerente",
     }
+    if pd.notna(ult.get("settore_giu")) and isinstance(ult.get("settore_quale"), str):
+        res["settore"] = {"nome": SETTORI[ult["settore_quale"]], "giu": round(float(ult["settore_giu"]), 0),
+                          "rotto": bool(float(ult["settore_giu"]) <= -15)}
     FILE.write_text(json.dumps(res, ensure_ascii=False), encoding="utf-8")
     df[["indice", "punteggio", "sotto_massimo"]].tail(2520).round(2).to_csv(STORIA, index_label="date")
     log(f"[indice_crollo] {res['data']} · {res['indice']:.0f} su 100 · {nome}")
@@ -185,6 +200,25 @@ def carica() -> dict | None:
         return json.loads(FILE.read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         return None
+
+
+def _settore_html(d: dict) -> str:
+    """Il settore più rotto: descrizione, non previsione. L'assetto a due chiavi non ha superato R16 (3 episodi su 6)."""
+    import html as _h
+    s = d.get("settore")
+    if not s:
+        return ""
+    base = (f"<div class='ic-m'><b>Settore più in difficoltà:</b> {_h.escape(s['nome'])}, {abs(s['giu']):.0f}% sotto il suo massimo "
+            "degli ultimi sei mesi.")
+    if not s.get("rotto"):
+        return base + " Nessun settore è rotto oltre il 15%.</div>"
+    vicino = d.get("sotto_massimo", -99) > -5
+    if vicino and d.get("indice", 0) >= 34:
+        return (base + " Questo settore è rotto oltre il 15% mentre l'indice è ancora vicino ai massimi e la tensione è alta: "
+                "è l'assetto del 2000, del 2007 e di oggi. In quelle condizioni il calo è poi arrivato al 10% nel 42% dei casi "
+                "contro il 9% normale — ma su soli 165 giorni concentrati in tre episodi, e questo schema ha mancato le crisi "
+                "del 2015, 2018 e 2022. È un indizio trovato al quarto tentativo, non una regola provata.</div>")
+    return base + " Un settore rotto oltre il 15% è normale a correzione iniziata: conta quando l'indice è ancora sui massimi.</div>"
 
 
 def oggi_html() -> str:
@@ -213,6 +247,7 @@ def oggi_html() -> str:
         "<div class='ic-k'><span>1 tranquillo</span><span>100 panico</span></div>"
         f"<div class='ic-p'>{_h.escape(sit)}</div>"
         f"<div class='ic-m'>Oggi il mercato è {abs(d['sotto_massimo']):.1f}% sotto il massimo dell'anno. Cosa spinge l'indice in alto:</div><ul>{sp}</ul>"
+        f"{_settore_html(d)}"
         f"<div class='ic-m'><b>Come usarlo.</b> {_h.escape(d.get('situazione', {}).get('usare', ''))} "
         "Nella prova, vendere quando l'indice entrava in rosso avrebbe reso il 143% invece del 236% restando investito, senza ridurre la perdita peggiore.</div>"
         "<div class='ic-m'>Prova fatta una volta sola sulle 11 crisi finanziarie dal 1990, escluse quelle da dazi, guerre e pandemia. "

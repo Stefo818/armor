@@ -751,3 +751,9 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
   senza ridurre la perdita peggiore; al massimo di tutti gli 11 episodi l'indice era basso.
   Comando: python -m armor.jobs crollo. Da fare dall'utente: workflow «Aggiornamento giornaliero Armor»
   poi «Sito Armor».
+- 2026-11-22 (2): emendamenti 2, 3, 4 del protocollo Indice crollo. Quattro tentativi di battere l'indice
+  esistente nella zona entro il 5% dai massimi: tutti «Non coerente». Il migliore e' D1 (indice nel quinto
+  piu' alto + un settore rotto oltre il 15%): 42,4% contro 21,5%, ma solo 3 episodi su 6 (prende 2000,
+  2007, 2026; manca 2015, 2018, 2022) e serviva 4 su 6. Corretto un errore mio su R11 (era circolare).
+  Aggiunta la riga «Settore piu' in difficolta'» alla scheda. DA FARE: chiave FRED_API_KEY nei segreti
+  GitHub per avere hy_oas/ig_oas dal 1996 (ora solo dal 2023-11) e poter provare il canale credito.

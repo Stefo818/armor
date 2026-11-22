@@ -1,0 +1,69 @@
+{
+ "soglia_indice": 33.4,
+ "soglia_valutazioni": 94.4,
+ "riferimento": 21.5,
+ "base": 9.3,
+ "D1 indice alto + un settore rotto oltre il 15%": {
+  "giorni": 165,
+  "precisione": 42.4,
+  "ic90": [
+   23.8,
+   70.7
+  ],
+  "episodi": {
+   "2000": true,
+   "2007": true,
+   "2015": false,
+   "2018": false,
+   "2022": false,
+   "2026": true
+  },
+  "episodi_ok": 3
+ },
+ "D2 indice alto + valutazioni nel quinto piu' alto": {
+  "giorni": 404,
+  "precisione": 20.5,
+  "ic90": [
+   9.8,
+   34.3
+  ],
+  "episodi": {
+   "2000": true,
+   "2007": false,
+   "2015": false,
+   "2018": false,
+   "2022": false,
+   "2026": false
+  },
+  "episodi_ok": 1
+ },
+ "riferimento: solo indice alto": {
+  "giorni": 810,
+  "precisione": 21.5,
+  "ic90": [
+   13.3,
+   28.6
+  ],
+  "episodi": {
+   "2000": true,
+   "2007": true,
+   "2015": true,
+   "2018": true,
+   "2022": true,
+   "2026": true
+  },
+  "episodi_ok": 6
+ },
+ "regole_D1": {
+  "R15": true,
+  "R16": false,
+  "R17": true
+ },
+ "etichetta": "Non coerente",
+ "oggi": {
+  "indice": 79.0,
+  "settore_piu_rotto": "tecnologia",
+  "quanto_rotto": -26.2,
+  "rotto_oltre_15": true
+ }
+}
