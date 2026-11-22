@@ -259,3 +259,45 @@ comunque chiamato indizio, non prova.
 Le misure citate dall'utente — valutazione dei primi dieci titoli, rapporto fra investimenti e flusso di
 cassa delle aziende di intelligenza artificiale — nell'archivio partono dal 7 novembre 2026 (13 giorni):
 **non sono validabili** e non entrano nel punteggio. Possono comparire solo come informazione.
+
+---
+# Emendamento 3 (22 novembre 2026) — il settore che si rompe, seconda formulazione
+Scritto e pubblicato **prima** del calcolo. È il **secondo** tentativo sulla stessa ipotesi, quindi l'asta
+è più alta: un secondo tentativo ha più probabilità di indovinare per caso e questo va pagato.
+
+## A. Perché un secondo tentativo, dichiarato
+Nell'emendamento 2 il «settore guida» era definito come quello con il miglior rendimento a 24 mesi.
+Risultato: 0,5185 su 1, cioè nulla, e la famiglia «la guida smette di guidare» 0,3570, cioè al contrario.
+Ma quella definizione sbaglia il bersaglio: nel 2007 indicava **materiali**, mentre il settore che si è
+rotto era la **finanza**, che da mesi già perdeva; e per il 2000 non dava nessun settore per mancanza di
+storia. L'ipotesi dell'utente parla del settore che **si rompe**, non di quello che corre. Si riformula
+una volta sola, così.
+
+## B. Nuova famiglia: «un settore importante è già rotto»
+1. **S1 settore più rotto.** Fra i nove settori, il massimo di quanto un settore sta sotto il proprio
+   massimo a 6 mesi, misurato nei giorni in cui l'indice è entro il 5% dal suo massimo. Percentile.
+2. **S2 quanti settori rotti.** Quanti dei nove stanno almeno il 10% sotto il proprio massimo a 6 mesi.
+3. **S3 dispersione.** Differenza fra il miglior e il peggior rendimento a 3 mesi fra i nove settori.
+4. **S4 indice tenuto su da pochi.** Rapporto Nasdaq 100 su S&P 500 in salita mentre il numero di settori
+   sopra la media a 200 giorni scende: prodotto dei due percentili.
+
+## C. Composito «assetto sistemico»
+Media dei percentili di: S1, S2, valutazioni (g4), premio per il rischio (g5), insolvenze (g11),
+oro in fuga (g10). Scelte **ora**, prima del calcolo: le quattro ultime perché nell'emendamento 2 hanno
+superato 0,58, le due prime perché sono la nuova formulazione dell'ipotesi.
+
+## D. Regole di accettazione, più severe per il secondo tentativo
+Zona entro il 5% dai massimi, bersaglio Y60, frequenza di base della zona 9,3%:
+- **R10** precisione nel quinto più alto almeno **25%**, con limite inferiore dell'intervallo al 90%
+  sopra il 9,3%.
+- **R11** con esclusione di un episodio alla volta la precisione resta almeno **18%**.
+- **R12** placebo: 200 spostamenti circolari, 95° percentile sotto la precisione vera.
+- **R13** batte l'Indice crollo attuale **nella stessa zona e sullo stesso bersaglio** di almeno
+  **8 punti** di precisione.
+- **R14** almeno 4 dei 6 episodi finanziari dell'era dei settori devono avere un giorno nel quinto più
+  alto nei 60 giorni precedenti il momento in cui il calo raggiunge il 10%.
+Tutte: «Coerente con i casi osservati». Anche una sola mancante: «Non coerente», e si dichiara che
+l'ipotesi del settore che si rompe non ha trovato conferma in due tentativi.
+
+## E. Limite che non si può togliere
+Sei episodi. Anche superando tutte le regole, con sei casi il risultato va chiamato **indizio**.
