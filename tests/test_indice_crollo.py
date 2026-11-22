@@ -46,7 +46,9 @@ def test_scheda(tmp_path, monkeypatch):
     assert r["etichetta"] == "Non coerente" and r["fascia"] in {f[1] for f in ic.FASCE}
     h = ic.oggi_html()
     assert "Indice crollo" in h and "non che devi vendere" in h or "rimbalzo" in h
-    assert "229 periodi" in h and "termometro" in h
+    assert "termometro" in h and "non una previsione" in h
+    assert "ic-m" in h and ">35<" in h and ">80<" in h   # tacca di oggi e riferimenti numerici
+    assert "<details" in h                                # gli approfondimenti stanno chiusi
     # la regola di onesta' della parte 8: mai «molto probabile»
     assert "molto probabile" not in h
 

@@ -158,8 +158,24 @@ def carica() -> dict | None:
         return None
 
 
+def _col(v: float) -> str:
+    return "#ef4444" if v >= 75 else ("#f59e0b" if v >= 60 else ("#9ca3af" if v >= 45 else "var(--ok)"))
+
+
+def _barra(etichetta: str, v: float, grande: bool = False) -> str:
+    import html as _h
+    c = _col(v)
+    h = "10px" if grande else "7px"
+    return (f"<div class='rs-row'><span class='rs-lab'>{_h.escape(etichetta)}</span>"
+            f"<span class='rs-tr' style='height:{h}'><i style='width:{max(2, min(100, v)):.0f}%;background:{c}'></i></span>"
+            f"<b class='rs-val' style='color:{c}'>{v:.0f}</b></div>")
+
+
 def oggi_html() -> str:
-    """Scheda compatta «Radar di fondo» (contesto, non previsione: l'etichetta della prova è «Non coerente», vedi PROTOCOLLO_SISTEMICO.md)."""
+    """Scheda «Radar di fondo»: due barre, i sensori, il resto a scomparsa.
+
+    Contesto, non previsione: l'etichetta della prova è «Non coerente» (PROTOCOLLO_SISTEMICO.md).
+    """
     import html as _h
     d = carica()
     if not d:
@@ -167,21 +183,46 @@ def oggi_html() -> str:
     s3, s6 = d["score_3m"], d["score_6m"]
     cls = _classe(s3)
     tit = "Pressione di fondo alta" if s3 >= 60 else ("Pressione di fondo in crescita" if s3 >= 45 else "Pressione di fondo bassa")
-    sens = "".join(f"<li>{_h.escape(s['nome'])}: <b>{'alto' if s['valore'] >= 70 else ('medio' if s['valore'] >= 50 else 'basso')}</b></li>" for s in d.get("sensori", []))
+    sens = "".join(_barra(x["nome"], x["valore"]) for x in d.get("sensori", []))
     p = d.get("prova") or {}
     odds = ""
     if p.get("precisione") and p.get("frequenza_base"):
-        odds = (f"In passato, quando il punteggio a 1-3 mesi era da 60 in su, nei 3 mesi seguenti l'indice ha perso almeno l'8% circa 1 volta su {round(1 / p['precisione'])} "
-                f"(normalmente 1 volta su {round(1 / p['frequenza_base'])}). ")
+        odds = (f"<p>Quando il punteggio a 1-3 mesi era da 60 in su, nei 3 mesi seguenti l'indice ha perso almeno l'8% "
+                f"circa <b>1 volta su {round(1 / p['precisione'])}</b>, contro 1 volta su {round(1 / p['frequenza_base'])} "
+                "nei periodi normali.</p>")
     o = d.get("opzioni") or {}
     opz = ""
     if o.get("put_skew_80") and o.get("put_skew_80_prec"):
-        opz = (f"<div class='rs-mu'>Opzioni sull'indice: il costo delle assicurazioni contro un crollo del 20% è passato da {o['put_skew_80_prec']:.2f} a {o['put_skew_80']:.2f} nell'ultimo giorno. "
-               f"Archivio di soli {o['giorni_archivio']} giorni: non provabile, non entra nel punteggio.</div>")
+        opz = (f"<p>Opzioni sull'indice: il costo delle assicurazioni contro un crollo del 20% è passato da "
+               f"{o['put_skew_80_prec']:.2f} a {o['put_skew_80']:.2f}. Archivio di soli {o['giorni_archivio']} giorni: "
+               "non provabile, non entra nel punteggio.</p>")
     return (
-        "<style>.rs{border:1px solid var(--bd);border-left-width:5px;border-radius:12px;background:var(--card);padding:8px 12px;margin:8px 0}.rs.ok{border-left-color:var(--ok)}.rs.warn{border-left-color:var(--warn,#f59e0b)}.rs.bad{border-left-color:var(--bad)}"
-        ".rs-tit{font-size:15px;font-weight:700}.rs-mu{font-size:12px;color:var(--mu);line-height:1.4;margin-top:4px}.rs ul{margin:4px 0 0;padding-left:18px;font-size:13px}</style>"
-        f"<div class='rs {cls}'><div class='rs-tit'>Radar di fondo · {tit} ({s3:.0f} su 100 a 1-3 mesi, {s6:.0f} a 6 mesi)</div>"
-        f"<div class='rs-mu' style='font-size:13px'>Regime di oggi: <b>{_h.escape(d['regime_nome'])}</b>. Cosa guarda ora:</div><ul>{sens}</ul>"
-        f"<div class='rs-mu'>{odds}Non guarda: {_h.escape(d.get('ignorati', ''))}</div>{opz}"
-        "<div class='rs-mu'>Prova fatta una volta sola sui dati dal 1997: non fa meglio dell'Indice Armor, quindi è un contesto in più, non una previsione e non manda notifiche sul telefono.</div></div>")
+        """<style>
+.rs{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:12px 14px 10px;margin:10px 0}
+.rs-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.rs-t{font-size:15px;font-weight:700}
+.rs-chip{font-size:11px;color:var(--mu);border:1px solid var(--bd);border-radius:999px;padding:2px 9px;margin-left:auto}
+.rs-row{display:flex;align-items:center;gap:9px;margin:5px 0}
+.rs-lab{font-size:12.5px;color:var(--mu);flex:0 0 46%;line-height:1.25}
+.rs-tr{flex:1;background:rgba(127,127,127,.18);border-radius:999px;overflow:hidden;display:block}
+.rs-tr i{display:block;height:100%;border-radius:999px}
+.rs-val{font-size:12.5px;font-weight:700;flex:0 0 26px;text-align:right}
+.rs-sub{font-size:11px;color:var(--mu);margin:9px 0 2px;text-transform:uppercase;letter-spacing:.4px}
+details.rsd{margin-top:9px;border-top:1px solid var(--bd);padding-top:6px}
+details.rsd>summary{list-style:none;cursor:pointer;font-size:12.5px;color:var(--mu);display:flex;align-items:center;gap:6px}
+details.rsd>summary::-webkit-details-marker{display:none}
+details.rsd>summary::after{content:"";width:7px;height:7px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);transition:transform .18s}
+details.rsd[open]>summary::after{transform:rotate(225deg)}
+details.rsd .rsb{font-size:12.5px;line-height:1.5;color:var(--mu)}
+details.rsd .rsb p{margin:8px 0 0}details.rsd .rsb b{color:var(--tx)}
+</style>""" +
+        f"<div class='rs {cls}'>"
+        f"<div class='rs-h'><span class='rs-t'>Radar di fondo · {tit}</span>"
+        f"<span class='rs-chip'>{_h.escape(d['regime_nome'])}</span></div>"
+        + _barra("Rischio fra 1 e 3 mesi", s3, True) + _barra("Rischio fra 6 mesi", s6, True) +
+        f"<div class='rs-sub'>Cosa guarda in questo regime</div>{sens}"
+        "<details class='rsd'><summary>Come leggerlo</summary><div class='rsb'>"
+        f"{odds}<p>In questo regime <b>non</b> guarda: {_h.escape(d.get('ignorati', ''))}</p>{opz}"
+        "<p>Prova fatta una volta sola sui dati dal 1997: non fa meglio dell'Indice Armor, quindi è un contesto in più, "
+        "non una previsione, e non manda notifiche sul telefono.</p>"
+        "</div></details></div>")

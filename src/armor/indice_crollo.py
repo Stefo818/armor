@@ -254,39 +254,68 @@ def _settore_html(d: dict) -> str:
     return base + " Un settore rotto oltre il 15% è normale a correzione iniziata: conta quando l'indice è ancora sui massimi.</div>"
 
 
+CSS = """<style>
+.ic{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:12px 14px 10px;margin:10px 0}
+.ic-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ic-n{font-size:40px;font-weight:800;line-height:1}
+.ic-su{font-size:12px;color:var(--mu)}
+.ic-tt{font-size:15px;font-weight:700;margin-left:auto}
+.ic-wrap{position:relative;margin:14px 0 2px}
+.ic-s{display:flex;height:9px;border-radius:999px;overflow:hidden}
+.ic-s i{display:block;height:100%}
+.ic-m{position:absolute;top:-5px;width:3px;height:19px;background:var(--tx);border-radius:2px;box-shadow:0 0 0 2px var(--card)}
+.ic-tick{position:relative;height:13px;font-size:10px;color:var(--mu)}
+.ic-tick span{position:absolute;transform:translateX(-50%)}
+.ic-k{font-size:10.5px;color:var(--mu);display:flex;justify-content:space-between;margin-top:1px}
+.ic-p{font-size:13px;line-height:1.5;margin:8px 0 0}
+details.icd{margin-top:8px;border-top:1px solid var(--bd);padding-top:6px}
+details.icd>summary{list-style:none;cursor:pointer;font-size:12.5px;color:var(--mu);display:flex;align-items:center;gap:6px}
+details.icd>summary::-webkit-details-marker{display:none}
+details.icd>summary::after{content:"";width:7px;height:7px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);transition:transform .18s}
+details.icd[open]>summary::after{transform:rotate(225deg)}
+details.icd .icb{font-size:12.5px;line-height:1.5;color:var(--mu)}
+details.icd .icb p{margin:8px 0 0}
+details.icd .icb b{color:var(--tx)}
+</style>"""
+
+BARRA = ("<div class='ic-s'><i style='flex:35;background:var(--ok)'></i><i style='flex:5;background:#9ca3af'></i>"
+         "<i style='flex:20;background:#f59e0b'></i><i style='flex:20;background:#ef4444'></i>"
+         "<i style='flex:20;background:#8b5cf6'></i></div>")
+
+
 def oggi_html() -> str:
+    """Scheda compatta: numero, barra con la tacca di oggi, una riga di lettura; il resto a scomparsa."""
     import html as _h
     d = carica()
     if not d:
         return ""
     v = int(d["indice"])
-    sp = "".join(f"<li>{_h.escape(s['nome'])}</li>" for s in d.get("spinte", []))
-    sit = d.get("situazione", {}).get("testo", "")
+    col = d.get("colore", "inherit")
+    sit = d.get("situazione", {})
+    spinte = ", ".join(s["nome"] for s in d.get("spinte", []))
+    corpo = [
+        f"<p>Oggi il mercato è <b>{abs(d['sotto_massimo']):.1f}% sotto il massimo</b> dell'anno. "
+        f"Spingono l'indice in alto: {_h.escape(spinte)}.</p>",
+        _settore_html(d),
+        f"<p><b>Come usarlo.</b> {_h.escape(sit.get('usare', ''))} Nella prova, vendere quando l'indice entrava in rosso "
+        "avrebbe reso il 143% invece del 236% restando investito, senza ridurre la perdita peggiore.</p>",
+        "<p><b>Quanto preavviso ha dato.</b> Nelle crisi finanziarie dal 1990 è entrato in giallo in mediana <b>25 sedute</b> "
+        "prima che il calo arrivasse al 10%, in <b>9 episodi su 11</b> (in questo, il 16 ottobre, 26 sedute prima). "
+        "Ma è stato giallo o peggio per <b>500 giorni</b> senza che seguisse nulla: prende quasi tutti i cali veri "
+        "proprio perché si accende spesso.</p>",
+        "<p>Prova fatta una volta sola sulle 11 crisi finanziarie dal 1990, escluse quelle da dazi, guerre e pandemia. "
+        "Non ha superato la prova sulla fascia viola, quindi è un termometro e non una previsione. Al massimo di tutti "
+        "gli 11 episodi l'indice era basso: i crolli non si vedono dalla cima.</p>",
+    ]
     return (
-        "<style>.ic{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:12px 14px;margin:10px 0}"
-        ".ic.ok{border-left:6px solid var(--ok)}.ic.warn{border-left:6px solid var(--warn,#f59e0b)}.ic.bad{border-left:6px solid var(--bad)}"
-        ".ic-top{display:flex;align-items:baseline;gap:10px}.ic-n{font-size:40px;font-weight:800;line-height:1}"
-                ".ic-t{font-size:16px;font-weight:700;margin-top:6px}.ic-p{font-size:13px;line-height:1.5;margin-top:6px;color:var(--fg)}"
-        ".ic-m{font-size:12px;line-height:1.45;margin-top:8px;color:var(--mu)}.ic ul{margin:4px 0 0;padding-left:18px;font-size:13px}"
-        ".ic-s{display:flex;height:8px;border-radius:999px;overflow:hidden;margin:10px 0 4px}.ic-s i{display:block;height:100%}"
-        ".ic-k{font-size:11px;color:var(--mu);display:flex;justify-content:space-between}</style>"
-        f"<div class='ic {d['classe']}'>"
-        f"<div class='ic-top'><div class='ic-n' style='color:{d.get('colore', 'inherit')}'>{v}</div>"
-        f"<div style='font-size:13px;color:var(--mu)'>su 100</div></div>"
-        f"<div class='ic-t'>Indice crollo · {_h.escape(d['titolo'])}</div>"
-        "<div class='ic-s'><i style='flex:35;background:var(--ok)'></i><i style='flex:5;background:#9ca3af'></i>"
-        "<i style='flex:20;background:#f59e0b'></i><i style='flex:20;background:#ef4444'></i><i style='flex:20;background:#8b5cf6'></i></div>"
+        CSS +
+        f"<div class='ic' style='border-left:6px solid {col}'>"
+        f"<div class='ic-top'><div class='ic-n' style='color:{col}'>{v}</div><div class='ic-su'>su 100</div>"
+        f"<div class='ic-tt' style='color:{col}'>{_h.escape(d['titolo'])}</div></div>"
+        f"<div class='ic-wrap'>{BARRA}<div class='ic-m' style='left:calc({v}% - 1.5px)'></div></div>"
+        "<div class='ic-tick'><span style='left:35%'>35</span><span style='left:40%'>40</span>"
+        "<span style='left:60%'>60</span><span style='left:80%'>80</span></div>"
         "<div class='ic-k'><span>1 tranquillo</span><span>100 panico</span></div>"
-        f"<div class='ic-p'>{_h.escape(sit)}</div>"
-        f"<div class='ic-m'>Oggi il mercato è {abs(d['sotto_massimo']):.1f}% sotto il massimo dell'anno. Cosa spinge l'indice in alto:</div><ul>{sp}</ul>"
-        f"{_settore_html(d)}"
-        f"<div class='ic-m'><b>Come usarlo.</b> {_h.escape(d.get('situazione', {}).get('usare', ''))} "
-        "Nella prova, vendere quando l'indice entrava in rosso avrebbe reso il 143% invece del 236% restando investito, senza ridurre la perdita peggiore.</div>"
-        "<div class='ic-m'><b>Quanto preavviso ha dato in passato.</b> Nelle crisi finanziarie dal 1990 è entrato in giallo "
-        "in mediana 25 sedute prima che il calo arrivasse al 10%, in 9 episodi su 11 (in questo, il 16 ottobre, 26 sedute prima). "
-        "Ma nello stesso periodo è stato giallo o peggio per 500 giorni senza che seguisse nulla: prende quasi tutti i cali veri "
-        "proprio perché si accende spesso.</div>"
-        "<div class='ic-m'>Prova fatta una volta sola sulle 11 crisi finanziarie dal 1990, escluse quelle da dazi, guerre e pandemia. "
-        "Non ha superato la prova sulla fascia viola, quindi è un termometro e non una previsione: dal 1990 ci sono stati 229 periodi di "
-        "allarme, 61 seguiti da un calo del 10% e 168 no. Al massimo di tutti gli 11 episodi l'indice era basso: i crolli non si vedono dalla cima.</div>"
-        "</div>")
+        f"<div class='ic-p'>{_h.escape(sit.get('testo', ''))}</div>"
+        "<details class='icd'><summary>Da cosa nasce e come si usa</summary>"
+        f"<div class='icb'>{''.join(x for x in corpo if x)}</div></details></div>")
