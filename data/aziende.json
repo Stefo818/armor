@@ -1,5 +1,5 @@
 {
-"date": "2026-11-21",
+"date": "2026-11-22",
 "fonte": "Yahoo Finance (bilanci trimestrali e annuali); contratti già firmati (RPO): SEC EDGAR",
 "pesi": "stimati dalla capitalizzazione",
 "aziende": [
@@ -518,10 +518,10 @@
 ],
 "diminuiti": [],
 "valuta": "TWD",
-"fx_bilancio": 0.030278900638222694,
+"fx_bilancio": 0.030341647565364838,
 "peso": 1.48,
 "ordine_statico": 7,
-"ps": 11.040212581706108
+"ps": 11.017381276550191
 },
 {
 "sym": "AVGO",
@@ -1045,7 +1045,7 @@
 {
 "sym": "005930.KS",
 "nome": "Samsung Electronics",
-"cap_usd": 893274493719.971,
+"cap_usd": 885749476939.28,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1123,8 +1123,8 @@
 ],
 "diminuiti": [],
 "valuta": "KRW",
-"fx_bilancio": 0.0007491814903914928,
-"peso": 0.8,
+"fx_bilancio": 0.0007428703247569501,
+"peso": 0.79,
 "ordine_statico": 22,
 "ps": 2.005731082464418
 },
@@ -2256,7 +2256,7 @@
 {
 "sym": "TCEHY",
 "nome": "Tencent",
-"cap_usd": 382605792080.42487,
+"cap_usd": 382695823042.5,
 "q": {
 "fine": "2026-06-30",
 "mesi": 12,
@@ -2334,10 +2334,10 @@
 "margine operativo"
 ],
 "valuta": "CNY",
-"fx_bilancio": 0.14976337552070618,
+"fx_bilancio": 0.1497790813446045,
 "peso": 0.34,
 "ordine_statico": 23,
-"ps": 3.398311930452701
+"ps": 3.3987551565710117
 },
 {
 "sym": "CSCO",
@@ -2605,9 +2605,9 @@
 "migliora": 18,
 "stabile": 10,
 "peggiora": 2,
-"peso_migliora": 20.25,
+"peso_migliora": 20.24,
 "peso_stabile": 10.21,
 "peso_peggiora": 2.3,
-"peso_totale": 32.76
+"peso_totale": 32.75
 }
 }
