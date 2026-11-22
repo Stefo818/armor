@@ -149,3 +149,47 @@ candidata. Il limite che l'articolo stesso segnala — un CAPE alto non signific
 domani, e può restare alto per anni — è esattamente ciò che le misure di questo progetto mostrano:
 l'indice Buffett ha la discriminazione più alta fra i segnali strutturali (0,6710) ma non migliora
 l'Indice Armor su nessuno dei tre eventi.
+
+---
+# Parte 7 — Correzione: il «100% sopra 80» era un artefatto della misura
+Domanda dell'utente: «sopra 80 il crollo avviene con certezza?». **No**, e la tabella della parte 5 era
+scritta male. Va corretta qui, non cancellata.
+
+**Primo, i giorni non sono consecutivi.** I 64-66 giorni sopra 80 sono sparsi in **15 periodi distinti**,
+concentrati in tre soli episodi: 1998 (un periodo), 2008 (tredici periodi) e un singolo giorno nel 2022.
+
+**Secondo, il 100% era quasi automatico.** Il bersaglio chiedeva «il calo arriva al 10% sotto il massimo
+a 12 mesi». In quei giorni il mercato era **già sceso in mediana del 21,2%** sotto quel massimo: dei dieci
+punti richiesti ne erano già stati persi ventuno. La risposta era sì prima della domanda. È un difetto
+della misura, non una capacità del modello. Lo stesso vale, in misura minore, per la fascia 60-80
+(mercato già a −14,8%) e per la 40-60 (−4,3%).
+
+**Terzo, cosa succede davvero dopo**, misurato dal prezzo di quel giorno e non dal massimo:
+
+| dopo | mediana | media | casi positivi | peggior caso |
+|---|---|---|---|---|
+| 5 sedute | +0,55% | −0,32% | 56% | −18,3% |
+| 10 sedute | −0,57% | −1,90% | 47% | −25,9% |
+| 21 sedute | +0,51% | −3,71% | 56% | −30,0% |
+| 63 sedute | +0,35% | −1,94% | 50% | −29,5% |
+| 126 sedute | −3,52% | +0,39% | 45% | −36,3% |
+
+Sopra 80 il mercato **non scende con certezza**: in mediana resta fermo. Quello che fa è ballare
+violentemente, con code molto brutte.
+
+## La tabella corretta, con la domanda giusta
+«Da qui, quanto rischio di perdere ancora?» — il prezzo scende di almeno un altro 5% rispetto a quel
+giorno, in qualche momento entro 21 sedute:
+
+| fascia | giorni | già sotto il massimo | perde ancora ≥5% entro un mese | prezzo dopo un mese (mediana) |
+|---|---|---|---|---|
+| sotto 40 · tranquillo | 4.877 | −1,1% | **8%** | +1,18% |
+| 40-60 · in difficoltà | 2.793 | −4,3% | **23%** | +1,27% |
+| 60-80 · in pericolo | 453 | −14,8% | **35%** | +2,29% |
+| sopra 80 · rischio di crollo | 65 | −19,8% | **63%** | +0,59% |
+
+Questa tabella è onesta e il gradiente regge: da 8% a 63%, otto volte. Ma dice una cosa diversa da quella
+che sembrava: le fasce alte misurano **quanto sarà turbolento il tratto che hai davanti**, non se il
+mercato scenderà. In tutte e quattro le zone il prezzo di un mese dopo è stato in mediana **più alto**.
+
+La scheda nell'app è stata riscritta con questi numeri.
