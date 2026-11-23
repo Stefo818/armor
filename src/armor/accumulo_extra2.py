@@ -252,3 +252,107 @@ def aggiorna_retail(stato: dict) -> None:
     pd.concat([old, t], ignore_index=True).drop_duplicates(subset=["data", "ticker"], keep="last").to_csv(p, index=False)
     n = store.upsert("retail_menzioni_totali", pd.Series({pd.Timestamp(oggi): float(pd.to_numeric(t["menzioni"], errors="coerce").sum())}))
     stato["retail_forum"] = {"titoli": len(t), "righe_nuove": n}
+
+
+# ----------------------------------------------------------------------------- Wikipedia in altre lingue (titoli risolti con i collegamenti fra lingue)
+LINGUE_WIKI = ("it", "de", "es", "fr")
+
+
+def parse_langlinks(j: dict, lingua: str) -> dict[str, str]:
+    """{titolo inglese: titolo nella lingua} dalla risposta dell'API di Wikipedia."""
+    out = {}
+    for p in j.get("query", {}).get("pages", {}).values():
+        for ll in p.get("langlinks", []) or []:
+            if ll.get("lang") == lingua:
+                out[str(p.get("title", "")).replace(" ", "_")] = (ll.get("*") or ll.get("title") or "").replace(" ", "_")
+    return out
+
+
+def aggiorna_wiki_lingue(stato: dict) -> None:
+    from .accumulo_extra import WIKI, parse_wiki
+    from .guard import run_parallel
+    ieri = (datetime.now(timezone.utc) - timedelta(days=2)).strftime("%Y%m%d")
+    lavori = {}
+    for lg in LINGUE_WIKI:
+        try:
+            j = _get("https://en.wikipedia.org/w/api.php", tries=2, params={"action": "query", "titles": "|".join(a.replace("_", " ") for a in WIKI[:50]), "prop": "langlinks",
+                                                                       "lllang": lg, "lllimit": "500", "redirects": "1", "format": "json"}).json()
+        except Exception:  # noqa: BLE001
+            continue
+        for en, loc in parse_langlinks(j, lg).items():
+            if loc:
+                def mk(lg=lg, en=en, loc=loc):
+                    def job():
+                        sid = f"wiki_{lg}_{slug(en)}"
+                        old = store.load(sid)
+                        da = "20150701" if old.empty else (old.index[-1] - timedelta(days=10)).strftime("%Y%m%d")
+                        url = f"https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/{lg}.wikipedia/all-access/user/{requests.utils.quote(loc, safe='')}/daily/{da}/{ieri}"
+                        return store.upsert(sid, parse_wiki(_get(url, tries=2).json()))
+                    return job
+                lavori[f"{lg}:{en}"] = mk()
+    if not lavori:
+        raise RuntimeError("nessun titolo risolto")
+    res = run_parallel(lavori, workers=3, deadline=420)
+    stato["wikipedia_altre_lingue"] = {"pagine": len(lavori), "riuscite": sum(1 for t, _ in res.values() if t == "ok"),
+                                       "fallite": {k: str(v)[:40] for k, (t, v) in res.items() if t != "ok"}}
+
+
+# ----------------------------------------------------------------------------- Google Trends (tentativo prudente: finestre sovrapposte da cucire poi)
+TRENDS_PAROLE = ["stock market crash", "recession", "bank run", "margin call", "layoffs", "unemployment", "inflation", "bankruptcy", "credit crunch", "sell stocks",
+                 "gold price", "buy bitcoin", "crollo borsa", "recessione", "fallimento banca"]
+TRENDS_GEO = ("US", "IT", "")
+
+
+def cuci_finestre(finestre: list[tuple[str, pd.Series]]) -> pd.Series:
+    """Cuce finestre Google Trends (ognuna normalizzata 0-100 a modo suo) in una serie continua:
+    ogni finestra e' riscalata sull'ultima nei giorni in comune (rapporto delle mediane). `finestre` = [(data_di_scarico, serie)] in ordine di data."""
+    if not finestre:
+        return pd.Series(dtype=float)
+    finestre = sorted(finestre, key=lambda x: x[0])
+    out = finestre[0][1].astype(float).copy()
+    for _, s in finestre[1:]:
+        s = s.astype(float)
+        com = out.index.intersection(s.index)
+        com = [d for d in com if out[d] > 0 and s[d] > 0]
+        k = float((out[com] / s[com]).median()) if len(com) >= 5 else 1.0
+        nuovo = s * k
+        out = pd.concat([out[~out.index.isin(nuovo.index)], nuovo]).sort_index()
+    return out
+
+
+def aggiorna_trends(stato: dict) -> None:
+    from pytrends.request import TrendReq
+    base = DATA / "trends"
+    base.mkdir(parents=True, exist_ok=True)
+    oggi = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    pt = TrendReq(hl="en-US", tz=0)
+    righe, sett, err = [], [], {}
+    lunedi = datetime.now(timezone.utc).weekday() == 0
+    for geo in TRENDS_GEO:
+        for kw in TRENDS_PAROLE:
+            if (geo == "IT") != (kw in ("crollo borsa", "recessione", "fallimento banca")) and geo != "":
+                continue
+            try:
+                pt.build_payload([kw], timeframe="today 3-m", geo=geo)
+                df = pt.interest_over_time()
+                if len(df):
+                    for d, v in df[kw].tail(30).items():
+                        righe.append({"scaricato": oggi, "parola": kw, "geo": geo or "mondo", "data": d.strftime("%Y-%m-%d"), "valore": int(v)})
+                if lunedi:   # una volta a settimana la storia lunga (5 anni, valori settimanali): serve da base per la cucitura
+                    pt.build_payload([kw], timeframe="today 5-y", geo=geo)
+                    d5 = pt.interest_over_time()
+                    for d, v in d5[kw].items():
+                        sett.append({"scaricato": oggi, "parola": kw, "geo": geo or "mondo", "data": d.strftime("%Y-%m-%d"), "valore": int(v)})
+            except Exception as e:  # noqa: BLE001
+                err[f"{geo or 'mondo'}:{kw}"] = str(e)[:50]
+                if "429" in str(e):
+                    break
+            time.sleep(8)
+    for nome, dati in (("trends_giornaliero", righe), ("trends_settimanale", sett)):
+        if dati:
+            p = base / f"{nome}.csv"
+            old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+            pd.concat([old, pd.DataFrame(dati)], ignore_index=True).to_csv(p, index=False)
+    if not righe:
+        raise RuntimeError("nessuna richiesta riuscita: " + "; ".join(list(err.values())[:2]))
+    stato["google_trends"] = {"righe_giornaliere": len(righe), "righe_settimanali": len(sett), "problemi": dict(list(err.items())[:8])}

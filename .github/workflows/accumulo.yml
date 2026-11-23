@@ -21,6 +21,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt tzdata
+      - run: pip install pytrends || true   # facoltativo: se non si installa, solo Google Trends salta
       - name: Accumula i dati
         env:
           PYTHONPATH: src
@@ -30,4 +31,4 @@ jobs:
         run: python -m armor accumulo
       - name: Salva nel repository
         if: always()
-        run: bash scripts/salva.sh "Accumulo dati per le ricerche future" data/series data/ohlc data/intraday data/componenti data/opzioni_ext data/cot data/aste data/finra_short data/vix_futures data/previsioni data/dealer data/ftd data/short_interest data/etf_quote data/sec_moduli data/testi data/retail data/accumulo_stato.json
+        run: bash scripts/salva.sh "Accumulo dati per le ricerche future" data/series data/ohlc data/intraday data/componenti data/opzioni_ext data/cot data/aste data/finra_short data/vix_futures data/previsioni data/dealer data/ftd data/short_interest data/etf_quote data/sec_moduli data/testi data/retail data/trends data/accumulo_stato.json

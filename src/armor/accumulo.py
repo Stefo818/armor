@@ -433,7 +433,7 @@ def aggiorna(solo: list[str] | None = None) -> dict:
              ("vix_future", ex.aggiorna_vix_future), ("aaii", ex.aggiorna_aaii), ("previsioni", ex.aggiorna_previsioni),
              ("dealer", ex.aggiorna_dealer), ("ftd", ex.aggiorna_ftd), ("short_interest", ex.aggiorna_short_interest), ("etf_quote", ex.aggiorna_etf_quote),
              ("moduli_sec", ex2.aggiorna_moduli_sec), ("parole_sec", ex2.aggiorna_parole_sec), ("cripto_leva", ex2.aggiorna_cripto_leva), ("jgb", ex2.aggiorna_jgb),
-             ("testi", ex2.aggiorna_testi), ("retail", ex2.aggiorna_retail),
+             ("testi", ex2.aggiorna_testi), ("retail", ex2.aggiorna_retail), ("wiki_lingue", ex2.aggiorna_wiki_lingue), ("trends", ex2.aggiorna_trends),
              ("derivati_componenti", dv.aggiorna_derivati_componenti), ("derivati_intraday", dv.aggiorna_derivati_intraday))
     for nome, fn in passi:
         if solo and nome not in solo:

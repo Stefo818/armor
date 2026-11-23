@@ -116,3 +116,15 @@ def test_indicatori_componenti_e_intraday():
     g = pd.DataFrame({"ts": ts, "o": 100.0, "h": 101.0, "l": 99.0, "c": np.linspace(100, 102, 40), "v": 10.0})
     m = dv.misure_giornata(g)
     assert m["ampiezza"] == 2.0 and m["ritorno_giornata"] > 1.9 and "quota_volume_ultima_ora" in m
+
+
+def test_wiki_lingue_e_cucitura_trends():
+    from armor import accumulo_extra2 as e2
+    j = {"query": {"pages": {"1": {"title": "Bank run", "langlinks": [{"lang": "it", "*": "Corsa agli sportelli"}]}, "2": {"title": "Recession", "langlinks": []}}}}
+    assert e2.parse_langlinks(j, "it") == {"Bank_run": "Corsa_agli_sportelli"}
+    idx1 = pd.date_range("2026-10-01", periods=10)
+    idx2 = pd.date_range("2026-10-06", periods=10)
+    a = pd.Series([10, 20, 30, 40, 50, 60, 70, 80, 90, 100.0], index=idx1)
+    b = pd.Series([30, 35, 40, 45, 50, 55, 60, 65, 70, 75.0], index=idx2)    # stessa realta' vista con un'altra scala (meta')
+    s = e2.cuci_finestre([("2026-10-10", a), ("2026-10-15", b)])
+    assert len(s) == 15 and abs(s.iloc[-1] - 150.0) < 1e-9 and abs(s[pd.Timestamp("2026-10-06")] - 60.0) < 1e-9

@@ -819,3 +819,6 @@ Aggiunte fonti in `src/armor/accumulo_extra.py`: BCE (CISS per paese, curve euro
 
 ## (15) Terza ondata di accumulo (23/11/2026)
 `accumulo_derivati.py` (30 indicatori `d_*` dai titoli dell'S&P 500, ricostruiti dal 2015 e verificati su marzo 2020; `di_*` dalle barre a 5 minuti) e `accumulo_extra2.py` (moduli SEC, parole di stress SEC, leva cripto, JGB, testi/giornali, retail, nuovi simboli Yahoo). 288 test. Fonti non raggiungibili dal sandbox: leggere `data/accumulo_stato.json`. Vedi GUIDA_TRA_SEI_MESI.md §10.
+
+## (16) Wikipedia in altre lingue e Google Trends (23/11/2026)
+`accumulo_extra2.aggiorna_wiki_lingue` e `aggiorna_trends` (+ `cuci_finestre`). Trends è fragile (429): leggere `accumulo_stato.json`. 289 test.
