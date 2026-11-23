@@ -9,12 +9,12 @@
   "p3": 82.7,
   "p4": 57.4,
   "p5": 38.7,
-  "p6": 50.2
+  "p6": 50.3
  },
  "previsioni": {
   "1 settimana": {
    "calo": 0.1693,
-   "rialzo": 0.2307,
+   "rialzo": 0.2306,
    "soglia_calo": 0.05,
    "normale": 0.062,
    "data": "2026-11-20"
@@ -28,21 +28,21 @@
   },
   "3 mesi": {
    "calo": 0.252,
-   "rialzo": 0.5622,
+   "rialzo": 0.562,
    "soglia_calo": 0.1,
    "normale": 0.1525,
    "data": "2026-11-20"
   },
   "6 mesi": {
    "calo": 0.3417,
-   "rialzo": 0.5633,
+   "rialzo": 0.5632,
    "soglia_calo": 0.1,
    "normale": 0.255,
    "data": "2026-11-20"
   },
   "12 mesi": {
-   "calo": 0.4717,
-   "rialzo": 0.5698,
+   "calo": 0.4718,
+   "rialzo": 0.5697,
    "soglia_calo": 0.1,
    "normale": 0.3749,
    "data": "2026-11-20"
