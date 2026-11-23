@@ -30,3 +30,14 @@ Un candidato diventa il nuovo Indice crollo se, rispetto a BASE, l'AUC sul bersa
 
 ## Se nulla passa
 Si dice chiaramente che con i dati a disposizione l'anticipo di un giorno non è dimostrabile; resta il termometro. Si aggiunge comunque, come informazione separata, la «predisposizione» P con i fattori che la spingono (non cambia il numero dell'Indice crollo) e si registra ogni giorno per la prova in avanti.
+
+## Emendamento 1 (23 novembre 2026, 12:45, prima dei nuovi calcoli): l'ipotesi «troppo peso alla paura»
+Ipotesi dell'utente: se l'indice si basa sulla paura (VIX), si alza solo quando il crollo è già iniziato; deve anticipare l'aumento della paura.
+Nuovi candidati (stessi dati, nessuna soglia cambiata):
+- NP: Indice crollo ricalcolato SENZA le tre famiglie di paura (f1 paura, f2 salto della paura, f3 curva della paura): stessi pesi delle altre, rinormalizzati, stessa scala a percentili.
+- RP: solo famiglie di prezzo (f7 tendenza, f8 perdita, f9 ballo dei prezzi), media dei percentili.
+- NP2: come NP ma senza anche f7 e f8 (il prezzo già sceso): resta solo credito f5, tassi f6, rotazione f10, protezioni f4, titoli di Stato f11, Indice Armor f12.
+- C1: 0,5·rank(NP) + 0,5·rank(P).
+- C2: 0,5·rank(NP2) + 0,5·rank(P).
+Nuovo bersaglio «paura in arrivo»: giorni con VIX sotto 22 in cui il massimo del VIX nelle prossime 5 sedute è almeno +35% rispetto a oggi. Si misura l'AUC di ogni candidato (scelta fino al 2014, verifica dal 2015; stessi perimetri). Serve a dire se un indice senza paura anticipa l'aumento della paura.
+Regola di adozione: identica a quella già scritta (+0,03 su B5 e B10 in entrambi i periodi, senza peggiorare i controlli di più di −0,01), con in più AUC sul bersaglio «paura in arrivo» non peggiore di −0,02 in entrambi i periodi rispetto a BASE. Se NP, NP2, C1 o C2 la passano, sostituiscono l'Indice crollo. Esito: «Coerente con i casi osservati» / «Non coerente».
