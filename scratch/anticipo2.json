@@ -1,0 +1,220 @@
+{
+ "episodi_B5_scelta": 20,
+ "episodi_B5_verifica": 9,
+ "episodi_B10_scelta": 14,
+ "episodi_B10_verifica": 6,
+ "tabella": {
+  "BASE": {
+   "B5_scelta": 0.6576,
+   "B5_verifica": 0.742,
+   "B10_scelta": 0.7105,
+   "B10_verifica": 0.7057,
+   "5g-3%_scelta": 0.7449,
+   "5g-3%_verifica": 0.7483,
+   "21g-5%_scelta": 0.7287,
+   "21g-5%_verifica": 0.6859,
+   "63g-8%_scelta": 0.7642,
+   "63g-8%_verifica": 0.5866,
+   "paura in arrivo_scelta": 0.3643,
+   "paura in arrivo_verifica": 0.4712
+  },
+  "NP senza paura": {
+   "B5_scelta": 0.5298,
+   "B5_verifica": 0.5781,
+   "B10_scelta": 0.576,
+   "B10_verifica": 0.589,
+   "5g-3%_scelta": 0.7152,
+   "5g-3%_verifica": 0.689,
+   "21g-5%_scelta": 0.7033,
+   "21g-5%_verifica": 0.65,
+   "63g-8%_scelta": 0.7564,
+   "63g-8%_verifica": 0.5465,
+   "paura in arrivo_scelta": 0.3816,
+   "paura in arrivo_verifica": 0.4204
+  },
+  "RP solo prezzo": {
+   "B5_scelta": 0.6401,
+   "B5_verifica": 0.5356,
+   "B10_scelta": 0.6779,
+   "B10_verifica": 0.5965,
+   "5g-3%_scelta": 0.7426,
+   "5g-3%_verifica": 0.7162,
+   "21g-5%_scelta": 0.7219,
+   "21g-5%_verifica": 0.6412,
+   "63g-8%_scelta": 0.768,
+   "63g-8%_verifica": 0.5402,
+   "paura in arrivo_scelta": 0.41,
+   "paura in arrivo_verifica": 0.419
+  },
+  "NP2 senza paura e prezzo": {
+   "B5_scelta": 0.5408,
+   "B5_verifica": 0.5028,
+   "B10_scelta": 0.4899,
+   "B10_verifica": 0.561,
+   "5g-3%_scelta": 0.6276,
+   "5g-3%_verifica": 0.5646,
+   "21g-5%_scelta": 0.6049,
+   "21g-5%_verifica": 0.6209,
+   "63g-8%_scelta": 0.6532,
+   "63g-8%_verifica": 0.5249,
+   "paura in arrivo_scelta": 0.387,
+   "paura in arrivo_verifica": 0.3876
+  },
+  "P predisposizione": {
+   "B5_scelta": 0.7111,
+   "B5_verifica": 0.606,
+   "B10_scelta": 0.7041,
+   "B10_verifica": 0.5198,
+   "5g-3%_scelta": 0.6575,
+   "5g-3%_verifica": 0.5967,
+   "21g-5%_scelta": 0.6861,
+   "21g-5%_verifica": 0.6614,
+   "63g-8%_scelta": 0.7222,
+   "63g-8%_verifica": 0.65,
+   "paura in arrivo_scelta": 0.4729,
+   "paura in arrivo_verifica": 0.4576
+  },
+  "C1 0.5NP+0.5P": {
+   "B5_scelta": 0.6661,
+   "B5_verifica": 0.6127,
+   "B10_scelta": 0.6744,
+   "B10_verifica": 0.5452,
+   "5g-3%_scelta": 0.7139,
+   "5g-3%_verifica": 0.678,
+   "21g-5%_scelta": 0.7219,
+   "21g-5%_verifica": 0.6835,
+   "63g-8%_scelta": 0.7738,
+   "63g-8%_verifica": 0.6118,
+   "paura in arrivo_scelta": 0.4127,
+   "paura in arrivo_verifica": 0.424
+  },
+  "C2 0.5NP2+0.5P": {
+   "B5_scelta": 0.6344,
+   "B5_verifica": 0.5654,
+   "B10_scelta": 0.5989,
+   "B10_verifica": 0.5405,
+   "5g-3%_scelta": 0.6551,
+   "5g-3%_verifica": 0.5929,
+   "21g-5%_scelta": 0.6576,
+   "21g-5%_verifica": 0.6641,
+   "63g-8%_scelta": 0.7071,
+   "63g-8%_verifica": 0.5923,
+   "paura in arrivo_scelta": 0.4186,
+   "paura in arrivo_verifica": 0.3975
+  }
+ },
+ "adottabili": [],
+ "delta": {
+  "NP senza paura": {
+   "delta": {
+    "B5_scelta": -0.128,
+    "B5_verifica": -0.164,
+    "B10_scelta": -0.135,
+    "B10_verifica": -0.117,
+    "5g-3%_scelta": -0.03,
+    "5g-3%_verifica": -0.059,
+    "21g-5%_scelta": -0.025,
+    "21g-5%_verifica": -0.036,
+    "63g-8%_scelta": -0.008,
+    "63g-8%_verifica": -0.04,
+    "paura in arrivo_scelta": 0.017,
+    "paura in arrivo_verifica": -0.051
+   },
+   "adottabile": false
+  },
+  "RP solo prezzo": {
+   "delta": {
+    "B5_scelta": -0.017,
+    "B5_verifica": -0.206,
+    "B10_scelta": -0.033,
+    "B10_verifica": -0.109,
+    "5g-3%_scelta": -0.002,
+    "5g-3%_verifica": -0.032,
+    "21g-5%_scelta": -0.007,
+    "21g-5%_verifica": -0.045,
+    "63g-8%_scelta": 0.004,
+    "63g-8%_verifica": -0.046,
+    "paura in arrivo_scelta": 0.046,
+    "paura in arrivo_verifica": -0.052
+   },
+   "adottabile": false
+  },
+  "NP2 senza paura e prezzo": {
+   "delta": {
+    "B5_scelta": -0.117,
+    "B5_verifica": -0.239,
+    "B10_scelta": -0.221,
+    "B10_verifica": -0.145,
+    "5g-3%_scelta": -0.117,
+    "5g-3%_verifica": -0.184,
+    "21g-5%_scelta": -0.124,
+    "21g-5%_verifica": -0.065,
+    "63g-8%_scelta": -0.111,
+    "63g-8%_verifica": -0.062,
+    "paura in arrivo_scelta": 0.023,
+    "paura in arrivo_verifica": -0.084
+   },
+   "adottabile": false
+  },
+  "P predisposizione": {
+   "delta": {
+    "B5_scelta": 0.054,
+    "B5_verifica": -0.136,
+    "B10_scelta": -0.006,
+    "B10_verifica": -0.186,
+    "5g-3%_scelta": -0.087,
+    "5g-3%_verifica": -0.152,
+    "21g-5%_scelta": -0.043,
+    "21g-5%_verifica": -0.025,
+    "63g-8%_scelta": -0.042,
+    "63g-8%_verifica": 0.063,
+    "paura in arrivo_scelta": 0.109,
+    "paura in arrivo_verifica": -0.014
+   },
+   "adottabile": false
+  },
+  "C1 0.5NP+0.5P": {
+   "delta": {
+    "B5_scelta": 0.008,
+    "B5_verifica": -0.129,
+    "B10_scelta": -0.036,
+    "B10_verifica": -0.16,
+    "5g-3%_scelta": -0.031,
+    "5g-3%_verifica": -0.07,
+    "21g-5%_scelta": -0.007,
+    "21g-5%_verifica": -0.002,
+    "63g-8%_scelta": 0.01,
+    "63g-8%_verifica": 0.025,
+    "paura in arrivo_scelta": 0.048,
+    "paura in arrivo_verifica": -0.047
+   },
+   "adottabile": false
+  },
+  "C2 0.5NP2+0.5P": {
+   "delta": {
+    "B5_scelta": -0.023,
+    "B5_verifica": -0.177,
+    "B10_scelta": -0.112,
+    "B10_verifica": -0.165,
+    "5g-3%_scelta": -0.09,
+    "5g-3%_verifica": -0.155,
+    "21g-5%_scelta": -0.071,
+    "21g-5%_verifica": -0.022,
+    "63g-8%_scelta": -0.057,
+    "63g-8%_verifica": 0.006,
+    "paura in arrivo_scelta": 0.054,
+    "paura in arrivo_verifica": -0.074
+   },
+   "adottabile": false
+  }
+ },
+ "oggi": {
+  "BASE": 78.92,
+  "NP senza paura": 57.9,
+  "RP solo prezzo": 83.92,
+  "NP2 senza paura e prezzo": 16.62,
+  "P predisposizione": 65.95,
+  "C1 0.5NP+0.5P": 0.78,
+  "C2 0.5NP2+0.5P": 0.5
+ }
+}
