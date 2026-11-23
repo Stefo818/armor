@@ -1085,7 +1085,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
               f"{_safe(modello_sistemico.oggi_html, 'Radar di fondo')}"
               f"{F('Il rischio nei prossimi mesi', cruscotto.armor_window(hz3, aix) + cruscotto.JS, 'Indice Armor a tre scadenze')}"
               f"{_safe(lambda: scadenze.banner(scadenze.elenco()), 'Scadenze')}"
-              f"{F('Semafori di oggi', sem_new, 'Quanti indici sono verdi, gialli e rossi')}"
+              f"{F('Semafori di oggi', sem_new, 'Quanti indici sono verdi, gialli e rossi', aperto=True)}"
               f"{F('Zone di rischio', _safe(lambda: soglie.html(aix['value'] if aix else None, _sai_titan(p)), 'Zone di rischio'))}"
               f"{F('Il giudizio di Armor', hero_b5)}"
               f"{F('Regime di tensione', reg_box, 'Quanta tensione c’è sui mercati')}"
