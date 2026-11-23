@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-23T08:20:10Z",
+ "data_utc": "2026-11-23T09:47:06Z",
  "oggi": "2026-11-23",
  "ultima_previsione": "2026-11-20",
  "giorni_da_ultima": 1,
@@ -162,8 +162,8 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-19",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 3,
    "stato": "ok"
   },
   {
@@ -449,8 +449,8 @@
   {
    "nome": "fear_greed",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
