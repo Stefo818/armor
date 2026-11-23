@@ -424,7 +424,8 @@ def aggiorna(solo: list[str] | None = None) -> dict:
              ("opzioni", aggiorna_opzioni), ("componenti", aggiorna_componenti),
              ("bce", ex.aggiorna_bce), ("ofr", ex.aggiorna_ofr), ("tesoro_curve", ex.aggiorna_ust), ("tesoro_cassa_aste", ex.aggiorna_fiscal), ("cot", ex.aggiorna_cot),
              ("wikipedia", ex.aggiorna_wiki), ("cripto", ex.aggiorna_cripto), ("nyfed", ex.aggiorna_nyfed), ("tsa", ex.aggiorna_tsa),
-             ("finra", ex.aggiorna_finra), ("gdelt", ex.aggiorna_gdelt))
+             ("finra", ex.aggiorna_finra), ("gdelt", ex.aggiorna_gdelt),
+             ("vix_future", ex.aggiorna_vix_future), ("aaii", ex.aggiorna_aaii), ("previsioni", ex.aggiorna_previsioni))
     for nome, fn in passi:
         if solo and nome not in solo:
             continue

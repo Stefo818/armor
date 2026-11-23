@@ -200,6 +200,7 @@ def _archivio(k: str):
             ("gdelt_", "Quanto (o con che tono) i giornali di tutto il mondo parlano di un tema di crisi.", "GDELT."),
             ("cripto_", "Dati sul mondo cripto: stablecoin in circolazione, fondi nella finanza decentralizzata o indice di paura/avidità.", "DefiLlama, Alternative.me."),
             ("nyfed_", "Tasso o volume dei prestiti overnight garantiti da titoli di Stato (SOFR e simili): misura la tensione nel finanziamento delle banche.", "Federal Reserve di New York."),
+            ("aaii_", "Sondaggio settimanale dei piccoli investitori americani: quanti si dicono rialzisti, neutrali o ribassisti.", "AAII."),
             ("tsa_", "Persone che passano ogni giorno i controlli aeroportuali americani: indicatore rapido dell'economia reale.", "TSA."),
             ("cboe_pc_", "Rapporto tra opzioni put (di protezione) e call (di scommessa al rialzo) scambiate ogni giorno: più è alto, più gli investitori si proteggono.", "CBOE.")):
         if k.startswith(pre):

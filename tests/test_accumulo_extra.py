@@ -34,3 +34,16 @@ def test_parse_wiki_gdelt_nyfed_finra():
     assert n["tasso"].iloc[0] == 4.3 and n["volume"].iloc[0] == 2000
     f = ex.parse_finra("Date|Symbol|ShortVolume|ShortExemptVolume|TotalVolume|Market\n20261110|SPY|60|1|100|B\n20261110|ZZZ|5|0|10|B\n", {"SPY"})
     assert list(f["Symbol"]) == ["_TOTALE", "SPY"] and f["TotalVolume"].iloc[0] == 110
+
+
+def test_vix_future_scadenze_e_parser():
+    sc = ex.scadenze_vix(pd.Timestamp("2026-11-23"), avanti=2)
+    assert [d.strftime("%Y-%m-%d") for d in sc[:2]] == ["2026-11-18", "2026-12-16"] and all(d.weekday() == 2 for d in sc)
+    v = ex.parse_vx("Trade Date,Futures,Open,High,Low,Close,Settle,Change,Total Volume,EFP,Open Interest\n2026-11-20,VX,18,19,17,18.5,18.4,0.1,100,0,500\n", "2026-12-16")
+    assert v["settle"].iloc[0] == 18.4 and v["scadenza"].iloc[0] == "2026-12-16" and v["data"].iloc[0] == "2026-11-20"
+
+
+def test_parse_aaii():
+    df = pd.DataFrame([["titolo", None, None, None], ["Date", "Bullish", "Neutral", "Bearish"], ["2026-11-19", 35.0, 30.0, 35.0], ["2026-11-12", 40.0, 30.0, 30.0]])
+    t = ex.parse_aaii(df)
+    assert list(t.columns) == ["bullish", "neutral", "bearish"] and t["bullish"].iloc[0] == 35.0

@@ -397,3 +397,101 @@ def aggiorna_finra(stato: dict) -> None:
     if assenti:
         festivi.write_text("\n".join(sorted(saltati | set(assenti))), encoding="utf-8")
     stato["finra_vendite_scoperto"] = {"giorni_richiesti": len(giorni), "righe_nuove": righe, "senza_file": len(assenti), **{"fallite": {k: str(v)[:50] for k, (t, v) in res.items() if t != "ok"}}}
+
+
+# ----------------------------------------------------------------------------- istantanee giornaliere di dati che altrove sono a pagamento o senza storia
+# Curva dei future VIX (CBOE pubblica gratis il regolamento giornaliero di ogni scadenza), sondaggio AAII, probabilita' dei mercati di previsione.
+def scadenze_vix(oggi: pd.Timestamp, indietro: int = 0, avanti: int = 9) -> list[pd.Timestamp]:
+    """Scadenze mensili dei future VIX: il mercoledi' che cade 30 giorni prima del terzo venerdi' del mese successivo."""
+    out = []
+    for k in range(-indietro, avanti + 1):
+        m = (oggi.replace(day=1) + pd.DateOffset(months=k + 1))
+        primo = m.replace(day=1)
+        terzo_ven = primo + pd.Timedelta(days=(4 - primo.weekday()) % 7 + 14)
+        out.append(terzo_ven - pd.Timedelta(days=30))
+    return out
+
+
+def parse_vx(txt: str, scadenza: str) -> pd.DataFrame:
+    df = pd.read_csv(io.StringIO(txt))
+    df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
+    col_d = "trade_date" if "trade_date" in df.columns else df.columns[0]
+    df["data"] = pd.to_datetime(df[col_d], errors="coerce").dt.strftime("%Y-%m-%d")
+    df["scadenza"] = scadenza
+    tieni = [c for c in ("data", "scadenza", "open", "high", "low", "close", "settle", "volume", "open_interest") if c in df.columns]
+    return df.dropna(subset=["data"])[tieni]
+
+
+def aggiorna_vix_future(stato: dict) -> None:
+    base = DATA / "vix_futures"
+    base.mkdir(parents=True, exist_ok=True)
+    p = base / "vx.csv"
+    old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+    oggi = pd.Timestamp(datetime.now(timezone.utc).date())
+    sc = scadenze_vix(oggi, indietro=0 if len(old) else 14)
+    pezzi, err = [], {}
+    for d in sc:
+        k = d.strftime("%Y-%m-%d")
+        try:
+            r = requests.get(f"https://cdn.cboe.com/data/us/futures/market_statistics/historical_data/VX/VX_{k}.csv", headers=UA, timeout=60)
+            if r.status_code == 404:
+                continue
+            r.raise_for_status()
+            txt = "\n".join(l for l in r.text.splitlines() if l.strip() and not l.lower().startswith(("product", "cboe")))
+            pezzi.append(parse_vx(txt, k))
+        except Exception as e:  # noqa: BLE001
+            err[k] = str(e)[:50]
+    if pezzi:
+        m = pd.concat([old] + pezzi, ignore_index=True).drop_duplicates(subset=["data", "scadenza"], keep="last").sort_values(["data", "scadenza"])
+        m.to_csv(p, index=False)
+    stato["vix_future_curva"] = {"scadenze_tentate": len(sc), "scaricate": len(pezzi), "fallite": err}
+
+
+def parse_aaii(df: pd.DataFrame) -> pd.DataFrame:
+    """Cerca la riga d'intestazione con Bullish/Bearish e restituisce data + percentuali."""
+    for i in range(min(15, len(df))):
+        riga = [str(x).strip().lower() for x in df.iloc[i].tolist()]
+        if any("bullish" == x for x in riga) and any("bearish" == x for x in riga):
+            t = df.iloc[i + 1:].copy()
+            t.columns = [str(x).strip().lower() for x in df.iloc[i].tolist()]
+            t = t.rename(columns={t.columns[0]: "data"})
+            t["data"] = pd.to_datetime(t["data"], errors="coerce")
+            t = t[t["data"].notna()].set_index("data")
+            return t[[c for c in ("bullish", "neutral", "bearish") if c in t.columns]].apply(pd.to_numeric, errors="coerce").dropna(how="all")
+    raise RuntimeError("intestazione AAII non trovata")
+
+
+def aggiorna_aaii(stato: dict) -> None:
+    r = _get("https://www.aaii.com/files/surveys/sentiment.xls")
+    df = pd.read_excel(io.BytesIO(r.content), header=None)
+    t = parse_aaii(df)
+    t = t / 100.0 if t.max().max() > 1.5 else t
+    stato["aaii_sondaggio"] = {"righe_nuove": _upsert_tutte("aaii_", t)}
+
+
+def aggiorna_previsioni(stato: dict) -> None:
+    """Probabilita' implicite (prezzo del «si») dei mercati di previsione su recessione, tassi, crolli. Istantanea: la storia nasce da qui."""
+    oggi = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    righe = []
+    for q in ("recession", "fed rate", "stock market crash", "S&P 500", "bank failure", "default"):
+        try:
+            j = _get("https://gamma-api.polymarket.com/public-search", tries=2, params={"q": q, "limit_per_type": 8}).json()
+            for ev in j.get("events", [])[:8]:
+                for m in ev.get("markets", [])[:6]:
+                    pr = m.get("outcomePrices")
+                    if isinstance(pr, str):
+                        pr = json.loads(pr)
+                    if pr:
+                        righe.append({"data": oggi, "tema": q, "evento": str(ev.get("title", ""))[:80], "mercato": str(m.get("question", ""))[:100],
+                                      "prob_si": float(pr[0]), "volume": m.get("volume"), "fine": str(m.get("endDate", ""))[:10]})
+        except Exception:  # noqa: BLE001
+            continue
+    if not righe:
+        raise RuntimeError("nessun mercato letto")
+    base = DATA / "previsioni"
+    base.mkdir(parents=True, exist_ok=True)
+    p = base / f"{oggi[:4]}.csv"
+    old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+    m = pd.concat([old, pd.DataFrame(righe)], ignore_index=True).drop_duplicates(subset=["data", "mercato"], keep="last")
+    m.to_csv(p, index=False)
+    stato["mercati_previsione"] = {"righe_oggi": len(righe)}

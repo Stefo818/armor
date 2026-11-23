@@ -99,3 +99,9 @@ Da cercare/aggiungere se diventano raggiungibili: curva dei future VIX (struttur
 - File con righe CRLF/miste: report.py, jobs.py, sources.py — modificare via byte, non con il testo di Python.
 - L'utente dopo ogni spinta deve rilanciare, da GitHub → Actions: «Accumulo dati per le ricerche future», poi «Aggiornamento giornaliero Armor», poi «Sito Armor (prezzi live e app per telefono)», e riaprire l'app.
 - Ogni cosa mostrata all'utente: italiano semplice, senza sigle, con la «chiave di lettura».
+
+## 8. Aggiunta del 23/11/2026 (pomeriggio): istantanee di dati altrove a pagamento
+- `vix_futures/vx.csv`: regolamento giornaliero di ogni scadenza dei future VIX (CBOE lo pubblica gratis): data, scadenza, open/high/low/close/settle, volume, posizioni aperte. Dà la **curva a termine** (contango/backwardation); al primo giro recupera le ultime ~14 scadenze.
+- `aaii_bullish/neutral/bearish` in series: sondaggio settimanale AAII (storico completo dal 1987, se il file xls è raggiungibile).
+- `previsioni/AAAA.csv`: istantanea giornaliera dei mercati di previsione (Polymarket) su recessione, tassi, crolli, default: probabilità implicita («prob_si»). **Storia solo da oggi.**
+- Non raggiungibili gratis e non raccolti: CDS, flussi dei fondi, dealer, basis valutaria (vedi §6).
