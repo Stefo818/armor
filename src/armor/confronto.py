@@ -183,7 +183,7 @@ CSS = """
 .cfw{margin:8px 0}.cfbar{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.cfbar button,.cfchips label{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
 .cfbar button.on{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700}.cfchips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.cfchips label{display:flex;align-items:center;gap:6px}.cfchips label.on{border-width:2px;font-weight:700}
 .cfchips i{display:inline-block;width:14px;height:4px;border-radius:2px}.cfwrap{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:6px 4px}
-.cfwrap canvas{width:100%;display:block;touch-action:pan-y;user-select:none;-webkit-user-select:none}.cftip{position:absolute;pointer-events:none;background:var(--card);color:var(--tx);border:1px solid var(--ac);border-radius:8px;padding:4px 7px;font-size:10.5px;line-height:1.28;box-shadow:0 3px 12px rgba(0,0,0,.3);display:none;z-index:5;min-width:0;max-width:62%;background:color-mix(in srgb,var(--card) 52%,transparent);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.cfwrap canvas{width:100%;display:block;touch-action:pan-y;user-select:none;-webkit-user-select:none}.cftip{position:absolute;pointer-events:none;background:var(--card);color:var(--tx);border:1px solid var(--ac);border-radius:7px;padding:2px 5px;font-size:9.5px;line-height:1.18;box-shadow:none;display:none;z-index:5;min-width:0;max-width:46%;background:color-mix(in srgb,var(--card) 34%,transparent);border-color:color-mix(in srgb,var(--ac) 55%,transparent)}
 .cfst{font-size:13px;margin:8px 0}.cfl{font-size:12px;color:var(--mu);display:flex;gap:14px;flex-wrap:wrap;margin:4px 6px}.cfl i{display:inline-block;width:18px;border-top:3px solid;margin-right:5px;vertical-align:middle}.cfl span{display:inline-flex;align-items:center}
 .cfchips label{transition:box-shadow .15s,opacity .15s}.cfchips label:not(.on){opacity:.55}.cfchips label.on i{box-shadow:0 0 8px 1px currentColor}
 .cfzoom{font-size:13px;margin:4px 0;min-height:30px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.cfzoom button{border:1px solid var(--ac);background:var(--ac);color:#fff;border-radius:99px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}
@@ -214,7 +214,7 @@ function chip(m){var c=colr(m),on=act[m.k];return '<label data-k="'+m.k+'" data-
 function build(){
  var h='<div class="cfbar"><b>Periodo:</b>'+P.map(function(p){return '<button data-p="'+p[0]+'"'+(per===p[0]?' class="on"':'')+'>'+p[1]+'</button>'}).join('')+'</div>'+
  '<div class="cfzoom"></div><div class="cfl"></div>'+
- '<div class="cfwrap"><canvas id="cfc" tabindex="0"></canvas><div class="cftip"></div></div>'+
+ '<div class="cfwrap"><canvas id="cfc" tabindex="0"></canvas><div class="cftip cftl"></div><div class="cftip cftr"></div></div>'+
  '<div class="cfhint mu">'+(COARSE?'<b>Tocca</b> il grafico: vedi i valori, e se scorri il dito cambiano subito. <b>Due dita</b>: sposti il grafico. <b>Doppio tocco e trascina</b>: ingrandisci quella zona. <b>Doppio tocco veloce</b>: torna alla vista normale. Tieni premuta una voce per la spiegazione.':'Passa il mouse: data e valori. <b>Trascina</b> per ingrandire un periodo; <b>tasto destro + trascina</b> (o i tasti ← →) per scorrere; <b>doppio clic</b> per tornare alla vista normale. Con «Schermo intero» il grafico occupa tutto lo schermo. Su ogni voce il mouse fermo apre la spiegazione.')+'</div>'+
  '<div class="cfchips">';
  D.gruppi.forEach(function(g){var ms=D.meta.filter(function(m){return m.g===g[0]});if(!ms.length)return;var n=ms.filter(function(m){return act[m.k]}).length;
@@ -262,10 +262,13 @@ function stats(){var el=root.querySelector('.cfst');if(!el)return;var arm=D.s.ar
  el.innerHTML='<b>Nel periodo scelto</b> (descrittivo, non una previsione): dopo i giorni con Indice Armor in zona pericolo (45 o più) l\'S&amp;P 500 ha reso in media <b>'+nf(av(hi),1)+'%</b> nel mese successivo ('+hi.length+' giorni); dopo quelli in zona tranquilla (sotto 35), <b>'+nf(av(lo),1)+'%</b> ('+lo.length+' giorni).'}
 function idx(cx){var rc=cv.getBoundingClientRect(),i=Math.round(i0+(cx-rc.left-L)/(W-L-R)*(i1-i0));return Math.max(i0,Math.min(i1,i))}
 function tip(clientX){var rc=cv.getBoundingClientRect(),x=clientX-rc.left,i=idx(clientX);hov=i;draw();
- var t=root.querySelector('.cftip'),dt=new Date(D.d[i]*86400000);var h='<b>'+dt.getUTCDate()+'/'+(dt.getUTCMonth()+1)+'/'+dt.getUTCFullYear()+'</b>';
- D.meta.filter(function(m){return act[m.k]&&D.s[m.k]}).forEach(function(m){var v=D.s[m.k][i],e='';if(m.g==='a'&&IB!=null&&v!=null&&D.s[m.k][IB])e=' ('+nf((v/D.s[m.k][IB]-1)*100,1)+'% dalla base)';h+='<br><span style="color:'+colr(m)+'">■</span> '+m.n+': '+nf(v,m.g==='a'?2:m.d)+(m.g==='a'?'':(m.u||''))+e});
- t.innerHTML=h;t.style.display='block';var tw=t.offsetWidth;var lx=x<rc.width/2?x+16:x-tw-16;lx=Math.max(0,Math.min(lx,rc.width-tw));t.style.left=lx+'px';t.style.top='6px'}
-function hideTip(){var t=root.querySelector('.cftip');if(t)t.style.display='none'}
+ var tl=root.querySelector('.cftl'),tr=root.querySelector('.cftr'),dt=new Date(D.d[i]*86400000);var hd='<b>'+dt.getUTCDate()+'/'+(dt.getUTCMonth()+1)+'/'+dt.getUTCFullYear()+'</b>';
+ var rows=D.meta.filter(function(m){return act[m.k]&&D.s[m.k]}).map(function(m){var v=D.s[m.k][i],e='';if(m.g==='a'&&IB!=null&&v!=null&&D.s[m.k][IB])e=' ('+nf((v/D.s[m.k][IB]-1)*100,1)+'%)';return '<span style="color:'+colr(m)+'">\u25a0</span> '+m.n+': '+nf(v,m.g==='a'?2:m.d)+(m.g==='a'?'':(m.u||''))+e});
+ var h=Math.ceil(rows.length/2),A=[hd].concat(rows.slice(0,h)),B=rows.slice(h);
+ tl.innerHTML=A.join('<br>');tl.style.display='block';var wl=tl.offsetWidth;tl.style.left=Math.max(0,x-wl-8)+'px';tl.style.top='6px';
+ if(B.length){tr.innerHTML=B.join('<br>');tr.style.display='block';var wr=tr.offsetWidth;tr.style.left=Math.min(rc.width-wr,x+8)+'px';tr.style.top='6px'}else tr.style.display='none';
+ if(x-wl-8<0){tl.style.left='0px'}}
+function hideTip(){root.querySelectorAll('.cftip').forEach(function(t){t.style.display='none'})}
 function clampView(a,b){var n=D.d.length,sp=b-a;if(sp<19)sp=19;if(sp>n-1)sp=n-1;if(a<0){a=0}if(a+sp>n-1)a=n-1-sp;return [Math.max(0,a),Math.max(0,a)+sp]}
 function shift(k){setRange();var sp=i1-i0,d=Math.round(sp*0.25)*k;view=clampView(i0+d,i1+d);per=0;draw()}
 function endSel(){if(dragA==null)return;var a=Math.min(dragA,dragB==null?dragA:dragB),b=Math.max(dragA,dragB==null?dragA:dragB);dragA=dragB=null;if(b-a>=5){view=[a,b];per=0;hov=null;hideTip()}draw()}
