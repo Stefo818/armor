@@ -804,3 +804,6 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - PROTOCOLLO_/ESITO_ANTICIPO.md: nessuna variante (massimo 5 giorni, media esponenziale, misto con predisposizione) passa la regola. Indice crollo invariato.
 - Aggiunta riga «Terreno fragile» (src/armor/predisposizione.py) + registro data/predisposizione_registro.csv per la prova in avanti.
 - Grafico: aggiunto Indice crollo, default attivi solo S&P 500, VWCE, Armor, Super Armor, Indice crollo; su telefono valori in una striscia sopra il grafico.
+
+## (11) 23/11/2026 · Ricerca sfasata
+- PROTOCOLLO_/ESITO_SFASATO.md: 396 variabili × 3 orizzonti sfasati, partenza da fermo. Solo il VIX supera il caso per i prossimi 5 giorni; settimane e mesi: nulla. Indice crollo invariato.

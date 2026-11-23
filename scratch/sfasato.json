@@ -1,0 +1,208 @@
+{
+ "episodi": {
+  "E1 giorni": {
+   "scelta": 47,
+   "verifica": 13
+  },
+  "E2 settimane": {
+   "scelta": 30,
+   "verifica": 8
+  },
+  "E3 mesi": {
+   "scelta": 12,
+   "verifica": 3
+  }
+ },
+ "n_candidati": 396,
+ "segnali": {
+  "E1 giorni": {
+   "soglia_caso": 0.7372,
+   "n": 1,
+   "top8": [
+    {
+     "f": "vix|T0",
+     "segno": 1,
+     "scelta": 0.6906,
+     "verifica": 0.7842
+    },
+    {
+     "f": "vix|T63",
+     "segno": 1,
+     "scelta": 0.5086,
+     "verifica": 0.7154
+    },
+    {
+     "f": "cape_m|T5",
+     "segno": -1,
+     "scelta": 0.5955,
+     "verifica": 0.7047
+    },
+    {
+     "f": "nfci_risk|T5",
+     "segno": 1,
+     "scelta": 0.6376,
+     "verifica": 0.6974
+    },
+    {
+     "f": "fedfunds|T21",
+     "segno": -1,
+     "scelta": 0.5247,
+     "verifica": 0.6912
+    },
+    {
+     "f": "pe_m|T63",
+     "segno": 1,
+     "scelta": 0.5366,
+     "verifica": 0.6706
+    },
+    {
+     "f": "pe_m|T0",
+     "segno": 1,
+     "scelta": 0.6002,
+     "verifica": 0.6635
+    },
+    {
+     "f": "eps_sp|T5",
+     "segno": -1,
+     "scelta": 0.534,
+     "verifica": 0.6607
+    }
+   ],
+   "segnali": [
+    {
+     "f": "vix|T0",
+     "segno": 1,
+     "scelta": 0.6906,
+     "verifica": 0.7842
+    }
+   ]
+  },
+  "E2 settimane": {
+   "soglia_caso": 0.8426,
+   "n": 0,
+   "top8": [
+    {
+     "f": "anfci|T5",
+     "segno": 1,
+     "scelta": 0.5489,
+     "verifica": 0.7738
+    },
+    {
+     "f": "erp|T63",
+     "segno": -1,
+     "scelta": 0.6102,
+     "verifica": 0.7656
+    },
+    {
+     "f": "delinq_mut|T21",
+     "segno": 1,
+     "scelta": 0.6061,
+     "verifica": 0.759
+    },
+    {
+     "f": "nfci_leverage|T0",
+     "segno": 1,
+     "scelta": 0.6688,
+     "verifica": 0.7537
+    },
+    {
+     "f": "usrec|T63",
+     "segno": -1,
+     "scelta": 0.5762,
+     "verifica": 0.7441
+    },
+    {
+     "f": "nfci_risk|T5",
+     "segno": 1,
+     "scelta": 0.6308,
+     "verifica": 0.7429
+    },
+    {
+     "f": "erp|T0",
+     "segno": -1,
+     "scelta": 0.6135,
+     "verifica": 0.7407
+    },
+    {
+     "f": "delinq_mut|T63",
+     "segno": 1,
+     "scelta": 0.5817,
+     "verifica": 0.7388
+    }
+   ],
+   "segnali": []
+  },
+  "E3 mesi": {
+   "soglia_caso": 0.9728,
+   "n": 0,
+   "top8": [
+    {
+     "f": "baa_d|T0",
+     "segno": 1,
+     "scelta": 0.5322,
+     "verifica": 0.9205
+    },
+    {
+     "f": "neworder|T0",
+     "segno": 1,
+     "scelta": 0.6052,
+     "verifica": 0.918
+    },
+    {
+     "f": "usrec|T0",
+     "segno": 1,
+     "scelta": 0.5959,
+     "verifica": 0.9085
+    },
+    {
+     "f": "usrec|T5",
+     "segno": -1,
+     "scelta": 0.606,
+     "verifica": 0.9085
+    },
+    {
+     "f": "usrec|T21",
+     "segno": -1,
+     "scelta": 0.6025,
+     "verifica": 0.9085
+    },
+    {
+     "f": "equity_value|T5",
+     "segno": -1,
+     "scelta": 0.6641,
+     "verifica": 0.9045
+    },
+    {
+     "f": "credit_ratio|T63",
+     "segno": -1,
+     "scelta": 0.5537,
+     "verifica": 0.9033
+    },
+    {
+     "f": "aaa_d|T0",
+     "segno": 1,
+     "scelta": 0.5335,
+     "verifica": 0.9009
+    }
+   ],
+   "segnali": []
+  }
+ },
+ "combinato": {
+  "E1 giorni": {
+   "BASE_scelta": 0.6771,
+   "COMB_scelta": 0.7028,
+   "BASE_verifica": 0.7588,
+   "COMB_verifica": 0.7842
+  },
+  "E2 settimane": {
+   "BASE_scelta": 0.6224,
+   "BASE_verifica": 0.6551
+  },
+  "E3 mesi": {
+   "BASE_scelta": 0.5315,
+   "BASE_verifica": 0.6925
+  }
+ },
+ "adottabile": false
+}
