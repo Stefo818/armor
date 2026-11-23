@@ -793,3 +793,8 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 - Scala 40/60/80 e stesse tinte per Indice Armor e Super Armor in tutte le schede (soglie.py, armor_index.compute usa armor_tarato, registro resta sulla scala originale).
 - grafico_indici.py: toccando un indice si vedono i suoi pilastri, toccando un pilastro si apre il suo grafico con tasto per tornare indietro. Indice Armor: 5 parti (paura, liquidita, rimbalzo, stress, ciclo; colonne a_* in titan_storia.csv, solo per mostrarle). Super Armor: 6 pilastri + 7 (fondi a breve) e 8 (Buffett) solo informativi, NON nel calcolo.
 - Pagina Oggi: Paura, protezioni e prezzi spostata sopra La bussola di oggi.
+
+
+## (9) 23/11/2026 · Valutazioni e ricerca libera
+- Schede CAPE, P/E, Indice Buffett in «Paura, protezioni e prezzi» (colore per posizione storica 50/80/95%, grafico interattivo): grafico_indici.val_cards/val_cfg.
+- Ricerca libera (PROTOCOLLO_/ESITO_RICERCA_LIBERA.md): unico candidato che passa P2 è «CAPE × sotto media 200 giorni»; implementato come spia informativa src/armor/spia_caro.py (non cambia l'Indice crollo).

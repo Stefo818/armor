@@ -139,6 +139,8 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
     try:
         from . import grafico_indici
         extra = grafico_indici.val_cards()
+        from . import spia_caro
+        extra += spia_caro.html()
     except Exception:  # noqa: BLE001
         extra = ""
     return f"<div class='kpis'>{cards}{extra}</div><div class='mu liveinfo' style='margin:-4px 0 10px'></div>"

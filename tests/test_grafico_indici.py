@@ -51,3 +51,10 @@ def test_valutazioni_schede_e_grafico():
     for k in ("cape", "pe", "buffett"):
         assert f"data-gi='{k}'" in h
     assert "gi-cfg" in g.html()
+
+
+def test_spia_caro_stato():
+    from armor import spia_caro
+    x = spia_caro.stato()
+    assert x and x["livello"] in (0, 1, 2) and x["q80"] < x["q90"]
+    assert "Spia" in spia_caro.html()
