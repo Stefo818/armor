@@ -1,0 +1,32 @@
+name: Accumulo dati per le ricerche future
+on:
+  schedule:
+    - cron: '50 22 * * 1-5'   # dopo la chiusura di Wall Street: chiusure, barre a 5 minuti, opzioni, componenti dell'S&P 500
+    - cron: '50 6 * * 2-6'    # mattina: Asia, futures e criptovalute della notte
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: armor-dati
+  cancel-in-progress: false
+jobs:
+  accumulo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Accumula i dati
+        env:
+          PYTHONPATH: src
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        timeout-minutes: 30
+        run: python -m armor accumulo
+      - name: Salva nel repository
+        if: always()
+        run: bash scripts/salva.sh "Accumulo dati per le ricerche future" data/series data/intraday data/componenti data/opzioni_ext data/accumulo_stato.json

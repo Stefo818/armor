@@ -1,0 +1,10 @@
+{
+ "data": "2026-11-23 12:03 UTC",
+ "componenti": {
+  "titoli": 503,
+  "riusciti": 503,
+  "falliti": 0,
+  "esempi_errori": {},
+  "avviso": "elenco di oggi: i titoli usciti dall'indice in passato non ci sono (sopravvivenza)"
+ }
+}

@@ -507,6 +507,9 @@ def main() -> None:
         import os
         sys.stdout.flush()
         os._exit(0)   # chiusura immediata: nessun thread di rete bloccato può tenere vivo il programma
+    elif cmd == "accumulo":   # archivio esteso per le ricerche future (workflow accumulo.yml): python -m armor accumulo [yahoo fred cboe_putcall intraday opzioni componenti]
+        from . import accumulo
+        accumulo.aggiorna(sys.argv[2:] or None)
     elif cmd == "senza-download":
         tutto(skip_download=True)
     elif cmd == "diagnosi":

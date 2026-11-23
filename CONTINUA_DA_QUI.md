@@ -807,3 +807,6 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 
 ## (11) 23/11/2026 · Ricerca sfasata
 - PROTOCOLLO_/ESITO_SFASATO.md: 396 variabili × 3 orizzonti sfasati, partenza da fermo. Solo il VIX supera il caso per i prossimi 5 giorni; settimane e mesi: nulla. Indice crollo invariato.
+
+## (12) Accumulo dati per le ricerche future (23/11/2026)
+Richiesta: registrare da ora quanti più dati possibili per migliorare il modello fra qualche mese. Fatto: `src/armor/accumulo.py` + comando `python -m armor accumulo [yahoo fred cboe_putcall intraday opzioni componenti]` + workflow `.github/workflows/accumulo.yml` (22:50 e 06:50 UTC nei giorni di Borsa, indipendente dal giornaliero, ogni fonte fallisce da sola). Cosa viene salvato: vedi `DATI_ACCUMULATI.md`; esito di ogni giorno in `data/accumulo_stato.json`. Provato dal vivo solo Yahoo (301/304 serie, 52/52 intraday, 503/503 componenti S&P 500); FRED, CBOE put/call e catene opzioni CBOE non sono raggiungibili dal sandbox: si verificano al primo lancio del workflow (controllare accumulo_stato.json). Nessuna di queste serie entra nei modelli. Glossario: serie x_/xv_/f_/cboe_pc_ hanno una spiegazione comune (glossario_dati._archivio).

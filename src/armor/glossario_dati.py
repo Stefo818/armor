@@ -181,7 +181,22 @@ DATI = _carica()
 def scheda(k: str):
     """(cos'è, perché conta, come si legge, fonte) nel formato di glossario_serie, oppure None."""
     d = DATI.get(k)
-    return None if d is None else (d["cosa"], d["perche"], d["lettura"], d["fonte"])
+    if d is None:
+        return _archivio(k)
+    return (d["cosa"], d["perche"], d["lettura"], d["fonte"])
+
+
+def _archivio(k: str):
+    """Serie solo archiviate per le ricerche future (accumulo.py): non compaiono nell'app, ma hanno una spiegazione comune."""
+    for pre, cosa, fonte in (
+            ("xv_", "Volume giornaliero scambiato (quante quote o azioni passano di mano in un giorno) di uno strumento di Borsa.", "Yahoo Finance, dal 2015."),
+            ("x_", "Prezzo di chiusura giornaliero di un indice, di un fondo (ETF), di una valuta, di una materia prima o di una criptovaluta, archiviato per le ricerche future.", "Yahoo Finance."),
+            ("f_", "Serie economica o finanziaria della Federal Reserve (tassi, credito, lavoro, prezzi, produzione, cambi), archiviata per le ricerche future.", "FRED, Federal Reserve di St. Louis."),
+            ("cboe_pc_", "Rapporto tra opzioni put (di protezione) e call (di scommessa al rialzo) scambiate ogni giorno: più è alto, più gli investitori si proteggono.", "CBOE.")):
+        if k.startswith(pre):
+            return (cosa, "Per ora non entra in nessun indice: è un archivio per cercare, fra qualche mese, segnali che anticipano le correzioni.",
+                    "Si legge come ogni serie storica: conta il confronto con i valori passati.", fonte)
+    return None
 
 
 def _dai_grafici() -> dict:

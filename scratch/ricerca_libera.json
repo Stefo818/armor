@@ -1,0 +1,1176 @@
+{
+ "soglia_caso_95": 0.8008,
+ "non_valutabili": [],
+ "candidati": {
+  "D01 CAPE": {
+   "una settimana": {
+    "auc_scelta": 0.4638,
+    "auc_verifica": 0.4204,
+    "ic90": [
+     0.3413,
+     0.5596
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0254,
+    "dBase_verifica": -0.0078
+   },
+   "un mese": {
+    "auc_scelta": 0.5048,
+    "auc_verifica": 0.4729,
+    "ic90": [
+     0.3806,
+     0.6259
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0151,
+    "dBase_verifica": 0.0014
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5091,
+    "auc_verifica": 0.6546,
+    "ic90": [
+     0.4974,
+     0.832
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0129,
+    "dBase_verifica": 0.0434
+   }
+  },
+  "D02 P/E": {
+   "una settimana": {
+    "auc_scelta": 0.6185,
+    "auc_verifica": 0.4052,
+    "ic90": [
+     0.2647,
+     0.6331
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0063,
+    "dBase_verifica": -0.0169
+   },
+   "un mese": {
+    "auc_scelta": 0.6263,
+    "auc_verifica": 0.3847,
+    "ic90": [
+     0.2511,
+     0.6246
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0102,
+    "dBase_verifica": -0.0257
+   },
+   "tre mesi": {
+    "auc_scelta": 0.6732,
+    "auc_verifica": 0.4027,
+    "ic90": [
+     0.2806,
+     0.6051
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0201,
+    "dBase_verifica": -0.0292
+   }
+  },
+  "D03 Indice Buffett": {
+   "una settimana": {
+    "auc_scelta": 0.5439,
+    "auc_verifica": 0.4983,
+    "ic90": [
+     0.4262,
+     0.6
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0098,
+    "dBase_verifica": -0.0032
+   },
+   "un mese": {
+    "auc_scelta": 0.5769,
+    "auc_verifica": 0.5495,
+    "ic90": [
+     0.4486,
+     0.6681
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0004,
+    "dBase_verifica": 0.0097
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5546,
+    "auc_verifica": 0.6715,
+    "ic90": [
+     0.5096,
+     0.8238
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0041,
+    "dBase_verifica": 0.0379
+   }
+  },
+  "D04 premio al rischio basso": {
+   "una settimana": {
+    "auc_scelta": 0.5304,
+    "auc_verifica": 0.5085,
+    "ic90": [
+     0.4074,
+     0.654
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0105,
+    "dBase_verifica": -0.0108
+   },
+   "un mese": {
+    "auc_scelta": 0.5485,
+    "auc_verifica": 0.5205,
+    "ic90": [
+     0.3878,
+     0.7112
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0035,
+    "dBase_verifica": -0.0037
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5727,
+    "auc_verifica": 0.5693,
+    "ic90": [
+     0.3673,
+     0.7869
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0018,
+    "dBase_verifica": 0.0103
+   }
+  },
+  "D05 CAPE x salita rendimento": {
+   "una settimana": {
+    "auc_scelta": 0.4045,
+    "auc_verifica": 0.6344,
+    "ic90": [
+     0.5676,
+     0.6732
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0214,
+    "dBase_verifica": 0.0149
+   },
+   "un mese": {
+    "auc_scelta": 0.419,
+    "auc_verifica": 0.5857,
+    "ic90": [
+     0.4813,
+     0.6589
+    ],
+    "P1": false,
+    "dBase_scelta": -0.017,
+    "dBase_verifica": 0.0095
+   },
+   "tre mesi": {
+    "auc_scelta": 0.3995,
+    "auc_verifica": 0.6803,
+    "ic90": [
+     0.5746,
+     0.7852
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0224,
+    "dBase_verifica": 0.0406
+   }
+  },
+  "D06 CAPE x stretta finanziaria": {
+   "una settimana": {
+    "auc_scelta": 0.5601,
+    "auc_verifica": 0.6106,
+    "ic90": [
+     0.444,
+     0.7341
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0034,
+    "dBase_verifica": 0.0041
+   },
+   "un mese": {
+    "auc_scelta": 0.5503,
+    "auc_verifica": 0.6337,
+    "ic90": [
+     0.4127,
+     0.8077
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0027,
+    "dBase_verifica": 0.0142
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5153,
+    "auc_verifica": 0.631,
+    "ic90": [
+     0.463,
+     0.7283
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0083,
+    "dBase_verifica": 0.021
+   }
+  },
+  "D07 CAPE x sotto media 200": {
+   "una settimana": {
+    "auc_scelta": 0.6854,
+    "auc_verifica": 0.6211,
+    "ic90": [
+     0.4523,
+     0.7047
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0073,
+    "dBase_verifica": 0.002
+   },
+   "un mese": {
+    "auc_scelta": 0.7111,
+    "auc_verifica": 0.6498,
+    "ic90": [
+     0.4755,
+     0.7545
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0135,
+    "dBase_verifica": 0.0128
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7744,
+    "auc_verifica": 0.7672,
+    "ic90": [
+     0.6437,
+     0.8401
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0245,
+    "dBase_verifica": 0.0491
+   }
+  },
+  "D08 nfci livello": {
+   "una settimana": {
+    "auc_scelta": 0.7399,
+    "auc_verifica": 0.6439,
+    "ic90": [
+     0.5074,
+     0.7278
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0354,
+    "dBase_verifica": -0.0
+   },
+   "un mese": {
+    "auc_scelta": 0.7425,
+    "auc_verifica": 0.6255,
+    "ic90": [
+     0.4857,
+     0.7364
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0374,
+    "dBase_verifica": 0.0049
+   },
+   "tre mesi": {
+    "auc_scelta": 0.774,
+    "auc_verifica": 0.4778,
+    "ic90": [
+     0.282,
+     0.6139
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0442,
+    "dBase_verifica": -0.0156
+   }
+  },
+  "D09 nfci variazione 13 sett": {
+   "una settimana": {
+    "auc_scelta": 0.5861,
+    "auc_verifica": 0.6148,
+    "ic90": [
+     0.4454,
+     0.7369
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0029,
+    "dBase_verifica": 0.0043
+   },
+   "un mese": {
+    "auc_scelta": 0.5665,
+    "auc_verifica": 0.6318,
+    "ic90": [
+     0.4136,
+     0.8001
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0018,
+    "dBase_verifica": 0.0133
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5319,
+    "auc_verifica": 0.6195,
+    "ic90": [
+     0.4509,
+     0.7171
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0031,
+    "dBase_verifica": 0.0182
+   }
+  },
+  "D10 nfci leva": {
+   "una settimana": {
+    "auc_scelta": 0.6076,
+    "auc_verifica": 0.5591,
+    "ic90": [
+     0.4261,
+     0.6786
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0193,
+    "dBase_verifica": -0.0076
+   },
+   "un mese": {
+    "auc_scelta": 0.5847,
+    "auc_verifica": 0.5836,
+    "ic90": [
+     0.4448,
+     0.7178
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0133,
+    "dBase_verifica": 0.0035
+   },
+   "tre mesi": {
+    "auc_scelta": 0.552,
+    "auc_verifica": 0.6272,
+    "ic90": [
+     0.511,
+     0.7237
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0046,
+    "dBase_verifica": 0.0182
+   }
+  },
+  "D11 stlfsi": {
+   "una settimana": {
+    "auc_scelta": 0.7432,
+    "auc_verifica": 0.5525,
+    "ic90": [
+     0.4372,
+     0.6251
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0068,
+    "dBase_verifica": -0.0128
+   },
+   "un mese": {
+    "auc_scelta": 0.7317,
+    "auc_verifica": 0.4954,
+    "ic90": [
+     0.344,
+     0.5826
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0075,
+    "dBase_verifica": -0.0199
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7955,
+    "auc_verifica": 0.4312,
+    "ic90": [
+     0.274,
+     0.557
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0128,
+    "dBase_verifica": -0.0199
+   }
+  },
+  "D12 kcfsi": {
+   "una settimana": {
+    "auc_scelta": 0.7183,
+    "auc_verifica": 0.597,
+    "ic90": [
+     0.4027,
+     0.6844
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0194,
+    "dBase_verifica": -0.0053
+   },
+   "un mese": {
+    "auc_scelta": 0.729,
+    "auc_verifica": 0.5301,
+    "ic90": [
+     0.3012,
+     0.6443
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0241,
+    "dBase_verifica": -0.0135
+   },
+   "tre mesi": {
+    "auc_scelta": 0.8,
+    "auc_verifica": 0.368,
+    "ic90": [
+     0.1922,
+     0.5336
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0358,
+    "dBase_verifica": -0.0394
+   }
+  },
+  "D13 ciss": {
+   "una settimana": {
+    "auc_scelta": 0.7025,
+    "auc_verifica": 0.6112,
+    "ic90": [
+     0.3991,
+     0.6995
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0287,
+    "dBase_verifica": -0.0062
+   },
+   "un mese": {
+    "auc_scelta": 0.6898,
+    "auc_verifica": 0.5689,
+    "ic90": [
+     0.3277,
+     0.6933
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0287,
+    "dBase_verifica": -0.0069
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7037,
+    "auc_verifica": 0.4701,
+    "ic90": [
+     0.2308,
+     0.63
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0338,
+    "dBase_verifica": -0.0165
+   }
+  },
+  "D14 salita rendimento 10 anni": {
+   "una settimana": {
+    "auc_scelta": 0.4193,
+    "auc_verifica": 0.6416,
+    "ic90": [
+     0.5694,
+     0.6816
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0173,
+    "dBase_verifica": 0.0151
+   },
+   "un mese": {
+    "auc_scelta": 0.419,
+    "auc_verifica": 0.5895,
+    "ic90": [
+     0.4807,
+     0.6605
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0163,
+    "dBase_verifica": 0.0096
+   },
+   "tre mesi": {
+    "auc_scelta": 0.3948,
+    "auc_verifica": 0.6713,
+    "ic90": [
+     0.5731,
+     0.7732
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0234,
+    "dBase_verifica": 0.0383
+   }
+  },
+  "D15 salita rendimento 2 anni": {
+   "una settimana": {
+    "auc_scelta": 0.3891,
+    "auc_verifica": 0.6939,
+    "ic90": [
+     0.5069,
+     0.7922
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0209,
+    "dBase_verifica": 0.0236
+   },
+   "un mese": {
+    "auc_scelta": 0.3822,
+    "auc_verifica": 0.6902,
+    "ic90": [
+     0.482,
+     0.8133
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0222,
+    "dBase_verifica": 0.0285
+   },
+   "tre mesi": {
+    "auc_scelta": 0.3343,
+    "auc_verifica": 0.7373,
+    "ic90": [
+     0.6197,
+     0.8161
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0348,
+    "dBase_verifica": 0.05
+   }
+  },
+  "D16 prosciugamento liquidita": {
+   "una settimana": {
+    "auc_scelta": 0.4598,
+    "auc_verifica": 0.5726,
+    "ic90": [
+     0.4617,
+     0.6419
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0197,
+    "dBase_verifica": 0.0028
+   },
+   "un mese": {
+    "auc_scelta": 0.4561,
+    "auc_verifica": 0.6121,
+    "ic90": [
+     0.5207,
+     0.691
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0169,
+    "dBase_verifica": 0.016
+   },
+   "tre mesi": {
+    "auc_scelta": 0.3605,
+    "auc_verifica": 0.5249,
+    "ic90": [
+     0.3845,
+     0.63
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0389,
+    "dBase_verifica": 0.0003
+   }
+  },
+  "D17 M2 annuo basso": {
+   "una settimana": {
+    "auc_scelta": 0.3352,
+    "auc_verifica": 0.4824,
+    "ic90": [
+     0.3849,
+     0.5731
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0345,
+    "dBase_verifica": -0.0171
+   },
+   "un mese": {
+    "auc_scelta": 0.324,
+    "auc_verifica": 0.4965,
+    "ic90": [
+     0.3895,
+     0.6592
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0371,
+    "dBase_verifica": -0.009
+   },
+   "tre mesi": {
+    "auc_scelta": 0.2926,
+    "auc_verifica": 0.4697,
+    "ic90": [
+     0.321,
+     0.6175
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0428,
+    "dBase_verifica": -0.0092
+   }
+  },
+  "D18 crescita fondi monetari": {
+   "una settimana": {
+    "auc_scelta": 0.5206,
+    "auc_verifica": 0.5642,
+    "ic90": [
+     0.4666,
+     0.6409
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0141,
+    "dBase_verifica": -0.0071
+   },
+   "un mese": {
+    "auc_scelta": 0.5176,
+    "auc_verifica": 0.5701,
+    "ic90": [
+     0.4517,
+     0.6665
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0118,
+    "dBase_verifica": -0.0007
+   },
+   "tre mesi": {
+    "auc_scelta": 0.4504,
+    "auc_verifica": 0.5946,
+    "ic90": [
+     0.4439,
+     0.7543
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0233,
+    "dBase_verifica": 0.017
+   }
+  },
+  "D19 MOVE": {
+   "una settimana": {
+    "auc_scelta": 0.7619,
+    "auc_verifica": 0.6323,
+    "ic90": [
+     0.4603,
+     0.7553
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0062,
+    "dBase_verifica": -0.0024
+   },
+   "un mese": {
+    "auc_scelta": 0.7565,
+    "auc_verifica": 0.6425,
+    "ic90": [
+     0.467,
+     0.7711
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0139,
+    "dBase_verifica": 0.0081
+   },
+   "tre mesi": {
+    "auc_scelta": 0.8315,
+    "auc_verifica": 0.609,
+    "ic90": [
+     0.4322,
+     0.7279
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0212,
+    "dBase_verifica": 0.0121
+   }
+  },
+  "D20 VIX su VIX3M": {
+   "una settimana": {
+    "auc_scelta": 0.6828,
+    "auc_verifica": 0.704,
+    "ic90": [
+     0.6247,
+     0.7741
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0069,
+    "dBase_verifica": -0.0032
+   },
+   "un mese": {
+    "auc_scelta": 0.6259,
+    "auc_verifica": 0.6638,
+    "ic90": [
+     0.5757,
+     0.7307
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0072,
+    "dBase_verifica": -0.0017
+   },
+   "tre mesi": {
+    "auc_scelta": 0.6368,
+    "auc_verifica": 0.5743,
+    "ic90": [
+     0.4574,
+     0.6575
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0086,
+    "dBase_verifica": -0.0015
+   }
+  },
+  "D21 VVIX": {
+   "una settimana": {
+    "auc_scelta": 0.6431,
+    "auc_verifica": 0.5732,
+    "ic90": [
+     0.4875,
+     0.7176
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0029,
+    "dBase_verifica": -0.0031
+   },
+   "un mese": {
+    "auc_scelta": 0.6406,
+    "auc_verifica": 0.5103,
+    "ic90": [
+     0.4305,
+     0.6061
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0087,
+    "dBase_verifica": -0.0128
+   },
+   "tre mesi": {
+    "auc_scelta": 0.6107,
+    "auc_verifica": 0.4942,
+    "ic90": [
+     0.4082,
+     0.6073
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0001,
+    "dBase_verifica": -0.0084
+   }
+  },
+  "D22 variazione VIX 21 sedute": {
+   "una settimana": {
+    "auc_scelta": 0.5366,
+    "auc_verifica": 0.61,
+    "ic90": [
+     0.55,
+     0.7068
+    ],
+    "P1": false,
+    "dBase_scelta": -0.008,
+    "dBase_verifica": -0.0032
+   },
+   "un mese": {
+    "auc_scelta": 0.5103,
+    "auc_verifica": 0.5664,
+    "ic90": [
+     0.5094,
+     0.6613
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0128,
+    "dBase_verifica": -0.0058
+   },
+   "tre mesi": {
+    "auc_scelta": 0.4991,
+    "auc_verifica": 0.5779,
+    "ic90": [
+     0.5063,
+     0.6554
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0153,
+    "dBase_verifica": 0.009
+   }
+  },
+  "D23 sotto la media 200": {
+   "una settimana": {
+    "auc_scelta": 0.6673,
+    "auc_verifica": 0.6113,
+    "ic90": [
+     0.4212,
+     0.71
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0135,
+    "dBase_verifica": -0.0107
+   },
+   "un mese": {
+    "auc_scelta": 0.6604,
+    "auc_verifica": 0.5622,
+    "ic90": [
+     0.2957,
+     0.7034
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0162,
+    "dBase_verifica": -0.0144
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7102,
+    "auc_verifica": 0.5221,
+    "ic90": [
+     0.3065,
+     0.6477
+    ],
+    "P1": false,
+    "dBase_scelta": 0.027,
+    "dBase_verifica": -0.0045
+   }
+  },
+  "D24 momento 10 mesi negativo": {
+   "una settimana": {
+    "auc_scelta": 0.6362,
+    "auc_verifica": 0.6167,
+    "ic90": [
+     0.4339,
+     0.6908
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0136,
+    "dBase_verifica": -0.0081
+   },
+   "un mese": {
+    "auc_scelta": 0.6351,
+    "auc_verifica": 0.5896,
+    "ic90": [
+     0.3983,
+     0.6757
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0152,
+    "dBase_verifica": -0.0058
+   },
+   "tre mesi": {
+    "auc_scelta": 0.69,
+    "auc_verifica": 0.4598,
+    "ic90": [
+     0.2497,
+     0.5968
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0257,
+    "dBase_verifica": -0.0176
+   }
+  },
+  "D25 rendimento 252 sedute": {
+   "una settimana": {
+    "auc_scelta": 0.3744,
+    "auc_verifica": 0.3964,
+    "ic90": [
+     0.33,
+     0.5457
+    ],
+    "P1": false,
+    "dBase_scelta": -0.024,
+    "dBase_verifica": -0.0044
+   },
+   "un mese": {
+    "auc_scelta": 0.3807,
+    "auc_verifica": 0.4394,
+    "ic90": [
+     0.339,
+     0.6129
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0229,
+    "dBase_verifica": 0.0002
+   },
+   "tre mesi": {
+    "auc_scelta": 0.3157,
+    "auc_verifica": 0.5456,
+    "ic90": [
+     0.4287,
+     0.748
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0382,
+    "dBase_verifica": 0.0145
+   }
+  },
+  "D26 sopra la media 200": {
+   "una settimana": {
+    "auc_scelta": 0.3327,
+    "auc_verifica": 0.3887,
+    "ic90": [
+     0.29,
+     0.5788
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0267,
+    "dBase_verifica": 0.0003
+   },
+   "un mese": {
+    "auc_scelta": 0.3396,
+    "auc_verifica": 0.4378,
+    "ic90": [
+     0.2966,
+     0.7043
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0277,
+    "dBase_verifica": 0.0033
+   },
+   "tre mesi": {
+    "auc_scelta": 0.2898,
+    "auc_verifica": 0.4779,
+    "ic90": [
+     0.3523,
+     0.6935
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0408,
+    "dBase_verifica": -0.0073
+   }
+  },
+  "D27 HYG/IEF in calo": {
+   "una settimana": {
+    "auc_scelta": 0.6406,
+    "auc_verifica": 0.464,
+    "ic90": [
+     0.4048,
+     0.568
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0039,
+    "dBase_verifica": -0.0182
+   },
+   "un mese": {
+    "auc_scelta": 0.6582,
+    "auc_verifica": 0.5583,
+    "ic90": [
+     0.4851,
+     0.6586
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0074,
+    "dBase_verifica": 0.0032
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7173,
+    "auc_verifica": 0.5246,
+    "ic90": [
+     0.3741,
+     0.6209
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0158,
+    "dBase_verifica": -0.0013
+   }
+  },
+  "D28 prestiti imprese in calo": {
+   "una settimana": {
+    "auc_scelta": 0.4793,
+    "auc_verifica": 0.3868,
+    "ic90": [
+     0.31,
+     0.474
+    ],
+    "P1": false,
+    "dBase_scelta": -0.006,
+    "dBase_verifica": -0.0166
+   },
+   "un mese": {
+    "auc_scelta": 0.476,
+    "auc_verifica": 0.4503,
+    "ic90": [
+     0.3378,
+     0.5563
+    ],
+    "P1": false,
+    "dBase_scelta": -0.006,
+    "dBase_verifica": -0.0058
+   },
+   "tre mesi": {
+    "auc_scelta": 0.4605,
+    "auc_verifica": 0.5631,
+    "ic90": [
+     0.4464,
+     0.6945
+    ],
+    "P1": false,
+    "dBase_scelta": -0.012,
+    "dBase_verifica": 0.0168
+   }
+  },
+  "D29 stretta SLOOS": {
+   "una settimana": {
+    "auc_scelta": 0.6923,
+    "auc_verifica": 0.5711,
+    "ic90": [
+     0.4621,
+     0.6608
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0026,
+    "dBase_verifica": -0.0083
+   },
+   "un mese": {
+    "auc_scelta": 0.7036,
+    "auc_verifica": 0.5403,
+    "ic90": [
+     0.4312,
+     0.6464
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0131,
+    "dBase_verifica": -0.0087
+   },
+   "tre mesi": {
+    "auc_scelta": 0.767,
+    "auc_verifica": 0.3516,
+    "ic90": [
+     0.2138,
+     0.4591
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0186,
+    "dBase_verifica": -0.0428
+   }
+  },
+  "D30 insoluti imprese": {
+   "una settimana": {
+    "auc_scelta": 0.6839,
+    "auc_verifica": 0.4161,
+    "ic90": [
+     0.2968,
+     0.6232
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0077,
+    "dBase_verifica": -0.0206
+   },
+   "un mese": {
+    "auc_scelta": 0.6979,
+    "auc_verifica": 0.4206,
+    "ic90": [
+     0.2571,
+     0.6569
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0124,
+    "dBase_verifica": -0.0213
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7488,
+    "auc_verifica": 0.493,
+    "ic90": [
+     0.2527,
+     0.7407
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0171,
+    "dBase_verifica": -0.0066
+   }
+  },
+  "D31 misto valutazione-condizioni-tassi": {
+   "una settimana": {
+    "auc_scelta": 0.5651,
+    "auc_verifica": 0.6781,
+    "ic90": [
+     0.591,
+     0.7253
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0019,
+    "dBase_verifica": 0.0156
+   },
+   "un mese": {
+    "auc_scelta": 0.5737,
+    "auc_verifica": 0.6376,
+    "ic90": [
+     0.5137,
+     0.7209
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0061,
+    "dBase_verifica": 0.0138
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5772,
+    "auc_verifica": 0.6759,
+    "ic90": [
+     0.5709,
+     0.7604
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0057,
+    "dBase_verifica": 0.0345
+   }
+  },
+  "D32 misto volatilita-prezzo-credito": {
+   "una settimana": {
+    "auc_scelta": 0.7732,
+    "auc_verifica": 0.6213,
+    "ic90": [
+     0.4502,
+     0.7383
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0027,
+    "dBase_verifica": -0.009
+   },
+   "un mese": {
+    "auc_scelta": 0.7246,
+    "auc_verifica": 0.6484,
+    "ic90": [
+     0.4414,
+     0.7866
+    ],
+    "P1": false,
+    "dBase_scelta": 0.005,
+    "dBase_verifica": 0.0042
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7753,
+    "auc_verifica": 0.5815,
+    "ic90": [
+     0.3706,
+     0.7032
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0104,
+    "dBase_verifica": 0.0043
+   }
+  }
+ },
+ "P2_adottabili": [
+  "D07 CAPE x sotto media 200"
+ ],
+ "P1_promossi": [],
+ "anni_esclusi": [
+  2008,
+  2002,
+  2001
+ ],
+ "P2_secondo_controllo": {
+  "D07 CAPE x sotto media 200": {
+   "2008": 2,
+   "2002": 2,
+   "2001": 2
+  }
+ },
+ "oggi": {
+  "D01 CAPE": 0.961,
+  "D02 P/E": 0.89,
+  "D03 Indice Buffett": 1.0,
+  "D04 premio al rischio basso": 0.768,
+  "D05 CAPE x salita rendimento": 0.767,
+  "D06 CAPE x stretta finanziaria": 0.665,
+  "D07 CAPE x sotto media 200": 0.86,
+  "D08 nfci livello": 0.42,
+  "D09 nfci variazione 13 sett": 0.692,
+  "D10 nfci leva": 0.628,
+  "D11 stlfsi": 0.048,
+  "D12 kcfsi": 0.05,
+  "D13 ciss": 0.135,
+  "D14 salita rendimento 10 anni": 0.798,
+  "D15 salita rendimento 2 anni": 0.85,
+  "D16 prosciugamento liquidita": 0.532,
+  "D17 M2 annuo basso": 0.632,
+  "D18 crescita fondi monetari": 0.397,
+  "D19 MOVE": 0.76,
+  "D20 VIX su VIX3M": 0.987,
+  "D21 VVIX": 0.985,
+  "D22 variazione VIX 21 sedute": 0.99,
+  "D23 sotto la media 200": 0.849,
+  "D24 momento 10 mesi negativo": 0.693,
+  "D25 rendimento 252 sedute": 0.375,
+  "D26 sopra la media 200": 0.151,
+  "D27 HYG/IEF in calo": 0.822,
+  "D28 prestiti imprese in calo": 0.319,
+  "D29 stretta SLOOS": 0.531,
+  "D30 insoluti imprese": 0.566,
+  "D31 misto valutazione-condizioni-tassi": 0.726,
+  "D32 misto volatilita-prezzo-credito": 0.811
+ }
+}
