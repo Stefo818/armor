@@ -136,7 +136,12 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
         dd = (x / float(s.rolling(252, min_periods=60).max().iloc[-1]) - 1) * 100
         cards += (f"<div class='kc lq' data-k='{key}' data-chart='{chart}'><div class='kt'>{nm}</div><div class='kv lqp'>{_fmt(x, 2)}</div><div class='lqc'></div>"
                   f"{trend_dated(s, 2, False)}<div class='mu'>Dal massimo a 1 anno: {_fmt(dd, 1)}%</div></div>")
-    return f"<div class='kpis'>{cards}</div><div class='mu liveinfo' style='margin:-4px 0 10px'></div>"
+    try:
+        from . import grafico_indici
+        extra = grafico_indici.val_cards()
+    except Exception:  # noqa: BLE001
+        extra = ""
+    return f"<div class='kpis'>{cards}{extra}</div><div class='mu liveinfo' style='margin:-4px 0 10px'></div>"
 
 
 def _dv(v, prev, d=0):

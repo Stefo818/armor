@@ -10,6 +10,7 @@ import json
 
 import pandas as pd
 
+from . import store
 from .config import DATA
 
 DESC = {
@@ -66,6 +67,105 @@ def _serie(s: pd.Series) -> dict | None:
     return {"t0": t[0], "dt": dt, "v": [int(round(float(x) * 10)) for x in s.values]}
 
 
+VAL = {   # valutazioni del mercato: piu' alto = piu' caro = peggio
+    "cape": ("CAPE S&P 500", "prezzo su utili medi di 10 anni", 1, ""),
+    "pe": ("P/E S&P 500", "prezzo su utili di un anno", 1, ""),
+    "buffett": ("Indice Buffett", "valore della Borsa su prodotto interno lordo", 0, "%"),
+}
+VAL_NOM = ["Nella norma", "Sopra la norma", "Caro", "Estremo"]
+VAL_COL = ["#22c55e", "#f59e0b", "#ef4444", "#8b5cf6"]
+VAL_DESC = {
+    "cape": "Prezzo delle 500 maggiori aziende americane diviso la media dei loro utili degli ultimi 10 anni, corretta per l'inflazione. Più è alto, più il mercato è caro rispetto a quanto guadagna: in passato valori alti hanno preceduto rendimenti più bassi e cali più profondi. Non dice quando.",
+    "pe": "Prezzo delle 500 maggiori aziende americane diviso gli utili dell'ultimo anno. Più è alto, più si paga caro ogni euro di utile. Verde nella norma storica, giallo sopra la norma, rosso caro, viola estremo.",
+    "buffett": "Valore di tutte le azioni americane diviso il prodotto interno lordo (la ricchezza prodotta in un anno). Sopra 100% si paga la Borsa più di quanto produce il Paese. Il dato arriva ogni trimestre, con ritardo.",
+}
+
+
+def val_serie(k: str):
+    try:
+        if k == "cape":
+            return store.load("cape_m").dropna()
+        if k == "pe":
+            return store.load("pe_m").dropna()
+        from . import semafori
+        return semafori.series_of("buffett").dropna()
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def val_info() -> dict:
+    """Per ogni valutazione: valore di oggi, posizione nella storia, soglie (50/80/95 per cento della storia) e colori."""
+    out = {}
+    for k, (nome, sub_, dec, u) in VAL.items():
+        s = val_serie(k)
+        if s is None or len(s) < 100:
+            continue
+        v = float(s.iloc[-1])
+        lim = [round(float(s.quantile(q)), 2) for q in (0.50, 0.80, 0.95)]
+        i = sum(v >= x for x in lim)
+        out[k] = {"nome": nome, "sub": sub_, "dec": dec, "u": u, "v": v, "pos": float((s < v).mean()), "lim": lim, "i": i,
+                  "col": VAL_COL[i], "nom": VAL_NOM[i], "mediana": float(s.median()), "dal": int(s.index[0].year),
+                  "data": s.index[-1], "ieri": float(s.iloc[-2]) if len(s) > 1 else None,
+                  "sett": float(s[s.index <= s.index[-1] - pd.Timedelta(days=7)].iloc[-1]) if (s.index <= s.index[-1] - pd.Timedelta(days=7)).any() else None}
+    return out
+
+
+def _it(x: float, d: int = 0) -> str:
+    return f"{x:.{d}f}".replace(".", ",").replace("-", "\u2212")
+
+
+def val_cards() -> str:
+    """Tre schede per «Paura, protezioni e prezzi»: CAPE, P/E, Buffett con colore e grafico toccando."""
+    info = val_info()
+    if not info:
+        return ""
+    mesi = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"]
+    out = ""
+    for k, x in info.items():
+        zone = ["verde", "gialla", "rossa", "viola"]
+        seg = "".join(f"<i style='flex:{w};background:{c};opacity:{1 if j == x['i'] else .3}'></i>" for j, (w, c) in enumerate(zip((50, 30, 15, 5), VAL_COL)))
+        pos = min(max(x["pos"] * 100, 1), 99)
+        freschezza = ""
+        if (pd.Timestamp.now() - x["data"]).days > 20:
+            freschezza = f"<div class='mu'>Dato al {x['data'].day} {mesi[x['data'].month - 1]} {x['data'].year}: arriva ogni trimestre.</div>"
+        prev = ""
+        if x["ieri"] is not None and not freschezza:
+            d = x["v"] - x["ieri"]
+            prev = (f"<div class='vl-p'>ieri <b>{_it(x['ieri'], x['dec'])}{x['u']}</b> "
+                    f"<span style='color:{'var(--bad)' if d > 0 else 'var(--ok)'}'>{'\u25b2' if d > 0 else '\u25bc'} {_it(abs(d), x['dec'])}</span>"
+                    + (f" · 1 sett. fa <b>{_it(x['sett'], x['dec'])}{x['u']}</b>" if x["sett"] is not None else "") + "</div>")
+        out += (f"<div class='kc vl' data-gi='{k}'><div class='kt'>{x['nome']} "
+                f"<small style='display:block;color:{x['col']};font-weight:700'>{x['nom']}</small></div>"
+                f"<div class='kv' style='color:{x['col']}'>{_it(x['v'], x['dec'])}{x['u']}</div>"
+                f"<div class='vl-s'>{x['sub']}</div>"
+                f"<div class='vl-g'>{seg}<u style='left:{pos:.0f}%'></u></div>"
+                f"<div class='vl-p'>Più alto del <b>{x['pos'] * 100:.0f}%</b> dei dati dal {x['dal']} · tipico {_it(x['mediana'], x['dec'])}{x['u']}</div>"
+                f"{prev}{freschezza}<div class='mu'>Tocca per il grafico ›</div></div>")
+    return out
+
+
+def val_cfg() -> tuple[dict, dict, dict]:
+    """Configurazione del grafico per le valutazioni: serie, opzioni, zone (soglie in unita' reali)."""
+    ser, cfg, zone = {}, {}, {}
+    info = val_info()
+    for k, x in info.items():
+        s = val_serie(k)
+        r = _serie(s)
+        if not r:
+            continue
+        ser[k] = r
+        zone[k] = {"lim": x["lim"], "col": VAL_COL, "nom": VAL_NOM}
+        trim = k == "buffett"
+        cfg[k] = {"val": 1, "dec": x["dec"], "u": x["u"], "pp": "sul dato precedente",
+                  "rng": [["1A", 365], ["3A", 1096], ["5A", 1826], ["10A", 3652], ["20A", 7305], ["Max", 0]] if trim else [["1M", 30], ["3M", 91], ["1A", 365], ["5A", 1826], ["20A", 7305], ["Max", 0]],
+                  "prev": [["3 mesi fa", 91], ["6 mesi fa", 182], ["1 anno fa", 365]] if trim else [["Ieri", 1], ["Una settimana fa", 7], ["Un mese fa", 30]],
+                  "mean": None if trim else [["Ultima settimana", 7], ["Ultimo mese", 30], ["Ultimi 3 mesi", 91]],
+                  "def": 1 if trim else 1}
+        NOMI[k] = x["nome"]
+        DESC[k] = VAL_DESC[k]
+    return ser, cfg, zone
+
+
 def dati() -> dict:
     out: dict = {}
     try:
@@ -76,6 +176,10 @@ def dati() -> dict:
                 x = _serie(d[c])
                 if x:
                     out[k] = x
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        out.update(val_cfg()[0])
     except Exception:  # noqa: BLE001
         pass
     try:   # pilastri 7 e 8: informativi, in percentile rispetto alla propria storia, sull'asse dei giorni Titan
@@ -131,6 +235,11 @@ CSS = """<style>
 .gi-kb{height:4px;border-radius:99px;background:var(--bd);overflow:hidden;margin-top:3px}
 .gi-kb i{display:block;height:100%;background:var(--c)}
 .gi-kg2{font-size:9.5px;color:var(--mu);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc.vl{cursor:pointer}.vl-s{font-size:11px;color:var(--mu);margin-top:-2px}
+.vl-g{display:flex;position:relative;height:8px;border-radius:99px;margin:9px 0 4px}
+.vl-g i{display:block;height:100%}.vl-g i:first-child{border-radius:99px 0 0 99px}.vl-g i:nth-child(4){border-radius:0 99px 99px 0}
+.vl-g u{position:absolute;top:-4px;width:3px;height:16px;border-radius:2px;background:var(--tx);box-shadow:0 0 0 2px var(--card);transform:translateX(-1px)}
+.vl-p{font-size:11.5px;color:var(--mu);line-height:1.4}.vl-p b{color:var(--tx)}
 .gi-ds{font-size:11.5px;color:var(--mu);line-height:1.4;margin:6px 0 0}
 .gi-rg{display:flex;gap:5px;margin:10px 0 6px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
 .gi-rg::-webkit-scrollbar{display:none}
@@ -151,13 +260,16 @@ CSS = """<style>
 JS = r"""<script>(function(){
 if(window.giOn)return;window.giOn=1;
 var el=document.getElementById('gi-dati');if(!el)return;
-var RAW=JSON.parse(el.textContent),Z=JSON.parse(document.getElementById('gi-zone').textContent),NM=JSON.parse(document.getElementById('gi-nomi').textContent),DS=JSON.parse(document.getElementById('gi-desc').textContent),KD=JSON.parse(document.getElementById('gi-kids').textContent);
+var RAW=JSON.parse(el.textContent),Z=JSON.parse(document.getElementById('gi-zone').textContent),NM=JSON.parse(document.getElementById('gi-nomi').textContent),DS=JSON.parse(document.getElementById('gi-desc').textContent),KD=JSON.parse(document.getElementById('gi-kids').textContent),CF=JSON.parse(document.getElementById('gi-cfg').textContent);
 var S={};Object.keys(RAW).forEach(function(k){var r=RAW[k],t=[],a=r.t0;for(var i=0;i<r.dt.length;i++){a+=r.dt[i];t.push(a)}S[k]={t:t,v:r.v.map(function(x){return x/10})}});
 var ov=document.getElementById('gi-ov');document.body.appendChild(ov);
 var sh=document.getElementById('gi-sh'),cv=document.getElementById('gi-cv'),cx=cv.getContext('2d');
 var cur=null,T,V,ZN,v0,v1,t0,t1,ya,yb,tya,tyb,cursor=null,W=0,H=0,dpr=1,raf=0,rangeDays=null,C={};
 var M={l:8,r:30,t:12,b:22};
-var RG=[['1S',7],['1M',30],['3M',91],['6M',182],['1A',365],['3A',1096],['5A',1826],['Max',0]];
+var RGD=[['1S',7],['1M',30],['3M',91],['6M',182],['1A',365],['3A',1096],['5A',1826],['Max',0]],RG=RGD;
+function cfg(){return CF[cur]||{}}
+function fv(v,d){var c=cfg();return it(v,d==null?(c.dec||0):d)+(c.u||'')}
+function chips(){var box=document.getElementById('gi-rg');box.innerHTML=RG.map(function(r,i){return '<button type="button" data-i="'+i+'">'+r[0]+'</button>'}).join('');box.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){range(+b.dataset.i)})})}
 function it(x,d){var s=x.toFixed(d==null?0:d).replace('.',',');return s.replace('-','−')}
 function zi(k,v){var l=Z[k].lim;for(var i=0;i<l.length;i++){if(k==='crollo'?v<=l[i]:v<l[i])return i}return l.length}
 function zc(v){return Z[cur].col[zi(cur,v)]}
@@ -170,7 +282,7 @@ function size(){dpr=Math.min(3,window.devicePixelRatio||1);W=cv.clientWidth;H=cv
 function pw(){return W-M.l-M.r}
 function X(d){return M.l+(d-v0)/(v1-v0)*pw()}
 function Y(v){return M.t+(1-(v-ya)/(yb-ya))*(H-M.t-M.b)}
-function fit(){var a=bs(v0),b=bs(v1),lo=1e9,hi=-1e9;a=Math.max(0,a-1);b=Math.min(T.length-1,b+1);for(var i=a;i<=b;i++){if(V[i]<lo)lo=V[i];if(V[i]>hi)hi=V[i]}if(hi-lo<16){var m=(hi+lo)/2;lo=m-8;hi=m+8}var p=(hi-lo)*.14;tya=Math.max(0,lo-p);tyb=Math.min(100,hi+p);if(tyb-tya<12){tya=Math.max(0,tyb-12)}}
+function fit(){var a=bs(v0),b=bs(v1),lo=1e9,hi=-1e9;a=Math.max(0,a-1);b=Math.min(T.length-1,b+1);for(var i=a;i<=b;i++){if(V[i]<lo)lo=V[i];if(V[i]>hi)hi=V[i]}var vl=cfg().val,ms=vl?Math.max(1,.14*Math.abs((hi+lo)/2)):16;if(hi-lo<ms){var m=(hi+lo)/2;lo=m-ms/2;hi=m+ms/2}var p=(hi-lo)*.14;if(vl){tya=Math.max(0,lo-p);tyb=hi+p}else{tya=Math.max(0,lo-p);tyb=Math.min(100,hi+p);if(tyb-tya<12){tya=Math.max(0,tyb-12)}}}
 function clampView(){var full=T[T.length-1]-T[0],sp=v1-v0;var mn=6,mx=full*1.06+3;if(sp<mn){var c=(v0+v1)/2;v0=c-mn/2;v1=c+mn/2;sp=mn}if(sp>mx){v0=v1-mx;sp=mx}var pad=sp*.04;var lo=T[0]-pad,hi=T[T.length-1]+pad;if(v0<lo){v1+=lo-v0;v0=lo}if(v1>hi){v0-=v1-hi;v1=hi}}
 function nice(span,n){var r=span/n,p=Math.pow(10,Math.floor(Math.log10(r))),f=r/p;return(f<1.5?1:f<3?2:f<7?5:10)*p}
 function xticks(){var sp=v1-v0,n=Math.max(2,Math.floor(pw()/78)),C0=[['d',1],['d',2],['d',7],['d',14],['m',1],['m',2],['m',3],['m',6],['y',1],['y',2],['y',5],['y',10]],u=null;
@@ -187,9 +299,9 @@ for(var i=0;i<co.length;i++){var lo=i===0?-1e3:l[i-1],hi=i===l.length?1e3:l[i];v
 cx.globalAlpha=1;cx.font='10px system-ui,sans-serif';cx.textBaseline='middle';cx.textAlign='left';
 // griglia
 var st=nice(yb-ya,4);cx.strokeStyle=C.bd;cx.lineWidth=1;cx.fillStyle=C.mu;
-for(var g=Math.ceil(ya/st)*st;g<=yb;g+=st){var yy=Math.round(Y(g))+.5;cx.globalAlpha=.7;cx.beginPath();cx.moveTo(pl,yy);cx.lineTo(pr,yy);cx.stroke();cx.globalAlpha=1;cx.fillText(String(Math.round(g)),pr+4,yy)}
+for(var g=Math.ceil(ya/st)*st;g<=yb;g+=st){var yy=Math.round(Y(g))+.5;cx.globalAlpha=.7;cx.beginPath();cx.moveTo(pl,yy);cx.lineTo(pr,yy);cx.stroke();cx.globalAlpha=1;cx.fillText(st<1?g.toFixed(1):String(Math.round(g)),pr+4,yy)}
 // soglie
-cx.setLineDash([4,4]);for(var j=0;j<l.length;j++){var ys=Y(l[j]);if(ys>pt&&ys<pb){cx.strokeStyle=co[j+1]||co[j];cx.globalAlpha=.55;cx.beginPath();cx.moveTo(pl,ys);cx.lineTo(pr,ys);cx.stroke();cx.globalAlpha=1;cx.fillStyle=co[j+1]||co[j];cx.font='700 10px system-ui,sans-serif';cx.fillText(String(l[j]),pr+4,ys);cx.font='10px system-ui,sans-serif'}}cx.setLineDash([]);
+cx.setLineDash([4,4]);for(var j=0;j<l.length;j++){var ys=Y(l[j]);if(ys>pt&&ys<pb){cx.strokeStyle=co[j+1]||co[j];cx.globalAlpha=.55;cx.beginPath();cx.moveTo(pl,ys);cx.lineTo(pr,ys);cx.stroke();cx.globalAlpha=1;cx.fillStyle=co[j+1]||co[j];cx.font='700 10px system-ui,sans-serif';cx.fillText(it(l[j],cfg().dec||0),pr+4,ys);cx.font='10px system-ui,sans-serif'}}cx.setLineDash([]);
 // asse x
 var tk=xticks();cx.fillStyle=C.mu;cx.textAlign='center';cx.textBaseline='top';
 tk.forEach(function(q){var xx=X(q[0]);if(xx<pl+8||xx>pr-8)return;cx.strokeStyle=C.bd;cx.globalAlpha=.6;cx.beginPath();cx.moveTo(Math.round(xx)+.5,pb);cx.lineTo(Math.round(xx)+.5,pb+4);cx.stroke();cx.globalAlpha=1;cx.fillText(q[1],xx,pb+6)});
@@ -207,13 +319,13 @@ var li=T.length-1;if(T[li]>=v0&&T[li]<=v1){var ex=X(T[li]),ey=Y(V[li]),c0=zc(V[l
 // cursore
 if(cursor!=null){var ci=cursor,cxp=X(T[ci]);if(cxp>=pl&&cxp<=pr){var cyp=Y(V[ci]),cc=zc(V[ci]);cx.strokeStyle=C.mu;cx.globalAlpha=.7;cx.setLineDash([3,3]);cx.lineWidth=1;cx.beginPath();cx.moveTo(cxp,pt);cx.lineTo(cxp,pb);cx.stroke();cx.setLineDash([]);cx.globalAlpha=1;
 cx.fillStyle=cc;cx.beginPath();cx.arc(cxp,cyp,5,0,7);cx.fill();cx.strokeStyle=C.card;cx.lineWidth=2;cx.stroke();
-var tx=dshort(T[ci])+(v1-v0>300?' '+dfmt(T[ci],{year:'2-digit'}):'')+' · '+it(V[ci],1);cx.font='700 11px system-ui,sans-serif';var tw=cx.measureText(tx).width+14,bx=Math.max(pl,Math.min(pr-tw,cxp-tw/2)),by=pt+2;
+var tx=dshort(T[ci])+(v1-v0>300?' '+dfmt(T[ci],{year:'2-digit'}):'')+' · '+fv(V[ci],1);cx.font='700 11px system-ui,sans-serif';var tw=cx.measureText(tx).width+14,bx=Math.max(pl,Math.min(pr-tw,cxp-tw/2)),by=pt+2;
 cx.fillStyle=C.tx;cx.globalAlpha=.92;rr(bx,by,tw,20,10);cx.fill();cx.globalAlpha=1;cx.fillStyle=C.card;cx.textAlign='center';cx.textBaseline='middle';cx.fillText(tx,bx+tw/2,by+10.5)}}
 }
 function rr(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath()}
 function head(){var i=cursor!=null?cursor:T.length-1,v=V[i],c=zc(v),pv=i>0?V[i-1]:null;
-var big=document.getElementById('gi-v');big.textContent=it(v);big.style.color=c;
-var d=document.getElementById('gi-dd'),txt=dlong(T[i]);if(pv!=null){var df=v-pv;txt+=' · <b style="color:'+(Math.abs(df)<.05?'var(--mu)':df>0?'var(--bad)':'var(--ok)')+'">'+(Math.abs(df)<.05?'invariato':(df>0?'▲ +':'▼ −')+it(Math.abs(df),1))+'</b> sulla seduta precedente'}d.innerHTML=txt;
+var big=document.getElementById('gi-v');big.textContent=fv(v);big.style.color=c;
+var d=document.getElementById('gi-dd'),txt=dlong(T[i]);if(pv!=null){var df=v-pv;txt+=' · <b style="color:'+(Math.abs(df)<.05?'var(--mu)':df>0?'var(--bad)':'var(--ok)')+'">'+(Math.abs(df)<.05?'invariato':(df>0?'▲ +':'▼ −')+it(Math.abs(df),1))+'</b> '+(cfg().pp||'sulla seduta precedente')}d.innerHTML=txt;
 var zn=document.getElementById('gi-zn');zn.textContent=Z[cur].nom[zi(cur,v)];zn.style.setProperty('--c',c)}
 function loop(){raf=0;var go=false,ease=.22;
 if(Math.abs(tv0-v0)>.02||Math.abs(tv1-v1)>.02){v0+=(tv0-v0)*ease;v1+=(tv1-v1)*ease;go=true}else{v0=tv0;v1=tv1}
@@ -224,7 +336,14 @@ function kick(){if(!raf)raf=requestAnimationFrame(loop)}
 function setView(a,b,anim){tv0=a;tv1=b;if(!anim){v0=a;v1=b}kick()}
 function hit(c){var n=ov.querySelectorAll('.gi-rg button');n.forEach(function(x){x.classList.toggle('on',x.dataset.i===String(c))})}
 function range(i){var n=RG[i][1],last=T[T.length-1],first=T[0],b=last+Math.max(1,(n||last-first)*.03),a=n?Math.max(first,last-n):first;tv0=a;tv1=b;rangeDays=i;hit(i);cursor=null;head();kick()}
-function stats(){var n=T.length-1,box=document.getElementById('gi-st'),h='';
+function atDay(days){var tt=T[T.length-1]-days,i=bs(tt);return i}
+function statsVal(){var n=T.length-1,box=document.getElementById('gi-st'),c=cfg(),h='';
+function tile(lbl,v,sub){var cc=zc(v);return '<div class="gi-c" style="--c:'+cc+'"><div class="gi-cn">'+fv(v)+'</div><div class="gi-cl">'+lbl+'</div><div class="gi-cs">'+sub+'</div></div>'}
+if(c.mean){h+='<div class="gi-sc">Valore medio</div><div class="gi-g">'+c.mean.map(function(m){var a=atDay(m[1]),s=0,k=0;for(var i=a+1;i<=n;i++){s+=V[i];k++}if(!k){s=V[n];k=1}return tile(m[0],s/k,m[1]+' giorni')}).join('')+'</div>'}
+h+='<div class="gi-sc">Com\u2019era prima</div><div class="gi-g">'+c.prev.map(function(m){var i=atDay(m[1]),df=V[n]-V[i],cl=Math.abs(df)<.05?'var(--mu)':df>0?'var(--bad)':'var(--ok)';return tile(m[0],V[i],dshort(T[i])+' \u00b7 <b style="color:'+cl+'">'+(Math.abs(df)<.05?'=':(df>0?'\u25b2 ':'\u25bc ')+it(Math.abs(df),c.dec||0))+'</b>')}).join('')+'</div>';
+h+='<div class="gi-hint" style="margin-top:6px">Colori rispetto alla storia: verde nella norma, giallo sopra la norma, rosso caro, viola estremo. Freccia rossa = oggi \u00e8 pi\u00f9 caro di allora.</div>';
+box.innerHTML=h}
+function stats(){if(cfg().val)return statsVal();var n=T.length-1,box=document.getElementById('gi-st'),h='';
 function tile(lbl,v,sub){var c=zc(v);return '<div class="gi-c" style="--c:'+c+'"><div class="gi-cn">'+it(v)+'</div><div class="gi-cl">'+lbl+'</div><div class="gi-cs">'+sub+'</div></div>'}
 function mean(k){var a=Math.max(0,n-k+1),s=0;for(var i=a;i<=n;i++)s+=V[i];return s/(n-a+1)}
 h+='<div class="gi-sc">Valore medio</div><div class="gi-g">'+tile('Ultima settimana',mean(5),'5 sedute')+tile('Ultimo mese',mean(21),'21 sedute')+tile('Ultimi 3 mesi',mean(63),'63 sedute')+'</div>';
@@ -237,9 +356,9 @@ var h='<div class="gi-kt">'+(k==='armor'?'I pilastri dell\u2019Indice Armor':'I 
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
 h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
 box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}
-function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';
+function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';RG=cfg().rng||RGD;chips();
 document.body.style.overflow='hidden';ov.classList.add('on');requestAnimationFrame(function(){ov.classList.add('in')});size();
-cursor=null;range(2);v0=tv0;v1=tv1;fit();ya=tya;yb=tyb;stats();kids(k);var pr=KD.par[k],bk=document.getElementById('gi-bk');if(pr){bk.hidden=false;bk.textContent='\u2039 '+NM[pr];bk.onclick=function(){open(pr)}}else{bk.hidden=true}head();draw();sh.scrollTop=0}
+cursor=null;range(cfg().def!=null?cfg().def:2);v0=tv0;v1=tv1;fit();ya=tya;yb=tyb;stats();kids(k);var pr=KD.par[k],bk=document.getElementById('gi-bk');if(pr){bk.hidden=false;bk.textContent='\u2039 '+NM[pr];bk.onclick=function(){open(pr)}}else{bk.hidden=true}head();draw();sh.scrollTop=0}
 function close(){ov.classList.remove('in');document.body.style.overflow='';setTimeout(function(){if(!ov.classList.contains('in'))ov.classList.remove('on')},220)}
 // ---- gesti
 var P={},g0=null;
@@ -262,13 +381,13 @@ if(ks.length===0)g0=null}
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 cv.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse'&&!P[e.pointerId]){cursor=null;head();kick()}});
 cv.addEventListener('wheel',function(e){e.preventDefault();var p=pos(e),f=Math.exp(e.deltaY*.0015),sp=v1-v0,anc=d2x(p.x),ns=sp*f;v0=anc-(p.x-M.l)/pw()*ns;v1=v0+ns;clampView();tv0=v0;tv1=v1;manual();fit();ya=tya;yb=tyb;draw()},{passive:false});
-cv.addEventListener('dblclick',function(){range(7)});
+cv.addEventListener('dblclick',function(){range(RG.length-1)});
 // ---- apertura/chiusura
-document.addEventListener('click',function(e){var t=e.target;if(t.closest('#gi-ov'))return;var c=t.closest('[data-gi]');if(!c)return;var bl=t.closest('details,summary,a,button,input,select');if(bl&&!bl.hasAttribute('data-gi'))return;open(c.getAttribute('data-gi'))});
+document.addEventListener('click',function(e){var t=e.target;if(t.closest('#gi-ov'))return;var c=t.closest('[data-gi]');if(!c)return;var bl=t.closest('details,summary,a,button,input,select');if(bl&&bl!==c&&c.contains(bl)&&!bl.hasAttribute('data-gi'))return;open(c.getAttribute('data-gi'))});
 document.getElementById('gi-xb').addEventListener('click',close);
 ov.addEventListener('click',function(e){if(e.target===ov)close()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ov.classList.contains('on'))close()});
-ov.querySelectorAll('.gi-rg button').forEach(function(b){b.addEventListener('click',function(){range(+b.dataset.i)})});
+
 window.addEventListener('resize',function(){if(ov.classList.contains('on')){size();kick()}});
 })()</script>"""
 
@@ -277,22 +396,23 @@ def html() -> str:
     d = dati()
     if not d:
         return ""
-    chips = "".join(f"<button type='button' data-i='{i}'>{n}</button>" for i, n in
-                    enumerate(("1S", "1M", "3M", "6M", "1A", "3A", "5A", "Max")))
-    zone = {k: {"lim": ZONE[k]["lim"], "col": ZONE[k]["col"], "nom": ZONE[k]["nom"]} for k in d}
+    vser, vcfg, vzone = val_cfg()
+    zone = {k: {"lim": ZONE[k]["lim"], "col": ZONE[k]["col"], "nom": ZONE[k]["nom"]} for k in d if k in ZONE}
+    zone.update(vzone)
     return (
         CSS
         + f"<script type='application/json' id='gi-dati'>{json.dumps(d, separators=(',', ':'))}</script>"
         + f"<script type='application/json' id='gi-zone'>{json.dumps(zone, ensure_ascii=False, separators=(',', ':'))}</script>"
         + f"<script type='application/json' id='gi-nomi'>{json.dumps(NOMI, ensure_ascii=False)}</script>"
         + f"<script type='application/json' id='gi-kids'>{json.dumps({'kids': KIDS, 'par': PAR, 'tag': TAG}, ensure_ascii=False)}</script>"
+        + f"<script type='application/json' id='gi-cfg'>{json.dumps(vcfg, ensure_ascii=False, separators=(',', ':'))}</script>"
         + f"<script type='application/json' id='gi-desc'>{json.dumps(DESC, ensure_ascii=False)}</script>"
         + "<div id='gi-ov' role='dialog' aria-modal='true' aria-label='Grafico dell&#39;indice'><div id='gi-sh'>"
         "<div class='gi-hd'><div class='gi-t'><div class='gi-nm' id='gi-nm'>x<span class='gi-zn' id='gi-zn'></span></div>"
         "<div class='gi-big'><span class='gi-v' id='gi-v'></span><span class='gi-dd' id='gi-dd'></span></div></div>"
         "<button type='button' class='gi-bk' id='gi-bk' hidden></button><button type='button' class='gi-x' id='gi-xb' aria-label='Chiudi'>&times;</button></div>"
         "<div class='gi-ds' id='gi-ds'></div>"
-        f"<div class='gi-rg'>{chips}</div>"
+        f"<div class='gi-rg' id='gi-rg'></div>"
         "<canvas id='gi-cv'></canvas>"
         "<div class='gi-hint'>Trascina per scorrere · pizzica con due dita per ingrandire · tocca per leggere un giorno</div>"
         "<div id='gi-kd'></div><div id='gi-st'></div></div></div>"

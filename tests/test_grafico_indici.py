@@ -12,14 +12,14 @@ def test_dati_compatti_e_ricostruibili():
         for x in r["dt"][1:]:
             assert x > 0
             t += x
-        assert len(r["dt"]) == len(r["v"]) and len(r["v"]) > 500
+        assert len(r["dt"]) == len(r["v"]) and len(r["v"]) > 200
 
 
 def test_html_ha_grafico_chiusura_e_gesti():
     h = grafico_indici.html()
     assert "id='gi-ov'" in h and "gi-xb" in h and "pointerdown" in h and "touch-action:none" in h
     for k in ("1S", "1M", "3M", "6M", "1A", "3A", "5A", "Max"):
-        assert f">{k}<" in h
+        assert f"['{k}'," in h
     for t in ("Valore medio", "Ieri", "Una settimana fa", "Due settimane fa"):
         assert t in h
     json.loads(re.search(r"id='gi-dati'>(.*?)</script>", h).group(1))
@@ -39,3 +39,15 @@ def test_pilastri_dentro_ogni_indice():
     assert len(grafico_indici.KIDS["armor"]) == 5
     h = grafico_indici.html()
     assert "gi-kd" in h and "gi-bk" in h and "solo informativo" in h
+
+
+def test_valutazioni_schede_e_grafico():
+    from armor import grafico_indici as g
+    info = g.val_info()
+    assert set(info) == {"cape", "pe", "buffett"}
+    for x in info.values():
+        assert x["nom"] in g.VAL_NOM and x["col"] in g.VAL_COL
+    h = g.val_cards()
+    for k in ("cape", "pe", "buffett"):
+        assert f"data-gi='{k}'" in h
+    assert "gi-cfg" in g.html()
