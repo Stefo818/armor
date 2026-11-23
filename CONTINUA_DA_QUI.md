@@ -816,3 +816,6 @@ Aggiunte fonti in `src/armor/accumulo_extra.py`: BCE (CISS per paese, curve euro
 
 ## (14) Seconda ondata di accumulo (23/11/2026)
 `accumulo_extra.py`: curva future VIX (`vix_futures/vx.csv`), AAII, mercati di previsione (`previsioni/`), dealer NY Fed (`dealer/`), fails SEC (`ftd/`), short interest FINRA (`short_interest/`), patrimonio e quote ETF (`etf_quote/`). `sec_dati.py`: `posizioni_complete()` + `salva_posizioni_complete()` salvano le prime 250 posizioni di ~200 depositanti 13F per trimestre (dal 2019) in `data/grandi_fondi/posizioni/AAAA.csv.gz` (workflow «Grandi fondi (dati SEC)»). Nessuna di queste fonti è raggiungibile dal sandbox: verificare con `data/accumulo_stato.json` e col log del workflow dei grandi fondi. Vedi GUIDA_TRA_SEI_MESI.md §8-9.
+
+## (15) Terza ondata di accumulo (23/11/2026)
+`accumulo_derivati.py` (30 indicatori `d_*` dai titoli dell'S&P 500, ricostruiti dal 2015 e verificati su marzo 2020; `di_*` dalle barre a 5 minuti) e `accumulo_extra2.py` (moduli SEC, parole di stress SEC, leva cripto, JGB, testi/giornali, retail, nuovi simboli Yahoo). 288 test. Fonti non raggiungibili dal sandbox: leggere `data/accumulo_stato.json`. Vedi GUIDA_TRA_SEI_MESI.md §10.

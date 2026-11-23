@@ -200,6 +200,13 @@ def _archivio(k: str):
             ("gdelt_", "Quanto (o con che tono) i giornali di tutto il mondo parlano di un tema di crisi.", "GDELT."),
             ("cripto_", "Dati sul mondo cripto: stablecoin in circolazione, fondi nella finanza decentralizzata o indice di paura/avidità.", "DefiLlama, Alternative.me."),
             ("nyfed_", "Tasso o volume dei prestiti overnight garantiti da titoli di Stato (SOFR e simili): misura la tensione nel finanziamento delle banche.", "Federal Reserve di New York."),
+            ("di_", "Misura ricavata dalle barre a 5 minuti di uno strumento: ampiezza della giornata, volatilità realizzata, andamento della prima e dell'ultima ora.", "Calcolato da Armor su dati Yahoo."),
+            ("d_", "Misura calcolata sui 503 titoli dell'S&P 500: ampiezza (quanti titoli salgono o stanno sopra le medie), nuovi massimi e minimi, dispersione, correlazione fra titoli, concentrazione dei volumi.", "Calcolato da Armor su dati Yahoo."),
+            ("jgb_", "Rendimento dei titoli di Stato giapponesi per una scadenza: serve a seguire il carry trade sullo yen.", "Ministero delle Finanze del Giappone."),
+            ("efts_", "Quanti documenti depositati alla SEC in un giorno contengono una parola di difficoltà (continuità aziendale, covenant, fallimento…).", "SEC EDGAR, ricerca a testo pieno."),
+            ("secmod_", "Quanti moduli di un certo tipo vengono depositati alla SEC ogni giorno (quotazioni, ritardi nei bilanci, uscite dalla Borsa…).", "SEC EDGAR."),
+            ("gnews_", "Quanti articoli al giorno escono su un tema di crisi (corsa agli sportelli, stretta di credito, licenziamenti…).", "Google News."),
+            ("retail_", "Attività dei piccoli investitori sui forum online (menzioni di titoli).", "ApeWisdom."),
             ("aaii_", "Sondaggio settimanale dei piccoli investitori americani: quanti si dicono rialzisti, neutrali o ribassisti.", "AAII."),
             ("tsa_", "Persone che passano ogni giorno i controlli aeroportuali americani: indicatore rapido dell'economia reale.", "TSA."),
             ("cboe_pc_", "Rapporto tra opzioni put (di protezione) e call (di scommessa al rialzo) scambiate ogni giorno: più è alto, più gli investitori si proteggono.", "CBOE.")):

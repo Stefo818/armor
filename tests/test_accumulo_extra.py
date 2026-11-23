@@ -78,3 +78,41 @@ def test_parse_dealer_ftd_short_interest():
     assert list(s["symbol"]) == ["SPY"] and s["short"].iloc[0] == "10"
     dt = ex.date_short_interest(pd.Timestamp("2026-11-23"), mesi=1)
     assert "20261113" in dt and "20261030" in dt and all(x < "20261123" for x in dt)
+
+
+def test_seconda_ondata_parser():
+    from armor import accumulo_extra2 as e2
+    idx = ["8-K                  ACME CORP                     123456      2026-11-10  edgar/data/1/a.txt",
+           "NT 10-K              LATE INC                      777         2026-11-10  edgar/data/2/b.txt",
+           "ZZZ                  X                             1           2026-11-10  edgar/data/3/c.txt",
+           "8-K                  BETA CORP                     5           2026-11-11  edgar/data/4/d.txt"]
+    c = e2.conta_moduli(idx)
+    assert set(c["modulo"]) == {"8-K", "NT 10-K"} and int(c[(c.data == "2026-11-10") & (c.modulo == "8-K")]["n"].iloc[0]) == 1
+    assert e2.totale_efts({"hits": {"total": {"value": 42}}}) == 42
+    assert e2.parse_dvol({"result": {"data": [[1763856000000, 1, 2, 0.5, 55.5]]}}).iloc[0] == 55.5
+    assert e2.put_call_deribit({"result": [{"instrument_name": "BTC-27DEC26-60000-P", "open_interest": 30}, {"instrument_name": "BTC-27DEC26-60000-C", "open_interest": 60}]})["put_call"] == 0.5
+    j = e2.parse_jgb("Interest Rate (%)\nDate,1Y,10Y\n2026/11/20,0.8,1.9\n2026/11/19,0.8,-\n")
+    assert j.index[0] == pd.Timestamp("2026-11-20") and j["10Y"].iloc[0] == 1.9
+    rss = "<rss><channel><item><title>Titolo uno</title><link>http://x</link><pubDate>Mon, 23 Nov 2026 10:00:00 GMT</pubDate></item></channel></rss>"
+    r = e2.parse_rss(rss)
+    assert r[0]["data"] == "2026-11-23" and r[0]["titolo"] == "Titolo uno"
+    a = e2.parse_apewisdom({"results": [{"ticker": "NVDA", "rank": 1, "mentions": 50, "upvotes": 9}]}, "2026-11-23")
+    assert a["menzioni"].iloc[0] == 50
+
+
+def test_indicatori_componenti_e_intraday():
+    import numpy as np
+
+    from armor import accumulo_derivati as dv
+    rng = np.random.default_rng(1)
+    idx = pd.bdate_range("2025-01-01", periods=320)
+    P = pd.DataFrame(100 * np.exp(np.cumsum(rng.normal(0, 0.01, (320, 60)), axis=0)), index=idx, columns=[f"S{i}" for i in range(60)])
+    V = pd.DataFrame(1e6, index=idx, columns=P.columns)
+    d = dv.indicatori_componenti(P, V, {c: ("A" if i < 30 else "B") for i, c in enumerate(P.columns)})
+    assert 0 <= d["d_pct_sopra_200"].dropna().min() and d["d_pct_sopra_200"].max() <= 100
+    assert 10 / 60 * 100 <= d["d_quota_volume_top10"].dropna().iloc[-1] < 40
+    assert "d_pct_sopra_50_a" in d.columns and d["d_correlazione_media_21"].dropna().abs().max() < 1
+    ts = pd.date_range("2026-11-20 14:30", periods=40, freq="5min")
+    g = pd.DataFrame({"ts": ts, "o": 100.0, "h": 101.0, "l": 99.0, "c": np.linspace(100, 102, 40), "v": 10.0})
+    m = dv.misure_giornata(g)
+    assert m["ampiezza"] == 2.0 and m["ritorno_giornata"] > 1.9 and "quota_volume_ultima_ora" in m

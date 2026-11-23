@@ -53,6 +53,9 @@ YAHOO = {
     "futures_indici": "ES=F NQ=F YM=F RTY=F ZN=F ZB=F ZF=F ZT=F",
     "crypto": "BTC-USD ETH-USD SOL-USD BNB-USD XRP-USD ADA-USD DOGE-USD AVAX-USD LINK-USD IBIT GBTC ETHE COIN MSTR MARA RIOT",
     "banche_estere": "DB UBS BCS SAN ING BBVA HSBC NWG LYG ITUB BMA TD RY BNS",
+    "economia_reale_trasporti": "BDRY ZIM SBLK MATX LBR=F BCI GSG WOOD UPS FDX XTN IYT",
+    "credito_privato_gestori": "ARCC OBDC BXSL FSK GBDC OWL APO KKR BX CG ARES PRIV",
+    "immobiliare_commerciale": "VNO SLG BXP MPW NLY AGNC MORT REM SRVR INDS",
     "volatilita_etf": "VXX UVXY SVXY VIXY SQQQ TQQQ SH SDS SPXU SPXL TZA TNA UPRO TLT TMV",
 }
 # serie FRED (id = f_<codice minuscolo>)
@@ -419,14 +422,19 @@ def aggiorna_opzioni(stato: dict) -> None:
 # ----------------------------------------------------------------------------- orchestrazione
 def aggiorna(solo: list[str] | None = None) -> dict:
     stato: dict = {"data": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}
+    from . import accumulo_derivati as dv
     from . import accumulo_extra as ex
+    from . import accumulo_extra2 as ex2
     passi = (("yahoo", aggiorna_yahoo), ("ohlc", aggiorna_ohlc), ("fred", aggiorna_fred), ("cboe_putcall", aggiorna_cboe_pc), ("intraday", aggiorna_intraday),
              ("opzioni", aggiorna_opzioni), ("componenti", aggiorna_componenti),
              ("bce", ex.aggiorna_bce), ("ofr", ex.aggiorna_ofr), ("tesoro_curve", ex.aggiorna_ust), ("tesoro_cassa_aste", ex.aggiorna_fiscal), ("cot", ex.aggiorna_cot),
              ("wikipedia", ex.aggiorna_wiki), ("cripto", ex.aggiorna_cripto), ("nyfed", ex.aggiorna_nyfed), ("tsa", ex.aggiorna_tsa),
              ("finra", ex.aggiorna_finra), ("gdelt", ex.aggiorna_gdelt),
              ("vix_future", ex.aggiorna_vix_future), ("aaii", ex.aggiorna_aaii), ("previsioni", ex.aggiorna_previsioni),
-             ("dealer", ex.aggiorna_dealer), ("ftd", ex.aggiorna_ftd), ("short_interest", ex.aggiorna_short_interest), ("etf_quote", ex.aggiorna_etf_quote))
+             ("dealer", ex.aggiorna_dealer), ("ftd", ex.aggiorna_ftd), ("short_interest", ex.aggiorna_short_interest), ("etf_quote", ex.aggiorna_etf_quote),
+             ("moduli_sec", ex2.aggiorna_moduli_sec), ("parole_sec", ex2.aggiorna_parole_sec), ("cripto_leva", ex2.aggiorna_cripto_leva), ("jgb", ex2.aggiorna_jgb),
+             ("testi", ex2.aggiorna_testi), ("retail", ex2.aggiorna_retail),
+             ("derivati_componenti", dv.aggiorna_derivati_componenti), ("derivati_intraday", dv.aggiorna_derivati_intraday))
     for nome, fn in passi:
         if solo and nome not in solo:
             continue

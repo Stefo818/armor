@@ -1,9 +1,14 @@
 {
- "data": "2026-11-23 12:23 UTC",
- "intraday_5m": {
-  "richieste": 52,
-  "riuscite": 52,
-  "barre_nuove": 29048,
-  "fallite": {}
+ "data": "2026-11-23 12:44 UTC",
+ "derivati_componenti": {
+  "indicatori": 30,
+  "giorni": 2990,
+  "ultimo": "2026-11-20",
+  "righe_nuove": 88273
+ },
+ "derivati_intraday": {
+  "strumenti": 51,
+  "giorni": 8,
+  "righe_nuove": 1910
  }
 }
