@@ -495,3 +495,196 @@ def aggiorna_previsioni(stato: dict) -> None:
     m = pd.concat([old, pd.DataFrame(righe)], ignore_index=True).drop_duplicates(subset=["data", "mercato"], keep="last")
     m.to_csv(p, index=False)
     stato["mercati_previsione"] = {"righe_oggi": len(righe)}
+
+
+# ----------------------------------------------------------------------------- NY Fed: posizioni e finanziamento dei dealer primari (settimanale, gratis)
+def parse_dealer(j) -> pd.DataFrame:
+    """Trova ovunque nel JSON le righe con keyid, asofdate, value."""
+    righe = []
+
+    def giu(x):
+        if isinstance(x, dict):
+            if "keyid" in x and "asofdate" in x and "value" in x:
+                righe.append((x["keyid"], x["asofdate"], x["value"]))
+            else:
+                for v in x.values():
+                    giu(v)
+        elif isinstance(x, list):
+            for v in x:
+                giu(v)
+    giu(j)
+    df = pd.DataFrame(righe, columns=["keyid", "data", "valore"])
+    df["valore"] = pd.to_numeric(df["valore"], errors="coerce")
+    return df.dropna()
+
+
+def aggiorna_dealer(stato: dict) -> None:
+    base = DATA / "dealer"
+    base.mkdir(parents=True, exist_ok=True)
+    lista = _get("https://markets.newyorkfed.org/api/pd/list/timeseries.json").json()
+    chiavi = sorted({str(t["keyid"]) for t in _trova(lista) if t.get("keyid")})
+    chiavi = [k for k in chiavi if k and k.startswith(("PDPOS", "PDFTD", "PDFTR", "PDSIOS", "PDSIOSB", "PDSOOS", "PDFI", "PDTR"))][:260]
+
+    def mk(k):
+        def job():
+            return parse_dealer(_get(f"https://markets.newyorkfed.org/api/pd/get/{k}.json", tries=2).json())
+        return job
+    res = run_parallel({k: mk(k) for k in chiavi}, workers=4, deadline=300)
+    nuovi = [v for (t, v) in res.values() if t == "ok" and len(v)]
+    if nuovi:
+        p = base / "dealer.csv"
+        old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+        m = pd.concat([old] + nuovi, ignore_index=True).drop_duplicates(subset=["keyid", "data"], keep="last").sort_values(["keyid", "data"])
+        m.to_csv(p, index=False)
+    stato["nyfed_dealer"] = {"serie_richieste": len(chiavi), **_riepilogo(res)}
+
+
+def _trova(j) -> list[dict]:
+    out = []
+
+    def giu(x):
+        if isinstance(x, dict):
+            if "keyid" in x:
+                out.append(x)
+            for v in x.values():
+                giu(v)
+        elif isinstance(x, list):
+            for v in x:
+                giu(v)
+    giu(j)
+    return out
+
+
+# ----------------------------------------------------------------------------- SEC: titoli venduti e non consegnati (fails to deliver, quindicinale)
+def parse_ftd(txt: str, tenere: set[str]) -> pd.DataFrame:
+    df = pd.read_csv(io.StringIO(txt), sep="|", dtype=str, on_bad_lines="skip")
+    df.columns = [c.strip().upper() for c in df.columns]
+    q = [c for c in df.columns if c.startswith("QUANTITY")][0]
+    df["q"] = pd.to_numeric(df[q], errors="coerce")
+    df["p"] = pd.to_numeric(df.get("PRICE"), errors="coerce")
+    df["data"] = pd.to_datetime(df["SETTLEMENT DATE"], format="%Y%m%d", errors="coerce").dt.strftime("%Y-%m-%d")
+    df = df.dropna(subset=["data", "q"])
+    tot = df.groupby("data").agg(fails=("q", "sum"), valore=("p", lambda s: float((s * df.loc[s.index, "q"]).sum()))).reset_index().assign(symbol="_TOTALE")
+    sel = df[df["SYMBOL"].isin(tenere)].rename(columns={"SYMBOL": "symbol"}).assign(fails=lambda d: d["q"], valore=lambda d: d["q"] * d["p"])[["data", "symbol", "fails", "valore"]]
+    return pd.concat([tot[["data", "symbol", "fails", "valore"]], sel], ignore_index=True)
+
+
+def _titoli_chiave() -> set[str]:
+    from .accumulo import INTRADAY
+    t = {s for s in INTRADAY if s.isalpha()} | {"SPY", "QQQ", "IWM", "TLT", "HYG", "TQQQ", "SQQQ", "UVXY", "VXX"}
+    el = DATA / "componenti" / "elenco.csv"
+    if el.exists():
+        t |= set(pd.read_csv(el)["Symbol"].astype(str))
+    return t
+
+
+def aggiorna_ftd(stato: dict) -> None:
+    import zipfile
+
+    from . import sec_dati
+    tenere = _titoli_chiave()
+    base = DATA / "ftd"
+    base.mkdir(parents=True, exist_ok=True)
+    oggi = datetime.now(timezone.utc)
+    nomi = []
+    for k in range(0, 5):
+        d = (oggi.replace(day=1) - timedelta(days=30 * k)).strftime("%Y%m")
+        nomi += [f"cnsfails{d}b.zip", f"cnsfails{d}a.zip"]
+    pezzi, saltati = [], []
+    for nome in nomi:
+        try:
+            r = requests.get(f"https://www.sec.gov/files/data/fails-deliver-data/{nome}", headers=sec_dati.ua(), timeout=90)
+            if r.status_code == 404:
+                continue
+            r.raise_for_status()
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            pezzi.append(parse_ftd(z.read(z.namelist()[0]).decode("latin-1"), tenere))
+        except Exception as e:  # noqa: BLE001
+            saltati.append(f"{nome}: {str(e)[:40]}")
+        time.sleep(0.3)
+    if not pezzi:
+        raise RuntimeError("nessun file letto: " + "; ".join(saltati[:3]))
+    nuovo = pd.concat(pezzi, ignore_index=True)
+    for ym, g in nuovo.groupby(nuovo["data"].str[:7]):
+        p = base / f"{ym}.csv"
+        old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+        pd.concat([old, g], ignore_index=True).drop_duplicates(subset=["data", "symbol"], keep="last").sort_values(["data", "symbol"]).to_csv(p, index=False)
+    stato["sec_fails_to_deliver"] = {"file_letti": len(pezzi), "righe": len(nuovo), "problemi": saltati[:5]}
+
+
+# ----------------------------------------------------------------------------- FINRA: short interest (due volte al mese)
+def date_short_interest(oggi: pd.Timestamp, mesi: int = 3) -> list[str]:
+    """Giorni di regolamento ufficiali: il 15 e l'ultimo giorno del mese (se festivo, il giorno lavorativo prima)."""
+    out = []
+    for k in range(mesi + 1):
+        m = oggi - pd.DateOffset(months=k)
+        for d in (m.replace(day=15), m + pd.offsets.MonthEnd(0)):
+            while d.weekday() >= 5:
+                d -= pd.Timedelta(days=1)
+            if d < oggi:
+                out.append(d.strftime("%Y%m%d"))
+    return sorted(set(out))
+
+
+def parse_short_interest(txt: str, tenere: set[str]) -> pd.DataFrame:
+    df = pd.read_csv(io.StringIO(txt), sep="|", dtype=str, on_bad_lines="skip")
+    df.columns = [c.strip() for c in df.columns]
+    sym = "symbolCode" if "symbolCode" in df.columns else df.columns[1]
+    df = df[df[sym].isin(tenere)]
+    ren = {sym: "symbol", "currentShortPositionQuantity": "short", "previousShortPositionQuantity": "short_prec", "averageDailyVolumeQuantity": "vol_medio",
+           "daysToCoverQuantity": "giorni_per_coprire", "settlementDate": "data"}
+    df = df.rename(columns=ren)
+    tieni = [c for c in ("data", "symbol", "short", "short_prec", "vol_medio", "giorni_per_coprire") if c in df.columns]
+    return df[tieni]
+
+
+def aggiorna_short_interest(stato: dict) -> None:
+    tenere = _titoli_chiave()
+    base = DATA / "short_interest"
+    base.mkdir(parents=True, exist_ok=True)
+    pezzi, assenti = [], 0
+    for d in date_short_interest(pd.Timestamp(datetime.now(timezone.utc).date())):
+        r = requests.get(f"https://cdn.finra.org/equity/otcmarket/biweekly/shrt{d}.csv", headers=UA, timeout=90)
+        if r.status_code == 404:
+            assenti += 1
+            continue
+        r.raise_for_status()
+        t = parse_short_interest(r.text, tenere)
+        if "data" not in t.columns:
+            t["data"] = f"{d[:4]}-{d[4:6]}-{d[6:]}"
+        pezzi.append(t)
+    if not pezzi:
+        raise RuntimeError(f"nessun file (assenti {assenti})")
+    nuovo = pd.concat(pezzi, ignore_index=True)
+    p = base / "short_interest.csv"
+    old = pd.read_csv(p, dtype=str) if p.exists() else pd.DataFrame()
+    pd.concat([old, nuovo.astype(str)], ignore_index=True).drop_duplicates(subset=["data", "symbol"], keep="last").sort_values(["data", "symbol"]).to_csv(p, index=False)
+    stato["finra_short_interest"] = {"file_letti": len(pezzi), "righe": len(nuovo), "file_assenti": assenti}
+
+
+# ----------------------------------------------------------------------------- ETF: patrimonio e quote in circolazione (per ricavare i flussi giorno per giorno)
+ETF_FLUSSI = ("SPY IVV VOO VTI QQQ IWM DIA EFA EEM VWO AGG BND LQD HYG JNK TLT IEF SHY TIP GLD SLV USO XLF XLK XLE XLV XLY XLP XLI XLU XLB XLRE XLC KRE KBE SMH SOXX "
+              "XBI IBB ARKK EMB MUB BKLN BIL SGOV SHV VXX UVXY SQQQ TQQQ SH SDS SPXU SPXL IBIT FBTC GBTC ETHE VEA IEFA IEMG IJH IJR MDY RSP SCHD VYM VNQ").split()
+
+
+def aggiorna_etf_quote(stato: dict) -> None:
+    import yfinance as yf
+    oggi = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    def mk(s):
+        def job():
+            info = yf.Ticker(s).info or {}
+            return {"data": oggi, "symbol": s, "patrimonio": info.get("totalAssets"), "quote": info.get("sharesOutstanding"), "nav": info.get("navPrice"),
+                    "prezzo": info.get("regularMarketPrice") or info.get("previousClose"), "premio": info.get("bid"), "rend_ytd": info.get("ytdReturn"),
+                    "rend_div": info.get("yield")}
+        return job
+    res = run_parallel({s: mk(s) for s in ETF_FLUSSI}, workers=4, deadline=300)
+    righe = [v for (t, v) in res.values() if t == "ok" and (v.get("patrimonio") or v.get("quote"))]
+    if not righe:
+        raise RuntimeError("nessun dato letto")
+    base = DATA / "etf_quote"
+    base.mkdir(parents=True, exist_ok=True)
+    p = base / f"{oggi[:4]}.csv"
+    old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+    pd.concat([old, pd.DataFrame(righe)], ignore_index=True).drop_duplicates(subset=["data", "symbol"], keep="last").to_csv(p, index=False)
+    stato["etf_patrimonio_quote"] = {"richiesti": len(ETF_FLUSSI), "letti": len(righe)}

@@ -47,3 +47,34 @@ def test_parse_aaii():
     df = pd.DataFrame([["titolo", None, None, None], ["Date", "Bullish", "Neutral", "Bearish"], ["2026-11-19", 35.0, 30.0, 35.0], ["2026-11-12", 40.0, 30.0, 30.0]])
     t = ex.parse_aaii(df)
     assert list(t.columns) == ["bullish", "neutral", "bearish"] and t["bullish"].iloc[0] == 35.0
+
+
+def test_posizioni_complete_pacchetto_finto(tmp_path, monkeypatch):
+    import io
+    import zipfile
+
+    from armor import sec_dati as sd
+    monkeypatch.setattr(sd, "DIR", tmp_path)
+    sub = "ACCESSION_NUMBER\tFILING_DATE\tSUBMISSIONTYPE\tCIK\tPERIODOFREPORT\na1\t2026-05-10\t13F-HR\t1\t2026-03-31\na2\t2026-05-11\t13F-HR\t2\t2026-03-31\n"
+    cov = "ACCESSION_NUMBER\tFILINGMANAGER_NAME\na1\tBRIDGEWATER ASSOCIATES, LP\na2\tPiccolo Fondo\n"
+    righe = ["ACCESSION_NUMBER\tNAMEOFISSUER\tCUSIP\tVALUE\tSSHPRNAMT\tPUTCALL"] + [f"a1\tAZ{i}\tC{i}\t{100 - i}\t{i + 1}\t" for i in range(5)] + ["a2\tAZ0\tC0\t5\t1\t"]
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("SUBMISSION.tsv", sub); z.writestr("COVERPAGE.tsv", cov); z.writestr("INFOTABLE.tsv", "\n".join(righe))
+    z = zipfile.ZipFile(io.BytesIO(buf.getvalue()))
+    df = sd.posizioni_complete(z)
+    assert set(df["cik"]) == {"1", "2"} and len(df) == 6      # a2 e' fra i primi 150: sono pochi depositanti
+    assert sd.salva_posizioni_complete(df) == 6 and sd.salva_posizioni_complete(df) == 6
+    assert len(pd.read_csv(tmp_path / "posizioni" / "2026.csv.gz")) == 6   # riscrittura = sostituzione, non doppioni
+
+
+def test_parse_dealer_ftd_short_interest():
+    j = {"pd": {"timeseries": {"keyid": "PDPOSGST-TOT", "asofdate": "2026-11-18", "value": "12.5"}}}
+    d = ex.parse_dealer({"a": [j, {"keyid": "PDPOSGST-TOT", "asofdate": "2026-11-11", "value": "*"}]})
+    assert len(d) == 1 and d["valore"].iloc[0] == 12.5
+    f = ex.parse_ftd("SETTLEMENT DATE|CUSIP|SYMBOL|QUANTITY (FAILS)|DESCRIPTION|PRICE\n20261110|x|SPY|1000|S&P|500\n20261110|y|ZZZ|50|z|2\n", {"SPY"})
+    assert list(f["symbol"]) == ["_TOTALE", "SPY"] and f["fails"].iloc[0] == 1050 and f["data"].iloc[0] == "2026-11-10"
+    s = ex.parse_short_interest("symbolCode|currentShortPositionQuantity|previousShortPositionQuantity|averageDailyVolumeQuantity|daysToCoverQuantity|settlementDate\nSPY|10|8|5|2|2026-11-13\nZZZ|1|1|1|1|2026-11-13\n", {"SPY"})
+    assert list(s["symbol"]) == ["SPY"] and s["short"].iloc[0] == "10"
+    dt = ex.date_short_interest(pd.Timestamp("2026-11-23"), mesi=1)
+    assert "20261113" in dt and "20261030" in dt and all(x < "20261123" for x in dt)

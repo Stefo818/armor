@@ -182,6 +182,87 @@ def posizioni_roster(z: zipfile.ZipFile) -> pd.DataFrame:
     return t[["fondo", "periodo", "issuer", "cusip", "putcall", "value", "shares", "tot"]]
 
 
+TOP_ISTITUZIONALI = 150    # i depositanti piu' grandi per valore (gestori, banche, fondi pensione, assicurazioni)
+POS_COMPLETE = 250         # posizioni conservate per depositante e trimestre
+DAL_COMPLETE = 2019
+EXTRA_PRIVATI = (r"^VIKING GLOBAL", r"^LONE PINE", r"^APPALOOSA", r"^GREENLIGHT CAPITAL", r"^BAUPOST", r"^MAVERICK CAPITAL", r"^GLENVIEW CAPITAL", r"^VALUEACT",
+                 r"^ICAHN", r"^DUQUESNE", r"^SCION ASSET", r"^JANA PARTNERS", r"^TRIAN FUND", r"^D1 CAPITAL", r"^DRAGONEER", r"^WHALE ROCK", r"^FARALLON", r"^TUDOR",
+                 r"^MAN GROUP", r"^MARSHALL WACE", r"^BALYASNY", r"^SCHONFELD", r"^EXODUSPOINT", r"^SUSQUEHANNA", r"^JANE STREET", r"^CITADEL SECURITIES", r"^HUDSON BAY",
+                 r"^ARK INVESTMENT", r"^CAPITAL GROUP", r"^FMR LLC", r"^T\.? ROWE PRICE", r"^NORGES BANK", r"^CALIFORNIA PUBLIC EMPLOYEES", r"^CALIFORNIA STATE TEACHERS",
+                 r"^NEW YORK STATE COMMON", r"^GEODE CAPITAL", r"^DIMENSIONAL FUND", r"^WELLINGTON MANAGEMENT", r"^GOLDMAN SACHS GROUP", r"^MORGAN STANLEY$", r"^JPMORGAN CHASE",
+                 r"^BANK OF AMERICA", r"^UBS GROUP", r"^BARCLAYS", r"^DEUTSCHE BANK", r"^PRUDENTIAL FINANCIAL", r"^TEACHERS INSURANCE", r"^INVESCO LTD", r"^NORTHERN TRUST",
+                 r"^MILLENNIUM MANAGEMENT", r"^CITADEL ADVISORS", r"^POINT72", r"^TWO SIGMA", r"^D\.? ?E\.? SHAW", r"^RENAISSANCE", r"^BRIDGEWATER", r"^AQR", r"^SOROS", r"^PERSHING SQUARE",
+                 r"^BERKSHIRE HATHAWAY INC", r"^COATUE", r"^TIGER GLOBAL", r"^THIRD POINT", r"^ELLIOTT INVESTMENT", r"^SILVER LAKE", r"^KKR", r"^BLACKSTONE", r"^APOLLO", r"^CARLYLE")
+
+
+def posizioni_complete(z: zipfile.ZipFile) -> pd.DataFrame:
+    """Un pacchetto 13F -> le prime POS_COMPLETE posizioni di ogni depositante grande (primi TOP_ISTITUZIONALI per valore) o con nome noto (fondi privati, fondi pensione, banche).
+    Serve a ricostruire i MOVIMENTI (chi compra e chi vende cosa) fra trimestri. Valore in dollari dal 2023, in migliaia prima: non confrontare senza correggere."""
+    sub = _controlla(_tsv(z, "SUBMISSION.tsv"), {"ACCESSION_NUMBER", "FILING_DATE", "SUBMISSIONTYPE", "CIK", "PERIODOFREPORT"}, "SUBMISSION")
+    sub = sub[sub["SUBMISSIONTYPE"].str.upper() == "13F-HR"][["ACCESSION_NUMBER", "FILING_DATE", "CIK", "PERIODOFREPORT"]]
+    sub["periodo"] = pd.to_datetime(sub["PERIODOFREPORT"], errors="coerce")
+    sub["deposito"] = pd.to_datetime(sub["FILING_DATE"], errors="coerce")
+    sub = sub.dropna(subset=["periodo"])
+    sub = sub[sub["periodo"].dt.year >= DAL_COMPLETE].sort_values("deposito").drop_duplicates(["CIK", "periodo"], keep="last")
+    if sub.empty:
+        return pd.DataFrame()
+    cov = _controlla(_tsv(z, "COVERPAGE.tsv"), {"ACCESSION_NUMBER", "FILINGMANAGER_NAME"}, "COVERPAGE")[["ACCESSION_NUMBER", "FILINGMANAGER_NAME"]]
+    sub = sub.merge(cov, on="ACCESSION_NUMBER", how="left")
+    acc = set(sub["ACCESSION_NUMBER"])
+    tot: dict[str, float] = {}
+    for ch in _tsv(z, "INFOTABLE.tsv", usecols={"ACCESSION_NUMBER", "VALUE"}, chunksize=400000):
+        ch = _controlla(ch, {"ACCESSION_NUMBER", "VALUE"}, "INFOTABLE")
+        ch = ch[ch["ACCESSION_NUMBER"].isin(acc)]
+        for k, v in ch.assign(V=pd.to_numeric(ch["VALUE"], errors="coerce").fillna(0.0)).groupby("ACCESSION_NUMBER")["V"].sum().items():
+            tot[k] = tot.get(k, 0.0) + float(v)
+    sub["tot"] = sub["ACCESSION_NUMBER"].map(tot).fillna(0.0)
+    rx = re.compile("|".join(EXTRA_PRIVATI), re.I)
+    # un periodo alla volta: i primi N di quel periodo, piu' quelli con nome noto
+    scelti = []
+    for _, g in sub.groupby("periodo"):
+        top = g.nlargest(TOP_ISTITUZIONALI, "tot")
+        noti = g[g["FILINGMANAGER_NAME"].fillna("").str.strip().str.contains(rx)]
+        scelti.append(pd.concat([top, noti]).drop_duplicates("ACCESSION_NUMBER"))
+    sc = pd.concat(scelti)
+    sc = sc[sc["tot"] > 0].set_index("ACCESSION_NUMBER")
+    parti = []
+    for ch in _tsv(z, "INFOTABLE.tsv", chunksize=400000):
+        ch = _controlla(ch, {"ACCESSION_NUMBER", "NAMEOFISSUER", "CUSIP", "VALUE", "SSHPRNAMT", "PUTCALL"}, "INFOTABLE")
+        ch = ch[ch["ACCESSION_NUMBER"].isin(sc.index)]
+        if ch.empty:
+            continue
+        parti.append(pd.DataFrame({"acc": ch["ACCESSION_NUMBER"], "issuer": ch["NAMEOFISSUER"].fillna(""), "cusip": ch["CUSIP"].fillna("").str.upper(),
+                                   "putcall": ch["PUTCALL"].fillna("").str.upper(), "value": pd.to_numeric(ch["VALUE"], errors="coerce").fillna(0.0),
+                                   "shares": pd.to_numeric(ch["SSHPRNAMT"], errors="coerce").fillna(0.0)}))
+    if not parti:
+        return pd.DataFrame()
+    t = pd.concat(parti).groupby(["acc", "cusip", "putcall"], as_index=False).agg(issuer=("issuer", "first"), value=("value", "sum"), shares=("shares", "sum"))
+    t = t.sort_values("value", ascending=False).groupby("acc").head(POS_COMPLETE)
+    t = t.join(sc[["CIK", "FILINGMANAGER_NAME", "periodo", "tot"]], on="acc").drop(columns="acc")
+    t = t.rename(columns={"CIK": "cik", "FILINGMANAGER_NAME": "nome"})
+    return t[["cik", "nome", "periodo", "issuer", "cusip", "putcall", "value", "shares", "tot"]]
+
+
+def salva_posizioni_complete(df: pd.DataFrame) -> int:
+    """Un file compresso per anno del periodo (data/grandi_fondi/posizioni/AAAA.csv.gz); un depositante-periodo riletto sostituisce il vecchio."""
+    if df.empty:
+        return 0
+    base = DIR / "posizioni"
+    base.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for anno, g in df.groupby(df["periodo"].dt.year):
+        p = base / f"{anno}.csv.gz"
+        old = pd.read_csv(p, parse_dates=["periodo"], dtype={"cik": str, "cusip": str, "putcall": str}).fillna({"putcall": ""}) if p.exists() else pd.DataFrame()
+        g = g.assign(cik=g["cik"].astype(str))
+        if len(old):
+            chiavi = set(zip(g["cik"], g["periodo"]))
+            old = old[[(a, b) not in chiavi for a, b in zip(old["cik"].astype(str), old["periodo"])]]
+        m = pd.concat([old, g], ignore_index=True)
+        m.to_csv(p, index=False, compression={"method": "gzip", "mtime": 0})
+        n += len(g)
+    return n
+
+
 def serie_13f(df: pd.DataFrame) -> pd.DataFrame:
     """Dai depositanti ai segnali per periodo, con il pannello fissato dal trimestre precedente (nessuna informazione futura).
     protezione = put su ETF indicizzati / valore totale del pannello; indicizzati = azioni+call su ETF indicizzati / valore totale."""
@@ -226,6 +307,11 @@ def aggiorna_13f(max_nuovi: int = MAX_NUOVI) -> str:
             a = aggrega_13f(z)
             print(f"[13F] {k}: {len(a)} depositanti, periodi {sorted(a['periodo'].dt.strftime('%Y-%m-%d').unique())[:3] if len(a) else '-'}", flush=True)
             nuovi.append(a)
+            try:   # tutte le posizioni dei depositanti grandi o noti: servono ai MOVIMENTI fra trimestri (dal 2019)
+                n_c = salva_posizioni_complete(posizioni_complete(z))
+                print(f"[13F] {k}: {n_c} posizioni complete salvate", flush=True)
+            except Exception as e:  # noqa: BLE001
+                print(f"[13F] {k} posizioni complete non lette: {str(e)[:150]}", flush=True)
             if (k, u) in zip_[-3:]:   # le posizioni dei fondi con nome servono solo per gli ultimi trimestri
                 try:
                     pr = posizioni_roster(z)
