@@ -1,5 +1,7 @@
 # Dati accumulati per le ricerche future (dal 23 novembre 2026)
 
+> Guida completa con obiettivo, inventario aggiornato (anche BCE, OFR, Tesoro, CFTC, Wikipedia, GDELT, FINRA, NY Fed, TSA, cripto), trappole e piano di ricerca: **GUIDA_TRA_SEI_MESI.md**. Questo file è l'elenco originale delle prime fonti.
+
 Scopo: fra qualche mese cercare correlazioni sui dati NUOVI con la regola «scelta sul passato, verifica in avanti» (vedi PROTOCOLLO_SFASATO.md). Nessuno di questi dati entra nei modelli o nelle schede: è solo archivio. Lo scrive il workflow «Accumulo dati per le ricerche future» (due volte al giorno nei giorni di Borsa), in modo indipendente dall'aggiornamento giornaliero: se una fonte fallisce, le altre continuano. Cosa è riuscito e cosa no: `data/accumulo_stato.json`.
 
 | Categoria | Cosa | Dove | Storia |

@@ -1,0 +1,399 @@
+"""Fonti aggiuntive dell'archivio (23/11/2026): stress sistemico, liquidita' del Tesoro, posizionamento, attenzione del pubblico, ecc.
+
+Ogni funzione e' indipendente, scrive su data/ e riempie lo `stato` con quanto e' riuscito. Le parti di lettura (parse_*) non toccano la rete,
+cosi' si provano con dati finti. Nessuna di queste serie entra nei modelli: sono archivio per le ricerche future."""
+from __future__ import annotations
+
+import io
+import json
+import re
+import time
+from datetime import datetime, timedelta, timezone
+
+import pandas as pd
+import requests
+
+from . import store
+from .config import DATA
+from .guard import run_parallel
+
+UA = {"User-Agent": "Mozilla/5.0 (Armor personal research)"}
+
+
+def _get(url: str, tries: int = 3, timeout: int = 60, **kw) -> requests.Response:
+    last = None
+    for i in range(tries):
+        try:
+            r = requests.get(url, headers=UA, timeout=timeout, **kw)
+            r.raise_for_status()
+            return r
+        except Exception as e:  # noqa: BLE001
+            last = e
+            time.sleep(2 * 2 ** i)
+    raise RuntimeError(str(last)[:100])
+
+
+def slug(t: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", str(t).lower()).strip("_")
+
+
+def _riepilogo(res: dict) -> dict:
+    ok = [k for k, (t, _) in res.items() if t == "ok"]
+    return {"richieste": len(res), "riuscite": len(ok), "fallite": {k: str(v)[:60] for k, (t, v) in res.items() if t != "ok"}}
+
+
+def _upsert_tutte(prefisso: str, df: pd.DataFrame) -> int:
+    n = 0
+    for c in df.columns:
+        s = pd.to_numeric(df[c], errors="coerce").dropna()
+        if len(s):
+            n += store.upsert(prefisso + slug(c), s)
+    return n
+
+
+# ----------------------------------------------------------------------------- BCE: stress sistemico europeo, curve, cambio
+def parse_bce(txt: str) -> pd.Series:
+    df = pd.read_csv(io.StringIO(txt), usecols=["TIME_PERIOD", "OBS_VALUE"])
+    s = pd.Series(df.OBS_VALUE.values, index=pd.to_datetime(df.TIME_PERIOD), dtype=float).dropna()
+    return s[~s.index.duplicated(keep="last")].sort_index()
+
+
+BCE = {
+    "ciss_area_euro": "CISS/D.U2.Z0Z.4F.EC.SS_CIN.IDX", "ciss_italia": "CISS/D.IT.Z0Z.4F.EC.SS_CIN.IDX", "ciss_germania": "CISS/D.DE.Z0Z.4F.EC.SS_CIN.IDX",
+    "ciss_francia": "CISS/D.FR.Z0Z.4F.EC.SS_CIN.IDX", "ciss_spagna": "CISS/D.ES.Z0Z.4F.EC.SS_CIN.IDX", "ciss_usa": "CISS/D.US.Z0Z.4F.EC.SS_CIN.IDX",
+    "ciss_regno_unito": "CISS/D.GB.Z0Z.4F.EC.SS_CIN.IDX", "ciss_cina": "CISS/D.CN.Z0Z.4F.EC.SS_CIN.IDX",
+    "rend_aaa_2a": "YC/B.U2.EUR.4F.G_N_A.SV_C_YM.SR_2Y", "rend_aaa_10a": "YC/B.U2.EUR.4F.G_N_A.SV_C_YM.SR_10Y", "rend_aaa_30a": "YC/B.U2.EUR.4F.G_N_A.SV_C_YM.SR_30Y",
+    "rend_tutti_2a": "YC/B.U2.EUR.4F.G_N_C.SV_C_YM.SR_2Y", "rend_tutti_10a": "YC/B.U2.EUR.4F.G_N_C.SV_C_YM.SR_10Y", "rend_tutti_30a": "YC/B.U2.EUR.4F.G_N_C.SV_C_YM.SR_30Y",
+    "tasso_bce_rifinanziamento": "FM/B.U2.EUR.4F.KR.MRR_FR.LEV", "tasso_bce_deposito": "FM/B.U2.EUR.4F.KR.DFR.LEV",
+    "euro_dollaro": "EXR/D.USD.EUR.SP00.A", "euro_yen": "EXR/D.JPY.EUR.SP00.A", "euro_franco": "EXR/D.CHF.EUR.SP00.A", "euro_sterlina": "EXR/D.GBP.EUR.SP00.A",
+    "euro_yuan": "EXR/D.CNY.EUR.SP00.A",
+}
+
+
+def aggiorna_bce(stato: dict) -> None:
+    def mk(nome, chiave):
+        def job():
+            old = store.load("bce_" + nome)
+            inizio = "" if old.empty else "&startPeriod=" + (old.index[-1] - timedelta(days=20)).strftime("%Y-%m-%d")
+            r = _get(f"https://data-api.ecb.europa.eu/service/data/{chiave}?format=csvdata{inizio}")
+            return store.upsert("bce_" + nome, parse_bce(r.text))
+        return job
+    res = run_parallel({k: mk(k, v) for k, v in BCE.items()}, workers=4, deadline=240)
+    stato["bce"] = _riepilogo(res)
+
+
+# ----------------------------------------------------------------------------- OFR: indice di stress finanziario (Tesoro USA)
+def parse_ofr(txt: str) -> pd.DataFrame:
+    df = pd.read_csv(io.StringIO(txt))
+    df.index = pd.to_datetime(df[df.columns[0]], errors="coerce")
+    return df.drop(columns=df.columns[0])[df.index.notna()]
+
+
+def aggiorna_ofr(stato: dict) -> None:
+    df = parse_ofr(_get("https://www.financialresearch.gov/financial-stress-index/data/fsi.csv").text)
+    stato["ofr_stress"] = {"colonne": len(df.columns), "righe_nuove": _upsert_tutte("ofr_", df)}
+
+
+# ----------------------------------------------------------------------------- Tesoro USA: curve ufficiali giornaliere
+UST = {"curva": "daily_treasury_yield_curve", "bills": "daily_treasury_bill_rates", "reali": "daily_treasury_real_yield_curve", "reali_lungo": "daily_treasury_real_long_term"}
+
+
+def parse_ust(txt: str) -> pd.DataFrame:
+    df = pd.read_csv(io.StringIO(txt))
+    df.index = pd.to_datetime(df["Date"], format="%m/%d/%Y", errors="coerce")
+    return df.drop(columns=["Date"])[df.index.notna()]
+
+
+def aggiorna_ust(stato: dict) -> None:
+    anno = datetime.now(timezone.utc).year
+    n, err = 0, {}
+    for nome, tipo in UST.items():
+        try:
+            primo = store.load(f"ust_{nome}_{'1_mo' if nome != 'reali' else '5_yr'}").empty
+            anni = range(1990 if nome == "curva" else 2003, anno + 1) if primo else [anno]
+            for a in anni:
+                url = f"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{a}/all?type={tipo}&field_tdr_date_value={a}&page&_format=csv"
+                try:
+                    n += _upsert_tutte(f"ust_{nome}_", parse_ust(_get(url, tries=2).text))
+                except Exception:  # noqa: BLE001
+                    if a == anno:
+                        raise
+        except Exception as e:  # noqa: BLE001
+            err[nome] = str(e)[:60]
+    stato["tesoro_curve"] = {"righe_nuove": n, "fallite": err}
+
+
+# ----------------------------------------------------------------------------- Tesoro USA: cassa, debito, aste
+FD = "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/"
+
+
+def parse_tga(j: dict) -> pd.Series:
+    righe = [r for r in j.get("data", []) if "clos" in str(r.get("account_type", "")).lower() and "tga" in str(r.get("account_type", "")).lower()]
+    if not righe:
+        righe = [r for r in j.get("data", []) if "clos" in str(r.get("account_type", "")).lower()]
+    s = {}
+    for r in righe:
+        v = r.get("close_today_bal") or r.get("open_today_bal")
+        try:
+            s[pd.Timestamp(r["record_date"])] = float(v)
+        except (TypeError, ValueError, KeyError):
+            continue
+    return pd.Series(s, dtype=float).sort_index()
+
+
+COL_ASTE = ["auction_date", "issue_date", "security_type", "security_term", "cusip", "offering_amt", "total_tendered", "total_accepted", "bid_to_cover_ratio",
+            "high_yield", "high_investment_rate", "high_discnt_rate", "avg_med_yield", "primary_dealer_accepted", "direct_bidder_accepted", "indirect_bidder_accepted",
+            "primary_dealer_tendered", "direct_bidder_tendered", "indirect_bidder_tendered", "soma_accepted", "reopening"]
+
+
+def aggiorna_fiscal(stato: dict) -> None:
+    out: dict = {}
+    # cassa del Tesoro (TGA): quando sale, drena liquidita' dalle banche
+    try:
+        old = store.load("fisc_tga_milioni")
+        da = "2005-01-01" if old.empty else (old.index[-1] - timedelta(days=15)).strftime("%Y-%m-%d")
+        j = _get(f"{FD}accounting/dts/operating_cash_balance?filter=record_date:gte:{da}&sort=record_date&page[size]=10000").json()
+        out["tga_nuove"] = store.upsert("fisc_tga_milioni", parse_tga(j))
+    except Exception as e:  # noqa: BLE001
+        out["tga_errore"] = str(e)[:60]
+    try:
+        old = store.load("fisc_debito_pubblico")
+        da = "2000-01-01" if old.empty else (old.index[-1] - timedelta(days=15)).strftime("%Y-%m-%d")
+        j = _get(f"{FD}accounting/od/debt_to_penny?filter=record_date:gte:{da}&sort=record_date&page[size]=10000").json()
+        s = pd.Series({pd.Timestamp(r["record_date"]): float(r["tot_pub_debt_out_amt"]) for r in j.get("data", [])}).sort_index()
+        out["debito_nuove"] = store.upsert("fisc_debito_pubblico", s)
+    except Exception as e:  # noqa: BLE001
+        out["debito_errore"] = str(e)[:60]
+    # aste dei titoli di Stato: domanda (bid-to-cover), chi compra (esteri/dealer), rendimento
+    try:
+        base = DATA / "aste"
+        base.mkdir(parents=True, exist_ok=True)
+        p = base / "aste.csv"
+        old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+        da = "1990-01-01" if old.empty else (pd.Timestamp(old["auction_date"].max()) - timedelta(days=20)).strftime("%Y-%m-%d")
+        j = _get(f"{FD}accounting/od/auctions_query?filter=auction_date:gte:{da}&sort=auction_date&page[size]=10000").json()
+        nuovo = pd.DataFrame(j.get("data", []))
+        nuovo = nuovo[[c for c in COL_ASTE if c in nuovo.columns]]
+        m = pd.concat([old, nuovo], ignore_index=True).drop_duplicates(subset=["auction_date", "security_term", "security_type", "cusip"] if "cusip" in nuovo.columns else None, keep="last")
+        m.sort_values("auction_date").to_csv(p, index=False)
+        out["aste_righe"] = len(m)
+    except Exception as e:  # noqa: BLE001
+        out["aste_errore"] = str(e)[:60]
+    stato["tesoro_cassa_aste"] = out
+
+
+# ----------------------------------------------------------------------------- CFTC: posizionamento dei grandi operatori (settimanale)
+COT_COL = ["report_date_as_yyyy_mm_dd", "market_and_exchange_names", "open_interest_all", "dealer_positions_long_all", "dealer_positions_short_all",
+           "asset_mgr_positions_long", "asset_mgr_positions_short", "lev_money_positions_long", "lev_money_positions_short",
+           "other_rept_positions_long", "other_rept_positions_short", "nonrept_positions_long_all", "nonrept_positions_short_all"]
+COT_MERCATI = ("S&P 500", "VIX", "NASDAQ", "RUSSELL", "DJIA", "UST", "10-YEAR", "2-YEAR", "5-YEAR", "ULTRA", "EURO FX", "JAPANESE YEN", "BRITISH POUND",
+               "USD INDEX", "SWISS FRANC", "CANADIAN DOLLAR", "AUSTRALIAN DOLLAR", "BITCOIN", "ETHER", "NIKKEI", "MSCI", "FED FUNDS", "SOFR", "EURODOLLAR")
+
+
+def filtra_cot(righe: list[dict]) -> pd.DataFrame:
+    df = pd.DataFrame(righe)
+    if df.empty:
+        return df
+    df = df[[c for c in COT_COL if c in df.columns]]
+    m = df["market_and_exchange_names"].astype(str).str.upper()
+    df = df[m.apply(lambda x: any(k in x for k in COT_MERCATI))].copy()
+    df["report_date_as_yyyy_mm_dd"] = df["report_date_as_yyyy_mm_dd"].astype(str).str[:10]
+    return df
+
+
+def aggiorna_cot(stato: dict) -> None:
+    base = DATA / "cot"
+    base.mkdir(parents=True, exist_ok=True)
+    p = base / "tff.csv"
+    old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+    da = "2006-01-01" if old.empty else (pd.Timestamp(old["report_date_as_yyyy_mm_dd"].max()) - timedelta(days=21)).strftime("%Y-%m-%d")
+    righe, off = [], 0
+    while True:
+        url = ("https://publicreporting.cftc.gov/resource/gpe5-46if.json?$limit=20000&$offset=%d&$order=report_date_as_yyyy_mm_dd"
+               "&$where=report_date_as_yyyy_mm_dd>'%sT00:00:00.000'" % (off, da))
+        blocco = _get(url).json()
+        righe += blocco
+        if len(blocco) < 20000:
+            break
+        off += 20000
+    nuovo = filtra_cot(righe)
+    m = pd.concat([old, nuovo], ignore_index=True).drop_duplicates(subset=["report_date_as_yyyy_mm_dd", "market_and_exchange_names"], keep="last")
+    m.sort_values(["report_date_as_yyyy_mm_dd", "market_and_exchange_names"]).to_csv(p, index=False)
+    stato["cot_cftc"] = {"righe_totali": len(m), "mercati": int(m["market_and_exchange_names"].nunique())}
+
+
+# ----------------------------------------------------------------------------- Wikipedia: quanta gente cerca la parola «crollo»
+WIKI = ["Stock_market_crash", "Recession", "Great_Recession", "Financial_crisis_of_2007–2008", "Bank_run", "Inflation", "Stagflation", "Short_selling",
+        "Margin_call", "Black_Monday_(1987)", "Credit_default_swap", "Bankruptcy", "Federal_Reserve", "Gold_as_an_investment", "Bitcoin", "Layoff", "Unemployment",
+        "Debt_ceiling", "Yield_curve", "Dot-com_bubble", "Stock_market_bubble", "Great_Depression", "Subprime_mortgage_crisis", "Lehman_Brothers",
+        "Silicon_Valley_Bank", "Bear_market", "Market_trend", "Stock_market", "Volatility_Index", "Hedge_fund", "Bailout", "Default_(finance)", "Sovereign_default",
+        "Quantitative_easing", "Interest_rate", "Deflation", "Hyperinflation", "Capital_control", "Currency_crisis", "Bank_failure", "Liquidity_crisis", "Credit_crunch"]
+
+
+def parse_wiki(j: dict) -> pd.Series:
+    d = {pd.Timestamp(str(i["timestamp"])[:8]): float(i["views"]) for i in j.get("items", [])}
+    return pd.Series(d, dtype=float).sort_index()
+
+
+def aggiorna_wiki(stato: dict) -> None:
+    ieri = (datetime.now(timezone.utc) - timedelta(days=2)).strftime("%Y%m%d")
+
+    def mk(art):
+        def job():
+            sid = "wiki_" + slug(art)
+            old = store.load(sid)
+            da = "20150701" if old.empty else (old.index[-1] - timedelta(days=10)).strftime("%Y%m%d")
+            url = f"https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/{art}/daily/{da}/{ieri}"
+            return store.upsert(sid, parse_wiki(_get(url, tries=2).json()))
+        return job
+    res = run_parallel({a: mk(a) for a in WIKI}, workers=3, deadline=240)
+    stato["wikipedia_attenzione"] = _riepilogo(res)
+
+
+# ----------------------------------------------------------------------------- GDELT: tono e quantita' delle notizie del mondo
+GDELT = {"crollo_borsa": '"stock market crash"', "recessione": "recession", "crisi_bancaria": '"bank failure" OR "bank run"', "stretta_credito": '"credit crunch"',
+         "default": '"debt default" OR "sovereign default"', "inflazione": "inflation", "licenziamenti": "layoffs", "panico": '"market panic"'}
+
+
+def parse_gdelt(txt: str) -> pd.Series:
+    df = pd.read_csv(io.StringIO(txt))
+    col = [c for c in df.columns if c.lower() == "value"][0]
+    dcol = [c for c in df.columns if c.lower() == "date"][0]
+    s = pd.Series(df[col].values, index=pd.to_datetime(df[dcol]).dt.tz_localize(None).dt.normalize(), dtype=float)
+    return s.groupby(level=0).mean().dropna()
+
+
+def aggiorna_gdelt(stato: dict) -> None:
+    n, err = 0, {}
+    for nome, q in GDELT.items():
+        for modo, suff in (("timelinevolraw", "volume"), ("timelinetone", "tono")):
+            try:
+                r = _get("https://api.gdeltproject.org/api/v2/doc/doc", tries=2, params={"query": q, "mode": modo, "format": "csv", "timespan": "3months"})
+                n += store.upsert(f"gdelt_{nome}_{suff}", parse_gdelt(r.text))
+            except Exception as e:  # noqa: BLE001
+                err[f"{nome}_{suff}"] = str(e)[:50]
+            time.sleep(6)   # il servizio accetta una richiesta ogni 5 secondi
+    stato["gdelt_notizie"] = {"righe_nuove": n, "fallite": err}
+
+
+# ----------------------------------------------------------------------------- criptovalute: liquidita' in stablecoin, TVL, paura cripto
+def aggiorna_cripto(stato: dict) -> None:
+    out: dict = {}
+    try:
+        j = _get("https://stablecoins.llama.fi/stablecoincharts/all").json()
+        s = pd.Series({pd.Timestamp(int(i["date"]), unit="s"): float((i.get("totalCirculatingUSD") or i.get("totalCirculating") or {}).get("peggedUSD", float("nan"))) for i in j}).dropna()
+        out["stablecoin"] = store.upsert("cripto_stablecoin_totale_usd", s.sort_index())
+    except Exception as e:  # noqa: BLE001
+        out["stablecoin_errore"] = str(e)[:60]
+    try:
+        j = _get("https://api.llama.fi/v2/historicalChartTvl").json()
+        s = pd.Series({pd.Timestamp(int(i["date"]), unit="s"): float(i["tvl"]) for i in j})
+        out["tvl"] = store.upsert("cripto_defi_tvl_usd", s.sort_index())
+    except Exception as e:  # noqa: BLE001
+        out["tvl_errore"] = str(e)[:60]
+    try:
+        j = _get("https://api.alternative.me/fng/?limit=0&format=json").json()
+        s = pd.Series({pd.Timestamp(int(i["timestamp"]), unit="s").normalize(): float(i["value"]) for i in j["data"]})
+        out["paura_cripto"] = store.upsert("cripto_paura_avidita", s.sort_index())
+    except Exception as e:  # noqa: BLE001
+        out["paura_errore"] = str(e)[:60]
+    stato["cripto"] = out
+
+
+# ----------------------------------------------------------------------------- New York Fed: tassi sui prestiti overnight (tensione del finanziamento)
+def parse_nyfed(j: dict, campi: dict[str, str]) -> dict[str, pd.Series]:
+    righe = j.get("refRates", [])
+    out = {}
+    for suff, campo in campi.items():
+        d = {}
+        for r in righe:
+            if r.get(campo) is not None:
+                d[pd.Timestamp(r["effectiveDate"])] = float(r[campo])
+        out[suff] = pd.Series(d, dtype=float).sort_index()
+    return out
+
+
+def aggiorna_nyfed(stato: dict) -> None:
+    campi = {"tasso": "percentRate", "p1": "percentPercentile1", "p25": "percentPercentile25", "p75": "percentPercentile75", "p99": "percentPercentile99", "volume_mld": "volumeInBillions"}
+    n, err = 0, {}
+    for tasso in ("sofr", "tgcr", "bgcr"):
+        try:
+            j = _get(f"https://markets.newyorkfed.org/api/rates/secured/{tasso}/last/1500.json").json()
+            for suff, s in parse_nyfed(j, campi).items():
+                if len(s):
+                    n += store.upsert(f"nyfed_{tasso}_{suff}", s)
+        except Exception as e:  # noqa: BLE001
+            err[tasso] = str(e)[:60]
+    stato["nyfed_tassi_overnight"] = {"righe_nuove": n, "fallite": err}
+
+
+# ----------------------------------------------------------------------------- TSA: persone ai controlli aeroportuali (economia reale, giornaliero)
+def aggiorna_tsa(stato: dict) -> None:
+    html = _get("https://www.tsa.gov/travel/passenger-volumes").text
+    t = pd.read_html(io.StringIO(html))[0]
+    t.index = pd.to_datetime(t.iloc[:, 0], errors="coerce")
+    t = t[t.index.notna()]
+    n = store.upsert("tsa_passeggeri", pd.to_numeric(t.iloc[:, 1].astype(str).str.replace(",", ""), errors="coerce").dropna())
+    stato["tsa"] = {"righe_nuove": n}
+
+
+# ----------------------------------------------------------------------------- FINRA: vendite allo scoperto giornaliere, titolo per titolo
+def parse_finra(txt: str, tenere: set[str]) -> pd.DataFrame:
+    df = pd.read_csv(io.StringIO(txt), sep="|")
+    df = df[df["Date"].astype(str).str.fullmatch(r"\d{8}")]
+    tot = pd.DataFrame([{"Date": df["Date"].iloc[0], "Symbol": "_TOTALE", "ShortVolume": df["ShortVolume"].sum(), "ShortExemptVolume": df["ShortExemptVolume"].sum(),
+                         "TotalVolume": df["TotalVolume"].sum()}]) if len(df) else pd.DataFrame()
+    df = df[df["Symbol"].isin(tenere)][["Date", "Symbol", "ShortVolume", "ShortExemptVolume", "TotalVolume"]]
+    return pd.concat([tot, df], ignore_index=True)
+
+
+def aggiorna_finra(stato: dict) -> None:
+    from .accumulo import INTRADAY
+    tenere = set(INTRADAY) | {"SPY", "QQQ", "IWM", "DIA", "XLF", "KRE", "HYG", "JNK", "LQD", "TLT", "GLD", "USO", "VXX", "UVXY", "SQQQ", "TQQQ", "SPXU", "SPXL", "ARKK", "IBIT", "COIN", "MSTR"}
+    el = DATA / "componenti" / "elenco.csv"
+    if el.exists():
+        s = pd.read_csv(el)["Symbol"].astype(str)
+        tenere |= set(s) | set(s.str.replace("-", ".", regex=False))
+    base = DATA / "finra_short"
+    base.mkdir(parents=True, exist_ok=True)
+    gia = set()
+    for f in base.glob("*.csv"):
+        gia |= set(pd.read_csv(f, usecols=["Date"])["Date"].astype(str))
+    oggi = datetime.now(timezone.utc).date()
+    inizio = oggi - timedelta(days=900)
+    giorni = [oggi - timedelta(days=i) for i in range(1, 900)]
+    giorni = [d for d in giorni if d.weekday() < 5 and d >= inizio and d.strftime("%Y%m%d") not in gia][:60]   # al piu' 60 giorni per giro: il passato si recupera a poco a poco
+    festivi = DATA / "finra_short" / "senza_file.txt"
+    saltati = set(festivi.read_text().split()) if festivi.exists() else set()
+    giorni = [d for d in giorni if d.strftime("%Y%m%d") not in saltati]
+
+    def mk(d):
+        def job():
+            ymd = d.strftime("%Y%m%d")
+            r = requests.get(f"https://cdn.finra.org/equity/regsho/daily/CNMSshvol{ymd}.txt", headers=UA, timeout=90)
+            if r.status_code == 404:
+                return ("assente", ymd)
+            r.raise_for_status()
+            return ("ok", parse_finra(r.text, tenere))
+        return job
+    res = run_parallel({d.strftime("%Y%m%d"): mk(d) for d in giorni}, workers=4, deadline=600)
+    per_mese: dict[str, list] = {}
+    righe, assenti = 0, []
+    for k, (t, v) in res.items():
+        if t != "ok":
+            continue
+        if v[0] == "assente":
+            if (oggi - datetime.strptime(k, "%Y%m%d").date()).days > 5:
+                assenti.append(k)
+            continue
+        per_mese.setdefault(k[:6], []).append(v[1])
+    for ym, dfs in per_mese.items():
+        p = base / f"{ym[:4]}-{ym[4:]}.csv"
+        nuovo = pd.concat(dfs, ignore_index=True)
+        old = pd.read_csv(p) if p.exists() else pd.DataFrame()
+        m = pd.concat([old, nuovo], ignore_index=True).drop_duplicates(subset=["Date", "Symbol"], keep="last").sort_values(["Date", "Symbol"])
+        m.to_csv(p, index=False)
+        righe += len(nuovo)
+    if assenti:
+        festivi.write_text("\n".join(sorted(saltati | set(assenti))), encoding="utf-8")
+    stato["finra_vendite_scoperto"] = {"giorni_richiesti": len(giorni), "righe_nuove": righe, "senza_file": len(assenti), **{"fallite": {k: str(v)[:50] for k, (t, v) in res.items() if t != "ok"}}}

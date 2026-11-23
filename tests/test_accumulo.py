@@ -25,9 +25,12 @@ def test_riepilogo_catena_aggrega_per_scadenza():
     assert accumulo.riepilogo_catena({"data": {}}, "2026-11-23", "SPY") == []
 
 
-def test_salva_mensile_idempotente(tmp_path):
+def test_salva_giorni_idempotente(tmp_path):
     idx = pd.to_datetime(["2026-11-20 14:30", "2026-11-20 14:35", "2026-12-01 14:30"])
     df = pd.DataFrame({"o": [1, 2, 3], "h": [1, 2, 3], "l": [1, 2, 3], "c": [1, 2, 3], "v": [1, 1, 1]}, index=idx)
-    assert accumulo.salva_mensile(tmp_path, "spy", df) == 3
-    assert accumulo.salva_mensile(tmp_path, "spy", df) == 0
-    assert (tmp_path / "2026-11" / "spy.csv.gz").exists() and (tmp_path / "2026-12" / "spy.csv.gz").exists()
+    assert accumulo.salva_giorni(tmp_path, "SPY", df) == 3
+    assert accumulo.salva_giorni(tmp_path, "SPY", df) == 0
+    assert accumulo.salva_giorni(tmp_path, "QQQ", df) == 3     # stesso giorno, altro strumento: si aggiunge al file
+    g = accumulo._leggi_gz(tmp_path / "2026-11" / "2026-11-20.csv.gz")
+    assert set(g["sym"]) == {"SPY", "QQQ"} and len(g) == 4
+    assert (tmp_path / "2026-12" / "2026-12-01.csv.gz").exists()

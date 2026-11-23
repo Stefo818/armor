@@ -8,8 +8,10 @@ o nelle schede: sono solo archivio. Ogni fonte e' indipendente: se una fallisce,
 Struttura (tutta dentro data/):
 - series/x_<simbolo>.csv e xv_<simbolo>.csv  chiusure e volumi giornalieri di Yahoo Finance
 - series/f_<codice>.csv                       serie economiche e finanziarie di FRED
-- series/cboe_<nome>.csv                      rapporti put/call CBOE (totale, azioni, indici, S&P 500, VIX)
-- intraday/AAAA-MM/<simbolo>.csv.gz           barre a 5 minuti (UTC), un file al mese per non gonfiare il repository
+- series/cboe_pc_<nome>.csv                   rapporti put/call CBOE (totale, azioni, indici, S&P 500, VIX)
+- ohlc/<simbolo>.csv                          apertura/massimo/minimo/chiusura/volume giornalieri degli strumenti chiave
+- vedi accumulo_extra.py per BCE, OFR, Tesoro, CFTC, Wikipedia, GDELT, criptovalute, NY Fed, TSA, FINRA
+- intraday/AAAA-MM/AAAA-MM-GG.csv.gz           barre a 5 minuti (UTC): un file per giorno con tutti gli strumenti (colonna sym)
 - componenti/{close,vol}_AAAA-MM.csv.gz       prezzi e volumi giornalieri delle aziende dell'S&P 500 (colonne = titoli)
 - opzioni_ext/AAAA-MM.csv                     riepilogo giornaliero delle catene di opzioni per scadenza (volumi, OI, volatilita', asimmetria, gamma)
 - accumulo_stato.json                         cosa e' stato scritto oggi e cosa e' fallito
@@ -20,6 +22,7 @@ import gzip
 import io
 import json
 import re
+import threading
 import time
 from datetime import datetime, timedelta, timezone
 from urllib.parse import quote
@@ -68,6 +71,15 @@ IRLTLT01DEM156N IRLTLT01JPM156N IRLTLT01GBM156N IRLTLT01ITM156N IRLTLT01FRM156N 
 DCOILWTICO DCOILBRENTEU DHHNGSP GASREGW PCOPPUSDM PALUMUSDM PNGASEUUSDM PWHEAMTUSDM PCOTTINDUSDM
 NASDAQCOM DJIA WILL5000INDFC WILL5000PR NIKKEI225 SP500 BOGZ1LM153064486Q
 RECPROUSM156N SAHMREALTIME USREC STLENI
+RRPONTSYD RPONTSYD RRPONTTLD WTREGEN WDTGAL WLCFLPCL WLCFLSECW SWPT WALCL WSHOICB WSHOTSL WSHOFDSL WORAL WRESBAL WGCAL H41RESPPALGTRFNWW
+THREEFYTP10 ACMTP10 ACMTP02 THREEFF1 T10Y2Y T10Y3M T10YIE T5YIE DFF DAAA DBAA AAA10Y BAA10Y TEDRATE USD3MTD156N USD1MTD156N
+STLFSI4 STLFSI3 OFRFSI DRTSCILM DRTSCIS DRTSSP DEMDEBT DRCLACBS NETFI NETMANUALLIQ TOTBKCR LOANS INVEST TLAACBW027SBOG DPSACBW027SBOG
+GDPNOW WEI ICSA IC4WSA CCSA CONTCLAIMS UMCSENT CSCICP03USM665S IHLIDXUS IHLIDXUSTPSOFTDEVE RETAILSMSA RSAFS RSXFS TOTALSA MRTSSM44X72USS
+GACDISA066MSFRBNY GACDFSA066MSFRBPHI BACTSAMFRBDAL TXFSIRCP MANEMP USCONS USGOOD USTPU AWHMAN PERMIT HSN1F MORTGAGE5US MSPUS ASPUS
+DTWEXBGS DEXUSEU DEXUSAL DEXUSNZ DEXTHUS DEXSIUS DEXHKUS DEXMAUS DEXTAUS DEXVZUS DEXSFUS
+BOGZ1FL073164003Q BOGZ1FL664090005Q NCBEILQ027S CMDEBT BOGZ1FL104104016Q TNWBSHNO FBCELLQ027S
+BAMLC0A0CM BAMLH0A0HYM2 BAMLEMCBPIOAS BAMLC1A0C13Y BAMLC4A0C710Y BAMLC8A0C15PY BAMLH0A1HYBB BAMLHYH0A3CMTRIV
+IR14210 IR14220 IQ12260 IQ12220 IR10040 COMPUTSA
 """.split()
 CBOE_PC = {"totale": "totalpc", "azioni": "equitypc", "indici": "indexpc", "spx": "spxpc", "vix": "vixpc", "etf": "etfpc"}
 CBOE_URL = "https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/{}.csv"
@@ -137,6 +149,29 @@ def _scarta_oggi(df: pd.DataFrame, sym: str) -> pd.DataFrame:
     if len(df) and (sym.endswith("=F") or sym.endswith("-USD") or sym.endswith("=X") or df.index[-1] >= oggi):
         df = df[df.index < oggi]
     return df
+
+
+def aggiorna_ohlc(stato: dict) -> None:
+    """Apertura, massimo, minimo, chiusura e volume giornalieri degli strumenti chiave (anche quelli gia' archiviati dall'app):
+    servono a misurare l'ampiezza dei movimenti dentro la giornata. File di testo (non compressi): git li registra come righe aggiunte."""
+    base = DATA / "ohlc"
+    base.mkdir(parents=True, exist_ok=True)
+
+    def mk(sym):
+        def job():
+            p = base / f"{slug(sym)}.csv"
+            old = pd.read_csv(p, index_col=0, parse_dates=True) if p.exists() else pd.DataFrame()
+            df = chart(sym, "1d", "2000-01-01" if old.empty else (datetime.now(timezone.utc) - timedelta(days=15)).strftime("%Y-%m-%d"))
+            df = _scarta_oggi(df, sym)
+            m = df.combine_first(old) if len(old) else df
+            m = m[~m.index.duplicated(keep="last")].sort_index()
+            m.round(5).to_csv(p, index_label="date")
+            return len(m) - len(old)
+        return job
+    res = run_parallel({s: mk(s) for s in INTRADAY}, workers=6, deadline=240)
+    ok = [k for k, (t, _) in res.items() if t == "ok"]
+    stato["ohlc"] = {"richieste": len(INTRADAY), "riuscite": len(ok), "fallite": {k: str(v)[:60] for k, (t, v) in res.items() if t != "ok"}}
+    print(f"[accumulo] OHLC: {len(ok)}/{len(INTRADAY)}", flush=True)
 
 
 def aggiorna_yahoo(stato: dict) -> None:
@@ -211,16 +246,32 @@ def _scrivi_gz(p, df: pd.DataFrame) -> None:
         g.write(buf.getvalue().encode("utf-8"))
 
 
-def salva_mensile(base, nome: str, df: pd.DataFrame) -> int:
-    """Divide per mese (UTC) e unisce con quanto gia' salvato. Restituisce le righe nuove."""
+_LOCK = threading.Lock()   # piu' strumenti scrivono lo stesso file di giorno: uno alla volta
+
+
+def salva_giorni(base, sym: str, df: pd.DataFrame) -> int:
+    """Un file per giorno (UTC) con tutti gli strumenti in colonna `sym`: il file di un giorno passato non cambia piu',
+    cosi' il repository non si gonfia riscrivendo ogni giorno gli stessi dati compressi. Restituisce le righe nuove."""
+    with _LOCK:
+        return _salva_giorni(base, sym, df)
+
+
+def _salva_giorni(base, sym: str, df: pd.DataFrame) -> int:
     nuove = 0
-    for ym, g in df.groupby(df.index.strftime("%Y-%m")):
-        p = base / ym / f"{nome}.csv.gz"
+    df = df.copy()
+    df.insert(0, "sym", sym)
+    for giorno, g in df.groupby(df.index.strftime("%Y-%m-%d")):
+        p = base / giorno[:7] / f"{giorno}.csv.gz"
         old = _leggi_gz(p)
-        m = pd.concat([old, g]) if len(old) else g
-        m = m[~m.index.duplicated(keep="last")].sort_index()
+        if len(old):
+            old = old.reset_index()
+        nuovo = g.reset_index(names="ts")
+        m = pd.concat([old, nuovo], ignore_index=True) if len(old) else nuovo
+        m["ts"] = pd.to_datetime(m["ts"])
+        m = m.drop_duplicates(subset=["sym", "ts"], keep="last").sort_values(["sym", "ts"])
         nuove += len(m) - len(old)
-        _scrivi_gz(p, m)
+        if len(m) != len(old):
+            _scrivi_gz(p, m.set_index("ts"))
     return nuove
 
 
@@ -231,7 +282,7 @@ def aggiorna_intraday(stato: dict) -> None:
         def job():
             df = chart(sym, "5m", rng="5d")
             df.index = df.index.tz_convert("UTC").tz_localize(None)
-            return salva_mensile(base, slug(sym), df)
+            return salva_giorni(base, sym, df)
         return job
     res = run_parallel({s: mk(s) for s in INTRADAY}, workers=6, deadline=240)
     ok = [k for k, (t, _) in res.items() if t == "ok"]
@@ -368,8 +419,12 @@ def aggiorna_opzioni(stato: dict) -> None:
 # ----------------------------------------------------------------------------- orchestrazione
 def aggiorna(solo: list[str] | None = None) -> dict:
     stato: dict = {"data": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}
-    passi = (("yahoo", aggiorna_yahoo), ("fred", aggiorna_fred), ("cboe_putcall", aggiorna_cboe_pc), ("intraday", aggiorna_intraday),
-             ("opzioni", aggiorna_opzioni), ("componenti", aggiorna_componenti))
+    from . import accumulo_extra as ex
+    passi = (("yahoo", aggiorna_yahoo), ("ohlc", aggiorna_ohlc), ("fred", aggiorna_fred), ("cboe_putcall", aggiorna_cboe_pc), ("intraday", aggiorna_intraday),
+             ("opzioni", aggiorna_opzioni), ("componenti", aggiorna_componenti),
+             ("bce", ex.aggiorna_bce), ("ofr", ex.aggiorna_ofr), ("tesoro_curve", ex.aggiorna_ust), ("tesoro_cassa_aste", ex.aggiorna_fiscal), ("cot", ex.aggiorna_cot),
+             ("wikipedia", ex.aggiorna_wiki), ("cripto", ex.aggiorna_cripto), ("nyfed", ex.aggiorna_nyfed), ("tsa", ex.aggiorna_tsa),
+             ("finra", ex.aggiorna_finra), ("gdelt", ex.aggiorna_gdelt))
     for nome, fn in passi:
         if solo and nome not in solo:
             continue
