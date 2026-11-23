@@ -23,6 +23,9 @@ SOGLIA_PROMOSSO = 0.80   # quinto piu' alto della media a 5 sedute dell'Indice c
 # numeri misurati (ESITO_GARA_INDICI.md): persistenza sopra 60 -> calo dell'8% entro tre mesi
 SOPRA60 = {"Indice Armor": (44.7, 26), "Super Armor": (54.8, 17), "Indice crollo": (39.2, 68)}
 BASE_3M = 16.8
+# etichette piccole sotto ogni indice; per l'Indice crollo l'unico orizzonte che ha retto alla verifica e' la settimana
+SOTTO = {"Indice Armor": "Salute mercato", "Super Armor": "Salute economia + mercato",
+         "Indice crollo": "Rischio di crollo, prossima settimana"}
 
 
 def _col(v: float) -> str:
@@ -71,7 +74,7 @@ def html() -> str:
     if not d:
         return ""
     tre = "".join(
-        f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}{_freccia(d['tendenza'][g])}</div><div class='qd-l'>{_h.escape(n)}</div>"
+        f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}{_freccia(d['tendenza'][g])}</div><div class='qd-l'>{_h.escape(n)}</div><div class='qd-u'>{_h.escape(SOTTO[n])}</div>"
         f"<div class='qd-s'>{d['sopra60_5sedute'][n]}/5 sedute sopra 60</div></div>"
         for n, v, g in (("Indice Armor", d["armor"], "armor"), ("Super Armor", d["super"], "super"), ("Indice crollo", d["crollo"], "crollo")))
     m5 = d["crollo_m5"]
@@ -92,6 +95,7 @@ def html() -> str:
 .qd-n{font-size:28px;font-weight:800;line-height:1}
 .qd-a{font-size:15px;margin-left:5px;vertical-align:middle}
 .qd-l{font-size:11.5px;font-weight:600;margin-top:2px}
+.qd-u{font-size:9.5px;color:var(--mu);margin-top:1px;line-height:1.2}
 .qd-s{font-size:10.5px;color:var(--mu);margin-top:1px}
 .qd-b{border-left:4px solid;border-radius:8px;padding:7px 10px;margin-top:10px;background:rgba(127,127,127,.06)}
 .qd-b.bad{border-color:var(--bad)}.qd-b.ok{border-color:var(--ok)}
