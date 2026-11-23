@@ -29,6 +29,15 @@ def _col(v: float) -> str:
     return "#8b5cf6" if v > 80 else ("#ef4444" if v > 60 else ("#f59e0b" if v > 40 else "var(--ok)"))
 
 
+def _freccia(dv: float) -> str:
+    """Freccia accanto al numero: rossa in su se il rischio sale, verde in giù se scende, assente se stabile."""
+    if abs(dv) < 2:
+        return "<span class='qd-a' title='Stabile nell&#39;ultima settimana' style='color:var(--mu)'>&#8594;</span>"
+    su = dv > 0
+    return (f"<span class='qd-a' title='{'In salita' if su else 'In discesa'} da una settimana: {dv:+.1f} punti' "
+            f"style='color:{'#ef4444' if su else '#22c55e'}'>{'&#9650;' if su else '&#9660;'}</span>")
+
+
 def leggi() -> dict | None:
     try:
         d = pd.read_csv(STORIA, index_col=0, parse_dates=True).dropna(subset=["armor_index"])
@@ -47,7 +56,12 @@ def leggi() -> dict | None:
     col = "armor_tarato" if "armor_tarato" in d else "armor_index"
     sop = {"Indice Armor": int((d[col].tail(5) > 60).sum()), "Super Armor": int((d["super_armor_index"].tail(5) > 60).sum()),
            "Indice crollo": int((st.tail(5) > 60).sum())}
-    return {"data": str(d.index[-1].date()), "armor": arm, "super": sup, "crollo": cro, "crollo_m5": m5,
+    # tendenza: oggi contro 5 sedute fa (una settimana); sotto 2 punti di differenza e' stabile
+    def _tr(x):
+        x = x.dropna()
+        return float(x.iloc[-1] - x.iloc[-6]) if len(x) > 5 else 0.0
+    tend = {"armor": _tr(d[col]), "super": _tr(d["super_armor_index"]), "crollo": _tr(st)}
+    return {"tendenza": tend, "data": str(d.index[-1].date()), "armor": arm, "super": sup, "crollo": cro, "crollo_m5": m5,
             "sopra60_5sedute": sop, "settimana_acceso": m5 >= 60}
 
 
@@ -57,7 +71,7 @@ def html() -> str:
     if not d:
         return ""
     tre = "".join(
-        f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}</div><div class='qd-l'>{_h.escape(n)}</div>"
+        f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}{_freccia(d['tendenza'][g])}</div><div class='qd-l'>{_h.escape(n)}</div>"
         f"<div class='qd-s'>{d['sopra60_5sedute'][n]}/5 sedute sopra 60</div></div>"
         for n, v, g in (("Indice Armor", d["armor"], "armor"), ("Super Armor", d["super"], "super"), ("Indice crollo", d["crollo"], "crollo")))
     m5 = d["crollo_m5"]
@@ -76,6 +90,7 @@ def html() -> str:
 .qd-h{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
 .qd-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
 .qd-n{font-size:28px;font-weight:800;line-height:1}
+.qd-a{font-size:15px;margin-left:5px;vertical-align:middle}
 .qd-l{font-size:11.5px;font-weight:600;margin-top:2px}
 .qd-s{font-size:10.5px;color:var(--mu);margin-top:1px}
 .qd-b{border-left:4px solid;border-radius:8px;padding:7px 10px;margin-top:10px;background:rgba(127,127,127,.06)}
@@ -90,7 +105,7 @@ details.qdd[open]>summary::after{transform:rotate(225deg)}
 .qd-x{font-size:12.5px;color:var(--mu);line-height:1.5}
 .qd-x p{margin:8px 0 0}.qd-x b{color:var(--tx)}.qd-x ul{margin:5px 0 0;padding-left:18px}
 </style>""" +
-        f"<div class='qd'><div class='qd-h'>Quadro di oggi · {_h.escape(d['data'])} · tocca un numero per il grafico</div>"
+        f"<div class='qd'><div class='qd-h'>Quadro di oggi · {_h.escape(d['data'])} · tocca un numero per il grafico · freccia = andamento in una settimana</div>"
         f"<div class='qd-g'>{tre}</div>"
         f"<div class='qd-b {cls}'><div class='qd-t'>{tit}</div><div class='qd-d'>{det}</div></div>"
         "<details class='qdd'><summary>Cosa è stato provato, e cosa non funziona</summary><div class='qd-x'>"
