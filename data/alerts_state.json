@@ -6,7 +6,7 @@
   "6m": "Elevato"
  },
  "regime": "Tensione",
- "vix": "panico",
+ "vix": "stress",
  "aix_band": "elevato",
  "divergence": false,
  "event": "2026-11-10",
