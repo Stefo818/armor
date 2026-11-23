@@ -1,0 +1,313 @@
+{
+ "diag1": {
+  "base_prec": -0.294,
+  "base_succ": -0.144
+ },
+ "diag2_peso_reattive": 0.71,
+ "diag3": [
+  {
+   "episodio": "1994-02-02",
+   "primo_calo": "1994-03-22",
+   "indice_giorno_prima": 36.0,
+   "P_giorno_prima": 55.0,
+   "indice_5_prima": 41.0,
+   "indice_giorno_del_calo": 29.0
+  },
+  {
+   "episodio": "1997-02-18",
+   "primo_calo": "1997-08-06",
+   "indice_giorno_prima": 34.0,
+   "P_giorno_prima": 57.0,
+   "indice_5_prima": 40.0,
+   "indice_giorno_del_calo": 31.0
+  },
+  {
+   "episodio": "1997-10-07",
+   "primo_calo": "1997-10-20",
+   "indice_giorno_prima": 59.0,
+   "P_giorno_prima": 60.0,
+   "indice_5_prima": 55.0,
+   "indice_giorno_del_calo": 52.0
+  },
+  {
+   "episodio": "1998-07-17",
+   "primo_calo": "1998-07-16",
+   "indice_giorno_prima": 31.0,
+   "P_giorno_prima": 72.0,
+   "indice_5_prima": 37.0,
+   "indice_giorno_del_calo": 22.0
+  },
+  {
+   "episodio": "1999-07-16",
+   "primo_calo": "1999-07-15",
+   "indice_giorno_prima": 40.0,
+   "P_giorno_prima": 79.0,
+   "indice_5_prima": 27.0,
+   "indice_giorno_del_calo": 33.0
+  },
+  {
+   "episodio": "1999-12-31",
+   "primo_calo": "1999-12-28",
+   "indice_giorno_prima": 36.0,
+   "P_giorno_prima": 72.0,
+   "indice_5_prima": 47.0,
+   "indice_giorno_del_calo": 35.0
+  },
+  {
+   "episodio": "2000-03-24",
+   "primo_calo": "2000-04-06",
+   "indice_giorno_prima": 75.0,
+   "P_giorno_prima": 82.0,
+   "indice_5_prima": 59.0,
+   "indice_giorno_del_calo": 69.0
+  },
+  {
+   "episodio": "2007-07-19",
+   "primo_calo": "2007-07-19",
+   "indice_giorno_prima": 15.0,
+   "P_giorno_prima": 63.0,
+   "indice_5_prima": 12.0,
+   "indice_giorno_del_calo": 11.0
+  },
+  {
+   "episodio": "2007-10-09",
+   "primo_calo": "2007-10-12",
+   "indice_giorno_prima": 25.0,
+   "P_giorno_prima": 68.0,
+   "indice_5_prima": 12.0,
+   "indice_giorno_del_calo": 20.0
+  },
+  {
+   "episodio": "2018-01-26",
+   "primo_calo": "2018-01-26",
+   "indice_giorno_prima": 3.0,
+   "P_giorno_prima": 59.0,
+   "indice_5_prima": 3.0,
+   "indice_giorno_del_calo": 1.0
+  },
+  {
+   "episodio": "2020-09-02",
+   "primo_calo": "2020-08-31",
+   "indice_giorno_prima": 17.0,
+   "P_giorno_prima": 65.0,
+   "indice_5_prima": 16.0,
+   "indice_giorno_del_calo": 27.0
+  },
+  {
+   "episodio": "2022-01-03",
+   "primo_calo": "2022-01-11",
+   "indice_giorno_prima": 33.0,
+   "P_giorno_prima": 67.0,
+   "indice_5_prima": 8.0,
+   "indice_giorno_del_calo": 25.0
+  },
+  {
+   "episodio": "2024-07-16",
+   "primo_calo": "2024-07-31",
+   "indice_giorno_prima": 53.0,
+   "P_giorno_prima": 73.0,
+   "indice_5_prima": 50.0,
+   "indice_giorno_del_calo": 47.0
+  },
+  {
+   "episodio": "2026-10-06",
+   "primo_calo": "2026-10-29",
+   "indice_giorno_prima": 26.0,
+   "P_giorno_prima": 70.0,
+   "indice_5_prima": 38.0,
+   "indice_giorno_del_calo": 28.0
+  }
+ ],
+ "episodi_B5_scelta": 20,
+ "episodi_B5_verifica": 9,
+ "episodi_B10_scelta": 14,
+ "episodi_B10_verifica": 6,
+ "tabella": {
+  "BASE": {
+   "B5_scelta": 0.6576,
+   "B5_verifica": 0.742,
+   "B10_scelta": 0.7105,
+   "B10_verifica": 0.7057,
+   "5g-3%_scelta": 0.7449,
+   "5g-3%_verifica": 0.7483,
+   "21g-5%_scelta": 0.7287,
+   "21g-5%_verifica": 0.6859,
+   "63g-8%_scelta": 0.7642,
+   "63g-8%_verifica": 0.5866
+  },
+  "R reattive": {
+   "B5_scelta": 0.7024,
+   "B5_verifica": 0.7484,
+   "B10_scelta": 0.7041,
+   "B10_verifica": 0.7168,
+   "5g-3%_scelta": 0.7439,
+   "5g-3%_verifica": 0.7508,
+   "21g-5%_scelta": 0.7287,
+   "21g-5%_verifica": 0.6693,
+   "63g-8%_scelta": 0.7688,
+   "63g-8%_verifica": 0.5723
+  },
+  "P predisposizione": {
+   "B5_scelta": 0.7111,
+   "B5_verifica": 0.606,
+   "B10_scelta": 0.7041,
+   "B10_verifica": 0.5198,
+   "5g-3%_scelta": 0.6575,
+   "5g-3%_verifica": 0.5967,
+   "21g-5%_scelta": 0.6861,
+   "21g-5%_verifica": 0.6614,
+   "63g-8%_scelta": 0.7222,
+   "63g-8%_verifica": 0.65
+  },
+  "M5 massimo 5 giorni": {
+   "B5_scelta": 0.6589,
+   "B5_verifica": 0.7061,
+   "B10_scelta": 0.7397,
+   "B10_verifica": 0.6706,
+   "5g-3%_scelta": 0.7472,
+   "5g-3%_verifica": 0.7407,
+   "21g-5%_scelta": 0.7322,
+   "21g-5%_verifica": 0.6729,
+   "63g-8%_scelta": 0.7633,
+   "63g-8%_verifica": 0.5903
+  },
+  "E3 media esponenziale 3": {
+   "B5_scelta": 0.6637,
+   "B5_verifica": 0.7467,
+   "B10_scelta": 0.7203,
+   "B10_verifica": 0.7081,
+   "5g-3%_scelta": 0.7482,
+   "5g-3%_verifica": 0.7524,
+   "21g-5%_scelta": 0.7321,
+   "21g-5%_verifica": 0.6862,
+   "63g-8%_scelta": 0.7669,
+   "63g-8%_verifica": 0.5883
+  },
+  "B1 mista 50/50": {
+   "B5_scelta": 0.6978,
+   "B5_verifica": 0.7029,
+   "B10_scelta": 0.722,
+   "B10_verifica": 0.6222,
+   "5g-3%_scelta": 0.7192,
+   "5g-3%_verifica": 0.7164,
+   "21g-5%_scelta": 0.7264,
+   "21g-5%_verifica": 0.7094,
+   "63g-8%_scelta": 0.7665,
+   "63g-8%_verifica": 0.629
+  },
+  "B2 massimo 5 giorni di B1": {
+   "B5_scelta": 0.7016,
+   "B5_verifica": 0.6902,
+   "B10_scelta": 0.7406,
+   "B10_verifica": 0.5963,
+   "5g-3%_scelta": 0.723,
+   "5g-3%_verifica": 0.7059,
+   "21g-5%_scelta": 0.73,
+   "21g-5%_verifica": 0.7074,
+   "63g-8%_scelta": 0.7695,
+   "63g-8%_verifica": 0.6382
+  }
+ },
+ "adottabili": [],
+ "delta": {
+  "R reattive": {
+   "delta": {
+    "B5_scelta": 0.045,
+    "B5_verifica": 0.006,
+    "B10_scelta": -0.006,
+    "B10_verifica": 0.011,
+    "5g-3%_scelta": -0.001,
+    "5g-3%_verifica": 0.002,
+    "21g-5%_scelta": -0.0,
+    "21g-5%_verifica": -0.017,
+    "63g-8%_scelta": 0.005,
+    "63g-8%_verifica": -0.014
+   },
+   "adottabile": false
+  },
+  "P predisposizione": {
+   "delta": {
+    "B5_scelta": 0.054,
+    "B5_verifica": -0.136,
+    "B10_scelta": -0.006,
+    "B10_verifica": -0.186,
+    "5g-3%_scelta": -0.087,
+    "5g-3%_verifica": -0.152,
+    "21g-5%_scelta": -0.043,
+    "21g-5%_verifica": -0.025,
+    "63g-8%_scelta": -0.042,
+    "63g-8%_verifica": 0.063
+   },
+   "adottabile": false
+  },
+  "M5 massimo 5 giorni": {
+   "delta": {
+    "B5_scelta": 0.001,
+    "B5_verifica": -0.036,
+    "B10_scelta": 0.029,
+    "B10_verifica": -0.035,
+    "5g-3%_scelta": 0.002,
+    "5g-3%_verifica": -0.008,
+    "21g-5%_scelta": 0.003,
+    "21g-5%_verifica": -0.013,
+    "63g-8%_scelta": -0.001,
+    "63g-8%_verifica": 0.004
+   },
+   "adottabile": false
+  },
+  "E3 media esponenziale 3": {
+   "delta": {
+    "B5_scelta": 0.006,
+    "B5_verifica": 0.005,
+    "B10_scelta": 0.01,
+    "B10_verifica": 0.002,
+    "5g-3%_scelta": 0.003,
+    "5g-3%_verifica": 0.004,
+    "21g-5%_scelta": 0.003,
+    "21g-5%_verifica": 0.0,
+    "63g-8%_scelta": 0.003,
+    "63g-8%_verifica": 0.002
+   },
+   "adottabile": false
+  },
+  "B1 mista 50/50": {
+   "delta": {
+    "B5_scelta": 0.04,
+    "B5_verifica": -0.039,
+    "B10_scelta": 0.011,
+    "B10_verifica": -0.083,
+    "5g-3%_scelta": -0.026,
+    "5g-3%_verifica": -0.032,
+    "21g-5%_scelta": -0.002,
+    "21g-5%_verifica": 0.024,
+    "63g-8%_scelta": 0.002,
+    "63g-8%_verifica": 0.042
+   },
+   "adottabile": false
+  },
+  "B2 massimo 5 giorni di B1": {
+   "delta": {
+    "B5_scelta": 0.044,
+    "B5_verifica": -0.052,
+    "B10_scelta": 0.03,
+    "B10_verifica": -0.109,
+    "5g-3%_scelta": -0.022,
+    "5g-3%_verifica": -0.042,
+    "21g-5%_scelta": 0.001,
+    "21g-5%_verifica": 0.021,
+    "63g-8%_scelta": 0.005,
+    "63g-8%_verifica": 0.052
+   },
+   "adottabile": false
+  }
+ },
+ "oggi": {
+  "BASE": 78.92,
+  "R reattive": 90.89,
+  "P predisposizione": 65.95,
+  "M5 massimo 5 giorni": 78.92,
+  "E3 media esponenziale 3": 73.41,
+  "B1 mista 50/50": 0.84,
+  "B2 massimo 5 giorni di B1": 0.84
+ }
+}

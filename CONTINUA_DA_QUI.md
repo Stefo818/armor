@@ -798,3 +798,9 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
 ## (9) 23/11/2026 · Valutazioni e ricerca libera
 - Schede CAPE, P/E, Indice Buffett in «Paura, protezioni e prezzi» (colore per posizione storica 50/80/95%, grafico interattivo): grafico_indici.val_cards/val_cfg.
 - Ricerca libera (PROTOCOLLO_/ESITO_RICERCA_LIBERA.md): unico candidato che passa P2 è «CAPE × sotto media 200 giorni»; implementato come spia informativa src/armor/spia_caro.py (non cambia l'Indice crollo).
+
+## (10) 23/11/2026 · Anticipo Indice crollo
+- Richiesta: l'indice deve avvisare PRIMA. Diagnosi: 71% reattivo; il giorno prima dei crolli finanziari era sotto 41 in 11 casi su 14.
+- PROTOCOLLO_/ESITO_ANTICIPO.md: nessuna variante (massimo 5 giorni, media esponenziale, misto con predisposizione) passa la regola. Indice crollo invariato.
+- Aggiunta riga «Terreno fragile» (src/armor/predisposizione.py) + registro data/predisposizione_registro.csv per la prova in avanti.
+- Grafico: aggiunto Indice crollo, default attivi solo S&P 500, VWCE, Armor, Super Armor, Indice crollo; su telefono valori in una striscia sopra il grafico.

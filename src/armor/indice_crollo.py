@@ -190,6 +190,12 @@ def aggiorna(log=print) -> dict:
     if pd.notna(ult.get("settore_giu")) and isinstance(ult.get("settore_quale"), str):
         res["settore"] = {"nome": SETTORI[ult["settore_quale"]], "giu": round(float(ult["settore_giu"]), 0),
                           "rotto": bool(float(ult["settore_giu"]) <= -15)}
+    try:
+        from . import predisposizione
+        res["predisposizione"] = predisposizione.calcola(df)
+        predisposizione.registra(res["predisposizione"])
+    except Exception:  # noqa: BLE001
+        pass
     _registra(res, ult)
     FILE.write_text(json.dumps(res, ensure_ascii=False), encoding="utf-8")
     df[["indice", "punteggio", "sotto_massimo"]].tail(2520).round(2).to_csv(STORIA, index_label="date")
@@ -283,6 +289,21 @@ BARRA = ("<div class='ic-s'><i style='flex:35;background:var(--ok)'></i><i style
          "<i style='flex:20;background:#8b5cf6'></i></div>")
 
 
+def _predisp_html(d: dict) -> str:
+    """Riga separata: quanto il terreno e' fragile (non cambia l'Indice crollo, vedi ESITO_ANTICIPO.md)."""
+    import html as _h
+    p = d.get("predisposizione")
+    if not p:
+        return ""
+    col = {"alta": "#ef4444", "media": "#f59e0b", "bassa": "#22c55e"}[p["liv"]]
+    sp = ", ".join(s["nome"] for s in p["spinte"])
+    return (f"<div class='ic-p' style='border-top:1px dashed var(--bd);margin-top:8px;padding-top:7px'>"
+            f"<b>Terreno fragile: <span style='color:{col}'>{int(p['valore'])} su 100 ({p['liv']})</span></b> "
+            f"· più alti: {_h.escape(sp)}. Misura quanto il mercato è predisposto a un crollo anche se oggi non scende. "
+            "Il giorno prima dei crolli finanziari dal 1994 era sempre sopra 55, mentre l'Indice crollo era sotto 41 in 11 casi su 14. "
+            "Però è alta anche per lunghi periodi senza crolli: dice che il terreno è fragile, non quando cede.</div>")
+
+
 def oggi_html() -> str:
     """Scheda compatta: numero, barra con la tacca di oggi, una riga di lettura; il resto a scomparsa."""
     import html as _h
@@ -317,5 +338,6 @@ def oggi_html() -> str:
         "<span style='left:60%'>60</span><span style='left:80%'>80</span></div>"
         "<div class='ic-k'><span>1 tranquillo</span><span>100 panico</span></div>"
         f"<div class='ic-p'>{_h.escape(sit.get('testo', ''))}</div>"
+        + _predisp_html(d) +
         "<details class='icd'><summary>Da cosa nasce e come si usa</summary>"
         f"<div class='icb'>{''.join(x for x in corpo if x)}</div></details></div>")
