@@ -1,0 +1,952 @@
+{
+ "candidati": {
+  "C01 curva 10a-2a invertita": {
+   "una settimana": {
+    "auc_scelta": 0.4865,
+    "auc_verifica": 0.629,
+    "ic90": [
+     0.5194,
+     0.7133
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0209,
+    "dBase_verifica": 0.0021
+   },
+   "un mese": {
+    "auc_scelta": 0.5035,
+    "auc_verifica": 0.6891,
+    "ic90": [
+     0.5629,
+     0.793
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0154,
+    "dBase_verifica": 0.0222
+   },
+   "tre mesi": {
+    "auc_scelta": 0.4942,
+    "auc_verifica": 0.6294,
+    "ic90": [
+     0.4538,
+     0.8016
+    ],
+    "P1": false,
+    "dBase_scelta": -0.02,
+    "dBase_verifica": 0.0191
+   }
+  },
+  "C02 curva 10a-3m invertita": {
+   "una settimana": {
+    "auc_scelta": 0.4922,
+    "auc_verifica": 0.5204,
+    "ic90": [
+     0.4313,
+     0.5848
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0179,
+    "dBase_verifica": -0.0134
+   },
+   "un mese": {
+    "auc_scelta": 0.506,
+    "auc_verifica": 0.5396,
+    "ic90": [
+     0.4367,
+     0.6678
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0132,
+    "dBase_verifica": -0.0048
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5052,
+    "auc_verifica": 0.4816,
+    "ic90": [
+     0.335,
+     0.6509
+    ],
+    "P1": false,
+    "dBase_scelta": -0.016,
+    "dBase_verifica": -0.013
+   }
+  },
+  "C03 disinversione 2a-10a": {
+   "una settimana": {
+    "auc_scelta": 0.4972,
+    "auc_verifica": 0.5911,
+    "ic90": [
+     0.5002,
+     0.6663
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0203,
+    "dBase_verifica": -0.0002
+   },
+   "un mese": {
+    "auc_scelta": 0.5216,
+    "auc_verifica": 0.6136,
+    "ic90": [
+     0.4956,
+     0.7166
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0143,
+    "dBase_verifica": 0.0103
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5249,
+    "auc_verifica": 0.548,
+    "ic90": [
+     0.3436,
+     0.8052
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0183,
+    "dBase_verifica": 0.0041
+   }
+  },
+  "C04 disinversione 3m-10a": {
+   "una settimana": {
+    "auc_scelta": 0.4407,
+    "auc_verifica": 0.419,
+    "ic90": [
+     0.3007,
+     0.5612
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0344,
+    "dBase_verifica": -0.0212
+   },
+   "un mese": {
+    "auc_scelta": 0.4659,
+    "auc_verifica": 0.3869,
+    "ic90": [
+     0.2442,
+     0.5537
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0259,
+    "dBase_verifica": -0.0291
+   },
+   "tre mesi": {
+    "auc_scelta": 0.4777,
+    "auc_verifica": 0.5645,
+    "ic90": [
+     0.417,
+     0.7581
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0253,
+    "dBase_verifica": 0.0137
+   }
+  },
+  "C05 ciclo di rialzi dei tassi": {
+   "una settimana": {
+    "auc_scelta": 0.3842,
+    "auc_verifica": 0.5623,
+    "ic90": [
+     0.3433,
+     0.6824
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0272,
+    "dBase_verifica": -0.0045
+   },
+   "un mese": {
+    "auc_scelta": 0.3891,
+    "auc_verifica": 0.5979,
+    "ic90": [
+     0.4131,
+     0.7202
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0277,
+    "dBase_verifica": 0.0104
+   },
+   "tre mesi": {
+    "auc_scelta": 0.3148,
+    "auc_verifica": 0.4364,
+    "ic90": [
+     0.2744,
+     0.5443
+    ],
+    "P1": false,
+    "dBase_scelta": -0.045,
+    "dBase_verifica": -0.0197
+   }
+  },
+  "C06 regola di Sahm": {
+   "una settimana": {
+    "auc_scelta": 0.648,
+    "auc_verifica": 0.5355,
+    "ic90": [
+     0.4076,
+     0.6836
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0294,
+    "dBase_verifica": -0.0077
+   },
+   "un mese": {
+    "auc_scelta": 0.6681,
+    "auc_verifica": 0.4824,
+    "ic90": [
+     0.3304,
+     0.6403
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0378,
+    "dBase_verifica": -0.0188
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7086,
+    "auc_verifica": 0.4343,
+    "ic90": [
+     0.2985,
+     0.5929
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0477,
+    "dBase_verifica": -0.0284
+   }
+  },
+  "C07 indagine manifatturiera": {
+   "una settimana": {
+    "auc_scelta": 0.6189,
+    "auc_verifica": 0.5635,
+    "ic90": [
+     0.4563,
+     0.6498
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0149,
+    "dBase_verifica": -0.0086
+   },
+   "un mese": {
+    "auc_scelta": 0.6088,
+    "auc_verifica": 0.5343,
+    "ic90": [
+     0.3862,
+     0.6488
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0136,
+    "dBase_verifica": -0.0091
+   },
+   "tre mesi": {
+    "auc_scelta": 0.675,
+    "auc_verifica": 0.4592,
+    "ic90": [
+     0.318,
+     0.6069
+    ],
+    "P1": false,
+    "dBase_scelta": 0.028,
+    "dBase_verifica": -0.0178
+   }
+  },
+  "C08 ordini beni durevoli": {
+   "una settimana": {
+    "auc_scelta": 0.6196,
+    "auc_verifica": 0.4008,
+    "ic90": [
+     0.2668,
+     0.5822
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0011,
+    "dBase_verifica": -0.0246
+   },
+   "un mese": {
+    "auc_scelta": 0.6337,
+    "auc_verifica": 0.3839,
+    "ic90": [
+     0.2341,
+     0.5881
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0041,
+    "dBase_verifica": -0.031
+   },
+   "tre mesi": {
+    "auc_scelta": 0.6669,
+    "auc_verifica": 0.2937,
+    "ic90": [
+     0.17,
+     0.4636
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0087,
+    "dBase_verifica": -0.0523
+   }
+  },
+  "C09 permessi di costruzione": {
+   "una settimana": {
+    "auc_scelta": 0.5787,
+    "auc_verifica": 0.5745,
+    "ic90": [
+     0.504,
+     0.6573
+    ],
+    "P1": false,
+    "dBase_scelta": 0.006,
+    "dBase_verifica": -0.0024
+   },
+   "un mese": {
+    "auc_scelta": 0.5972,
+    "auc_verifica": 0.544,
+    "ic90": [
+     0.4326,
+     0.6887
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0126,
+    "dBase_verifica": -0.0033
+   },
+   "tre mesi": {
+    "auc_scelta": 0.6331,
+    "auc_verifica": 0.4671,
+    "ic90": [
+     0.3342,
+     0.5999
+    ],
+    "P1": false,
+    "dBase_scelta": 0.021,
+    "dBase_verifica": -0.0112
+   }
+  },
+  "C10 impulso del credito": {
+   "una settimana": {
+    "auc_scelta": 0.5746,
+    "auc_verifica": 0.4316,
+    "ic90": [
+     0.3716,
+     0.5475
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0018,
+    "dBase_verifica": -0.0303
+   },
+   "un mese": {
+    "auc_scelta": 0.545,
+    "auc_verifica": 0.4984,
+    "ic90": [
+     0.4054,
+     0.6301
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0025,
+    "dBase_verifica": -0.0118
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5701,
+    "auc_verifica": 0.5167,
+    "ic90": [
+     0.419,
+     0.6328
+    ],
+    "P1": false,
+    "dBase_scelta": 0.003,
+    "dBase_verifica": -0.0014
+   }
+  },
+  "C11 livello spread credito": {
+   "una settimana": {
+    "auc_scelta": 0.7155,
+    "auc_verifica": 0.4977,
+    "ic90": [
+     0.3169,
+     0.5998
+    ],
+    "P1": false,
+    "dBase_scelta": 0.033,
+    "dBase_verifica": -0.0141
+   },
+   "un mese": {
+    "auc_scelta": 0.7135,
+    "auc_verifica": 0.4478,
+    "ic90": [
+     0.2388,
+     0.5543
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0351,
+    "dBase_verifica": -0.023
+   },
+   "tre mesi": {
+    "auc_scelta": 0.7744,
+    "auc_verifica": 0.3284,
+    "ic90": [
+     0.1384,
+     0.4867
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0505,
+    "dBase_verifica": -0.043
+   }
+  },
+  "C12 ampiezza settori con indice vicino ai massimi": {
+   "una settimana": {
+    "auc_scelta": 0.3499,
+    "auc_verifica": 0.4044,
+    "ic90": [
+     0.3166,
+     0.5003
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0068,
+    "dBase_verifica": -0.0186
+   },
+   "un mese": {
+    "auc_scelta": 0.3219,
+    "auc_verifica": 0.4922,
+    "ic90": [
+     0.3564,
+     0.6524
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0142,
+    "dBase_verifica": 0.0015
+   },
+   "tre mesi": {
+    "auc_scelta": 0.2679,
+    "auc_verifica": 0.5472,
+    "ic90": [
+     0.3901,
+     0.6879
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0215,
+    "dBase_verifica": 0.0153
+   }
+  },
+  "C13 ampiezza settori semplice": {
+   "una settimana": {
+    "auc_scelta": 0.7275,
+    "auc_verifica": 0.6625,
+    "ic90": [
+     0.5258,
+     0.7156
+    ],
+    "P1": false,
+    "dBase_scelta": 0.001,
+    "dBase_verifica": 0.0015
+   },
+   "un mese": {
+    "auc_scelta": 0.6942,
+    "auc_verifica": 0.6528,
+    "ic90": [
+     0.4711,
+     0.748
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0025,
+    "dBase_verifica": 0.0079
+   },
+   "tre mesi": {
+    "auc_scelta": 0.717,
+    "auc_verifica": 0.6231,
+    "ic90": [
+     0.4634,
+     0.7231
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0079,
+    "dBase_verifica": 0.017
+   }
+  },
+  "C14 ampiezza a pesi uguali": {
+   "una settimana": {
+    "auc_scelta": 0.552,
+    "auc_verifica": 0.4563,
+    "ic90": [
+     0.3877,
+     0.554
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0133,
+    "dBase_verifica": -0.0086
+   },
+   "un mese": {
+    "auc_scelta": 0.5782,
+    "auc_verifica": 0.5433,
+    "ic90": [
+     0.4445,
+     0.6926
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0008,
+    "dBase_verifica": 0.0126
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5992,
+    "auc_verifica": 0.5779,
+    "ic90": [
+     0.4757,
+     0.7461
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0035,
+    "dBase_verifica": 0.0199
+   }
+  },
+  "C15 debito a margine": {
+   "una settimana": {
+    "auc_scelta": 0.4031,
+    "auc_verifica": 0.4166,
+    "ic90": [
+     0.3386,
+     0.5813
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0166,
+    "dBase_verifica": -0.0129
+   },
+   "un mese": {
+    "auc_scelta": 0.4577,
+    "auc_verifica": 0.4221,
+    "ic90": [
+     0.3162,
+     0.5916
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0042,
+    "dBase_verifica": -0.0145
+   },
+   "tre mesi": {
+    "auc_scelta": 0.4628,
+    "auc_verifica": 0.5525,
+    "ic90": [
+     0.4107,
+     0.7422
+    ],
+    "P1": false,
+    "dBase_scelta": 0.0004,
+    "dBase_verifica": 0.0141
+   }
+  },
+  "C16 debito a margine contro prezzi": {
+   "una settimana": {
+    "auc_scelta": 0.4938,
+    "auc_verifica": 0.4481,
+    "ic90": [
+     0.3771,
+     0.5493
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0215,
+    "dBase_verifica": -0.017
+   },
+   "un mese": {
+    "auc_scelta": 0.5078,
+    "auc_verifica": 0.4413,
+    "ic90": [
+     0.3296,
+     0.5808
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0111,
+    "dBase_verifica": -0.018
+   },
+   "tre mesi": {
+    "auc_scelta": 0.541,
+    "auc_verifica": 0.5321,
+    "ic90": [
+     0.3331,
+     0.7054
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0028,
+    "dBase_verifica": 0.0048
+   }
+  },
+  "C17 SKEW": {
+   "una settimana": {
+    "auc_scelta": 0.4595,
+    "auc_verifica": 0.334,
+    "ic90": [
+     0.2668,
+     0.5091
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0012,
+    "dBase_verifica": -0.0226
+   },
+   "un mese": {
+    "auc_scelta": 0.4704,
+    "auc_verifica": 0.3551,
+    "ic90": [
+     0.2914,
+     0.537
+    ],
+    "P1": false,
+    "dBase_scelta": -0.003,
+    "dBase_verifica": -0.0249
+   },
+   "tre mesi": {
+    "auc_scelta": 0.4113,
+    "auc_verifica": 0.4926,
+    "ic90": [
+     0.3946,
+     0.6847
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0159,
+    "dBase_verifica": 0.0013
+   }
+  },
+  "C18 oro": {
+   "una settimana": {
+    "auc_scelta": 0.5243,
+    "auc_verifica": 0.4175,
+    "ic90": [
+     0.3478,
+     0.5456
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0101,
+    "dBase_verifica": -0.0251
+   },
+   "un mese": {
+    "auc_scelta": 0.5292,
+    "auc_verifica": 0.4268,
+    "ic90": [
+     0.3371,
+     0.582
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0055,
+    "dBase_verifica": -0.0248
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5522,
+    "auc_verifica": 0.4321,
+    "ic90": [
+     0.3013,
+     0.5705
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0009,
+    "dBase_verifica": -0.0238
+   }
+  },
+  "C19 dollaro": {
+   "una settimana": {
+    "auc_scelta": 0.5284,
+    "auc_verifica": 0.4906,
+    "ic90": [
+     0.3886,
+     0.5841
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0001,
+    "dBase_verifica": -0.0174
+   },
+   "un mese": {
+    "auc_scelta": 0.5186,
+    "auc_verifica": 0.4982,
+    "ic90": [
+     0.3788,
+     0.5997
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0017,
+    "dBase_verifica": -0.0106
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5032,
+    "auc_verifica": 0.5717,
+    "ic90": [
+     0.4989,
+     0.6323
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0057,
+    "dBase_verifica": 0.0101
+   }
+  },
+  "C20 yen forte": {
+   "una settimana": {
+    "auc_scelta": 0.529,
+    "auc_verifica": 0.4948,
+    "ic90": [
+     0.4143,
+     0.6294
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0095,
+    "dBase_verifica": -0.006
+   },
+   "un mese": {
+    "auc_scelta": 0.5443,
+    "auc_verifica": 0.4958,
+    "ic90": [
+     0.431,
+     0.5775
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0031,
+    "dBase_verifica": -0.0066
+   },
+   "tre mesi": {
+    "auc_scelta": 0.5419,
+    "auc_verifica": 0.5276,
+    "ic90": [
+     0.4651,
+     0.5923
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0042,
+    "dBase_verifica": 0.005
+   }
+  },
+  "C21 euforia dei consumatori": {
+   "una settimana": {
+    "auc_scelta": 0.4509,
+    "auc_verifica": 0.3384,
+    "ic90": [
+     0.2497,
+     0.4887
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0292,
+    "dBase_verifica": -0.0192
+   },
+   "un mese": {
+    "auc_scelta": 0.4672,
+    "auc_verifica": 0.3403,
+    "ic90": [
+     0.2191,
+     0.511
+    ],
+    "P1": false,
+    "dBase_scelta": -0.023,
+    "dBase_verifica": -0.0261
+   },
+   "tre mesi": {
+    "auc_scelta": 0.4571,
+    "auc_verifica": 0.3244,
+    "ic90": [
+     0.1956,
+     0.5688
+    ],
+    "P1": false,
+    "dBase_scelta": -0.0281,
+    "dBase_verifica": -0.0371
+   }
+  }
+ },
+ "soglia_caso_95": 0.7771,
+ "P2_adottabili": [],
+ "P1_promossi": [],
+ "P3": {
+  "base_calo8_63": 16.8,
+  "A (impulso del credito)": {
+   "giorni": 1263,
+   "episodi_indipendenti": 43,
+   "calo8_entro_63_%": 28.0
+  },
+  "B (disinversione)": {
+   "giorni": 1435,
+   "episodi_indipendenti": 13,
+   "calo8_entro_63_%": 30.9
+  },
+  "C (ampiezza + debito)": {
+   "giorni": 45,
+   "episodi_indipendenti": 3,
+   "calo8_entro_63_%": 86.7
+  },
+  "tutte e tre": {
+   "giorni": 0,
+   "episodi_indipendenti": 0,
+   "calo8_entro_63_%": null
+  },
+  "almeno due": {
+   "giorni": 336,
+   "episodi_indipendenti": 17,
+   "calo8_entro_63_%": 38.1
+  },
+  "almeno due, SOLO scelta (fino al 2014)": {
+   "giorni": 267,
+   "episodi_indipendenti": 8,
+   "calo8_entro_63_%": 42.7,
+   "base_periodo_%": 17.8
+  },
+  "almeno due, SOLO verifica (dal 2015)": {
+   "giorni": 69,
+   "episodi_indipendenti": 9,
+   "calo8_entro_63_%": 20.3,
+   "base_periodo_%": 13.9
+  },
+  "richiamo": [
+   {
+    "picco": "1994-02-02",
+    "d10": "1994-04-04",
+    "calo": -8.9,
+    "triangolo": false,
+    "almeno_due": false,
+    "A": false,
+    "B": false,
+    "C": false
+   },
+   {
+    "picco": "1997-02-18",
+    "d10": "1997-04-11",
+    "calo": -9.6,
+    "triangolo": false,
+    "almeno_due": false,
+    "A": false,
+    "B": false,
+    "C": false
+   },
+   {
+    "picco": "1997-10-07",
+    "d10": "1997-10-27",
+    "calo": -10.8,
+    "triangolo": false,
+    "almeno_due": false,
+    "A": true,
+    "B": false,
+    "C": false
+   },
+   {
+    "picco": "1998-07-17",
+    "d10": "1998-08-14",
+    "calo": -19.3,
+    "triangolo": false,
+    "almeno_due": false,
+    "A": true,
+    "B": true,
+    "C": false
+   },
+   {
+    "picco": "1999-07-16",
+    "d10": "1999-09-29",
+    "calo": -12.1,
+    "triangolo": false,
+    "almeno_due": true,
+    "A": true,
+    "B": true,
+    "C": false
+   },
+   {
+    "picco": "1999-12-31",
+    "d10": "2000-02-25",
+    "calo": -9.2,
+    "triangolo": false,
+    "almeno_due": false,
+    "A": true,
+    "B": false,
+    "C": false
+   },
+   {
+    "picco": "2000-03-24",
+    "d10": "2000-04-14",
+    "calo": -49.1,
+    "triangolo": false,
+    "almeno_due": false,
+    "A": true,
+    "B": false,
+    "C": false
+   },
+   {
+    "picco": "2007-07-19",
+    "d10": "2008-01-08",
+    "calo": -9.4,
+    "triangolo": false,
+    "almeno_due": true,
+    "A": true,
+    "B": true,
+    "C": false
+   },
+   {
+    "picco": "2007-10-09",
+    "d10": "2007-11-26",
+    "calo": -56.8,
+    "triangolo": false,
+    "almeno_due": true,
+    "A": true,
+    "B": true,
+    "C": false
+   },
+   {
+    "picco": "2018-01-26",
+    "d10": "2018-02-08",
+    "calo": -10.2,
+    "triangolo": false,
+    "almeno_due": false,
+    "A": false,
+    "B": false,
+    "C": false
+   },
+   {
+    "picco": "2020-09-02",
+    "d10": "2020-09-23",
+    "calo": -9.6,
+    "triangolo": false,
+    "almeno_due": true,
+    "A": true,
+    "B": true,
+    "C": false
+   },
+   {
+    "picco": "2022-01-03",
+    "d10": "2022-02-22",
+    "calo": -25.4,
+    "triangolo": false,
+    "almeno_due": false,
+    "A": true,
+    "B": false,
+    "C": false
+   },
+   {
+    "picco": "2024-07-16",
+    "d10": "2024-08-05",
+    "calo": -8.5,
+    "triangolo": false,
+    "almeno_due": true,
+    "A": true,
+    "B": true,
+    "C": false
+   },
+   {
+    "picco": "2026-10-06",
+    "d10": "2026-11-20",
+    "calo": -11.6,
+    "triangolo": false,
+    "almeno_due": true,
+    "A": true,
+    "B": false,
+    "C": true
+   }
+  ]
+ },
+ "oggi": {
+  "C01 curva 10a-2a invertita": 0.701,
+  "C02 curva 10a-3m invertita": 0.74,
+  "C03 disinversione 2a-10a": 0.402,
+  "C04 disinversione 3m-10a": 0.408,
+  "C05 ciclo di rialzi dei tassi": 0.58,
+  "C06 regola di Sahm": 0.224,
+  "C07 indagine manifatturiera": 0.251,
+  "C08 ordini beni durevoli": 0.077,
+  "C09 permessi di costruzione": 0.772,
+  "C10 impulso del credito": 0.702,
+  "C11 livello spread credito": 0.1,
+  "C12 ampiezza settori con indice vicino ai massimi": 0.33,
+  "C13 ampiezza settori semplice": 0.829,
+  "C14 ampiezza a pesi uguali": 0.061,
+  "C15 debito a margine": 0.688,
+  "C16 debito a margine contro prezzi": 0.864,
+  "C17 SKEW": 0.874,
+  "C18 oro": 0.0,
+  "C19 dollaro": 0.835,
+  "C20 yen forte": 0.431,
+  "C21 euforia dei consumatori": 0.003,
+  "triangolo_acceso": false,
+  "almeno_due": false,
+  "A": false,
+  "B": false,
+  "C": false
+ }
+}
