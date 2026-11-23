@@ -183,7 +183,7 @@ CSS = """
 .cfw{margin:8px 0}.cfbar{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.cfbar button,.cfchips label{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
 .cfbar button.on{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700}.cfchips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.cfchips label{display:flex;align-items:center;gap:6px}.cfchips label.on{border-width:2px;font-weight:700}
 .cfchips i{display:inline-block;width:14px;height:4px;border-radius:2px}.cfwrap{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:6px 4px}
-.cfwrap canvas{width:100%;display:block;touch-action:pan-y;user-select:none;-webkit-user-select:none}.cftip{position:absolute;pointer-events:none;background:var(--card);color:var(--tx);border:1px solid var(--ac);border-radius:7px;padding:2px 5px;font-size:9.5px;line-height:1.18;box-shadow:none;display:none;z-index:5;min-width:0;max-width:46%;background:color-mix(in srgb,var(--card) 34%,transparent);border-color:color-mix(in srgb,var(--ac) 55%,transparent)}
+.cfwrap canvas{width:100%;display:block;touch-action:pan-y;user-select:none;-webkit-user-select:none}.cftip{position:absolute;pointer-events:none;background:var(--card);color:var(--tx);border:1px solid var(--ac);border-radius:7px;padding:2px 6px;font-size:12.4px;line-height:1.2;box-shadow:none;display:none;z-index:5;min-width:0;max-width:46%;background:color-mix(in srgb,var(--card) 34%,transparent);border-color:color-mix(in srgb,var(--ac) 55%,transparent)}
 .cfst{font-size:13px;margin:8px 0}.cfl{font-size:12px;color:var(--mu);display:flex;gap:14px;flex-wrap:wrap;margin:4px 6px}.cfl i{display:inline-block;width:18px;border-top:3px solid;margin-right:5px;vertical-align:middle}.cfl span{display:inline-flex;align-items:center}
 .cfchips label{transition:box-shadow .15s,opacity .15s}.cfchips label:not(.on){opacity:.55}.cfchips label.on i{box-shadow:0 0 8px 1px currentColor}
 .cfzoom{font-size:13px;margin:4px 0;min-height:30px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.cfzoom button{border:1px solid var(--ac);background:var(--ac);color:#fff;border-radius:99px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}
@@ -250,7 +250,12 @@ function draw(){cv=root.querySelector('#cfc');if(!cv)return;setRange();var full=
  ctx.fillStyle=mu;var nt=5;for(var t=0;t<=nt;t++){var i=Math.round(i0+(i1-i0)*t/nt),dt=new Date(D.d[i]*86400000);ctx.textAlign=t===0?'left':(t===nt?'right':'center');ctx.fillText(('0'+(dt.getUTCMonth()+1)).slice(-2)+'/'+dt.getUTCFullYear(),X(i),T+H1+GAP+H2+14)}ctx.textAlign='left';
  ctx.fillStyle=tx;ctx.fillText(ka.length?'Mercati (base 100)':'Accendi almeno una linea di mercato (sotto)',L+4,T+10);ctx.fillText(!kb.length?'Accendi almeno un indicatore (sotto)':(single?kb[0].n:'Indicatori (scala relativa 0–100%)'),L+4,y0+10);
  if(dragA!=null&&dragB!=null){var xa_=X(Math.min(dragA,dragB)),xb_=X(Math.max(dragA,dragB));ctx.fillStyle='rgba(120,160,255,.22)';ctx.fillRect(xa_,T,xb_-xa_,T+H1+GAP+H2-T);ctx.strokeStyle='rgba(120,160,255,.9)';ctx.lineWidth=1;ctx.strokeRect(xa_,T,xb_-xa_,T+H1+GAP+H2-T)}
- if(hov!=null&&hov>=i0&&hov<=i1&&dragA==null&&!pan){var x=X(hov);ctx.strokeStyle=tx;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+H1+GAP+H2);ctx.stroke()}
+ if(hov!=null&&hov>=i0&&hov<=i1&&dragA==null&&!pan){var x=X(hov);ctx.strokeStyle=tx;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+H1+GAP+H2);ctx.stroke();
+  var pts=[];ka.forEach(function(m){var vv=AR[m.k]&&AR[m.k][hov];if(vv==null)return;pts.push({m:m,y:Y1(vv),t:nf(D.s[m.k][hov],2)+' ('+(vv>=100?'+':'')+nf(vv-100,1)+'%)'})});
+  pts.sort(function(a,b){return a.y-b.y});for(var q2=0;q2<pts.length;q2++){pts[q2].y2=q2&&pts[q2].y-pts[q2-1].y2<17?pts[q2-1].y2+17:pts[q2].y}
+  ctx.font='700 11px system-ui';var right=x<W*0.55;pts.forEach(function(pt){var ly=pt.y2!=null?pt.y2:pt.y,tw=ctx.measureText(pt.t).width,bx=right?x+9:x-9-tw-8;
+   ctx.fillStyle=colr(pt.m);ctx.beginPath();ctx.arc(x,pt.y,3.6,0,6.3);ctx.fill();ctx.strokeStyle=tx;ctx.lineWidth=1;ctx.stroke();
+   ctx.fillStyle='rgba(10,14,24,.62)';ctx.fillRect(bx,ly-8,tw+8,16);ctx.fillStyle=colr(pt.m);ctx.fillText(pt.t,bx+4,ly+4)});ctx.font='10px system-ui'}
  var lg=root.querySelector('.cfl');if(lg)lg.innerHTML=ka.map(function(m){return '<span><i style="border-color:'+colr(m)+';color:'+colr(m)+'"></i>'+m.n+'</span>'}).join('')+(ka.length&&IB!=null&&IB>i0+5?'<span class="mu">(il confronto parte dal '+fd(IB)+': prima non tutte le linee esistono)</span>':'');
  stats();zbar()}
 function fd(i){var d=new Date(D.d[i]*86400000);return d.getUTCDate()+'/'+(d.getUTCMonth()+1)+'/'+d.getUTCFullYear()}
@@ -263,7 +268,7 @@ function stats(){var el=root.querySelector('.cfst');if(!el)return;var arm=D.s.ar
 function idx(cx){var rc=cv.getBoundingClientRect(),i=Math.round(i0+(cx-rc.left-L)/(W-L-R)*(i1-i0));return Math.max(i0,Math.min(i1,i))}
 function tip(clientX){var rc=cv.getBoundingClientRect(),x=clientX-rc.left,i=idx(clientX);hov=i;draw();
  var tl=root.querySelector('.cftl'),tr=root.querySelector('.cftr'),dt=new Date(D.d[i]*86400000);var hd='<b>'+dt.getUTCDate()+'/'+(dt.getUTCMonth()+1)+'/'+dt.getUTCFullYear()+'</b>';
- var rows=D.meta.filter(function(m){return act[m.k]&&D.s[m.k]}).map(function(m){var v=D.s[m.k][i],e='';if(m.g==='a'&&IB!=null&&v!=null&&D.s[m.k][IB])e=' ('+nf((v/D.s[m.k][IB]-1)*100,1)+'%)';return '<span style="color:'+colr(m)+'">\u25a0</span> '+m.n+': '+nf(v,m.g==='a'?2:m.d)+(m.g==='a'?'':(m.u||''))+e});
+ var rows=D.meta.filter(function(m){return m.g!=='a'&&act[m.k]&&D.s[m.k]}).map(function(m){var v=D.s[m.k][i],e='';if(m.g==='a'&&IB!=null&&v!=null&&D.s[m.k][IB])e=' ('+nf((v/D.s[m.k][IB]-1)*100,1)+'%)';return '<span style="color:'+colr(m)+'">\u25a0</span> '+m.n+': '+nf(v,m.g==='a'?2:m.d)+(m.g==='a'?'':(m.u||''))+e});
  var h=Math.ceil(rows.length/2),A=[hd].concat(rows.slice(0,h)),B=rows.slice(h);
  tl.innerHTML=A.join('<br>');tl.style.display='block';var wl=tl.offsetWidth;tl.style.left=Math.max(0,x-wl-8)+'px';tl.style.top='6px';
  if(B.length){tr.innerHTML=B.join('<br>');tr.style.display='block';var wr=tr.offsetWidth;tr.style.left=Math.min(rc.width-wr,x+8)+'px';tr.style.top='6px'}else tr.style.display='none';
