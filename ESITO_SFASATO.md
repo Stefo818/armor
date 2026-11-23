@@ -19,3 +19,8 @@ Le prove precedenti erano già sfasate (il valore del giorno t contro il calo de
 
 ## Limiti
 Pochi episodi in verifica (13, 8, 3). Molti test (396 × 3): la soglia del caso serve a questo. Serie con copertura breve (hy_oas, breadth) escluse. Nessuna regola è stata cambiata dopo i risultati. L'Indice crollo non viene modificato.
+
+## Emendamento 1: nuove serie Yahoo (script scratch/sfasato2.py, dati scratch/sfasato2.json)
+Scaricate 39 serie giornaliere (paure di altri indici, credito e obbligazioni, banche, valute, borse estere). Con la regola «almeno 8 anni nel periodo di scelta» ne sono entrate in prova 12 (^TNX, ^FVX, ^IRX, ^TYX, ^RUT, ^NYA, ^SOX, ^HSI, ^KS11, ^FTSE, ^FCHI, JPY=X); le altre, con storia più breve (VXN, VXD, OVX, GVZ, JNK, LQD, TLT, SHY, EMB, KBE e i rapporti che le usano), non hanno abbastanza storia per la prova del passato.
+Esito: invariato. Soglie del caso identiche (0,737 / 0,843 / 0,973); E1 ancora solo il livello del VIX; nessun nuovo segnale; nessun candidato adottabile («Non coerente»). Un valore apparentemente alto (^FVX livello, E3: verifica 0,929, scelta 0,510) è l'artefatto dei 3 soli episodi di verifica.
+Le serie con storia breve sono state aggiunte al download giornaliero (src/armor/sources.py): da oggi si accumulano per una prova in avanti.
