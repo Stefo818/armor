@@ -388,8 +388,8 @@ def build_titan(df: pd.DataFrame) -> pd.DataFrame:
     gs = clean_series(df["global_sync_bull"], 0.5)
     v6 = 0.45 * (1.0 - S6) + 0.55 * P_now * (1.0 - S6) - 0.50 * S6
     v8 = 0.45 * (1.0 - S8) + 0.55 * P_now * (1.0 - S8) - 0.50 * S8
-    fast = ((1.0 - df["p3_stress"] / 100.0) + (1.0 - df["p6_stress"] / 100.0)
-            + expit(clean_series(df["holo_rebound_z"]) + 0.35 * df["credit_lead_10d"] + 0.25 * df["z_dark_pool_buy"] - 0.20 * df["z_cot_inst_exit"])) / 3.0
+    reb = expit(clean_series(df["holo_rebound_z"]) + 0.35 * df["credit_lead_10d"] + 0.25 * df["z_dark_pool_buy"] - 0.20 * df["z_cot_inst_exit"])
+    fast = ((1.0 - df["p3_stress"] / 100.0) + (1.0 - df["p6_stress"] / 100.0) + reb) / 3.0
     dir_sec = 0.40 * (1.0 - st) + 0.30 * expit(2.0 * v6) + 0.20 * expit(1.5 * D6 + 0.3 * cyc) + 0.10 * expit(pe_ch)
     dir_mod = (0.25 * (1.0 - st) + 0.25 * expit(2.0 * v8)
                + 0.40 * expit(1.90 * d8 - 1.1 * T8 + 0.35 * cyc + 0.35 * infr + 0.25 * erp_i - 0.15 * df["z_margin_deleverage"] - 0.12 * df["z_cot_inst_exit"])
@@ -398,6 +398,14 @@ def build_titan(df: pd.DataFrame) -> pd.DataFrame:
     w_mod = np.clip(0.20 + 0.55 * is_mod + 0.20 * np.clip(d8, 0.0, 1.0), 0.20, 0.90)
     slow = (1.0 - w_mod) * dir_sec + w_mod * dir_mod
     bull = 0.30 * fast + 0.70 * slow
+    # parti dell'Indice Armor, in "rischio" 1-100 (solo per mostrarle: non cambiano il calcolo)
+    wst = 0.40 * (1.0 - w_mod) + 0.25 * w_mod
+    dir_rest = (slow - wst * (1.0 - st)) / (1.0 - wst)
+    df["a_paura"] = df["p3_stress"]
+    df["a_liquidita"] = df["p6_stress"]
+    df["a_rimbalzo"] = np.clip(100.0 * (1.0 - reb), 1.0, 100.0)
+    df["a_stress"] = np.clip(100.0 * st, 1.0, 100.0)
+    df["a_ciclo"] = np.clip(100.0 * (1.0 - dir_rest), 1.0, 100.0)
     df["armor_index"] = clean_series(np.clip(40.5 + (100.0 * (1.0 - bull) - 48.0) * 0.65, 1.0, 100.0), 40.0)
     # Scala tarata per chi legge (PROTOCOLLO_PILASTRI_7_8.md, emendamento 1 parte C): trasformazione monotona,
     # non cambia l'ordine dei giorni ne' alcun risultato gia' pubblicato, sposta solo i confini. I punti di

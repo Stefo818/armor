@@ -788,3 +788,8 @@ Esito prova: fasce in ordine (dopo «Pericoloso» calo ≥5% in 1 mese nel 36% d
   etichette di direzione centrate sul 53% (la Borsa sale nel 53,6% dei giorni dal 1990).
   Workflow «Sito Armor»: aggiunto il controllo che il sito esista prima di spedirlo e un secondo
   tentativo di pubblicazione dopo 60 secondi (il deploy ogni tanto non trova l'artifact appena caricato).
+
+## (8) 23 nov 2026 - grafici sui pilastri e scala unica
+- Scala 40/60/80 e stesse tinte per Indice Armor e Super Armor in tutte le schede (soglie.py, armor_index.compute usa armor_tarato, registro resta sulla scala originale).
+- grafico_indici.py: toccando un indice si vedono i suoi pilastri, toccando un pilastro si apre il suo grafico con tasto per tornare indietro. Indice Armor: 5 parti (paura, liquidita, rimbalzo, stress, ciclo; colonne a_* in titan_storia.csv, solo per mostrarle). Super Armor: 6 pilastri + 7 (fondi a breve) e 8 (Buffett) solo informativi, NON nel calcolo.
+- Pagina Oggi: Paura, protezioni e prezzi spostata sopra La bussola di oggi.
