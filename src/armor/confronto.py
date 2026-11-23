@@ -183,6 +183,7 @@ CSS = """
 .cfw{margin:8px 0}.cfbar{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.cfbar button,.cfchips label{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
 .cfbar button.on{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700}.cfchips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.cfchips label{display:flex;align-items:center;gap:6px}.cfchips label.on{border-width:2px;font-weight:700}
 .cfchips i{display:inline-block;width:14px;height:4px;border-radius:2px}.cfwrap{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:6px 4px}
+.cfstrip{display:none}@media(max-width:700px){.cfstrip{display:block;min-height:96px;margin:2px 0 6px;padding:5px 8px;border:1px solid var(--bd);border-radius:10px;font-size:12.5px;line-height:1.35;background:color-mix(in srgb,var(--card) 70%,transparent)}.cfstrip .cs{display:inline-block;margin:0 10px 1px 0;white-space:nowrap}.cfstrip .mu{font-size:12px}.cftip{display:none!important}}
 .cfwrap canvas{width:100%;display:block;touch-action:pan-y;user-select:none;-webkit-user-select:none}.cftip{position:absolute;pointer-events:none;background:var(--card);color:var(--tx);border:1px solid var(--ac);border-radius:7px;padding:2px 6px;font-size:12.4px;line-height:1.2;box-shadow:none;display:none;z-index:5;min-width:0;max-width:46%;background:color-mix(in srgb,var(--card) 34%,transparent);border-color:color-mix(in srgb,var(--ac) 55%,transparent)}
 .cfst{font-size:13px;margin:8px 0}.cfl{font-size:12px;color:var(--mu);display:flex;gap:14px;flex-wrap:wrap;margin:4px 6px}.cfl i{display:inline-block;width:18px;border-top:3px solid;margin-right:5px;vertical-align:middle}.cfl span{display:inline-flex;align-items:center}
 .cfchips label{transition:box-shadow .15s,opacity .15s}.cfchips label:not(.on){opacity:.55}.cfchips label.on i{box-shadow:0 0 8px 1px currentColor}
@@ -214,7 +215,7 @@ function chip(m){var c=colr(m),on=act[m.k];return '<label data-k="'+m.k+'" data-
 function build(){
  var h='<div class="cfbar"><b>Periodo:</b>'+P.map(function(p){return '<button data-p="'+p[0]+'"'+(per===p[0]?' class="on"':'')+'>'+p[1]+'</button>'}).join('')+'</div>'+
  '<div class="cfzoom"></div><div class="cfl"></div>'+
- '<div class="cfwrap"><canvas id="cfc" tabindex="0"></canvas><div class="cftip cftl"></div><div class="cftip cftr"></div></div>'+
+ '<div class="cfstrip"></div><div class="cfwrap"><canvas id="cfc" tabindex="0"></canvas><div class="cftip cftl"></div><div class="cftip cftr"></div></div>'+
  '<div class="cfhint mu">'+(COARSE?'<b>Tocca</b> il grafico: vedi i valori, e se scorri il dito cambiano subito. <b>Due dita</b>: sposti il grafico. <b>Doppio tocco e trascina</b>: ingrandisci quella zona. <b>Doppio tocco veloce</b>: torna alla vista normale. Tieni premuta una voce per la spiegazione.':'Passa il mouse: data e valori. <b>Trascina</b> per ingrandire un periodo; <b>tasto destro + trascina</b> (o i tasti ← →) per scorrere; <b>doppio clic</b> per tornare alla vista normale. Con «Schermo intero» il grafico occupa tutto lo schermo. Su ogni voce il mouse fermo apre la spiegazione.')+'</div>'+
  '<div class="cfchips">';
  D.gruppi.forEach(function(g){var ms=D.meta.filter(function(m){return m.g===g[0]});if(!ms.length)return;var n=ms.filter(function(m){return act[m.k]}).length;
@@ -222,7 +223,7 @@ function build(){
  h+='</div><div class="cfst"></div><div class="mu">Con una sola linea attiva in basso la scala è quella reale; con più linee ognuna è riportata a 0–100% del suo minimo e massimo nel periodo (i valori reali sono nel riquadro). In alto tutte le linee partono da 100 nel primo giorno in cui sono tutte disponibili.</div>';
  root.innerHTML=h;
  root.querySelectorAll('label[data-k],em.aii').forEach(function(el){var m=meta[el.dataset.k];if(m&&window.armorInfo)window.armorInfo.attach(el,function(){return info(m)})});
- draw()}
+ draw();hideTip()}
 var cv,ctx,W,H1=190,H2=190,GAP=22,L=40,R=8,T=8,i0,i1,BASE=0,IB=null;
 function rng(arr,a,b){var mn=1e18,mx=-1e18;for(var i=a;i<=b;i++){var v=arr[i];if(v==null)continue;if(v<mn)mn=v;if(v>mx)mx=v}return mn>mx?null:[mn,mx]}
 function setRange(){var n=D.d.length;if(view){i0=Math.max(0,Math.min(view[0],n-2));i1=Math.max(i0+1,Math.min(view[1],n-1))}else{i1=n-1;i0=Math.max(0,n-per)}}
@@ -267,13 +268,14 @@ function stats(){var el=root.querySelector('.cfst');if(!el)return;var arm=D.s.ar
  el.innerHTML='<b>Nel periodo scelto</b> (descrittivo, non una previsione): dopo i giorni con Indice Armor in zona pericolo (45 o più) l\'S&amp;P 500 ha reso in media <b>'+nf(av(hi),1)+'%</b> nel mese successivo ('+hi.length+' giorni); dopo quelli in zona tranquilla (sotto 35), <b>'+nf(av(lo),1)+'%</b> ('+lo.length+' giorni).'}
 function idx(cx){var rc=cv.getBoundingClientRect(),i=Math.round(i0+(cx-rc.left-L)/(W-L-R)*(i1-i0));return Math.max(i0,Math.min(i1,i))}
 function tip(clientX){var rc=cv.getBoundingClientRect(),x=clientX-rc.left,i=idx(clientX);hov=i;draw();
+ var strip=root.querySelector('.cfstrip');if(strip&&window.innerWidth<=700){var sh=function(n){return n.replace(' · calo ',' ').replace(' (stato di salute)','').replace(' (in ombra)',' ombra')};var dd0=new Date(D.d[i]*86400000);var ss='<b>'+dd0.getUTCDate()+'/'+(dd0.getUTCMonth()+1)+'/'+dd0.getUTCFullYear()+'</b><br>';ss+=D.meta.filter(function(m){return m.g!=='a'&&act[m.k]&&D.s[m.k]}).map(function(m){var v=D.s[m.k][i];return '<span class="cs"><span style="color:'+colr(m)+'">\u25a0</span> '+sh(m.n)+': <b>'+nf(v,m.d)+(m.u||'')+'</b></span>'}).join('');strip.innerHTML=ss;return}
  var tl=root.querySelector('.cftl'),tr=root.querySelector('.cftr'),dt=new Date(D.d[i]*86400000);var hd='<b>'+dt.getUTCDate()+'/'+(dt.getUTCMonth()+1)+'/'+dt.getUTCFullYear()+'</b>';
  var rows=D.meta.filter(function(m){return m.g!=='a'&&act[m.k]&&D.s[m.k]}).map(function(m){var v=D.s[m.k][i],e='';if(m.g==='a'&&IB!=null&&v!=null&&D.s[m.k][IB])e=' ('+nf((v/D.s[m.k][IB]-1)*100,1)+'%)';return '<span style="color:'+colr(m)+'">\u25a0</span> '+m.n+': '+nf(v,m.g==='a'?2:m.d)+(m.g==='a'?'':(m.u||''))+e});
  var h=Math.ceil(rows.length/2),A=[hd].concat(rows.slice(0,h)),B=rows.slice(h);
  tl.innerHTML=A.join('<br>');tl.style.display='block';var wl=tl.offsetWidth;tl.style.left=Math.max(0,x-wl-8)+'px';tl.style.top='6px';
  if(B.length){tr.innerHTML=B.join('<br>');tr.style.display='block';var wr=tr.offsetWidth;tr.style.left=Math.min(rc.width-wr,x+8)+'px';tr.style.top='6px'}else tr.style.display='none';
  if(x-wl-8<0){tl.style.left='0px'}}
-function hideTip(){root.querySelectorAll('.cftip').forEach(function(t){t.style.display='none'})}
+function hideTip(){root.querySelectorAll('.cftip').forEach(function(t){t.style.display='none'});var st=root.querySelector('.cfstrip');if(st)st.innerHTML='<span class="mu">Tocca il grafico per leggere i valori</span>'}
 function clampView(a,b){var n=D.d.length,sp=b-a;if(sp<19)sp=19;if(sp>n-1)sp=n-1;if(a<0){a=0}if(a+sp>n-1)a=n-1-sp;return [Math.max(0,a),Math.max(0,a)+sp]}
 function shift(k){setRange();var sp=i1-i0,d=Math.round(sp*0.25)*k;view=clampView(i0+d,i1+d);per=0;draw()}
 function endSel(){if(dragA==null)return;var a=Math.min(dragA,dragB==null?dragA:dragB),b=Math.max(dragA,dragB==null?dragA:dragB);dragA=dragB=null;if(b-a>=5){view=[a,b];per=0;hov=null;hideTip()}draw()}
