@@ -1,0 +1,62 @@
+{
+ "armor_tarato": [
+  {
+   "da": 0,
+   "a": 40,
+   "giorni_%": 55,
+   "calo10_%": 6,
+   "peggior_medio_%": -3.6
+  },
+  {
+   "da": 40,
+   "a": 60,
+   "giorni_%": 35,
+   "calo10_%": 24,
+   "peggior_medio_%": -6.1
+  },
+  {
+   "da": 60,
+   "a": 80,
+   "giorni_%": 8,
+   "calo10_%": 34,
+   "peggior_medio_%": -8.8
+  },
+  {
+   "da": 80,
+   "a": 101,
+   "giorni_%": 1,
+   "calo10_%": 41,
+   "peggior_medio_%": -12.1
+  }
+ ],
+ "super_armor_index": [
+  {
+   "da": 0,
+   "a": 40,
+   "giorni_%": 55,
+   "calo10_%": 6,
+   "peggior_medio_%": -3.8
+  },
+  {
+   "da": 40,
+   "a": 60,
+   "giorni_%": 36,
+   "calo10_%": 23,
+   "peggior_medio_%": -5.5
+  },
+  {
+   "da": 60,
+   "a": 80,
+   "giorni_%": 8,
+   "calo10_%": 34,
+   "peggior_medio_%": -9.0
+  },
+  {
+   "da": 80,
+   "a": 101,
+   "giorni_%": 1,
+   "calo10_%": 68,
+   "peggior_medio_%": -15.6
+  }
+ ]
+}

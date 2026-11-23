@@ -5,15 +5,15 @@ Numeri calcolati da scratch/soglie_titan.py: se si rifanno i calcoli, aggiornare
 import html as _h
 
 E = _h.escape
-LO, HI = 20, 70  # tratto di scala disegnato nella barra
+LO, HI = 20, 90  # tratto di scala disegnato nella barra
 BASE = 15  # % di giorni con un calo di almeno 10% entro 3 mesi, su tutto lo storico
-COL = ["#16a34a", "#64748b", "#d97706", "#dc2626"]
-NOMI = ["Tranquillo", "Neutro", "Allarme", "Pericolo"]
-FRASI = ["pochi segnali di tensione", "situazione nella norma", "tensione che cresce: prudenza", "stress diffuso: massima prudenza"]
+COL = ["#22c55e", "#f59e0b", "#ef4444", "#8b5cf6"]
+NOMI = ["Tranquillo", "In difficoltà", "In pericolo", "Rischio di crollo"]
+FRASI = ["pochi segnali di tensione", "mercato in difficoltà: tensione che cresce", "stress diffuso: massima prudenza", "stress estremo, tipico dei crolli"]
 # (limite alto, % giorni, % con calo ≥10% a 3 mesi, calo peggiore medio %)
 ZONE = {
-    "armor": {"nome": "Indice Armor", "lim": [35, 40, 45, 100], "stat": [(28, 2, -3.0), (30, 11, -4.2), (22, 20, -5.5), (20, 34, -8.2)]},
-    "super": {"nome": "Super Armor", "lim": [35, 45, 55, 100], "stat": [(30, 5, -3.8), (41, 10, -4.1), (15, 30, -6.3), (13, 38, -9.1)]},
+    "armor": {"nome": "Indice Armor", "lim": [40, 60, 80, 100], "stat": [(55, 6, -3.6), (35, 24, -6.1), (8, 34, -8.8), (1, 41, -12.1)]},
+    "super": {"nome": "Super Armor", "lim": [40, 60, 80, 100], "stat": [(55, 6, -3.8), (36, 23, -5.5), (8, 34, -9.0), (1, 68, -15.6)]},
 }
 
 
@@ -36,7 +36,7 @@ def _riga(k: str, v: float | None) -> str:
         f"<div class='sg-z{' on' if j == i else ''}' style='--c:{COL[j]}'><b>{NOMI[j]}</b><span>{'sotto ' + str(lim[0]) if j == 0 else ('da ' + str(lim[2]) + ' in su' if j == 3 else f'{lim[j - 1]}–{lim[j]}')}</span>"
         f"<em>{z['stat'][j][1]}% di calo di almeno 10% nei 3 mesi dopo</em></div>" for j in range(4))
     s = z["stat"][i]
-    return (f"<div class='sg-r'><div class='sg-t'><b>{z['nome']}</b><span class='sg-v' style='color:{COL[i]}'>{v:.0f}<small>/100</small></span>"
+    return (f"<div class='sg-r' data-gi='{'armor' if k == 'armor' else 'super'}'><div class='sg-t'><b>{z['nome']}</b><span class='sg-v' style='color:{COL[i]}'>{v:.0f}<small>/100</small></span>"
             f"<span class='sg-chip' style='--c:{COL[i]}'>{NOMI[i]}</span></div>"
             f"<div class='sg-bar'>{seg}<u style='left:{(min(max(v, LO), HI) - LO) / (HI - LO) * 100:.1f}%'></u></div><div class='sg-sc'><span>{LO}</span><span>scala dell'indice</span><span>{HI}</span></div><div class='sg-leg'>{leg}</div>"
             f"<div class='sg-n'>Oggi sei in zona <b>{NOMI[i].lower()}</b> ({FRASI[i]}). In passato, quando l'indice era in questa zona, nei 3 mesi successivi l'S&amp;P 500 è sceso di almeno il 10% "

@@ -195,7 +195,7 @@ def daily_extras(ctx: dict, fetch_news: bool = True) -> None:
             aix = armor_index.compute(sp_)
             if aix:
                 armor_index.save_history(aix)
-                extra["armor_index"] = round(aix["value"], 2)
+                extra["armor_index"] = round(aix.get("raw", aix["value"]), 2)   # il registro resta sulla scala originale
                 for g in aix["groups"]:
                     if g["score"] is not None:
                         extra["aix_" + g["name"].split()[0].lower()] = round(g["score"], 4)

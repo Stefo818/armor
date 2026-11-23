@@ -1,6 +1,6 @@
 {
  "protocollo": "3e0aa440e3b531aa4c7b6630",
- "asof": "2026-11-13",
+ "asof": "2026-11-20",
  "epoche": [
   {
    "periodo": "1928-1949",
@@ -145,12 +145,12 @@
   {
    "periodo": "2008-2026",
    "tutti": {
-    "giorni": 4748,
+    "giorni": 4753,
     "gruppi": 1,
-    "m6": 6.9,
-    "m12": 13.8,
+    "m6": 6.8,
+    "m12": 13.7,
     "pos12": 84,
-    "discesa6m": -7.2
+    "discesa6m": -7.3
    },
    "occ50": {
     "giorni": 614,
@@ -169,8 +169,8 @@
     "discesa6m": -4.5
    },
    "coltello": {
-    "giorni": 252,
-    "gruppi": 9,
+    "giorni": 253,
+    "gruppi": 10,
     "m6": 7.6,
     "m12": 18.5,
     "pos12": 71,
@@ -262,17 +262,17 @@
  ],
  "soldi": {
   "1990-2021": {
-   "arrivi": 370,
+   "arrivi": 371,
    "rate": {
     "media": -2.7,
     "vince": 25,
     "peggior_10": -11.5,
-    "miglior_10": 7.9
+    "miglior_10": 7.8
    },
    "attesa": {
     "media": -4.3,
     "vince": 31,
-    "peggior_10": -18.2,
+    "peggior_10": -18.3,
     "miglior_10": 9.7
    }
   },
@@ -301,10 +301,10 @@
     "abilita": 5.9
    },
    "2013-2026": {
-    "n": 697,
+    "n": 698,
     "copertura": 79,
     "copertura_storica": 83,
-    "abilita": 5.7
+    "abilita": 5.6
    },
    "regge": true
   },
@@ -316,7 +316,7 @@
     "abilita": 2.2
    },
    "2013-2026": {
-    "n": 694,
+    "n": 695,
     "copertura": 78,
     "copertura_storica": 82,
     "abilita": 4.3
@@ -331,7 +331,7 @@
     "abilita": -0.3
    },
    "2013-2026": {
-    "n": 685,
+    "n": 686,
     "copertura": 80,
     "copertura_storica": 82,
     "abilita": 1.9
@@ -346,7 +346,7 @@
     "abilita": 1.5
    },
    "2013-2026": {
-    "n": 673,
+    "n": 674,
     "copertura": 79,
     "copertura_storica": 86,
     "abilita": 3.1
@@ -361,7 +361,7 @@
     "abilita": 1.4
    },
    "2013-2026": {
-    "n": 648,
+    "n": 649,
     "copertura": 76,
     "copertura_storica": 86,
     "abilita": 0.8
@@ -514,8 +514,8 @@
    "rialzo": {
     "quota": 72,
     "su": 75,
-    "q10": -5.6,
-    "q90": 9.2
+    "q10": -5.7,
+    "q90": 9.1
    },
    "laterale": {
     "quota": 11,
@@ -535,20 +535,20 @@
   "mercato": {
    "1995-2010": [
     {
-     "giorni": 25,
-     "discesa": 0.1
+     "giorni": 46,
+     "discesa": 5.8
     },
     {
-     "giorni": 23,
-     "discesa": 13.6
+     "giorni": 42,
+     "discesa": 25.2
     },
     {
-     "giorni": 26,
-     "discesa": 19.4
+     "giorni": 10,
+     "discesa": 39.0
     },
     {
-     "giorni": 26,
-     "discesa": 38.1
+     "giorni": 2,
+     "discesa": 41.9
     },
     {
      "base": 18.1
@@ -556,20 +556,20 @@
    ],
    "2011-2026": [
     {
-     "giorni": 30,
-     "discesa": 3.2
+     "giorni": 65,
+     "discesa": 5.9
     },
     {
-     "giorni": 38,
-     "discesa": 8.7
+     "giorni": 29,
+     "discesa": 22.9
     },
     {
-     "giorni": 19,
-     "discesa": 21.7
+     "giorni": 6,
+     "discesa": 24.7
     },
     {
-     "giorni": 14,
-     "discesa": 27.5
+     "giorni": 0,
+     "discesa": 35.3
     },
     {
      "base": 12.0
@@ -577,20 +577,20 @@
    ],
    "1995-2026": [
     {
-     "giorni": 27,
-     "discesa": 1.8
+     "giorni": 55,
+     "discesa": 5.9
     },
     {
-     "giorni": 30,
-     "discesa": 10.6
+     "giorni": 36,
+     "discesa": 24.2
     },
     {
-     "giorni": 22,
-     "discesa": 20.3
+     "giorni": 8,
+     "discesa": 34.0
     },
     {
-     "giorni": 20,
-     "discesa": 34.5
+     "giorni": 1,
+     "discesa": 40.7
     },
     {
      "base": 15.1
@@ -600,20 +600,20 @@
   "economia": {
    "1995-2010": [
     {
-     "giorni": 30,
-     "discesa": 7.0
+     "giorni": 52,
+     "discesa": 6.2
     },
     {
-     "giorni": 39,
-     "discesa": 8.5
+     "giorni": 35,
+     "discesa": 24.4
     },
     {
-     "giorni": 14,
-     "discesa": 32.9
+     "giorni": 11,
+     "discesa": 42.5
     },
     {
-     "giorni": 18,
-     "discesa": 45.9
+     "giorni": 2,
+     "discesa": 84.3
     },
     {
      "base": 18.1
@@ -621,20 +621,20 @@
    ],
    "2011-2026": [
     {
-     "giorni": 31,
-     "discesa": 4.0
+     "giorni": 59,
+     "discesa": 6.6
     },
     {
-     "giorni": 44,
-     "discesa": 10.5
+     "giorni": 36,
+     "discesa": 21.0
     },
     {
-     "giorni": 17,
-     "discesa": 27.7
+     "giorni": 5,
+     "discesa": 13.2
     },
     {
-     "giorni": 8,
-     "discesa": 18.6
+     "giorni": 0,
+     "discesa": 5.6
     },
     {
      "base": 12.0
@@ -642,20 +642,20 @@
    ],
    "1995-2026": [
     {
-     "giorni": 31,
-     "discesa": 5.5
+     "giorni": 55,
+     "discesa": 6.4
     },
     {
-     "giorni": 41,
-     "discesa": 9.6
+     "giorni": 36,
+     "discesa": 22.7
     },
     {
-     "giorni": 15,
-     "discesa": 30.1
+     "giorni": 8,
+     "discesa": 33.9
     },
     {
-     "giorni": 13,
-     "discesa": 37.6
+     "giorni": 1,
+     "discesa": 68.2
     },
     {
      "base": 15.1

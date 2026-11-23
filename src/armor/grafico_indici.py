@@ -12,7 +12,19 @@ import pandas as pd
 
 from .config import DATA
 
+DESC = {
+    "armor": "Salute del mercato: da 40 mercato in difficoltà, da 60 in pericolo, da 80 rischio di crollo.",
+    "super": "Salute di economia e mercato: media dei sei pilastri con lo stesso peso. Stesse soglie: 40, 60, 80.",
+    "crollo": "Rischio di crollo nella prossima settimana: fino a 35 tranquillo, da 40 teso, da 60 molto teso, da 80 panico.",
+}
 NOMI = {"armor": "Indice Armor", "super": "Super Armor", "crollo": "Indice crollo"}
+try:   # i sei pilastri del Super Armor: stessa scala, con la spiegazione di cosa guardano
+    from .titan_schede import PIL as _PIL
+    for _k, (_n, _c, _s) in _PIL.items():
+        NOMI[_k] = _n
+        DESC[_k] = f"{_c} {_s}"
+except Exception:  # noqa: BLE001
+    pass
 # soglie e colori delle zone; stessa scala 40/60/80 per Armor e Super Armor, quella a cinque fasce per l'Indice crollo
 ZONE = {
     "armor": {"lim": [40, 60, 80], "col": ["#22c55e", "#f59e0b", "#ef4444", "#8b5cf6"],
@@ -21,6 +33,8 @@ ZONE = {
                "nom": ["Nessuna tensione", "Zona di passaggio", "Mercato teso", "Mercato molto teso", "Mercato in panico"]},
 }
 ZONE["super"] = ZONE["armor"]
+for _i in range(1, 7):
+    ZONE[f"p{_i}"] = ZONE["armor"]
 
 
 def _serie(s: pd.Series) -> dict | None:
@@ -37,7 +51,7 @@ def dati() -> dict:
     try:
         d = pd.read_csv(DATA / "titan_storia.csv", index_col=0, parse_dates=True)
         col = "armor_tarato" if "armor_tarato" in d else "armor_index"
-        for k, c in (("armor", col), ("super", "super_armor_index")):
+        for k, c in (("armor", col), ("super", "super_armor_index")) + tuple((f"p{i}", f"p{i}_stress") for i in range(1, 7)):
             if c in d:
                 x = _serie(d[c])
                 if x:
@@ -70,6 +84,7 @@ CSS = """<style>
 .gi-dd{font-size:12px;color:var(--mu)}
 .gi-x{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
 .gi-x:active{transform:scale(.92)}
+.gi-ds{font-size:11.5px;color:var(--mu);line-height:1.4;margin:6px 0 0}
 .gi-rg{display:flex;gap:5px;margin:10px 0 6px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
 .gi-rg::-webkit-scrollbar{display:none}
 .gi-rg button{flex:1 0 auto;min-width:38px;border:1px solid var(--bd);background:var(--bg);color:var(--mu);border-radius:99px;padding:5px 9px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
@@ -89,7 +104,7 @@ CSS = """<style>
 JS = r"""<script>(function(){
 if(window.giOn)return;window.giOn=1;
 var el=document.getElementById('gi-dati');if(!el)return;
-var RAW=JSON.parse(el.textContent),Z=JSON.parse(document.getElementById('gi-zone').textContent),NM=JSON.parse(document.getElementById('gi-nomi').textContent);
+var RAW=JSON.parse(el.textContent),Z=JSON.parse(document.getElementById('gi-zone').textContent),NM=JSON.parse(document.getElementById('gi-nomi').textContent),DS=JSON.parse(document.getElementById('gi-desc').textContent);
 var S={};Object.keys(RAW).forEach(function(k){var r=RAW[k],t=[],a=r.t0;for(var i=0;i<r.dt.length;i++){a+=r.dt[i];t.push(a)}S[k]={t:t,v:r.v.map(function(x){return x/10})}});
 var ov=document.getElementById('gi-ov');document.body.appendChild(ov);
 var sh=document.getElementById('gi-sh'),cv=document.getElementById('gi-cv'),cx=cv.getContext('2d');
@@ -97,7 +112,7 @@ var cur=null,T,V,ZN,v0,v1,t0,t1,ya,yb,tya,tyb,cursor=null,W=0,H=0,dpr=1,raf=0,ra
 var M={l:8,r:30,t:12,b:22};
 var RG=[['1S',7],['1M',30],['3M',91],['6M',182],['1A',365],['3A',1096],['5A',1826],['Max',0]];
 function it(x,d){var s=x.toFixed(d==null?0:d).replace('.',',');return s.replace('-','−')}
-function zi(k,v){var l=Z[k].lim;for(var i=0;i<l.length;i++){if(v<=l[i]&&!(k==='crollo'&&false))return i}return l.length}
+function zi(k,v){var l=Z[k].lim;for(var i=0;i<l.length;i++){if(k==='crollo'?v<=l[i]:v<l[i])return i}return l.length}
 function zc(v){return Z[cur].col[zi(cur,v)]}
 function dfmt(d,o){return new Date(d*864e5).toLocaleDateString('it-IT',Object.assign({timeZone:'UTC'},o))}
 function dlong(d){return dfmt(d,{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
@@ -170,7 +185,7 @@ function prev(lbl,k){if(n-k<0)return '';var v=V[n-k],df=V[n]-v,c=Math.abs(df)<.0
 h+='<div class="gi-sc">Com’era prima</div><div class="gi-g">'+prev('Ieri',1)+prev('Una settimana fa',5)+prev('Due settimane fa',10)+'</div>';
 h+='<div class="gi-hint" style="margin-top:6px">La freccia mostra di quanto è cambiato l’indice da allora a oggi: rossa se il rischio è salito, verde se è sceso.</div>';
 box.innerHTML=h}
-function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];
+function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';
 document.body.style.overflow='hidden';ov.classList.add('on');requestAnimationFrame(function(){ov.classList.add('in')});size();
 cursor=null;range(2);v0=tv0;v1=tv1;fit();ya=tya;yb=tyb;stats();head();draw();sh.scrollTop=0}
 function close(){ov.classList.remove('in');document.body.style.overflow='';setTimeout(function(){if(!ov.classList.contains('in'))ov.classList.remove('on')},220)}
@@ -197,7 +212,7 @@ cv.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse'&&!P[e.
 cv.addEventListener('wheel',function(e){e.preventDefault();var p=pos(e),f=Math.exp(e.deltaY*.0015),sp=v1-v0,anc=d2x(p.x),ns=sp*f;v0=anc-(p.x-M.l)/pw()*ns;v1=v0+ns;clampView();tv0=v0;tv1=v1;manual();fit();ya=tya;yb=tyb;draw()},{passive:false});
 cv.addEventListener('dblclick',function(){range(7)});
 // ---- apertura/chiusura
-document.addEventListener('click',function(e){var t=e.target;if(t.closest('#gi-ov'))return;var c=t.closest('[data-gi]');if(!c)return;if(t.closest('details,summary,a,button,input,select'))return;open(c.getAttribute('data-gi'))});
+document.addEventListener('click',function(e){var t=e.target;if(t.closest('#gi-ov'))return;var c=t.closest('[data-gi]');if(!c)return;var bl=t.closest('details,summary,a,button,input,select');if(bl&&!bl.hasAttribute('data-gi'))return;open(c.getAttribute('data-gi'))});
 document.getElementById('gi-xb').addEventListener('click',close);
 ov.addEventListener('click',function(e){if(e.target===ov)close()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ov.classList.contains('on'))close()});
@@ -218,10 +233,12 @@ def html() -> str:
         + f"<script type='application/json' id='gi-dati'>{json.dumps(d, separators=(',', ':'))}</script>"
         + f"<script type='application/json' id='gi-zone'>{json.dumps(zone, ensure_ascii=False, separators=(',', ':'))}</script>"
         + f"<script type='application/json' id='gi-nomi'>{json.dumps(NOMI, ensure_ascii=False)}</script>"
+        + f"<script type='application/json' id='gi-desc'>{json.dumps(DESC, ensure_ascii=False)}</script>"
         + "<div id='gi-ov' role='dialog' aria-modal='true' aria-label='Grafico dell&#39;indice'><div id='gi-sh'>"
         "<div class='gi-hd'><div class='gi-t'><div class='gi-nm' id='gi-nm'>x<span class='gi-zn' id='gi-zn'></span></div>"
         "<div class='gi-big'><span class='gi-v' id='gi-v'></span><span class='gi-dd' id='gi-dd'></span></div></div>"
         "<button type='button' class='gi-x' id='gi-xb' aria-label='Chiudi'>&times;</button></div>"
+        "<div class='gi-ds' id='gi-ds'></div>"
         f"<div class='gi-rg'>{chips}</div>"
         "<canvas id='gi-cv'></canvas>"
         "<div class='gi-hint'>Trascina per scorrere · pizzica con due dita per ingrandire · tocca per leggere un giorno</div>"

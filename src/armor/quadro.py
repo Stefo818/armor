@@ -29,7 +29,7 @@ SOTTO = {"Indice Armor": "Salute mercato", "Super Armor": "Salute economia + mer
 
 
 def _col(v: float) -> str:
-    return "#8b5cf6" if v > 80 else ("#ef4444" if v > 60 else ("#f59e0b" if v > 40 else "var(--ok)"))
+    return "#8b5cf6" if v >= 80 else ("#ef4444" if v >= 60 else ("#f59e0b" if v >= 40 else "#22c55e"))
 
 
 def _freccia(dv: float) -> str:
@@ -39,6 +39,24 @@ def _freccia(dv: float) -> str:
     su = dv > 0
     return (f"<span class='qd-a' title='{'In salita' if su else 'In discesa'} da una settimana: {dv:+.1f} punti' "
             f"style='color:{'#ef4444' if su else '#22c55e'}'>{'&#9650;' if su else '&#9660;'}</span>")
+
+
+def _freschezza(data: str) -> str:
+    """Dice con chiarezza a quando si riferiscono i dati: ultima chiusura di Borsa, oppure avviso se sono vecchi."""
+    import datetime as _dt
+    d = pd.Timestamp(data).normalize()
+    oggi = pd.Timestamp.now(tz="Europe/Rome").tz_localize(None)
+    # l'ultima seduta americana completa: ieri se e' un giorno feriale, altrimenti il venerdi'
+    att = oggi.normalize() - pd.Timedelta(days=1)
+    while att.weekday() > 4:
+        att -= pd.Timedelta(days=1)
+    if oggi.weekday() <= 4 and oggi.hour >= 23:   # dopo la chiusura americana anche oggi e' completo
+        att = oggi.normalize()
+    mesi = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"]
+    et = f"{d.day} {mesi[d.month - 1]}"
+    if d >= att:
+        return f"ultima chiusura di Borsa: {et}"
+    return f"<span style='color:var(--bad);font-weight:700'>dati fermi al {et}: da aggiornare</span>"
 
 
 def leggi() -> dict | None:
@@ -109,7 +127,7 @@ details.qdd[open]>summary::after{transform:rotate(225deg)}
 .qd-x{font-size:12.5px;color:var(--mu);line-height:1.5}
 .qd-x p{margin:8px 0 0}.qd-x b{color:var(--tx)}.qd-x ul{margin:5px 0 0;padding-left:18px}
 </style>""" +
-        f"<div class='qd'><div class='qd-h'>Quadro di oggi · {_h.escape(d['data'])} · tocca un numero per il grafico · freccia = andamento in una settimana</div>"
+        f"<div class='qd'><div class='qd-h'>Quadro di oggi · {_freschezza(d['data'])} · tocca un numero per il grafico · freccia = andamento in una settimana</div>"
         f"<div class='qd-g'>{tre}</div>"
         f"<div class='qd-b {cls}'><div class='qd-t'>{tit}</div><div class='qd-d'>{det}</div></div>"
         "<details class='qdd'><summary>Cosa è stato provato, e cosa non funziona</summary><div class='qd-x'>"

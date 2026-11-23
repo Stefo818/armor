@@ -8,7 +8,7 @@ from . import soglie, store
 from .config import DATA
 
 ORIZZONTI = [("1 settimana", 5, 0.03), ("1 mese", 21, 0.05), ("3 mesi", 63, 0.08), ("6 mesi", 126, 0.10), ("12 mesi", 252, 0.10)]   # nome, sedute, soglia di perdita/guadagno
-SALUTE = ["In salute", "Neutro", "Rischio", "Pericolo"]
+SALUTE = ["In salute", "In difficoltà", "In pericolo", "Rischio di crollo"]
 FASI = {"rialzo": ("Rialzo", "il prezzo è sopra la sua media di lungo periodo, che sta salendo"),
         "ribasso": ("Ribasso", "il prezzo è sotto la sua media di lungo periodo, che sta scendendo"),
         "laterale": ("Di passaggio", "prezzo e media di lungo periodo non vanno nella stessa direzione: la tendenza sta cambiando o è ferma")}
@@ -65,7 +65,7 @@ def salute(armor: float | None, super_: float | None) -> dict:
     out = {}
     p = DATA / "titan_storia.csv"
     st = pd.read_csv(p) if p.exists() else None
-    for k, v, col in (("mercato", armor, "armor_index"), ("economia", super_, "super_armor_index")):
+    for k, v, col in (("mercato", armor, "armor_tarato"), ("economia", super_, "super_armor_index")):
         if v is None:
             continue
         z = soglie.zona("armor" if k == "mercato" else "super", v)

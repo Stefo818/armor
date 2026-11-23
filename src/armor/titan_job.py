@@ -37,7 +37,7 @@ def calcola() -> dict:
     df = costruisci()
     ult = df.iloc[-1]
     pil = {f"p{i}": round(float(ult[f"p{i}_stress"]), 1) for i in range(1, 7)}
-    return {"data": str(df.index[-1].date()), "armor_index": round(float(ult["armor_index"]), 1),
+    return {"data": str(df.index[-1].date()), "armor_index": round(float(ult["armor_index"]), 1), "armor_tarato": round(float(ult["armor_tarato"]), 1) if "armor_tarato" in ult else round(float(ult["armor_index"]), 1),
             "super_armor": round(float(ult["super_armor_index"]), 1), "radar_decennio": round(float(ult["lost_decade_radar"]), 1),
             "pilastri": pil, "previsioni": titan.previsioni_oggi(df), "versione": "titan-v47"}, df
 

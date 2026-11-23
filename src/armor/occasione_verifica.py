@@ -172,7 +172,7 @@ def salute() -> dict:
     ev.iloc[-63:] = np.nan
     out = {}
     from . import soglie
-    for k, col in (("mercato", "armor_index"), ("economia", "super_armor_index")):
+    for k, col in (("mercato", "armor_tarato"), ("economia", "super_armor_index")):
         x, tagli = t[col].reindex(sp.index), soglie.ZONE["armor" if k == "mercato" else "super"]["lim"][:3]
         out[k] = {}
         for a, b in (("1995", "2010"), ("2011", "2026"), ("1995", "2026")):

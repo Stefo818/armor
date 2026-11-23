@@ -107,7 +107,7 @@ def aggiorna(scrivi: bool = True) -> dict:
         out["fasi"] = fasi.oggi()
         tj = DATA / "titan.json"
         t = json.loads(tj.read_text(encoding="utf-8")) if tj.exists() else {}
-        out["salute"] = fasi.salute(t.get("armor_index"), t.get("super_armor"))
+        out["salute"] = fasi.salute(t.get("armor_tarato", t.get("armor_index")), t.get("super_armor"))
         out["titan_calo"] = {k: v.get("calo") for k, v in (t.get("previsioni") or {}).items()}
     except Exception as e:      # le fasce non devono mai bloccare l'indice
         out["errore_fasi"] = str(e)[:120]

@@ -270,11 +270,14 @@ def compute(sp: pd.Series, use_cache: bool = True) -> dict | None:
         if idx.empty:
             return None
         t = idx.index[-1]
-        tv = titan_vista.serie("armor_index", t)   # valore ufficiale: motore Titan, se i suoi dati sono freschi
+        tv = titan_vista.serie("armor_tarato", t)   # valore ufficiale: motore Titan sulla scala tarata (40 difficolta', 60 pericolo, 80 crollo)
+        raw_tv = titan_vista.serie("armor_index", t)
+        if tv is None:
+            tv = raw_tv
         if tv is not None:
             idx = tv
         val = float(idx.iloc[-1])
-        chiave = str(t.date()) + ("+titan" if tv is not None else "")
+        chiave = str(t.date()) + ("+titan-tarato" if tv is not None else "")
         ev = None
         if use_cache and CACHE.exists():
             try:
@@ -299,7 +302,7 @@ def compute(sp: pd.Series, use_cache: bool = True) -> dict | None:
                     its.append({"key": key, "name": nm, "score": float(S.loc[t, key]), "value": last.get(key)})
             groups.append({"name": g, "weight": weights_in_use()[g], "score": None if pd.isna(sc) else float(sc), "items": its})
         prev = float(idx.iloc[-6]) if len(idx) > 6 else val
-        return {"value": val, "date": t, "hist": idx, "groups": groups, "eval": ev, "change5": val - prev, "G": G, "S": S, "titan": tv is not None}
+        return {"value": val, "date": t, "hist": idx, "groups": groups, "eval": ev, "change5": val - prev, "raw": float(raw_tv.iloc[-1]) if raw_tv is not None else val, "G": G, "S": S, "titan": tv is not None}
     except Exception as e:  # noqa: BLE001
         print("Indice Armor non calcolato:", str(e)[:120], flush=True)
         return None
@@ -351,7 +354,7 @@ def hero_html(d: dict | None, extra: str = "") -> str:
     name, txt = band(v)
     ch = d["change5"]
     arrow = "▲" if ch > 1 else ("▼" if ch < -1 else "▬")
-    return (f"<div class='aix' data-amod='1'><div class='aixt'>{thermometer(v)}</div>"
+    return (f"<div class='aix' data-amod='1' data-gi='armor'><div class='aixt'>{thermometer(v)}</div>"
             f"<div class='aixb'><div class='aixk'>Indice Armor</div><div class='aixv' style='color:{color(v)}'>{v:.0f}<span>/100</span></div>"
             f"<div class='aixl' style='color:{color(v)}'>Rischio {name}</div><div class='aixd'>{_h.escape(txt)}</div>"
             f"<div class='aixp'>{prob_line(d)}</div><div class='aixc'>{arrow} {ch:+.0f} punti in 5 sedute · <a href='#indici' data-go='indici'>Come è calcolato ›</a></div>{extra}<div class='aixc'><b>Tocca per vedere i tre indici: 1 settimana, 1 mese, 3 mesi ›</b></div></div></div>")
