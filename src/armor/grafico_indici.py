@@ -131,8 +131,10 @@ def val_cards() -> str:
         prev = ""
         if x["ieri"] is not None and not freschezza:
             d = x["v"] - x["ieri"]
+            colv = "var(--bad)" if d > 0 else "var(--ok)"
+            frv = "\u25b2" if d > 0 else "\u25bc"
             prev = (f"<div class='vl-p'>ieri <b>{_it(x['ieri'], x['dec'])}{x['u']}</b> "
-                    f"<span style='color:{'var(--bad)' if d > 0 else 'var(--ok)'}'>{'\u25b2' if d > 0 else '\u25bc'} {_it(abs(d), x['dec'])}</span>"
+                    f"<span style='color:{colv}'>{frv} {_it(abs(d), x['dec'])}</span>"
                     + (f" · 1 sett. fa <b>{_it(x['sett'], x['dec'])}{x['u']}</b>" if x["sett"] is not None else "") + "</div>")
         out += (f"<div class='kc vl' data-gi='{k}'><div class='kt'>{x['nome']} "
                 f"<small style='display:block;color:{x['col']};font-weight:700'>{x['nom']}</small></div>"
