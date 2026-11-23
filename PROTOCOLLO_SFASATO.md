@@ -27,3 +27,9 @@ AUC scelta ≥ 0,58 e AUC verifica (dal 2015) ≥ 0,58 con lo stesso segno, e AU
 
 ## Indice combinato
 Per ogni evento, la media dei percentili (col segno scelto) dei «segnali» (al massimo i 10 migliori per AUC di scelta) = punteggio. Si confronta con l'Indice crollo attuale sugli stessi giorni (AUC scelta e verifica). Adozione: il combinato supera l'Indice crollo di almeno +0,03 in scelta e in verifica su almeno 2 eventi su 3 e non peggiora di più di −0,02 sul terzo. Se passa, diventa il nuovo Indice crollo (con scala 1–100 a percentili come ora). Esito: «Coerente con i casi osservati» / «Non coerente». Mai «provato».
+
+## Emendamento 1 (23 novembre 2026, 13:20, prima di calcolare con i nuovi dati): serie nuove da Yahoo Finance
+La richiesta: usare subito più dati. I dati «veloci» (opzioni a breve scadenza, flussi intraday) non hanno storia disponibile; si aggiungono invece serie giornaliere gratuite con storia lunga, scaricate il 23 novembre.
+Nuove serie: ^VXN, ^VXD, ^OVX, ^GVZ, ^VIX9D, ^TNX, ^FVX, ^IRX, ^TYX, LQD, JNK, TLT, SHY, EMB, MUB, KBE, IYR, ^RUT, ^SOX, ^NYA, JPY=X, CHF=X, AUDUSD=X, ^HSI, ^KS11, ^FTSE, ^FCHI, XLY, XLP, SPLV, USMV, MTUM, QQQ, IWD, IWF, ^VIX3M, ^VIX6M, GLD. (Non scaricabili: ^RVX, ^VXEEM.)
+Rapporti fissati ora: LQD/TLT, JNK/LQD, KBE/S&P 500, ^VXN/VIX, ^VIX9D/VIX, ^VXD/VIX, IWD/IWF, XLY/XLP, QQQ/S&P 500.
+Stesse 4 trasformazioni, stessi eventi, stesso perimetro. Regola di copertura per le nuove serie: almeno 8 anni di giorni valutati nel periodo di scelta e copertura ≥85% dalla loro prima data; le date mancanti all'inizio contano come neutre (rango 0,5), quindi penalizzano e non favoriscono. La soglia del caso si ricalcola su vecchi e nuovi candidati insieme (stesso seme). Tutte le altre regole, compresa l'adozione, restano identiche.
