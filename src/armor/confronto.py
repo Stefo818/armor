@@ -17,19 +17,19 @@ SERIES = [
     ("mweq", "MSCI World Equal Weight (MWEQ)", "#14b8a6", "", 0, "a"), ("rsp", "S&P 500 Equal Weight", "#f97316", "", 0, "a"),
     ("urth", "MSCI World (URTH)", "#84cc16", "", 0, "a"), ("stoxx600", "Europa STOXX 600", "#ec4899", "", 0, "a"), ("eem", "Mercati emergenti", "#ef4444", "", 0, "a"),
     ("dax", "DAX", "#06b6d4", "", 0, "a"), ("ftsemib", "FTSE MIB", "#22c55e", "", 0, "a"), ("nikkei", "Nikkei 225", "#eab308", "", 0, "a"), ("iwm", "Small cap USA", "#8b5cf6", "", 0, "a"),
-    ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("super", "Super Armor (SAI)", "#f59e0b", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"),
+    ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("super", "Super Armor (SAI)", "#f59e0b", "", 1, "rischio"), ("crollo", "Indice crollo", "#8b5cf6", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"),
     ("t_p1", "Pilastro Andamento dei prezzi", "#8b5cf6", "", 0, "rischio"), ("t_p2", "Pilastro Credito", "#14b8a6", "", 0, "rischio"), ("t_p3", "Pilastro Paura sui mercati", "#06b6d4", "", 0, "rischio"),
     ("t_p4", "Pilastro Rischio tra i mercati", "#ec4899", "", 0, "rischio"), ("t_p5", "Pilastro Lavoro ed economia", "#84cc16", "", 0, "rischio"), ("t_p6", "Pilastro Liquidità", "#3b82f6", "", 0, "rischio"),
     ("pm_Titan_10g", "Titan (stato di salute) · calo ≥5% a 10 giorni", "#eab308", "%", 0, "prev"),
-    ("pm_Titan_1m", "Titan (stato di salute) · calo ≥10% a 1 mese", "#eab308", "%", 1, "prev"),
-    ("pm_Titan_3m", "Titan (stato di salute) · calo ≥10% a 3 mesi", "#eab308", "%", 1, "prev"),
+    ("pm_Titan_1m", "Titan (stato di salute) · calo ≥10% a 1 mese", "#eab308", "%", 0, "prev"),
+    ("pm_Titan_3m", "Titan (stato di salute) · calo ≥10% a 3 mesi", "#eab308", "%", 0, "prev"),
     ("pm_Titan_6m", "Titan (stato di salute) · calo ≥10% a 6 mesi", "#eab308", "%", 0, "prev"),
     ("pm_Titan+_10g", "Titan+ (in ombra) · calo ≥5% a 10 giorni", "#d946ef", "%", 0, "prev"),
-    ("pm_Titan+_1m", "Titan+ (in ombra) · calo ≥10% a 1 mese", "#d946ef", "%", 1, "prev"),
+    ("pm_Titan+_1m", "Titan+ (in ombra) · calo ≥10% a 1 mese", "#d946ef", "%", 0, "prev"),
     ("pm_Titan+_3m", "Titan+ (in ombra) · calo ≥10% a 3 mesi", "#d946ef", "%", 0, "prev"),
     ("pm_Titan+_6m", "Titan+ (in ombra) · calo ≥10% a 6 mesi", "#d946ef", "%", 0, "prev"),
     ("pm_FHS+VIX_10g", "FHS+VIX · calo ≥5% a 10 giorni", "#6366f1", "%", 0, "prev"),
-    ("pm_FHS+VIX_1m", "FHS+VIX · calo ≥10% a 1 mese", "#6366f1", "%", 1, "prev"),
+    ("pm_FHS+VIX_1m", "FHS+VIX · calo ≥10% a 1 mese", "#6366f1", "%", 0, "prev"),
     ("pm_FHS+VIX_3m", "FHS+VIX · calo ≥10% a 3 mesi", "#6366f1", "%", 0, "prev"),
     ("pm_FHS+VIX_6m", "FHS+VIX · calo ≥10% a 6 mesi", "#6366f1", "%", 0, "prev"),
     ("pm_FHS_10g", "FHS · calo ≥5% a 10 giorni", "#0ea5e9", "%", 0, "prev"),
@@ -103,6 +103,11 @@ def build(sp: pd.Series, vw: pd.Series, aix: dict | None) -> dict | None:
     try:
         from . import tensione
         out["regime"] = al(tensione.pct_espanso(tensione.pressione(aix["hist"].dropna())) * 100, 3)
+    except Exception:  # noqa: BLE001
+        pass
+    try:   # Indice crollo (probabilita' che il mercato scenda forte)
+        from . import indice_crollo as _ic
+        out["crollo"] = al(_ic.calcola_serie()["indice"], 3)
     except Exception:  # noqa: BLE001
         pass
     try:   # indici e pilastri del motore Titan (storia completa dal 1990)

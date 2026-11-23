@@ -117,6 +117,9 @@ G.update({k: (f"Pilastro «{n}» del motore Titan: {d}.", "È uno dei sei matton
 G["armor"] = ("L'Indice Armor (motore Titan): giudizio da 1 a 100 sul pericolo di calo e di nervosità del mercato, con una parte veloce (paura, liquidità, rimbalzi) e una lenta (prezzi, credito, valutazioni).",
               "Dice quanto il contesto è pericoloso per chi ha azioni. Non prevede il giorno del calo.",
               "Zone dai dati dal 1995: sotto 35 tranquillo, 35-40 neutro, 40-45 allarme, da 45 pericolo. 40 è la soglia di stress.", "Motore Titan, giornaliero.")
+G["crollo"] = ("Indice crollo: da 0 a 100, dice quanto il mercato somiglia ai momenti che in passato hanno preceduto cali forti. Più è alto, più è alto il rischio di un calo importante.",
+               "Serve a capire se conviene essere prudenti. Non dice il giorno del calo.",
+               "Fasce: fino a 35 calma, 36-40 attenzione leggera, 41-60 cautela, 61-80 pericolo, sopra 80 rischio molto alto.", "Calcolato ogni giorno da famiglie di segnali (prezzi, paura, credito, liquidità).")
 G["super"] = ("Super Armor (SAI): la media dei sei pilastri Titan (prezzi, credito, paura, rischio tra i mercati, lavoro ed economia, liquidità).",
               "Riassume da quali aree arriva il rischio.", "Zone dai dati dal 1995: sotto 35 tranquillo, 35-45 neutro, 45-55 allarme, da 55 pericolo.", "Motore Titan, giornaliero.")
 for _m, _d in (("Titan", "il motore che misura lo stato di salute del mercato"), ("Titan+", "FHS+VIX corretto dai pilastri di Titan, in ombra dal 12 novembre 2026"), ("FHS+VIX", "simulazione della nervosità ancorata all'indice della paura (il modello che prevede)"),
