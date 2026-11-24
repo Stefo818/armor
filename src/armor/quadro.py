@@ -104,9 +104,11 @@ def _tessera_sick() -> tuple[str, int]:
         rosso = v >= 80
         tit = _h.escape(territori.testo_sick(d) + " " + d["spiega"].capitalize() + ". " + d["stato"].capitalize() + ".", quote=True)
         riga = territori.riga_sick(d) if rosso else ("Nella norma" if v < 60 else "Sopra la norma, non ancora rosso")
+        a = d.get("analoghi")
+        breve = (f"Rosso: {a['salita_max']['med'] * 100:+.0f}% / {a['calo_max']['med'] * 100:+.0f}%" if rosso and a else ("Nella norma" if v < 60 else "Sopra la norma"))
         celle.append(f"<div class='sk' data-gi='{k}'><div class='qd-n' style='color:{col}'>{v:.0f}{_freccia(d['tendenza'])}</div><div class='qd-l'>{nome}</div>"
-                     f"<div class='qd-u'>{sotto}</div><div class='qd-s' title='{tit}' style='color:{('#ef4444' if rosso else 'var(--mu)')};font-weight:{700 if rosso else 400}'>{_h.escape(riga)}</div></div>")
-    return (f"<div class='qd-c qd-sick'><div class='sk-t'>Sick Index · il mercato è malato?</div>{''.join(celle)}</div>"), 5
+                     f"<div class='qd-u'>{sotto}</div><div class='qd-s' title='{tit}' style='color:{('#ef4444' if rosso else 'var(--mu)')};font-weight:{700 if rosso else 400}'><span class='lg'>{_h.escape(riga)}</span><span class='sh'>{_h.escape(breve)}</span></div></div>")
+    return (f"<div class='qd-c qd-sick'><div class='sk-t'>Sick Index<span class='lg'> · il mercato è malato?</span></div>{''.join(celle)}</div>"), 5
 
 
 def _striscia_territori() -> str:
@@ -125,7 +127,7 @@ def html() -> str:
     quarta, ncol = _tessera_sick()
     tre = "".join(
         f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}{_freccia(d['tendenza'][g])}</div><div class='qd-l'>{_h.escape(n)}</div><div class='qd-u'>{_h.escape(SOTTO[n])}</div>"
-        f"<div class='qd-s'>{d['sopra60_5sedute'][n]}/5 sedute sopra 60</div></div>"
+        f"<div class='qd-s'><span class='lg'>{d['sopra60_5sedute'][n]}/5 sedute sopra 60</span><span class='sh'>{d['sopra60_5sedute'][n]}/5 sopra 60</span></div></div>"
         for n, v, g in (("Indice Armor", d["armor"], "armor"), ("Super Armor", d["super"], "super"), ("Indice crollo", d["crollo"], "crollo"))) + quarta
     m5 = d["crollo_m5"]
     acceso = m5 >= 60
@@ -147,7 +149,11 @@ def html() -> str:
 .qd-sick>.sk{padding:0}
 .sk-t{position:absolute;top:4px;left:0;right:0;text-align:center;font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--mu)}
 .sk{cursor:pointer}.qd-l{white-space:nowrap}.qd-u,.qd-s{max-width:100%}
-@media(max-width:560px){.qd-g{grid-template-columns:repeat(3,1fr)!important}.qd-sick{grid-column:1/-1;margin-top:6px}.qd-n{font-size:26px}}
+.qd-s .sh{display:none}
+@media(max-width:560px){.qd{padding:9px 8px 7px}.qd-h{font-size:9.5px;margin-bottom:4px}.qd-g{grid-template-columns:repeat(5,1fr)!important;column-gap:1px}
+.qd-n{font-size:22px}.qd-a{font-size:11px;margin-left:2px}.qd-l{font-size:10px;white-space:normal;line-height:1.12;margin-top:3px}.qd-u{display:none}
+.qd-s{font-size:8.8px;line-height:1.2}.qd-s .lg{display:none}.qd-s .sh{display:inline}.qd-sick .sk-t .lg{display:none}
+.qd-c,.sk{padding:13px 1px 3px}.qd-sick{grid-column:span 2;margin:0;padding:13px 2px 3px;column-gap:2px;border-radius:9px}.qd-sick>.sk{padding:0}.sk-t{font-size:8.5px;top:3px}}
 .qd-n{font-size:28px;font-weight:800;line-height:1}
 .qd-a{font-size:15px;margin-left:5px;vertical-align:middle}
 .qd-l{font-size:11.5px;font-weight:600;margin-top:2px}

@@ -250,6 +250,8 @@ def striscia_html() -> str:
             riga_tipo = (f"<div class='qd-s' style='margin-top:3px' title='{_h.escape(v['storia'], quote=True)}'>Clima più simile a una <b>{_h.escape(v['nome'])}</b> "
                          f"(accese {fr * 100:.0f}% delle ultime sedute; in passato {_h.escape(v['storia'])}). Esito della prova: {v['esito']}.</div>")
     return ("<style>.tr{margin-top:8px}.tr-t{font-size:12px;font-weight:700}.tr-g{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}"
-            ".tr-c{font-size:10.5px;border:1px solid;border-radius:999px;padding:1px 7px;white-space:nowrap}.tr-c b{margin-left:2px}</style>"
-            f"<div class='tr'><div class='tr-t' title='{_h.escape(d['frase'], quote=True)}'>{_h.escape(tit)} <span style='font-weight:400;color:var(--mu)'>· informativo, non è un avviso</span></div>"
-            f"<div class='tr-g'>{''.join(chips)}</div>{riga_tipo}</div>")
+            ".tr>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.tr>summary::-webkit-details-marker{display:none}"
+            ".tr>summary::after{content:'';width:7px;height:7px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);transition:transform .18s;margin-left:auto;margin-right:4px}"
+            ".tr[open]>summary::after{transform:rotate(225deg)}.tr-c{font-size:10.5px;border:1px solid;border-radius:999px;padding:1px 7px;white-space:nowrap}.tr-c b{margin-left:2px}</style>"
+            f"<details class='tr'><summary class='tr-t' title='{_h.escape(d['frase'], quote=True)}'>{_h.escape(tit)}</summary>"
+            f"<div class='tr-g'>{''.join(chips)}</div>{riga_tipo}<div class='qd-s' style='margin-top:3px'><b>Informativo, non è un avviso.</b> {_h.escape(d['frase'])}</div></details>")
