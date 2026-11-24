@@ -103,7 +103,8 @@ def _tessera_sovraccarico() -> tuple[str, int]:
     tit = _h.escape(c["testo"]["dettaglio"], quote=True)
     return (f"<div class='qd-c' data-gi='sovr'><div class='qd-n' style='color:{col}'>{v:.0f}{_freccia(c['tendenza'])}</div><div class='qd-l'>Sovraccarico</div>"
             f"<div class='qd-u'>Mercato sbilanciato su pochi titoli · indizio, non dimostrato</div>"
-            f"<div class='qd-s' title='{tit}' style='color:{cs};font-weight:{700 if tipo in ('margine', 'calo') else 400}'>{_h.escape(c['testo']['riga'])}</div></div>"), 4
+            f"<div class='qd-s' title='{tit}' style='color:{cs};font-weight:{700 if tipo in ('margine', 'calo') else 400}'>{_h.escape(c['testo']['riga'])}</div>"
+            f"<div class='qd-s' title='{_h.escape(concentrazione.testo_analoghi(c.get('analoghi')), quote=True)}'>{_h.escape(concentrazione.riga_analoghi(c.get('analoghi')))}</div></div>"), 4
 
 
 def html() -> str:

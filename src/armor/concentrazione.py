@@ -213,6 +213,35 @@ def oggi_in_episodio(sp: pd.Series, m: pd.DataFrame, colonna: str) -> dict | Non
     return {"dal": str(m.index[i0].date()), "sedute": int(len(m) - 1 - i0), "variazione": float(p.iloc[-1] / p.iloc[i0] - 1)}
 
 
+def analoghi(sp: pd.Series, m: pd.DataFrame, orizzonte: int = 126, k: int = 300, dal: str = "1990-01-01") -> dict | None:
+    """Situazioni analoghe del passato: i `k` giorni dal 1990 con livello e accelerazione piu' vicini a quelli di oggi
+    (esclusi gli ultimi 6 mesi, che non hanno ancora il futuro). Per ognuno: quanto e' salito al massimo, quanto e' sceso al minimo
+    e dove si trovava dopo `orizzonte` sedute (circa 6 mesi). Si usa l'S&P 500 perche' ha storia lunga; il VWCE (mondo) e' piu' diversificato."""
+    from numpy.lib.stride_tricks import sliding_window_view as swv
+    p = sp.reindex(m.index).to_numpy(dtype=float)
+    n = len(p)
+    if n <= orizzonte + k:
+        return None
+    w = swv(p, orizzonte + 1)                      # riga i = prezzi da i a i+orizzonte
+    fin = w[:, -1] / w[:, 0] - 1
+    mx = w[:, 1:].max(axis=1) / w[:, 0] - 1
+    mn = w[:, 1:].min(axis=1) / w[:, 0] - 1
+    liv, acc = m["livello"].to_numpy()[: len(w)], m["accel"].to_numpy()[: len(w)]
+    ok = (m.index[: len(w)] >= pd.Timestamp(dal)) & ~np.isnan(liv) & ~np.isnan(acc)
+    d = np.where(ok, np.hypot(liv - m["livello"].iloc[-1], acc - m["accel"].iloc[-1]), np.inf)
+    sel = np.sort(np.argsort(d)[:k])
+    ep = 1 + int(np.sum(np.diff(sel) >= orizzonte))
+
+    def q(x, qs):
+        return [float(np.quantile(x, a)) for a in qs]
+    base = ok
+    return {"orizzonte_sedute": orizzonte, "giorni": int(len(sel)), "episodi": ep, "distanza_max": float(d[sel].max()),
+            "salita_max": dict(zip(("p25", "med", "p75"), q(mx[sel], (.25, .5, .75)))),
+            "calo_max": dict(zip(("p25", "med", "p75"), q(mn[sel], (.25, .5, .75)))),
+            "fine": dict(zip(("p10", "med", "p90"), q(fin[sel], (.1, .5, .9)))),
+            "base": {"salita_max_med": float(np.median(mx[base])), "calo_max_med": float(np.median(mn[base])), "fine_med": float(np.median(fin[base]))}}
+
+
 # ----------------------------------------------------------------------------- uscita giornaliera
 def _serie_grafico(s: pd.Series) -> dict | None:
     """Settimanale fino al 2020 e giornaliero dopo (grafico leggero); stesso formato compatto degli altri indici."""
@@ -264,16 +293,19 @@ def costruisci(P: dict[str, pd.Series] | None = None) -> dict:
     col = {"carico": "S1", "riprezzamento": "riprezzamento"}.get(fase)
     ep = oggi_in_episodio(sp, m, col) if col else None
     txt = testo_stato(fase, stat, ep)
+    an = analoghi(sp, m)
     sovr = (m["livello"] * 100).round(1)
     tr = float(sovr.iloc[-1] - sovr.iloc[-6]) if len(sovr) > 5 else 0.0
     out = {"data": str(m.index[-1].date()), "sovraccarico": float(sovr.iloc[-1]), "accelerazione": float(m["accel"].iloc[-1] * 100), "z": float(u["z"]),
-           "tendenza": tr, "fase": fase, "fase_nome": FASI[fase], "testo": txt, "episodio_in_corso": ep, "statistiche": stat,
+           "tendenza": tr, "fase": fase, "fase_nome": FASI[fase], "testo": txt, "analoghi": an, "episodio_in_corso": ep, "statistiche": stat,
            "inversione": bool(u["inversione"]), "rottura": bool(u["rottura"]), "inneschi": {k: bool(u[k]) for k in ("R1", "R2", "C1", "F1")},
            "proxy": {k[4:]: {"livello": float(u[k]), "accel": float(u["acc_" + k[4:]])} for k in m.columns if k.startswith("liv_") and pd.notna(u[k])},
            "serie": {"sovr": _serie_grafico(sovr), "acc": _serie_grafico((m["accel"] * 100).round(1))}}
     out["_riga_registro"] = {"data": out["data"], "sp500": round(float(sp.iloc[-1]), 2), "sovraccarico": out["sovraccarico"], "accelerazione": round(out["accelerazione"], 1),
                              "z": round(out["z"], 3), "inversione": int(out["inversione"]), "rottura": int(out["rottura"]),
                              **{k: int(v) for k, v in out["inneschi"].items()}, "fase": fase,
+                             **({"an_giorni": an["giorni"], "an_episodi": an["episodi"], "an_salita_med": round(an["salita_max"]["med"], 4), "an_calo_med": round(an["calo_max"]["med"], 4),
+                                 "an_fine_med": round(an["fine"]["med"], 4)} if an else {}),
                              **{f"liv_{k}": round(v["livello"], 4) for k, v in out["proxy"].items()}, **{f"acc_{k}": round(v["accel"], 4) for k, v in out["proxy"].items()}}
     return out
 
@@ -300,3 +332,21 @@ def leggi() -> dict | None:
         return json.loads(ARCH.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+
+
+def riga_analoghi(an: dict | None) -> str:
+    """Frase breve per la tessera: dove e' arrivato, al massimo e al minimo, il mercato nei 6 mesi dopo situazioni simili."""
+    if not an:
+        return ""
+    return f"6 mesi dopo casi simili: fino a {an['salita_max']['med'] * 100:+.0f}% · giù a {an['calo_max']['med'] * 100:+.0f}%"
+
+
+def testo_analoghi(an: dict | None) -> str:
+    if not an:
+        return ""
+    sm, cm, f, b = an["salita_max"], an["calo_max"], an["fine"], an["base"]
+    return (f"Situazioni analoghe del passato (dal 1990, {an['giorni']} giorni in {an['episodi']} periodi distinti con sbilanciamento e accelerazione simili a oggi): nei 6 mesi successivi il mercato "
+            f"ha toccato in tipico {sm['med'] * 100:+.0f}% al massimo (un caso su quattro oltre {sm['p75'] * 100:+.0f}%) e {cm['med'] * 100:+.0f}% al minimo (un caso su quattro sotto {cm['p25'] * 100:+.0f}%); "
+            f"dopo 6 mesi si trovava in tipico a {f['med'] * 100:+.0f}% (otto casi su dieci fra {f['p10'] * 100:+.0f}% e {f['p90'] * 100:+.0f}%). "
+            f"In un giorno qualunque: massimo {b['salita_max_med'] * 100:+.0f}%, minimo {b['calo_max_med'] * 100:+.0f}%, a 6 mesi {b['fine_med'] * 100:+.0f}%. "
+            "Calcolato sull'S&P 500, perché il VWCE ha solo pochi anni di storia: il VWCE (in euro, diversificato sul mondo) può differire. Sono statistiche passate, non una previsione.")

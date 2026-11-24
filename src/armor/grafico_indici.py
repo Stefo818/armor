@@ -431,7 +431,7 @@ def html() -> str:
         from . import concentrazione
         cj = concentrazione.leggi()
         if cj:
-            DESC["sovr"] = DESC["sovr"] + " " + cj["testo"]["dettaglio"]
+            DESC["sovr"] = DESC["sovr"] + " " + cj["testo"]["dettaglio"] + " " + concentrazione.testo_analoghi(cj.get("analoghi"))
     except Exception:  # noqa: BLE001
         pass
     return (

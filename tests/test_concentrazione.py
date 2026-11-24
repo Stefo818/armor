@@ -50,3 +50,16 @@ def test_tessera_nel_quadro(monkeypatch):
     assert n == 4 and "data-gi='sovr'" in h and "84" in h and "margine tipico" in h
     monkeypatch.setattr("armor.concentrazione.leggi", lambda: None)
     assert quadro._tessera_sovraccarico() == ("", 3)
+
+
+def test_analoghi_e_frasi():
+    r = np.random.default_rng(3)
+    idx = pd.bdate_range("1985-01-01", periods=3000)
+    sp = pd.Series(100 * np.exp(np.cumsum(r.normal(0.0003, 0.01, 3000))), index=idx)
+    m = pd.DataFrame({"livello": r.uniform(0, 1, 3000), "accel": r.uniform(0, 1, 3000)}, index=idx)
+    a = c.analoghi(sp, m, orizzonte=60, k=100, dal="1990-01-01")
+    assert a["giorni"] == 100 and a["episodi"] >= 1
+    assert a["calo_max"]["med"] <= 0 <= a["salita_max"]["med"]
+    assert a["calo_max"]["p25"] <= a["calo_max"]["med"] <= a["calo_max"]["p75"]
+    assert "casi simili" in c.riga_analoghi(a) and "S&P 500" in c.testo_analoghi(a)
+    assert c.riga_analoghi(None) == "" and c.testo_analoghi(None) == ""
