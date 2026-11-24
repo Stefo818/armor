@@ -112,7 +112,7 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
     # VIX
     v, v1, v5 = _tail(vix, 6)
     lt, ltxt = _light(sem, "vix")
-    cards += (f"<div class='kc lq' data-k='vix' data-chart='vix'><div class='kt'>VIX · paura <span class='sdot {lt}'></span><small>{ltxt}</small></div>"
+    cards += (f"<div class='kc lq' data-k='vix' data-chart='vix' title='Sotto 15 calma, 15-20 normale, 20-30 nervoso, sopra 30 stress.'><div class='kt'>VIX · paura <span class='sdot {lt}'></span><small>{ltxt}</small></div>"
               f"<div class='kv lqp'>{_fmt(v, 2)}</div><div class='lqc'></div>"
               f"{_vix_gauge(v)}{trend_dated(vix, 2, True)}"
               "<div class='mu'>Sopra 20 nervoso, sopra 30 stress.</div></div>")
@@ -125,7 +125,7 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
     else:
         body = (f"<div class='kv'>{_fmt(pc, 2)}</div>{trend_dated(arch, 2, True, live=False)}"
                 + ("" if len(arch) > 5 else f"<div class='mu'>Storia ancora corta ({len(arch)} {'giorno' if len(arch) == 1 else 'giorni'}).</div>"))
-    cards += (f"<div class='kc' data-chart='pc_oi'><div class='kt'>Put/Call (SPY) <span class='sdot {lt}'></span><small>{ltxt}</small></div>{body}"
+    cards += (f"<div class='kc' data-chart='pc_oi' title='Più alto = più protezioni comprate.'><div class='kt'>Put/Call (SPY) <span class='sdot {lt}'></span><small>{ltxt}</small></div>{body}"
               "<div class='mu'>Più alto = più protezioni comprate.</div></div>")
     # S&P 500 e VWCE
     ndx = store.load("nasdaq100")
@@ -136,7 +136,7 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
         x = float(s.iloc[-1])
         dd = (x / float(s.rolling(252, min_periods=60).max().iloc[-1]) - 1) * 100
         cards += (f"<div class='kc lq' data-k='{key}' data-chart='{chart}'><div class='kt'>{nm}</div><div class='kv lqp'>{_fmt(x, 2)}</div><div class='lqc'></div>"
-                  f"{trend_dated(s, 2, False)}<div class='mu'>Dal massimo a 1 anno: {_fmt(dd, 1)}%</div></div>")
+                  f"{trend_dated(s, 2, False)}<div class='mu'>Max 1 anno: {_fmt(dd, 1)}%</div></div>")
     try:
         from . import grafico_indici
         extra = grafico_indici.val_cards()
@@ -309,4 +309,15 @@ CSS = """
 .aix{cursor:pointer}.am3w{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
 .am3{border:1px solid var(--bd);border-radius:18px;padding:14px 15px;background:var(--bg);box-shadow:0 2px 10px rgba(0,0,0,.12)}.amk{font-weight:800;font-size:16px}.amh{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);margin:12px 0 4px;border-top:1px dashed var(--bd);padding-top:8px}.amb{display:flex;height:10px;border-radius:99px;overflow:hidden;position:relative;margin:10px 0 3px}.amb i{display:block}.amb b{position:absolute;top:-3px;width:5px;height:16px;border-radius:3px;background:var(--tx);box-shadow:0 0 0 2px var(--bg);transform:translateX(-50%)}.amt{display:flex;justify-content:space-between;font-size:9.5px;color:var(--mu)}.amc{font-size:13px;margin:2px 0}.amu{color:var(--bad);font-weight:700}.amd{color:var(--ok);font-weight:700}.amw{display:grid;grid-template-columns:1fr 54px 34px;gap:6px;align-items:center;font-size:12px;margin:3px 0}.amw i{display:block;height:7px;border-radius:99px;background:var(--ac)}.amw b{text-align:right}.amv2{font-size:20px;font-weight:800}.amf{font-size:14px;line-height:1.45;margin:8px 0 4px}.amsp{width:100%;height:60px;display:block;margin-top:10px;border-radius:10px;background:var(--card)}.amsl{display:flex;justify-content:space-between;font-size:10px;color:var(--mu)}.amtab{width:100%;border-collapse:collapse;font-size:13px}.amtab td{padding:6px 0;border-bottom:1px solid var(--bd);vertical-align:top}.amtab td:first-child{color:var(--mu);width:46%;padding-right:8px}.amtab tr:last-child td{border-bottom:0}.amd2{margin-top:10px;border:1px solid var(--bd);border-radius:12px;padding:0 12px;background:var(--card)}.amd2 summary{padding:10px 0;font-weight:700;font-size:13px;cursor:pointer}.amsum{border:1px solid var(--bd);border-radius:14px;padding:10px 14px;background:var(--card);margin:6px 0 10px;font-size:14px}.amv{font-size:40px;font-weight:800;line-height:1.05}.amv span{font-size:15px;color:var(--mu)}.aml{font-weight:800}
 #amod{z-index:26}#dkt{transition:opacity .4s}
+/* Paura, protezioni e prezzi: una riga su computer, due su telefono. I testi di spiegazione stanno nel suggerimento (tieni premuto) e nel grafico a comparsa. */
+.kpis{grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+.kpis .kc{padding:7px 7px;border-radius:11px;min-width:0;overflow:hidden}
+.kpis .kt{font-size:9.5px;letter-spacing:.2px;gap:3px;line-height:1.15}.kpis .kt small{font-size:9.5px;display:block;width:100%}
+.kpis .kv{font-size:19px;margin:2px 0;white-space:nowrap}
+.kpis .lqc,.kpis .trow,.kpis .vl-s,.kpis .vl-p,.kpis .mu,.kpis .tcl b{font-size:10px;line-height:1.25}
+.kpis .vgl,.kpis .kc>.mu:last-child,.kpis .lq[data-chart]::after,.kpis .vl-s{display:none}
+.kpis .vg{margin:4px 0 2px}.kpis .vgb{height:7px}.kpis .vgb i{height:13px;top:-3px}
+.kpis .vl-g{height:6px;margin:3px 0}.kpis .lvd{font-size:9px}
+.kpis .kc.vl[style*="grid-column"]{padding:6px 9px}.kpis .kc.vl[style*="grid-column"] .vl-s{display:block;font-size:11px;margin:2px 0 0!important}.kpis .kc.vl[style*="grid-column"] .kt small{display:inline;width:auto}
+@media(max-width:860px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.kpis .kc{padding:6px 5px}.kpis .kv{font-size:14.5px}.kpis .kt,.kpis .kt small{font-size:8.5px}.kpis .lqc,.kpis .trow,.kpis .vl-p,.kpis .mu,.kpis .tcl b{font-size:9px}.kpis .kc.vl[style*="grid-column"] .vl-s{font-size:10px}}
 """

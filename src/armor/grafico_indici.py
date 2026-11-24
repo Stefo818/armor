@@ -151,14 +151,15 @@ def val_cards() -> str:
             colv = "var(--bad)" if d > 0 else "var(--ok)"
             frv = "\u25b2" if d > 0 else "\u25bc"
             prev = (f"<div class='vl-p'>ieri <b>{_it(x['ieri'], x['dec'])}{x['u']}</b> "
-                    f"<span style='color:{colv}'>{frv} {_it(abs(d), x['dec'])}</span>"
-                    + (f" · 1 sett. fa <b>{_it(x['sett'], x['dec'])}{x['u']}</b>" if x["sett"] is not None else "") + "</div>")
-        out += (f"<div class='kc vl' data-gi='{k}'><div class='kt'>{x['nome']} "
+                    f"<span style='color:{colv}'>{frv} {_it(abs(d), x['dec'])}</span></div>")
+        tip = (f"{x['sub']}. Più alto del {x['pos'] * 100:.0f}% dei dati dal {x['dal']}, tipico {_it(x['mediana'], x['dec'])}{x['u']}."
+               + (f" Una settimana fa {_it(x['sett'], x['dec'])}{x['u']}." if x["sett"] is not None else "")).replace("'", "&#39;")
+        out += (f"<div class='kc vl' data-gi='{k}' title='{tip}'><div class='kt'>{x['nome']} "
                 f"<small style='display:block;color:{x['col']};font-weight:700'>{x['nom']}</small></div>"
                 f"<div class='kv' style='color:{x['col']}'>{_it(x['v'], x['dec'])}{x['u']}</div>"
                 f"<div class='vl-s'>{x['sub']}</div>"
                 f"<div class='vl-g'>{seg}<u style='left:{pos:.0f}%'></u></div>"
-                f"<div class='vl-p'>Più alto del <b>{x['pos'] * 100:.0f}%</b> dei dati dal {x['dal']} · tipico {_it(x['mediana'], x['dec'])}{x['u']}</div>"
+                f"<div class='vl-p'>Più alto del <b>{x['pos'] * 100:.0f}%</b> dei dati · tipico {_it(x['mediana'], x['dec'])}{x['u']}</div>"
                 f"{prev}{freschezza}<div class='mu'>Tocca per il grafico ›</div></div>")
     return out
 

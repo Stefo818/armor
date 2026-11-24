@@ -46,10 +46,10 @@ def html() -> str:
     if x["livello"] == 0:
         riga = "Oggi non c'è: il mercato non è insieme caro e in discesa."
     else:
-        riga = ("Oggi c'è: il mercato è caro e il prezzo è già sotto la sua media dell'ultimo anno circa. "
-                "Dal 2015, quando succedeva, nel 39% dei casi il mercato è sceso di almeno 8% entro 3 mesi; senza segnale in meno dell'8% dei casi.")
-    return (f"<div class='kc vl' style='grid-column:1/-1'><div class='kt'>Spia: mercato caro che sta già scendendo "
-            f"<small style='display:block;color:{x['col']};font-weight:700'>{x['nome']}</small></div>"
-            f"<div class='vl-s' style='margin-top:6px'>{riga}</div>"
-            "<div class='mu'>Trovata con una ricerca su 32 idee (solo crisi finanziarie). Funziona solo se il mercato è già in calo e i casi sono pochi: "
-            "è un campanello, non una previsione sicura. Non cambia l'Indice crollo.</div></div>")
+        riga = ("Oggi c'è: mercato caro e già sotto la media dell'ultimo anno. "
+                "Dal 2015, in questi casi il −8% a 3 mesi è arrivato nel 39% delle volte (senza segnale, meno dell'8%).")
+    tip = ("Trovata con una ricerca su 32 idee (solo crisi finanziarie). Funziona solo se il mercato è già in calo e i casi sono pochi: "
+           "è un campanello, non una previsione sicura. Non cambia l'Indice crollo.")
+    return (f"<div class='kc vl' style='grid-column:1/-1' title=\"{tip}\"><div class='kt'>Spia: mercato caro che sta già scendendo "
+            f"<small style='color:{x['col']};font-weight:700'>{x['nome']}</small></div>"
+            f"<div class='vl-s' style='margin-top:2px'>{riga}</div></div>")
