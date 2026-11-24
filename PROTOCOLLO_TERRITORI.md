@@ -48,3 +48,10 @@ In ogni caso: registro giornaliero (`data/territori_registro.csv`) per la verifi
 
 ## Limiti dichiarati
 Indicatori americani e un solo europeo; pochi episodi, correlati; valori di mercato (margin debt, SLOOS) a bassa frequenza e riveduti; meccanismi con dati solo recenti (cot, put/call, intraday, flussi) non entrano perché non c'è storia. Gli eventi esterni (guerre, pandemie, dazi) sono esclusi per scelta.
+
+## Note di attuazione (scritte prima di calcolare, per scelte che il testo lasciava aperte)
+- **Curva dei tassi**: per avere la stessa serie dal 1971 si usa «rendimento 10 anni − tasso della Fed» (dgs10 − fedfunds, entrambi giornalieri) invece di 10 anni − 3 mesi (che parte dal 1982).
+- **SLOOS** è trimestrale: percentile espandente con minimo 20 osservazioni (5 anni).
+- **Spread di credito in allargamento (M3)**: stessa costruzione di PROTOCOLLO_CONCENTRAZIONE.md (C1: variazione a 3 mesi, percentile; giornaliero dopo il 06/1986, mensile con ritardo di 35 giorni prima).
+- **Crescita di M2** = variazione sui 12 mesi; **debito di margine** = variazione sui 12 mesi (mensile, dal 1997).
+- «Percentile espandente» = posizione del valore nell'insieme di tutti i valori fino a quel giorno (minimo 252 osservazioni giornaliere o settimanali, 60 mensili, 20 trimestrali).
