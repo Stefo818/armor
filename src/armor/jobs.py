@@ -419,6 +419,11 @@ def tutto(skip_download: bool = False) -> None:
         concentrazione.run()
     except Exception as e:  # noqa: BLE001
         print("[concentrazione] non aggiornata:", str(e)[:100])
+    try:   # territori di rischio endogeno: informativo, peso zero, registro per la verifica in avanti
+        from . import territori
+        territori.run()
+    except Exception as e:  # noqa: BLE001
+        print("[territori] non aggiornati:", str(e)[:100])
     try:   # classifica dei modelli (voto 1-100), una riga per modello al giorno
         from . import classifica
         classifica.registra(str(closed_sp500().index[-1].date()))

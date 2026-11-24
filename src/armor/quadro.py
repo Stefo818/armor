@@ -108,6 +108,14 @@ def _tessera_sovraccarico() -> tuple[str, int]:
             f"<div class='qd-s' title='{_h.escape(concentrazione.testo_orizzonti(c.get('orizzonti')), quote=True)}'>{_h.escape(concentrazione.riga_orizzonti(c.get('orizzonti')))}</div></div>"), 4
 
 
+def _striscia_territori() -> str:
+    try:
+        from . import territori
+        return territori.striscia_html()
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def html() -> str:
     import html as _h
     d = leggi()
@@ -153,6 +161,7 @@ details.qdd[open]>summary::after{transform:rotate(225deg)}
         f"<div class='qd'><div class='qd-h'>Quadro di oggi · {_freschezza(d['data'])} · tocca un numero per il grafico · freccia = andamento in una settimana</div>"
         f"<div class='qd-g' style='--nc:{ncol}'>{tre}</div>"
         f"<div class='qd-b {cls}'><div class='qd-t'>{tit}</div><div class='qd-d'>{det}</div></div>"
+        f"{_striscia_territori()}"
         "<details class='qdd'><summary>Cosa è stato provato, e cosa non funziona</summary><div class='qd-x'>"
         "<p><b>A un mese e a tre mesi non c'è un segnale affidabile.</b> Sono stati messi in gara 81 candidati "
         "(i tre indici per nove modi di misurarli per tre orizzonti), scegliendo sui dati fino al 2014 e verificando "
@@ -163,6 +172,8 @@ details.qdd[open]>summary::after{transform:rotate(225deg)}
         "appena sopra la soglia di 0,7460 che la migliore di 81 raggiunge per puro caso. Anche questo, quindi, è un "
         "indizio stretto e non una certezza.</p>"
         f"<p><b>Quando un indice resta sopra 60 per una settimana</b>, il calo dell'8% entro tre mesi è poi arrivato:</p><ul>{righe60}</ul>"
+        "<p><b>Le cause dei crolli «di pancia»</b> (bolle, leva, credito, obbligazioni che drenano soldi, Europa, dollaro) sono state provate dal 1971: "
+        "nessuna, da sola o insieme alle altre, né un modello a punteggio, ha retto la verifica sugli ultimi anni. Sono mostrate come clima del mercato, non come previsione.</p>"
         "<p><b>Il Sovraccarico non è un indice di rischio dimostrato.</b> Misura quanto il mercato è sbilanciato su pochi titoli e sulla tecnologia "
         "e quanto in fretta lo sta diventando. Dal 1990 è un indizio che anticipa di mesi e non di giorni; prima del 1990 non funzionava. Non pesa su nessun altro indice, "
         "e ogni giorno viene registrato per verificarlo in avanti.</p>"

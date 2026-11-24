@@ -120,3 +120,73 @@ def calcola(P: dict[str, pd.Series], sp: pd.Series) -> dict:
     I, caldo = meccanismi(ind, cal)
     K = caldo.sum(axis=1)
     return {"cal": cal, "ind": ind, "I": I, "caldo": caldo, "K": K, "stati": stati(caldo, I), "conc": conc}
+
+
+FRASE = ("Non è dimostrato che questi segnali prevedano i crolli: provati su 1971-2026, nessuno ha retto la verifica sugli ultimi anni "
+         "(il credito funzionava fino al 2014 e poi no). Servono a capire in che clima siamo, non a dire «sta per crollare». Peso zero sugli altri indici.")
+
+
+def costruisci() -> dict:
+    P = {k: store.load("cn_" + k.lower()).dropna() for k in concentrazione.SIMBOLI}
+    sp = store.load("sp500").dropna()
+    R = calcola(P, sp)
+    I, caldo, K, cal = R["I"], R["caldo"], R["K"], R["cal"]
+    A = pe(I.mean(axis=1, skipna=True).dropna(), minimo=252)
+    i = len(cal) - 1
+    ind = {k: {n: round(float(v.dropna().iloc[-1]), 3) for n, v in d.items() if v.notna().any()} for k, d in R["ind"].items()}
+    mecc = {k: {"nome": MECC[k][0], "spiega": MECC[k][1], "indice": None if pd.isna(I[k].iloc[i]) else round(float(I[k].iloc[i]), 3), "caldo": bool(caldo[k].iloc[i]),
+                "giorni_caldo_ultimi_63": int(caldo[k].iloc[-63:].sum()), "indicatori": ind[k]} for k in ORDINE}
+    riga = {"data": str(cal[i].date()), "K": int(K.iloc[i]), "punteggio": round(float(A.iloc[-1]), 3)}
+    for k in ORDINE:
+        riga[k] = mecc[k]["indice"]
+    for k, d in ind.items():
+        for n, v in d.items():
+            riga[f"{k}_{n}"] = v
+    storia = {"t": [str(d.date()) for d in cal[-1260::5]], **{k: [None if pd.isna(x) else round(float(x), 2) for x in I[k].iloc[-1260::5]] for k in ORDINE},
+              "K": [int(x) for x in K.iloc[-1260::5]]}
+    return {"data": riga["data"], "K": riga["K"], "punteggio": riga["punteggio"], "meccanismi": mecc, "soglia": SOGLIA, "frase": FRASE, "storia": storia, "_riga_registro": riga}
+
+
+def registra(riga: dict) -> None:
+    new = pd.DataFrame([riga])
+    old = pd.read_csv(REG) if REG.exists() else pd.DataFrame()
+    m = pd.concat([old, new], ignore_index=True).drop_duplicates(subset=["data"], keep="last").sort_values("data")
+    m.to_csv(REG, index=False)
+
+
+def run() -> dict:
+    out = costruisci()
+    registra(out.pop("_riga_registro"))
+    ARCH.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    caldi = [k for k in ORDINE if out["meccanismi"][k]["caldo"]]
+    print(f"[territori] {out['data']}: {out['K']} meccanismi caldi {caldi}, punteggio {out['punteggio']:.2f}", flush=True)
+    return out
+
+
+def leggi() -> dict | None:
+    try:
+        return json.loads(ARCH.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def striscia_html() -> str:
+    """Striscia informativa del Quadro di oggi: quali cause dei crolli di pancia sono accese. Mai un avviso di crollo."""
+    import html as _h
+    d = leggi()
+    if not d:
+        return ""
+    chips = []
+    for k in ORDINE:
+        m = d["meccanismi"][k]
+        if m["indice"] is None:
+            continue
+        col = "var(--bad)" if m["caldo"] else "var(--mu)"
+        tip = f"{m['spiega']}. Indice {m['indice'] * 100:.0f} su 100 (acceso da 80). " + ("Acceso oggi." if m["caldo"] else "Spento oggi.")
+        chips.append(f"<span class='tr-c' style='border-color:{col};color:{col}' title='{_h.escape(tip, quote=True)}'>{_h.escape(m['nome'])} <b>{m['indice'] * 100:.0f}</b></span>")
+    n = d["K"]
+    tit = f"Cause dei crolli «di pancia»: {n} su 7 accese" if n else "Cause dei crolli «di pancia»: nessuna accesa"
+    return ("<style>.tr{margin-top:8px}.tr-t{font-size:12px;font-weight:700}.tr-g{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}"
+            ".tr-c{font-size:10.5px;border:1px solid;border-radius:999px;padding:1px 7px;white-space:nowrap}.tr-c b{margin-left:2px}</style>"
+            f"<div class='tr'><div class='tr-t' title='{_h.escape(d['frase'], quote=True)}'>{_h.escape(tit)} <span style='font-weight:400;color:var(--mu)'>· informativo, non è un avviso</span></div>"
+            f"<div class='tr-g'>{''.join(chips)}</div></div>")

@@ -838,3 +838,9 @@ PROTOCOLLO_CONCENTRAZIONE.md (+Emendamento 1: periodo dal 1971, punto di rottura
 
 ## (21) Orizzonti 1 settimana / 2 settimane / 1 mese / 3 mesi (24/11/2026)
 `concentrazione.ORIZZONTI` (5, 10, 21, 63, 126 sedute) → `analoghi` per ogni orizzonte; riga «Dove sarà, casi simili» nella tessera, testo completo (tipico + otto casi su dieci + giorno qualunque) nel grafico, colonne `an_<h>d_{p10,med,p90}` nel registro. SW armor-v92. 300 test.
+
+## (22) Territori di rischio endogeno + modello a punteggio (24/11/2026)
+Richiesta: avvisare quando ci si avvicina alle cause dei crolli di pancia (leva, credito, bolle, obbligazioni che drenano, Europa, dollaro) mettendo in relazione piu' informazioni. Protocollo scritto prima dei dati: PROTOCOLLO_TERRITORI.md (+ addendum con le 4 cause dell'utente, yen carry, modello A senza adattamento e modello B logistico). Esito: ESITO_TERRITORI.md. **Nessuno stato ne' modello supera la verifica (tutti «non supportato»)**: il modello B ha AUC 0,83-0,88 nel 1990-2014 e 0,40-0,47 dopo il 2015; il credito funzionava fino al 2014 e poi no.
+Nell'app: `src/armor/territori.py` (run/leggi/striscia_html), striscia informativa nel Quadro di oggi (7 meccanismi caldi/freddi, nessun avviso di crollo), registro `data/territori_registro.csv`, `data/territori.json`, aggancio in jobs.py (prima della classifica). Peso zero. Test: tests/test_territori.py. SW armor-v94. Oggi: M1, M4, M6 caldi (K=3), punteggio 0,93, probabilita' modello B 6,7%.
+Verifica in avanti 24/11/2026-24/05/2027: serve >= 6 episodi indipendenti; esito probabile «insufficiente».
+Anche: layout compatto di «Paura, protezioni e prezzi» (commit fee2664, SW armor-v93).
