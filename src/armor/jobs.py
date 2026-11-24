@@ -424,6 +424,11 @@ def tutto(skip_download: bool = False) -> None:
         territori.run()
     except Exception as e:  # noqa: BLE001
         print("[territori] non aggiornati:", str(e)[:100])
+    try:   # difensivita' dei grandi fondi: solo registro giornaliero, peso zero
+        from . import difensivita
+        difensivita.run()
+    except Exception as e:  # noqa: BLE001
+        print("[difensivita] non aggiornata:", str(e)[:100])
     try:   # classifica dei modelli (voto 1-100), una riga per modello al giorno
         from . import classifica
         classifica.registra(str(closed_sp500().index[-1].date()))
