@@ -825,3 +825,6 @@ Aggiunte fonti in `src/armor/accumulo_extra.py`: BCE (CISS per paese, curve euro
 
 ## (17) Nasdaq 100 in diretta + bozza concentrazione (24/11/2026)
 Scheda «Nasdaq 100» in «Paura, protezioni e prezzi» (cruscotto.kpi_html, grafico `ndx`); livefeed onvista ogni 15 s ora include `INDEX/ISIN:US6311011026` (non verificabile dal sandbox: se onvista non risponde si resta sui dati di live.json ogni 15 minuti); `report.py` mantiene il «live» di ndx. Glossario: schede per le 16 serie Yahoo aggiunte il 23/11. SW armor-v89. **Concentrazione**: solo PROTOCOLLO_CONCENTRAZIONE.md (bozza), in attesa di approvazione dell'utente prima di calcolare o inserire qualcosa.
+
+## (18) Concentrazione del mercato: esito (24/11/2026)
+PROTOCOLLO_CONCENTRAZIONE.md (+Emendamento 1: periodo dal 1971, punto di rottura con tassi/credito/NFCI) e ESITO_CONCENTRAZIONE.md. **Nessuno stato dimostrato**: S1 (sbilanciato+accelera) è un indizio solo dal 1990, opposto prima; S3 (con rottura) quasi mai accade; la sola rottura di tassi e credito (S7) funziona meglio ma si indebolisce dal 2015. Nulla inserito nell'app oltre alla scheda Nasdaq 100; scheda informativa proposta, in attesa di conferma. Possibile protocollo nuovo: orizzonte 4-6 mesi.
