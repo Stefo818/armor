@@ -74,12 +74,12 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-23,stock market crash,Will Google or NVIDIA be worth more on March 1?,Will Google or NVIDIA be worth more on March 1?,0.0,69424.48397,2024-03-01
 2026-11-23,stock market crash,Coinbase top 25 app by Friday?,Coinbase top 25 app by Friday?,0.0,17262.840334,2024-03-31
 2026-11-23,stock market crash,$SPX6900 all time high by Jan 31?,$SPX6900 all time high by Jan 31?,0.0,12194.012,2024-01-31
-2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Friday?,0.0,925,2024-02-07
-2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Saturday?,0.0,1000,2024-02-07
+2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Friday?,0.0,925.0,2024-02-07
+2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Saturday?,0.0,1000.0,2024-02-07
 2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Sunday?,0.0,4437.22222,2024-02-07
-2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Tuesday?,0.0,400,2024-02-07
-2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Wednesday?,1.0,0,2024-02-07
-2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Monday?,0.0,1200,2024-02-07
+2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Tuesday?,0.0,400.0,2024-02-07
+2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Wednesday?,1.0,0.0,2024-02-07
+2026-11-23,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Monday?,0.0,1200.0,2024-02-07
 2026-11-23,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will Bitcoin have the best performance in 2026?,0.017,482736.37227200007,2027-01-01
 2026-11-23,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will Gold have the best performance in 2026?,0.0535,328741.97298799996,2027-01-01
 2026-11-23,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will the S&P 500 have the best performance in 2026?,0.93,234347.618165,2027-01-01
@@ -103,7 +103,7 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-23,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $7,500-$8,000 in December?",0.19,5359.200016000001,2026-12-31
 2026-11-23,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by December 31, 2026?",0.2,67.91578700000001,2027-01-01
 2026-11-23,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by March 31, 2027?",0.325,8.084684,2027-04-01
-2026-11-23,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by June 30, 2027?",0.53,10,2027-07-01
+2026-11-23,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by June 30, 2027?",0.53,10.0,2027-07-01
 2026-11-23,S&P 500,S&P 500 (SPX) Opens Up or Down on February 2?,S&P 500 (SPX) Opens Up or Down on February 2?,0.0,1059512.569103,2026-02-02
 2026-11-23,S&P 500,Which companies added to S&P 500 in Q1 2026?,"Will Vertiv Holdings (VRT) be added to the S&P 500 by March 31, 2026?",1.0,,2026-03-31
 2026-11-23,S&P 500,Which companies added to S&P 500 in Q1 2026?,"Will Pure Storage (PSTG) be added to the S&P 500 by March 31, 2026?",0.0,79626.86064100002,2026-03-31
@@ -131,3 +131,136 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-23,default,US defaults on debt in 2025?,US defaults on debt in 2025?,0.0,138353.934783,2025-12-31
 2026-11-23,default,"France defaults on debt by December 31, 2027?","France defaults on debt by December 31, 2027?",0.0715,27082.888843999997,2028-01-01
 2026-11-23,default,US defaults on debt by 2027?,US defaults on debt by 2027?,0.0065,20882.746544,2027-01-01
+2026-11-24,recession,Japan recession in 2026?,Japan recession in 2026?,0.17,4341.739604,2027-05-01
+2026-11-24,recession,US GDP growth in Q1 2025?,Will U.S. GDP growth be greater than 2% in Q1 2025?,0.0,99755.99141,2025-04-30
+2026-11-24,recession,US GDP growth in Q1 2025?,Will U.S. GDP growth be between 2% and 1% in Q1 2025?,0.0,92949.409877,2025-04-30
+2026-11-24,recession,US GDP growth in Q1 2025?,Will U.S. GDP growth be between 1% and 0% in Q1 2025?,0.0,80448.13308,2025-04-30
+2026-11-24,recession,US GDP growth in Q1 2025?,Will U.S. GDP growth be between 0% and -1% in Q1 2025?,1.0,74108.127123,2025-04-30
+2026-11-24,recession,US GDP growth in Q1 2025?,Will U.S. GDP growth be between -1% and -2% in Q1 2025?,0.0,80917.712504,2025-04-30
+2026-11-24,recession,US GDP growth in Q1 2025?,Will U.S. GDP growth be less than -2% in Q1 2025?,0.0,162013.207461,2025-04-30
+2026-11-24,recession,US recession by end of 2026?,US recession by end of 2026?,0.0215,2536465.570198001,2027-01-31
+2026-11-24,recession,US recession by end of 2027?,US recession by end of 2027?,0.315,26900.119055,2027-12-31
+2026-11-24,recession,When will the next recession happen in the US?,Will the next recession in the US happen in Q4 2021?,2.642985862270381e-07,1648.395942,2022-01-27
+2026-11-24,recession,When will the next recession happen in the US?,Will the next recession in the US happen by Q1 2022?,0.9999994115359188,15604.877638,2022-04-28
+2026-11-24,recession,When will the next recession happen in the US?,Will the next recession in the US happen by Q2 2022?,0.9999994048442495,22175.587562,2022-07-28
+2026-11-24,recession,When will the next recession happen in the US?,Will the next recession in the US happen by Q3 2022?,0.9999996644454363,40479.508162,2022-10-27
+2026-11-24,recession,When will the next recession happen in the US?,Will the next recession in the US happen by Q4 2022?,0.9999995909264291,27035.205181,2023-01-27
+2026-11-24,recession,Will there be a recession in Q2 of 2022?,Will there be a recession in Q2 of 2022?,0.9999992103229602,104780.227449,2022-07-28
+2026-11-24,recession,"Will Biden say ""recession"" in his Tuesday remarks on inflation?","Will Biden say ""recession"" in his Tuesday remarks on inflation?",6.194094419512708e-07,1984.032159,2022-05-10
+2026-11-24,recession,US recession in 2025?,US recession in 2025?,0.0,11734512.428529,2026-02-28
+2026-11-24,fed rate,How many Fed rate hikes in 2026?,Will no Fed rate hikes happen in 2026?,0.0,140419.60613400003,2026-12-31
+2026-11-24,fed rate,How many Fed rate hikes in 2026?,Will 1 Fed rate hike happen in 2026?,0.035,1051471.275008,2026-12-31
+2026-11-24,fed rate,How many Fed rate hikes in 2026?,Will 2 Fed rate hikes happen in 2026?,0.925,299691.388059,2026-12-31
+2026-11-24,fed rate,How many Fed rate hikes in 2026?,Will 3 Fed rate hikes happen in 2026?,0.035,251128.372741,2026-12-31
+2026-11-24,fed rate,How many Fed rate hikes in 2026?,Will 4 Fed rate hikes happen in 2026?,0.0025,102748.30647799998,2026-12-31
+2026-11-24,fed rate,How many Fed rate hikes in 2026?,Will 5 or more Fed rate hikes happen in 2026?,0.0015,91134.79599299999,2026-12-31
+2026-11-24,fed rate,Another Fed rate hike in 2026?,Another Fed rate hike in 2026?,0.96,2439719.1234460003,2026-12-10
+2026-11-24,fed rate,How many Fed rate cuts in 2026?,Will no Fed rate cuts happen in 2026?,0.984,9849236.971771002,2027-01-01
+2026-11-24,fed rate,How many Fed rate cuts in 2026?,Will 1 Fed rate cut happen in 2026?,0.0035,3896888.261483,2027-01-01
+2026-11-24,fed rate,How many Fed rate cuts in 2026?,Will 2 Fed rate cuts happen in 2026?,0.0015,3667837.9086580006,2027-01-01
+2026-11-24,fed rate,How many Fed rate cuts in 2026?,Will 3 Fed rate cuts happen in 2026?,0.0025,3055943.568191999,2027-01-01
+2026-11-24,fed rate,How many Fed rate cuts in 2026?,Will 4 Fed rate cuts happen in 2026?,0.0015,2851380.3286730004,2027-01-01
+2026-11-24,fed rate,How many Fed rate cuts in 2026?,Will 5 Fed rate cuts happen in 2026?,0.0005,3084058.710133999,2027-01-01
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by January 2026 meeting?,0.0,588114.763678,2026-01-28
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by March 2026 meeting?,0.0,,2026-03-18
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by April 2026 meeting?,0.0,542979.3072430016,2026-04-29
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by June 2026 meeting?,0.0,784968.3769240015,2026-06-17
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by January 2027 meeting?,0.0325,11081.67486,2027-02-08
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by March 2027 meeting?,0.13,7671.752299000001,2027-04-08
+2026-11-24,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 2.25% at the end of 2026?,0.0015,105927.63186,2027-01-01
+2026-11-24,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 2.5% at the end of 2026?,0.0015,193899.63801499992,2027-01-01
+2026-11-24,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 2.75% at the end of 2026?,0.0005,75207.520549,2027-01-01
+2026-11-24,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 3.0% at the end of 2026?,0.0015,510992.08323300007,2027-01-01
+2026-11-24,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 3.25% at the end of 2026?,0.0015,99539.09401399999,2027-01-01
+2026-11-24,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 3.5% at the end of 2026?,0.0015,230513.68498,2027-01-01
+2026-11-24,fed rate,How many Fed rate cuts this year?,Will Fed cut interest rates 0 times in 2024?,0.0,2049580.060001,2024-12-30
+2026-11-24,fed rate,How many Fed rate cuts this year?,Will Fed cut interest rates 1 time in 2024?,0.0,1407495.111446,2024-12-30
+2026-11-24,fed rate,How many Fed rate cuts this year?,Will Fed cut interest rates 2 times in 2024?,0.0,3982525.829184,2024-12-30
+2026-11-24,fed rate,How many Fed rate cuts this year?,Will Fed cut interest rates 3 times in 2024?,0.0,8337156.91915808,2024-12-30
+2026-11-24,fed rate,How many Fed rate cuts this year?,Will Fed cut interest rates 4 times in 2024?,1.0,6812524.970527,2024-12-30
+2026-11-24,fed rate,How many Fed rate cuts this year?,Will Fed cut interest rates 5 times in 2024?,0.0,6683117.51304494,2024-12-30
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by March 20?,0.0,1907759.255828,2024-03-20
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by May 1?,0.0,1608415.69825,2024-05-01
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by January 31?,0.0,413985.13366299996,2024-01-31
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by June 12?,0.0,1253483.915707,2024-06-12
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by July 31?,0.0,1727507.986293,2024-07-31
+2026-11-24,fed rate,Fed rate cut by...?,Fed rate cut by September 18?,1.0,20345317.826273,2024-09-18
+2026-11-24,fed rate,How many Fed rate cuts in 2025?,Will no Fed rate cuts happen in 2025?,0.0,3257922.893311,2025-12-10
+2026-11-24,fed rate,How many Fed rate cuts in 2025?,Will 1 Fed rate cut happen in 2025?,0.0,2906248.945921,2025-12-10
+2026-11-24,fed rate,How many Fed rate cuts in 2025?,Will 2 Fed rate cuts happen in 2025?,0.0,3706364.415322,2025-12-10
+2026-11-24,fed rate,How many Fed rate cuts in 2025?,Will 3 Fed rate cuts happen in 2025?,1.0,3568731.458998,2025-12-10
+2026-11-24,fed rate,How many Fed rate cuts in 2025?,Will 4 Fed rate cuts happen in 2025?,0.0,3089647.671223,2025-12-10
+2026-11-24,fed rate,How many Fed rate cuts in 2025?,Will 5 Fed rate cuts happen in 2025?,0.0,2273086.225375,2025-12-10
+2026-11-24,stock market crash,$DJT market cap on April 30?,$DJT market cap less than $1b on April 30?,0.0,72838.874206,2024-04-30
+2026-11-24,stock market crash,$DJT market cap on April 30?,$DJT market cap between $1b and $2b on April 30?,0.0,29621.423238,2024-04-30
+2026-11-24,stock market crash,$DJT market cap on April 30?,$DJT market cap between $2b and $3b on April 30?,0.0,51316.334013,2024-04-30
+2026-11-24,stock market crash,$DJT market cap on April 30?,$DJT market cap between $3b and $4b on April 30?,0.0,41169.328744,2024-04-30
+2026-11-24,stock market crash,$DJT market cap on April 30?,$DJT market cap between $4b and $5b on April 30?,0.0,27300.206568,2024-04-30
+2026-11-24,stock market crash,$DJT market cap on April 30?,$DJT market cap greater than $5b on April 30?,1.0,32020.48368,2024-04-30
+2026-11-24,stock market crash,NVIDIA flips Apple in market cap by April 30?,NVIDIA flips Apple in market cap by April 30?,0.0,77254.557189,2024-04-30
+2026-11-24,stock market crash,Will WIF hit $1 by March 15?,Will WIF hit $1 by March 15?,1.0,104970.956333,2024-03-15
+2026-11-24,stock market crash,$STRK price 24hrs after airdrop?,Will STRK be below $1 one day after airdrop?,0.0,23669.765381999998,2024-02-16
+2026-11-24,stock market crash,$STRK price 24hrs after airdrop?,Will STRK be between $1.00 and $1.50 one day after airdrop?,0.0,17455.205463,2024-02-19
+2026-11-24,stock market crash,$STRK price 24hrs after airdrop?,Will STRK be between $1.50 and $2.00 one day after airdrop?,1.0,10974.752311,2024-02-19
+2026-11-24,stock market crash,$STRK price 24hrs after airdrop?,Will STRK be above $2.00 one day after airdrop?,0.0,18214.418616,2024-02-19
+2026-11-24,stock market crash,Will Google or NVIDIA be worth more on March 1?,Will Google or NVIDIA be worth more on March 1?,0.0,69424.48397,2024-03-01
+2026-11-24,stock market crash,Coinbase top 25 app by Friday?,Coinbase top 25 app by Friday?,0.0,17262.840334,2024-03-31
+2026-11-24,stock market crash,$SPX6900 all time high by Jan 31?,$SPX6900 all time high by Jan 31?,0.0,12194.012,2024-01-31
+2026-11-24,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Friday?,0.0,925,2024-02-07
+2026-11-24,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Saturday?,0.0,1000,2024-02-07
+2026-11-24,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Sunday?,0.0,4437.22222,2024-02-07
+2026-11-24,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Tuesday?,0.0,400,2024-02-07
+2026-11-24,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Wednesday?,1.0,0,2024-02-07
+2026-11-24,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Monday?,0.0,1200,2024-02-07
+2026-11-24,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $9,000 (HIGH) in December?",0.0165,342.77333200000004,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $7,400 (LOW) in December?",1.0,1784.378577,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $10,000 (HIGH) in December?",0.01,1308.153136,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $7,200 (LOW) in December?",1.0,8004.802776,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $6,000 (LOW) in December?",0.059,19067.30446,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $8,000 (HIGH) in December?",0.12,5034.973793,2026-12-31
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Cheniere Energy (LNG) be added to the S&P 500 by December 31, 2026?",0.465,3789.108521,2027-01-01
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Astera Labs (ALAB) be added to the S&P 500 by December 31, 2026?",0.245,2531.195979,2027-01-01
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Okta (OKTA) be added to the S&P 500 by December 31, 2026?",1.0,2690.277499,2027-01-01
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will HEICO (HEI) be added to the S&P 500 by December 31, 2026?",0.225,1807.217757,2027-01-01
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Credo Technology (CRDO) be added to the S&P 500 by December 31, 2026?",0.0245,3529.3422739999996,2027-01-01
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Rocket Companies (RKT) be added to the S&P 500 by December 31, 2026?",0.225,2252.4908849999997,2027-01-01
+2026-11-24,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by December 31, 2026?",0.105,719.990633,2027-01-01
+2026-11-24,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by March 31, 2027?",0.35,20.169912,2027-04-01
+2026-11-24,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by June 30, 2027?",0.505,178.639343,2027-07-01
+2026-11-24,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at <$6,000 in December?",0.07,36301.71266099999,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $6,000-$6,500 in December?",0.211,4332.859254000001,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $6,500-$7,000 in December?",0.345,6249.676988000001,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at >$8,000 in December?",0.055,8396.711496,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $7,000-$7,500 in December?",0.235,3867.5948089999993,2026-12-31
+2026-11-24,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $7,500-$8,000 in December?",0.19,5359.200016,2026-12-31
+2026-11-24,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will Bitcoin have the best performance in 2026?,0.0245,483205.842272,2027-01-01
+2026-11-24,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will Gold have the best performance in 2026?,0.0545,328741.972988,2027-01-01
+2026-11-24,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will the S&P 500 have the best performance in 2026?,0.93,234347.61816500002,2027-01-01
+2026-11-24,S&P 500,When will Anthropic be added to the S&P 500?,"Will Anthropic be added to the S&P 500 by June 30, 2027?",0.12,1941.25,2027-07-01
+2026-11-24,S&P 500,When will Anthropic be added to the S&P 500?,"Will Anthropic be added to the S&P 500 by December 31, 2027?",0.425,1.388889,2028-01-01
+2026-11-24,S&P 500,S&P 500 (SPX) Opens Up or Down on February 2?,S&P 500 (SPX) Opens Up or Down on February 2?,0.0,1059512.569103,2026-02-02
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q1 2026?,"Will Vertiv Holdings (VRT) be added to the S&P 500 by March 31, 2026?",1.0,,2026-03-31
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q1 2026?,"Will Pure Storage (PSTG) be added to the S&P 500 by March 31, 2026?",0.0,79626.86064100002,2026-03-31
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q1 2026?,"Will SoFi Technologies (SOFI) be added to the S&P 500 by March 31, 2026?",0.0,273473.6538100001,2026-03-31
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q1 2026?,"Will Ciena (CIEN) be added to the S&P 500 by March 31, 2026?",1.0,40225.24607,2026-03-31
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q1 2026?,"Will Strategy (MicroStrategy) (MSTR) be added to the S&P 500 by March 31, 2026?",0.0,356557.16909700015,2026-03-31
+2026-11-24,S&P 500,Which companies added to S&P 500 in Q1 2026?,"Will Alnylam Pharmaceuticals (ALNY) be added to the S&P 500 by March 31, 2026?",0.0,109252.61061299988,2026-03-31
+2026-11-24,bank failure,US bank failure by June 30?,US bank failure by June 30?,0.0,60338.289459,2024-06-30
+2026-11-24,bank failure,US bank failure in April?,US bank failure in April?,1.0,56886.521219,2024-04-30
+2026-11-24,bank failure,US bank failure in February?,US bank failure in February?,0.0,117045.907372,2024-02-29
+2026-11-24,bank failure,"US bank failure by December 31, 2026?","US bank failure by December 31, 2026?",0.545,16799.508603,2027-01-01
+2026-11-24,bank failure,US bank failure by January 31?,US bank failure by January 31?,1.0,693336.673599,2026-01-31
+2026-11-24,bank failure,US bank failure by October 31?,US bank failure by October 31?,1.0,204194.479453,2024-10-31
+2026-11-24,bank failure,US bank failure before December?,US bank failure before December?,0.0,145735.134524,2024-11-30
+2026-11-24,bank failure,US bank failure before September?,US bank failure before September?,0.0,121125.603379,2024-08-31
+2026-11-24,default,Will Vanke default on debt by December 31?,Will Vanke default on debt by December 31?,0.0,5917.177614,2025-12-31
+2026-11-24,default,Tennessee makes electric chair execution default in 2026?,Tennessee makes electric chair execution default in 2026?,0.025,2284.344751,2027-07-01
+2026-11-24,default,What will the announcers say during Germany vs Paraguay World Cup Match?,"Will the announcers say ""Goal"" 60+ times during the Germany vs Paraguay FIFA World Cup Match?",1.0,2775.620391,2026-06-29
+2026-11-24,default,What will the announcers say during Germany vs Paraguay World Cup Match?,"Will the announcers say ""Corner"" 10+ times during the Germany vs Paraguay FIFA World Cup Match?",1.0,858.7916150000001,2026-06-29
+2026-11-24,default,What will the announcers say during Germany vs Paraguay World Cup Match?,"Will the announcers say ""Foul"" 10+ times during the Germany vs Paraguay FIFA World Cup Match?",1.0,658.7898710000001,2026-06-29
+2026-11-24,default,What will the announcers say during Germany vs Paraguay World Cup Match?,"Will the announcers say ""Pressure"" 5+ times during the Germany vs Paraguay FIFA World Cup Match?",1.0,1433.1240260000004,2026-06-29
+2026-11-24,default,What will the announcers say during Germany vs Paraguay World Cup Match?,"Will the announcers say ""Bundesliga"" during the Germany vs Paraguay FIFA World Cup Match?",1.0,619.7784670000001,2026-06-29
+2026-11-24,default,What will the announcers say during Germany vs Paraguay World Cup Match?,"Will the announcers say ""Arsenal"" during the Germany vs Paraguay FIFA World Cup Match?",1.0,273.82,2026-06-29
+2026-11-24,default,US defaults on debt in 2025?,US defaults on debt in 2025?,0.0,138353.934783,2025-12-31
+2026-11-24,default,"France defaults on debt by December 31, 2027?","France defaults on debt by December 31, 2027?",0.071,27082.888843999997,2028-01-01
+2026-11-24,default,US defaults on debt by 2027?,US defaults on debt by 2027?,0.0065,20882.746544,2027-01-01
