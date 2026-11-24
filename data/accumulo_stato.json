@@ -1,5 +1,5 @@
 {
- "data": "2026-11-24 15:23 UTC",
+ "data": "2026-11-24 16:21 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
@@ -20,7 +20,7 @@
  "fred": {
   "richieste": 245,
   "riuscite": 245,
-  "nuove_righe": 14,
+  "nuove_righe": 0,
   "fallite": {},
   "codici_inesistenti_saltati": [
    "ACMTP02",
@@ -49,7 +49,7 @@
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 992,
+  "barre_nuove": 612,
   "fallite": {}
  },
  "opzioni": {
@@ -71,11 +71,11 @@
  },
  "ofr_stress": {
   "colonne": 9,
-  "righe_nuove": 9
+  "righe_nuove": 0
  },
  "mmf_ofr": {
   "ultima": "2026-10-31",
-  "righe_nuove": 192
+  "righe_nuove": 0
  },
  "tesoro_curve": {
   "righe_nuove": 0,
@@ -107,27 +107,30 @@
   "fallite": {}
  },
  "tsa": {
-  "righe_nuove": 1
+  "righe_nuove": 0
  },
  "finra_vendite_scoperto": {
   "giorni_richiesti": 60,
-  "righe_nuove": 28054,
+  "righe_nuove": 26428,
   "senza_file": 0,
   "fallite": {
-   "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260119": "403 Client Error: Forbidden for url: https://cdn.f"
+   "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260101": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20251225": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20251127": "403 Client Error: Forbidden for url: https://cdn.f"
   }
  },
  "gdelt_notizie": {
   "righe_nuove": 0,
   "fallite": {
-   "crollo_borsa_volume": "429 troppe richieste",
-   "crollo_borsa_tono": "429 troppe richieste",
+   "crollo_borsa_volume": "GDELT: risposta vuota o non CSV",
+   "crollo_borsa_tono": "GDELT: risposta vuota o non CSV",
    "recessione_volume": "429 troppe richieste",
    "recessione_tono": "429 troppe richieste",
    "crisi_bancaria_volume": "429 troppe richieste",
@@ -137,11 +140,11 @@
    "default_volume": "429 troppe richieste",
    "default_tono": "429 troppe richieste",
    "inflazione_volume": "GDELT: risposta vuota o non CSV",
-   "inflazione_tono": "429 troppe richieste",
+   "inflazione_tono": "GDELT: risposta vuota o non CSV",
    "licenziamenti_volume": "GDELT: risposta vuota o non CSV",
    "licenziamenti_tono": "429 troppe richieste",
-   "panico_volume": "GDELT: risposta vuota o non CSV",
-   "panico_tono": "429 troppe richieste"
+   "panico_volume": "429 troppe richieste",
+   "panico_tono": "GDELT: risposta vuota o non CSV"
   }
  },
  "vix_future_curva": {
@@ -177,17 +180,14 @@
  },
  "sec_moduli_depositati": {
   "trimestri_letti": 6,
-  "moduli": 35,
-  "righe_nuove": 6189,
+  "moduli": 36,
+  "righe_nuove": 6187,
   "problemi": {}
  },
  "sec_parole_di_stress": {
   "richieste": 12,
   "righe_nuove": 0,
-  "problemi": {
-   "dubbio_sostanziale": "500 Server Error: Internal Server Error for url: h",
-   "riduzione_personale": "500 Server Error: Internal Server Error for url: h"
-  }
+  "problemi": {}
  },
  "cripto_leva": {
   "righe_nuove": 0,
@@ -198,8 +198,8 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 669,
-  "righe_conteggi_nuove": 0,
+  "titoli_oggi": 684,
+  "righe_conteggi_nuove": 1,
   "problemi": {}
  },
  "retail_forum": {
@@ -212,12 +212,17 @@
   "fallite": {}
  },
  "google_trends": {
-  "righe_giornaliere": 120,
+  "righe_giornaliere": 330,
   "righe_settimanali": 0,
   "problemi": {
-   "US:stock market crash": "The request failed: Google returned a response wit",
-   "mondo:recession": "The request failed: Google returned a response wit"
+   "US:buy bitcoin": "The request failed: Google returned a response wit",
+   "IT:crollo borsa": "The request failed: Google returned a response wit",
+   "mondo:stock market crash": "The request failed: Google returned a response wit"
   }
+ },
+ "bis_dsr": {
+  "serie": 0,
+  "nuove_righe": 0
  },
  "derivati_componenti": {
   "indicatori": 30,
@@ -228,6 +233,6 @@
  "derivati_intraday": {
   "strumenti": 51,
   "giorni": 9,
-  "righe_nuove": 253
+  "righe_nuove": 28
  }
 }
