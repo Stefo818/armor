@@ -3,154 +3,154 @@
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 24841,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 24842,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "vix": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 9293,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 9294,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "vix3m": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5121,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5122,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "vix9d": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 3996,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 3997,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "vvix": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 4995,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 4996,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "skew": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 9217,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 9218,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "move": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5941,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5942,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "nasdaq100": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 10366,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 10367,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "vt": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 4631,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 4632,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "hyg": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 4937,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 4938,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "ief": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 6119,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 6120,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "rsp": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5929,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5930,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "spy": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 8512,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 8513,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "gold": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 6583,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 6584,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "wti": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 6590,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 6591,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "dxy": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 14191,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 14192,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "eurusd": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5961,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5962,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "vwce_de": {
   "ok": true,
@@ -159,52 +159,52 @@
   "new_rows": 0,
   "last_date": "2026-11-20",
   "rows": 1861,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "baa10y": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 10221,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 10222,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "t10y2y": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 12615,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 12616,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "t10y3m": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 11224,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 11225,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "hy_oas": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 796,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 797,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "ig_oas": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 795,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 796,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "nfci": {
   "ok": true,
@@ -213,7 +213,7 @@
   "new_rows": 0,
   "last_date": "2026-11-13",
   "rows": 2915,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "stlfsi": {
   "ok": true,
@@ -222,70 +222,70 @@
   "new_rows": 0,
   "last_date": "2026-11-13",
   "rows": 1716,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "real10y": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 5975,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 5976,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "be10y": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5976,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5977,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "dgs10": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 16206,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 16207,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "dgs2": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 12614,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 12615,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "fedfunds": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 26440,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 26441,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "usd_broad": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 5231,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 5,
+  "last_date": "2026-11-20",
+  "rows": 5236,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "epu": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 15298,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 3,
+  "last_date": "2026-11-22",
+  "rows": 15301,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "icsa": {
   "ok": true,
@@ -294,7 +294,7 @@
   "new_rows": 0,
   "last_date": "2026-11-14",
   "rows": 3124,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "unrate": {
   "ok": true,
@@ -303,7 +303,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 945,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "cpi": {
   "ok": true,
@@ -312,7 +312,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 957,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "equity_value": {
   "ok": true,
@@ -321,7 +321,7 @@
   "new_rows": 0,
   "last_date": "2026-04-01",
   "rows": 305,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "gdp": {
   "ok": true,
@@ -330,43 +330,43 @@
   "new_rows": 0,
   "last_date": "2026-07-01",
   "rows": 319,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "pput": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 10173,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 10174,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "ps_m": {
-  "ok": true,
-  "stato": "ok",
-  "msg": "",
+  "ok": false,
+  "stato": "ritardo",
+  "msg": "HTTPSConnectionPool(host='www.multpl.com', port=443): Max retries exceeded with url: /s-p-500-price-to-sales/table/by-quarter (Caused by NewConnectionError(\"HTTPSConnection(host='www.multpl.com', port",
   "new_rows": 0,
   "last_date": "2026-11-20",
   "rows": 112,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "cape_m": {
-  "ok": true,
-  "stato": "ok",
-  "msg": "",
+  "ok": false,
+  "stato": "ritardo",
+  "msg": "HTTPSConnectionPool(host='www.multpl.com', port=443): Max retries exceeded with url: /shiller-pe/table/by-month (Caused by NewConnectionError(\"HTTPSConnection(host='www.multpl.com', port=443): Failed ",
   "new_rows": 0,
   "last_date": "2026-11-20",
   "rows": 1881,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "pe_m": {
-  "ok": true,
-  "stato": "ok",
-  "msg": "",
+  "ok": false,
+  "stato": "ritardo",
+  "msg": "HTTPSConnectionPool(host='www.multpl.com', port=443): Max retries exceeded with url: /s-p-500-pe-ratio/table/by-month (Caused by NewConnectionError(\"HTTPSConnection(host='www.multpl.com', port=443): F",
   "new_rows": 0,
   "last_date": "2026-11-20",
   "rows": 1882,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "aaii_bull": {
   "ok": false,
@@ -375,7 +375,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "aaii_bear": {
   "ok": false,
@@ -384,7 +384,7 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "aaii_spread": {
   "ok": false,
@@ -393,250 +393,250 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "gpr": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-16",
-  "rows": 15295,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 7,
+  "last_date": "2026-11-23",
+  "rows": 15302,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "gpr_threat": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-16",
-  "rows": 15295,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 7,
+  "last_date": "2026-11-23",
+  "rows": 15302,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "gpr_act": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-16",
-  "rows": 15295,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 7,
+  "last_date": "2026-11-23",
+  "rows": 15302,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "fear_greed": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 261,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 262,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "breadth50": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 462,
-  "checked_at": "2026-11-23 11:20 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 463,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "breadth200": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 312,
-  "checked_at": "2026-11-23 11:20 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 313,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "nh_nl": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 312,
-  "checked_at": "2026-11-23 11:20 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 313,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "top_ps": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "top_pe": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "top_fcf_yield": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "ai_capex_ocf": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "stoxx50": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 4926,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 4927,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "dax": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 9837,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 9838,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "ftsemib": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7380,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7381,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "nikkei": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 15211,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 15212,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "eem": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5941,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5942,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xlk": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xlf": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xle": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xlv": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xly": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xlp": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xli": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xlu": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xlb": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 7022,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 7023,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xlre": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 2797,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 2798,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sec_xlc": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 2119,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 2120,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "umcsent": {
   "ok": true,
@@ -645,7 +645,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 678,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "philly": {
   "ok": true,
@@ -654,7 +654,7 @@
   "new_rows": 0,
   "last_date": "2026-11-01",
   "rows": 703,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "empire": {
   "ok": true,
@@ -663,7 +663,7 @@
   "new_rows": 0,
   "last_date": "2026-11-01",
   "rows": 305,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "dgorder": {
   "ok": true,
@@ -672,7 +672,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 416,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "neworder": {
   "ok": true,
@@ -681,7 +681,7 @@
   "new_rows": 0,
   "last_date": "2026-09-01",
   "rows": 416,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "indpro": {
   "ok": true,
@@ -690,7 +690,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 1294,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "payems": {
   "ok": true,
@@ -699,7 +699,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 1054,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "retail": {
   "ok": true,
@@ -708,7 +708,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 418,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "walcl": {
   "ok": true,
@@ -717,7 +717,7 @@
   "new_rows": 0,
   "last_date": "2026-11-18",
   "rows": 1249,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "wresbal": {
   "ok": true,
@@ -726,16 +726,16 @@
   "new_rows": 0,
   "last_date": "2026-11-18",
   "rows": 1249,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "rrp": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 3372,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 3373,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "tga": {
   "ok": true,
@@ -744,61 +744,61 @@
   "new_rows": 0,
   "last_date": "2026-11-18",
   "rows": 1249,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "val_pe_vwce": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "val_ps_vwce": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "val_pe_sp500": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "val_ps_sp500": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "val_pe_ndx": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "val_ps_ndx": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-23",
-  "rows": 15,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-24",
+  "rows": 16,
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "cot_lev_net": {
   "ok": true,
@@ -807,7 +807,7 @@
   "new_rows": 0,
   "last_date": "2026-11-17",
   "rows": 853,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "cot_am_net": {
   "ok": true,
@@ -816,7 +816,7 @@
   "new_rows": 0,
   "last_date": "2026-11-17",
   "rows": 853,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "cot_dealer_net": {
   "ok": true,
@@ -825,7 +825,7 @@
   "new_rows": 0,
   "last_date": "2026-11-17",
   "rows": 853,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "anfci": {
   "ok": true,
@@ -834,7 +834,7 @@
   "new_rows": 0,
   "last_date": "2026-11-13",
   "rows": 2915,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sloos": {
   "ok": true,
@@ -843,7 +843,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 147,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "credit_ratio": {
   "ok": true,
@@ -852,52 +852,52 @@
   "new_rows": 0,
   "last_date": "2026-01-01",
   "rows": 322,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "iwm": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 6662,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 6663,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "smh": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 6657,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 6658,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "iyt": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5759,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5760,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "kre": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5137,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5138,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "copper": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 6587,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 6588,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "cp": {
   "ok": true,
@@ -1131,7 +1131,7 @@
   "new_rows": 0,
   "last_date": "2026-11-20",
   "rows": 12240,
-  "checked_at": "2026-11-23 11:20 UTC"
+  "checked_at": "2026-11-24 07:03 UTC"
  },
  "margin_debt": {
   "ok": true,
@@ -1209,10 +1209,10 @@
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 4753,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 4754,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "vix1y": {
   "ok": false,
@@ -1221,52 +1221,52 @@
   "new_rows": 0,
   "last_date": null,
   "rows": 0,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "dexuseu": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-13",
-  "rows": 6988,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 5,
+  "last_date": "2026-11-20",
+  "rows": 6993,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sp_open": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 9291,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 9292,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sp_high": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 9291,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 9292,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sp_low": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 9291,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 9292,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "vwce_ls": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 1713,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 1714,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "btc": {
   "ok": true,
@@ -1275,7 +1275,7 @@
   "new_rows": 0,
   "last_date": "2026-11-22",
   "rows": 4450,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "eth": {
   "ok": true,
@@ -1284,43 +1284,43 @@
   "new_rows": 0,
   "last_date": "2026-11-22",
   "rows": 3301,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "silver": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 6584,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 6585,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "natgas": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 6588,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 6589,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "urth": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 3737,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 3738,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "stoxx600": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 5678,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 5679,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "mweq": {
   "ok": true,
@@ -1329,7 +1329,7 @@
   "new_rows": 0,
   "last_date": "2026-11-20",
   "rows": 544,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "putcall_cboe": {
   "ok": true,
@@ -1338,7 +1338,7 @@
   "new_rows": 0,
   "last_date": "2019-10-04",
   "rows": 3253,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "mmf_assets": {
   "ok": true,
@@ -1347,16 +1347,16 @@
   "new_rows": 0,
   "last_date": "2026-10-05",
   "rows": 2436,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "sp_vol": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 9290,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 9291,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "gdpnow": {
   "ok": true,
@@ -1365,7 +1365,7 @@
   "new_rows": 0,
   "last_date": "2026-10-01",
   "rows": 62,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "gdp_real_g": {
   "ok": true,
@@ -1374,51 +1374,195 @@
   "new_rows": 0,
   "last_date": "2026-07-01",
   "rows": 318,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "hy_fondo": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 11819,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 11820,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "gov_fondo": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 11695,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 11696,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "ig_fondo": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-20",
-  "rows": 11819,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-23",
+  "rows": 11820,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "baa_d": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 10257,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 10258,
+  "checked_at": "2026-11-24 07:02 UTC"
  },
  "aaa_d": {
   "ok": true,
   "stato": "ok",
   "msg": "",
-  "new_rows": 0,
-  "last_date": "2026-11-19",
-  "rows": 11016,
-  "checked_at": "2026-11-23 11:19 UTC"
+  "new_rows": 1,
+  "last_date": "2026-11-20",
+  "rows": 11017,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "vxn": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 6498,
+  "last_date": "2026-11-23",
+  "rows": 6498,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "vxd": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 5278,
+  "last_date": "2026-11-23",
+  "rows": 5278,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "ovx": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 4917,
+  "last_date": "2026-11-23",
+  "rows": 4917,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "gvz": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 4649,
+  "last_date": "2026-11-23",
+  "rows": 4649,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "jnk": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 4773,
+  "last_date": "2026-11-23",
+  "rows": 4773,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "lqd": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 6120,
+  "last_date": "2026-11-23",
+  "rows": 6120,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "tlt": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 6120,
+  "last_date": "2026-11-23",
+  "rows": 6120,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "shy": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 6120,
+  "last_date": "2026-11-23",
+  "rows": 6120,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "emb": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 4762,
+  "last_date": "2026-11-23",
+  "rows": 4762,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "kbe": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 5288,
+  "last_date": "2026-11-23",
+  "rows": 5288,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "rut": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 9876,
+  "last_date": "2026-11-23",
+  "rows": 9876,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "tnx": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 16212,
+  "last_date": "2026-11-23",
+  "rows": 16212,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "fvx": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 16212,
+  "last_date": "2026-11-23",
+  "rows": 16212,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "irx": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 16702,
+  "last_date": "2026-11-23",
+  "rows": 16702,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "tyx": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 12470,
+  "last_date": "2026-11-23",
+  "rows": 12470,
+  "checked_at": "2026-11-24 07:02 UTC"
+ },
+ "jpy": {
+  "ok": true,
+  "stato": "ok",
+  "msg": "",
+  "new_rows": 7796,
+  "last_date": "2026-11-23",
+  "rows": 7796,
+  "checked_at": "2026-11-24 07:02 UTC"
  }
 }

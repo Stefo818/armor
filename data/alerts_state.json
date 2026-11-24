@@ -2,10 +2,10 @@
  "levels": {
   "10g": "Alto",
   "1m": "Alto",
-  "3m": "Alto",
+  "3m": "Elevato",
   "6m": "Elevato"
  },
- "regime": "Tensione",
+ "regime": "Calma",
  "vix": "stress",
  "aix_band": "elevato",
  "divergence": false,

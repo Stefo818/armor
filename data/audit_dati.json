@@ -1,5 +1,5 @@
 {
- "generato": "2026-11-23T11:20Z",
+ "generato": "2026-11-24T07:03Z",
  "ok": true,
  "n_controlli": 15,
  "n_falliti": 0,
@@ -49,7 +49,7 @@
   {
    "controllo": "Date allineate",
    "ok": true,
-   "dettaglio": "VIX 20/11, S&P 500 20/11, VWCE (L&S) 20/11",
+   "dettaglio": "VIX 23/11, S&P 500 23/11, VWCE (L&S) 23/11",
    "grave": true
   },
   {
@@ -61,7 +61,7 @@
   {
    "controllo": "VIX: valori validi",
    "ok": true,
-   "dettaglio": "9293 righe",
+   "dettaglio": "9294 righe",
    "grave": true
   },
   {
@@ -73,25 +73,25 @@
   {
    "controllo": "S&P 500: valori validi",
    "ok": true,
-   "dettaglio": "24841 righe",
+   "dettaglio": "24842 righe",
    "grave": true
   },
   {
    "controllo": "S&P 500: salti giornalieri plausibili",
    "ok": true,
-   "dettaglio": "massimo 4.4% in un giorno",
+   "dettaglio": "massimo 4.7% in un giorno",
    "grave": false
   },
   {
    "controllo": "VWCE (L&S): valori validi",
    "ok": true,
-   "dettaglio": "1713 righe",
+   "dettaglio": "1714 righe",
    "grave": true
   },
   {
    "controllo": "VWCE (L&S): salti giornalieri plausibili",
    "ok": true,
-   "dettaglio": "massimo 4.0% in un giorno",
+   "dettaglio": "massimo 4.9% in un giorno",
    "grave": false
   }
  ]
