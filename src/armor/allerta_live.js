@@ -4,16 +4,16 @@ function pct(x,d,sg){var v=(x*100).toFixed(d); if(sg&&x>=0) v='+'+v; return v.re
 function $(i){return document.getElementById(i)}
 function paint(W){
   var A=W.allerta, box=$('allerta'); if(!A||!box) return;
-  var cls='ok', tit='Nessun segnale di vendite forti';
+  var cls='ok', tit='Nessun segnale di calo improvviso';
   var det='Futures S&amp;P 500 <b>'+(A.es15==null?'-':pct(A.es15,2,true))+'</b> in 15 minuti · paura (VIX) <b>'+(A.vix==null?'-':A.vix.toFixed(1).replace('.',','))+'</b>';
   var spi='I segnali controllati sono due: un calo forte dei futures e un salto della paura. Finché nessuno dei due scatta, non c\'è niente di anomalo in corso.';
   if(A.rapido&&A.rapido.length){
-    cls='b'; tit='Vendite forti in corso'; var d=[];
+    cls='b'; tit='Calo improvviso in corso'; var d=[];
     A.rapido.forEach(function(r){ var q=(r.tipo==='calo60'||r.tipo==='paura60')?'60 minuti':'15 minuti'; d.push((r.tipo==='calo'||r.tipo==='calo60')?'futures S&amp;P 500 <b>'+pct(r.valore,2,true)+'</b> in '+q:'paura salita del <b>'+pct(r.valore,0,false)+'</b> in '+q+' (VIX '+r.vix.toFixed(1).replace('.',',')+')')});
     det=d.join(' · ');
-    spi='Dopo giornate come questa, nei 20 giorni seguenti il mercato è salito in media del 2% e in due casi su tre era più alto. Vendere nel panico spesso blocca la perdita: decidi con calma.';
+    spi='Dopo giornate come questa, nei 20 giorni seguenti il mercato è salito in media del 2% e in due casi su tre era più alto. Non è un consiglio di vendere: vendere nel panico spesso blocca la perdita, e le prove fatte su regole di uscita dal mercato (con costi e tasse) hanno sempre reso meno del tenere.';
   } else if(A.fragile){
-    cls='w'; tit='Attenzione: vendite forti più probabili del solito';
+    cls='w'; tit='Attenzione: un calo improvviso è più probabile del solito';
     var f=A.fragile, w=[]; if(f.B) w.push('paura a '+f.vix.toFixed(1).replace('.',',')+', salita del '+(f.salita5g*100).toFixed(0)+'% in 5 giorni'); if(f.A) w.push("l'indice è appena sceso sotto la media dei 200 giorni");
     det=w.join('; ')+'.';
     spi="In passato, in giorni così, il giorno dopo si è perso oltre l'1,2% una volta su 5, mentre di norma capita una volta su 11. Non è una previsione: quattro volte su cinque non succede nulla.";}
@@ -25,6 +25,6 @@ function paint(W){
 var busy=false;
 function tick(){ if(busy||document.hidden) return; busy=true;
   fetch(C.url+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(W){busy=false; if(!W.ok) throw new Error(W.errore); paint(W)})
-   .catch(function(){busy=false; var b=$('allerta'); if(b){b.className='alr'; $('allerta-t').textContent='Controllo vendite non raggiungibile'; $('allerta-d').textContent='Riprovo tra 15 secondi. Le notifiche sul telefono continuano a funzionare.'}})}
+   .catch(function(){busy=false; var b=$('allerta'); if(b){b.className='alr'; $('allerta-t').textContent='Controllo dei cali improvvisi non raggiungibile'; $('allerta-d').textContent='Riprovo tra 15 secondi. Le notifiche sul telefono continuano a funzionare.'}})}
 tick(); setInterval(tick,15000); document.addEventListener('visibilitychange',function(){if(!document.hidden) tick()});
 })();

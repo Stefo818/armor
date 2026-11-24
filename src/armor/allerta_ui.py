@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Scheda compatta «Allerta vendite» in cima alla pagina Oggi (regole in PROTOCOLLO_FRAGILITA.md).
+"""Scheda compatta «Allerta cali improvvisi» in cima alla pagina Oggi (regole in PROTOCOLLO_FRAGILITA.md).
 Si aggiorna ogni 15 secondi leggendo il servizio Cloudflare (data/live_worker.json, «url»): stessi segnali della sentinella che manda le notifiche."""
 import json
 from pathlib import Path
@@ -29,7 +29,7 @@ def html() -> str:
         js = (Path(__file__).parent / "allerta_live.js").read_text(encoding="utf-8")
     except Exception:  # noqa: BLE001
         return ""
-    return (CSS + "<div id='allerta' class='alr'><b class='t' id='allerta-t'>Allerta vendite</b>"
+    return (CSS + "<div id='allerta' class='alr'><b class='t' id='allerta-t'>Allerta cali improvvisi</b>"
             "<div class='d' id='allerta-d'>Controllo dei segnali in corso…</div>"
             "<details class='alrd'><summary>Cosa vuol dire</summary><div class='x' id='allerta-x'></div>"
             "<div class='s' id='allerta-s'></div></details></div>"

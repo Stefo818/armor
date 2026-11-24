@@ -1074,7 +1074,7 @@ def build(ctx: dict, out=None, lazy: bool = False) -> None:
               f"{_safe(grafico_indici.html, 'Grafico indici')}"
               f"{_safe(quadro.html, 'Quadro di oggi')}"
               f"{_safe(indice_crollo.oggi_html, 'Indice crollo')}"
-              f"{_safe(allerta_ui.html, 'Allerta vendite')}"
+              f"{_safe(allerta_ui.html, 'Allerta cali improvvisi')}"
               f"{F('Indice Armor e Super Armor', _safe(lambda: titan_schede.armor_html() + titan_schede.super_html() or super_armor_ui.html(aix, p), 'Super Armor Index'), aix_sub, True)}"
               f"{F('Paura, protezioni e prezzi', kpi, 'VIX, put/call, S&P 500 e VWCE', True)}"
               f"{F('La bussola di oggi', _safe(occasione_ui.html, 'Bussola di oggi'), 'Salute del mercato, fase e occasioni per le entrate extra', True)}"

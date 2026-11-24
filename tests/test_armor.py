@@ -2845,7 +2845,7 @@ def test_scheda_allerta_vendite(tmp_path, monkeypatch):
     assert allerta_ui.html() == ""
     (tmp_path / "live_worker.json").write_text('{"url": "https://armor-live.example.workers.dev"}')
     h = allerta_ui.html()
-    assert "id='allerta'" in h and "ALLERTA_LIVE" in h and "armor-live.example.workers.dev" in h and "Vendite forti in corso" in h
+    assert "id='allerta'" in h and "ALLERTA_LIVE" in h and "armor-live.example.workers.dev" in h and "Calo improvviso in corso" in h
 
 
 def test_ore_rimbalzo_solo_in_tendenza_rialzista():
