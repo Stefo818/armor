@@ -429,6 +429,11 @@ def tutto(skip_download: bool = False) -> None:
         difensivita.run()
     except Exception as e:  # noqa: BLE001
         print("[difensivita] non aggiornata:", str(e)[:100])
+    try:   # laboratorio vivo e terreno: registro giornaliero, peso zero
+        from . import laboratorio
+        laboratorio.run()
+    except Exception as e:  # noqa: BLE001
+        print("[laboratorio] non aggiornato:", str(e)[:100])
     try:   # classifica dei modelli (voto 1-100), una riga per modello al giorno
         from . import classifica
         classifica.registra(str(closed_sp500().index[-1].date()))
