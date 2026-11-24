@@ -551,6 +551,13 @@ def aggiorna_opzioni(stato: dict) -> None:
 
 
 # ----------------------------------------------------------------------------- orchestrazione
+def aggiorna_bis_dsr(stato: dict) -> None:
+    """Debito di famiglie e imprese (BIS), trimestrale: copia di sicurezza nell'accumulo, peso zero."""
+    from . import bis_dsr
+    r = bis_dsr.aggiorna(full=False, log=lambda m: print(m, flush=True))
+    stato["bis_dsr"] = {"serie": len(r), "nuove_righe": int(sum(r.values()))}
+
+
 def aggiorna(solo: list[str] | None = None) -> dict:
     stato: dict = {"data": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}
     from . import accumulo_derivati as dv
@@ -565,7 +572,7 @@ def aggiorna(solo: list[str] | None = None) -> dict:
              ("dealer", ex.aggiorna_dealer), ("ftd", ex.aggiorna_ftd), ("short_interest", ex.aggiorna_short_interest), ("etf_quote", ex.aggiorna_etf_quote),
              ("moduli_sec", ex2.aggiorna_moduli_sec), ("parole_sec", ex2.aggiorna_parole_sec), ("cripto_leva", ex2.aggiorna_cripto_leva), ("jgb", ex2.aggiorna_jgb),
              ("testi", ex2.aggiorna_testi), ("retail", ex2.aggiorna_retail), ("wiki_lingue", ex2.aggiorna_wiki_lingue), ("trends", ex2.aggiorna_trends),
-             ("derivati_componenti", dv.aggiorna_derivati_componenti), ("derivati_intraday", dv.aggiorna_derivati_intraday))
+             ("bis_dsr", aggiorna_bis_dsr), ("derivati_componenti", dv.aggiorna_derivati_componenti), ("derivati_intraday", dv.aggiorna_derivati_intraday))
     for nome, fn in passi:
         if solo and nome not in solo:
             continue
