@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-24T14:27:07Z",
+ "data_utc": "2026-11-24T14:47:12Z",
  "oggi": "2026-11-24",
  "ultima_previsione": "2026-11-23",
  "giorni_da_ultima": 1,
@@ -232,15 +232,15 @@
   {
    "nome": "breadth200",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "breadth50",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -6252,8 +6252,8 @@
   {
    "nome": "nh_nl",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
