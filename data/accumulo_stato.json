@@ -1,9 +1,9 @@
 {
- "data": "2026-11-24 12:39 UTC",
+ "data": "2026-11-24 15:23 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
-  "nuove_righe": 8,
+  "nuove_righe": 0,
   "fallite": {
    "sml": "simbolo inesistente",
    "tyvix": "simbolo inesistente",
@@ -18,26 +18,26 @@
   "fallite": {}
  },
  "fred": {
-  "richieste": 259,
+  "richieste": 245,
   "riuscite": 245,
-  "nuove_righe": 0,
-  "fallite": {
-   "f_bamlemrecrpiemaoas": "FRED: la serie BAMLEMRECRPIEMAOAS non esiste (Bad Request.  ",
-   "f_bogz1lm153064486q": "FRED: la serie BOGZ1LM153064486Q non esiste (Bad Request.  T",
-   "f_wlcflsecw": "FRED: la serie WLCFLSECW non esiste (Bad Request.  The serie",
-   "f_wshoicb": "FRED: la serie WSHOICB non esiste (Bad Request.  The series ",
-   "f_acmtp10": "FRED: la serie ACMTP10 non esiste (Bad Request.  The series ",
-   "f_acmtp02": "FRED: la serie ACMTP02 non esiste (Bad Request.  The series ",
-   "f_demdebt": "FRED: la serie DEMDEBT non esiste (Bad Request.  The series ",
-   "f_netmanualliq": "FRED: la serie NETMANUALLIQ non esiste (Bad Request.  The se",
-   "f_contclaims": "FRED: la serie CONTCLAIMS non esiste (Bad Request.  The seri",
-   "f_txfsircp": "FRED: la serie TXFSIRCP non esiste (Bad Request.  The series",
-   "f_bogz1fl104104016q": "FRED: la serie BOGZ1FL104104016Q non esiste (Bad Request.  T",
-   "f_ir14210": "FRED: la serie IR14210 non esiste (Bad Request.  The series ",
-   "f_iq12220": "FRED: la serie IQ12220 non esiste (Bad Request.  The series ",
-   "f_ir10040": "FRED: la serie IR10040 non esiste (Bad Request.  The series "
-  },
-  "codici_inesistenti_saltati": []
+  "nuove_righe": 14,
+  "fallite": {},
+  "codici_inesistenti_saltati": [
+   "ACMTP02",
+   "ACMTP10",
+   "BAMLEMRECRPIEMAOAS",
+   "BOGZ1FL104104016Q",
+   "BOGZ1LM153064486Q",
+   "CONTCLAIMS",
+   "DEMDEBT",
+   "IQ12220",
+   "IR10040",
+   "IR14210",
+   "NETMANUALLIQ",
+   "TXFSIRCP",
+   "WLCFLSECW",
+   "WSHOICB"
+  ]
  },
  "cboe_putcall": {
   "richieste": 6,
@@ -49,12 +49,12 @@
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 1176,
+  "barre_nuove": 992,
   "fallite": {}
  },
  "opzioni": {
   "richieste": 10,
-  "righe_oggi": 288,
+  "righe_oggi": 290,
   "fallite": {}
  },
  "componenti": {
@@ -71,15 +71,19 @@
  },
  "ofr_stress": {
   "colonne": 9,
-  "righe_nuove": 0
+  "righe_nuove": 9
+ },
+ "mmf_ofr": {
+  "ultima": "2026-10-31",
+  "righe_nuove": 192
  },
  "tesoro_curve": {
   "righe_nuove": 0,
   "fallite": {}
  },
  "tesoro_cassa_aste": {
-  "tga_nuove": 1152,
-  "debito_nuove": 6749,
+  "tga_nuove": 0,
+  "debito_nuove": 0,
   "aste_righe": 9525
  },
  "cot_cftc": {
@@ -95,26 +99,28 @@
  },
  "cripto": {
   "stablecoin": 0,
-  "tvl": 3346,
+  "tvl": 0,
   "paura_cripto": 0
  },
  "nyfed_tassi_overnight": {
-  "righe_nuove": 9000,
+  "righe_nuove": 0,
   "fallite": {}
  },
  "tsa": {
-  "righe_nuove": 0
+  "righe_nuove": 1
  },
  "finra_vendite_scoperto": {
   "giorni_richiesti": 60,
-  "righe_nuove": 29152,
+  "righe_nuove": 28054,
   "senza_file": 0,
   "fallite": {
    "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260403": "403 Client Error: Forbidden for url: https://cdn.f"
+   "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260119": "403 Client Error: Forbidden for url: https://cdn.f"
   }
  },
  "gdelt_notizie": {
@@ -128,13 +134,13 @@
    "crisi_bancaria_tono": "429 troppe richieste",
    "stretta_credito_volume": "429 troppe richieste",
    "stretta_credito_tono": "429 troppe richieste",
-   "default_volume": "GDELT: risposta vuota o non CSV",
-   "default_tono": "GDELT: risposta vuota o non CSV",
+   "default_volume": "429 troppe richieste",
+   "default_tono": "429 troppe richieste",
    "inflazione_volume": "GDELT: risposta vuota o non CSV",
    "inflazione_tono": "429 troppe richieste",
-   "licenziamenti_volume": "429 troppe richieste",
+   "licenziamenti_volume": "GDELT: risposta vuota o non CSV",
    "licenziamenti_tono": "429 troppe richieste",
-   "panico_volume": "429 troppe richieste",
+   "panico_volume": "GDELT: risposta vuota o non CSV",
    "panico_tono": "429 troppe richieste"
   }
  },
@@ -172,14 +178,15 @@
  "sec_moduli_depositati": {
   "trimestri_letti": 6,
   "moduli": 35,
-  "righe_nuove": 6267,
+  "righe_nuove": 6189,
   "problemi": {}
  },
  "sec_parole_di_stress": {
   "richieste": 12,
   "righe_nuove": 0,
   "problemi": {
-   "dubbio_sostanziale": "500 Server Error: Internal Server Error for url: h"
+   "dubbio_sostanziale": "500 Server Error: Internal Server Error for url: h",
+   "riduzione_personale": "500 Server Error: Internal Server Error for url: h"
   }
  },
  "cripto_leva": {
@@ -191,8 +198,8 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 622,
-  "righe_conteggi_nuove": 2,
+  "titoli_oggi": 669,
+  "righe_conteggi_nuove": 0,
   "problemi": {}
  },
  "retail_forum": {
@@ -205,12 +212,11 @@
   "fallite": {}
  },
  "google_trends": {
-  "righe_giornaliere": 150,
+  "righe_giornaliere": 120,
   "righe_settimanali": 0,
   "problemi": {
-   "US:unemployment": "The request failed: Google returned a response wit",
-   "IT:crollo borsa": "The request failed: Google returned a response wit",
-   "mondo:stock market crash": "The request failed: Google returned a response wit"
+   "US:stock market crash": "The request failed: Google returned a response wit",
+   "mondo:recession": "The request failed: Google returned a response wit"
   }
  },
  "derivati_componenti": {
@@ -222,6 +228,6 @@
  "derivati_intraday": {
   "strumenti": 51,
   "giorni": 9,
-  "righe_nuove": 7
+  "righe_nuove": 253
  }
 }
