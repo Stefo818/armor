@@ -59,6 +59,8 @@ def indicatori(cal: pd.DatetimeIndex, sp: pd.Series, liv_conc: pd.Series | None 
     out["M2"]["margine_annuo"] = _al(pe(md.pct_change(12).dropna()), cal)
     out["M2"]["vix_basso"] = _al(1 - pe(L("vix").rolling(21).mean()), cal)
     out["M2"]["skew"] = _al(pe(L("skew").rolling(21).mean()), cal)
+    jp = lag(L("jpy"), 1)
+    out["M2"]["yen_si_rafforza"] = _al(1 - pe(np.log(jp / jp.shift(63)).dropna()), cal)
     # credito: spread che si allarga (stessa costruzione di PROTOCOLLO_CONCENTRAZIONE: C1)
     spread_m = (L("baa_lungo") - L("gs10_m").reindex(L("baa_lungo").index)).dropna()
     c_m = pe(lag(spread_m, 35).diff(3).dropna())
