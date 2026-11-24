@@ -63,3 +63,10 @@ def test_analoghi_e_frasi():
     assert a["calo_max"]["p25"] <= a["calo_max"]["med"] <= a["calo_max"]["p75"]
     assert "casi simili" in c.riga_analoghi(a) and "S&P 500" in c.testo_analoghi(a)
     assert c.riga_analoghi(None) == "" and c.testo_analoghi(None) == ""
+
+
+def test_orizzonti_frasi():
+    fake = {str(h): {"fine": {"p10": -0.03, "med": 0.01, "p90": 0.05}, "base": {"fine_med": 0.005}} for h in c.ORIZZONTI}
+    r = c.riga_orizzonti(fake)
+    assert "1 sett. +1%" in r and "3 mesi +1%" in r and "6 mesi" not in r
+    assert "otto casi su dieci" in c.testo_orizzonti(fake) and c.riga_orizzonti(None) == ""

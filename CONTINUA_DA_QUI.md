@@ -835,3 +835,6 @@ PROTOCOLLO_CONCENTRAZIONE.md (+Emendamento 1: periodo dal 1971, punto di rottura
 
 ## (20) Situazioni analoghe nel Sovraccarico (24/11/2026)
 `concentrazione.analoghi`: i 300 giorni dal 1990 con livello e accelerazione più vicini a oggi (esclusi gli ultimi 6 mesi) → massimo, minimo e punto d'arrivo a 126 sedute, sull'S&P 500 (il VWCE ha storia troppo corta). Riga nella tessera del Quadro di oggi («6 mesi dopo casi simili: fino a +8% · giù a −2%»), testo completo nel grafico a comparsa, e colonne `an_*` nel registro giornaliero. Oggi: 12 periodi distinti; massimo tipico +8%, minimo −2%, a 6 mesi +5% (giorno qualunque +9% / −4% / +6%). SW armor-v91. 299 test.
+
+## (21) Orizzonti 1 settimana / 2 settimane / 1 mese / 3 mesi (24/11/2026)
+`concentrazione.ORIZZONTI` (5, 10, 21, 63, 126 sedute) → `analoghi` per ogni orizzonte; riga «Dove sarà, casi simili» nella tessera, testo completo (tipico + otto casi su dieci + giorno qualunque) nel grafico, colonne `an_<h>d_{p10,med,p90}` nel registro. SW armor-v92. 300 test.

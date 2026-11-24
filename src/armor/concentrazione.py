@@ -27,6 +27,7 @@ from .config import DATA
 SIMBOLI = {"IXIC": "^IXIC", "NYA": "^NYA", "NDX": "^NDX", "GSPC": "^GSPC", "OEX": "^OEX", "MID": "^MID", "XLK": "XLK", "SPY": "SPY", "RSP": "RSP", "SPXEW": "^SPXEW"}
 PROXY = {"TEC1": ("IXIC", "NYA"), "TEC2": ("NDX", "GSPC"), "TEC3": ("XLK", "SPY"), "GRA1": ("OEX", "GSPC"), "GRA2": ("GSPC", "MID"), "GRA3": ("SPY", "RSP"), "GRA4": ("GSPC", "SPXEW")}
 SOGLIA = 0.80
+ORIZZONTI = {5: "1 settimana", 10: "2 settimane", 21: "1 mese", 63: "3 mesi", 126: "6 mesi"}   # sedute di Borsa
 INIZIO = "1971-06-01"
 ARCH = DATA / "concentrazione.json"
 REG = DATA / "concentrazione_registro.csv"
@@ -294,10 +295,11 @@ def costruisci(P: dict[str, pd.Series] | None = None) -> dict:
     ep = oggi_in_episodio(sp, m, col) if col else None
     txt = testo_stato(fase, stat, ep)
     an = analoghi(sp, m)
+    orizz = {h: analoghi(sp, m, orizzonte=h) for h in ORIZZONTI}
     sovr = (m["livello"] * 100).round(1)
     tr = float(sovr.iloc[-1] - sovr.iloc[-6]) if len(sovr) > 5 else 0.0
     out = {"data": str(m.index[-1].date()), "sovraccarico": float(sovr.iloc[-1]), "accelerazione": float(m["accel"].iloc[-1] * 100), "z": float(u["z"]),
-           "tendenza": tr, "fase": fase, "fase_nome": FASI[fase], "testo": txt, "analoghi": an, "episodio_in_corso": ep, "statistiche": stat,
+           "tendenza": tr, "fase": fase, "fase_nome": FASI[fase], "testo": txt, "analoghi": an, "orizzonti": {str(h): v for h, v in orizz.items() if v}, "episodio_in_corso": ep, "statistiche": stat,
            "inversione": bool(u["inversione"]), "rottura": bool(u["rottura"]), "inneschi": {k: bool(u[k]) for k in ("R1", "R2", "C1", "F1")},
            "proxy": {k[4:]: {"livello": float(u[k]), "accel": float(u["acc_" + k[4:]])} for k in m.columns if k.startswith("liv_") and pd.notna(u[k])},
            "serie": {"sovr": _serie_grafico(sovr), "acc": _serie_grafico((m["accel"] * 100).round(1))}}
@@ -306,6 +308,7 @@ def costruisci(P: dict[str, pd.Series] | None = None) -> dict:
                              **{k: int(v) for k, v in out["inneschi"].items()}, "fase": fase,
                              **({"an_giorni": an["giorni"], "an_episodi": an["episodi"], "an_salita_med": round(an["salita_max"]["med"], 4), "an_calo_med": round(an["calo_max"]["med"], 4),
                                  "an_fine_med": round(an["fine"]["med"], 4)} if an else {}),
+                             **{f"an_{h}d_{k}": round(v["fine"][k], 4) for h, v in orizz.items() if v for k in ("p10", "med", "p90")},
                              **{f"liv_{k}": round(v["livello"], 4) for k, v in out["proxy"].items()}, **{f"acc_{k}": round(v["accel"], 4) for k, v in out["proxy"].items()}}
     return out
 
@@ -350,3 +353,23 @@ def testo_analoghi(an: dict | None) -> str:
             f"dopo 6 mesi si trovava in tipico a {f['med'] * 100:+.0f}% (otto casi su dieci fra {f['p10'] * 100:+.0f}% e {f['p90'] * 100:+.0f}%). "
             f"In un giorno qualunque: massimo {b['salita_max_med'] * 100:+.0f}%, minimo {b['calo_max_med'] * 100:+.0f}%, a 6 mesi {b['fine_med'] * 100:+.0f}%. "
             "Calcolato sull'S&P 500, perché il VWCE ha solo pochi anni di storia: il VWCE (in euro, diversificato sul mondo) può differire. Sono statistiche passate, non una previsione.")
+
+
+def riga_orizzonti(orizz: dict | None) -> str:
+    """Dove si trovava il mercato, in tipico, 1 settimana, 2 settimane, 1 mese e 3 mesi dopo situazioni simili."""
+    if not orizz:
+        return ""
+    pezzi = [f"{n.replace('settimane', 'sett.').replace('settimana', 'sett.')} {orizz[str(h)]['fine']['med'] * 100:+.0f}%" for h, n in ORIZZONTI.items() if str(h) in orizz and h != 126]
+    return "Dove sarà, casi simili: " + " · ".join(pezzi)
+
+
+def testo_orizzonti(orizz: dict | None) -> str:
+    if not orizz:
+        return ""
+    righe = []
+    for h, n in ORIZZONTI.items():
+        v = orizz.get(str(h))
+        if v:
+            f, b = v["fine"], v["base"]["fine_med"]
+            righe.append(f"{n}: tipico {f['med'] * 100:+.1f}% (otto casi su dieci fra {f['p10'] * 100:+.1f}% e {f['p90'] * 100:+.1f}%; giorno qualunque {b * 100:+.1f}%)")
+    return "Dove si troverà il mercato dopo situazioni simili a oggi (variazione rispetto a oggi): " + "; ".join(righe) + "."
