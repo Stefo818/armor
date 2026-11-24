@@ -1,5 +1,5 @@
 {
- "data": "2026-11-24 17:01 UTC",
+ "data": "2026-11-24 18:24 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
@@ -20,7 +20,7 @@
  "fred": {
   "richieste": 245,
   "riuscite": 245,
-  "nuove_righe": 10,
+  "nuove_righe": 15,
   "fallite": {},
   "codici_inesistenti_saltati": [
    "ACMTP02",
@@ -49,7 +49,7 @@
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 1019,
+  "barre_nuove": 918,
   "fallite": {}
  },
  "opzioni": {
@@ -111,40 +111,41 @@
  },
  "finra_vendite_scoperto": {
   "giorni_richiesti": 60,
-  "righe_nuove": 26428,
+  "righe_nuove": 25823,
   "senza_file": 0,
   "fallite": {
    "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260101": "403 Client Error: Forbidden for url: https://cdn.f",
    "20251225": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20251127": "403 Client Error: Forbidden for url: https://cdn.f"
+   "20251127": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250901": "403 Client Error: Forbidden for url: https://cdn.f"
   }
  },
  "gdelt_notizie": {
   "righe_nuove": 0,
   "fallite": {
-   "crollo_borsa_volume": "GDELT: risposta vuota o non CSV",
+   "crollo_borsa_volume": "429 troppe richieste",
    "crollo_borsa_tono": "429 troppe richieste",
    "recessione_volume": "429 troppe richieste",
    "recessione_tono": "GDELT: risposta vuota o non CSV",
-   "crisi_bancaria_volume": "429 troppe richieste",
-   "crisi_bancaria_tono": "429 troppe richieste",
-   "stretta_credito_volume": "429 troppe richieste",
+   "crisi_bancaria_volume": "GDELT: risposta vuota o non CSV",
+   "crisi_bancaria_tono": "GDELT: risposta vuota o non CSV",
+   "stretta_credito_volume": "GDELT: risposta vuota o non CSV",
    "stretta_credito_tono": "429 troppe richieste",
-   "default_volume": "429 troppe richieste",
+   "default_volume": "GDELT: risposta vuota o non CSV",
    "default_tono": "429 troppe richieste",
    "inflazione_volume": "429 troppe richieste",
-   "inflazione_tono": "GDELT: risposta vuota o non CSV",
+   "inflazione_tono": "429 troppe richieste",
    "licenziamenti_volume": "GDELT: risposta vuota o non CSV",
    "licenziamenti_tono": "GDELT: risposta vuota o non CSV",
    "panico_volume": "429 troppe richieste",
-   "panico_tono": "GDELT: risposta vuota o non CSV"
+   "panico_tono": "429 troppe richieste"
   }
  },
  "vix_future_curva": {
@@ -152,8 +153,8 @@
   "scaricate": 9,
   "fallite": {}
  },
- "aaii_sondaggio": {
-  "righe_nuove": 6150
+ "aaii": {
+  "errore": "503 Server Error: Service Unavailable for url: https://www.aaii.com/files/surveys/sentiment.xls"
  },
  "mercati_previsione": {
   "righe_oggi": 133
@@ -181,16 +182,13 @@
  "sec_moduli_depositati": {
   "trimestri_letti": 6,
   "moduli": 36,
-  "righe_nuove": 6187,
+  "righe_nuove": 6168,
   "problemi": {}
  },
  "sec_parole_di_stress": {
   "richieste": 12,
   "righe_nuove": 0,
-  "problemi": {
-   "linea_credito_ritirata": "500 Server Error: Internal Server Error for url: h",
-   "ritardo_bilancio": "500 Server Error: Internal Server Error for url: h"
-  }
+  "problemi": {}
  },
  "cripto_leva": {
   "righe_nuove": 0,
@@ -201,9 +199,11 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 599,
-  "righe_conteggi_nuove": 0,
-  "problemi": {}
+  "titoli_oggi": 583,
+  "righe_conteggi_nuove": 1,
+  "problemi": {
+   "margin_call": "429 troppe richieste"
+  }
  },
  "retail_forum": {
   "titoli": 200,
@@ -215,11 +215,12 @@
   "fallite": {}
  },
  "google_trends": {
-  "righe_giornaliere": 240,
+  "righe_giornaliere": 330,
   "righe_settimanali": 0,
   "problemi": {
-   "US:stock market crash": "The request failed: Google returned a response wit",
-   "mondo:unemployment": "The request failed: Google returned a response wit"
+   "US:buy bitcoin": "The request failed: Google returned a response wit",
+   "IT:crollo borsa": "The request failed: Google returned a response wit",
+   "mondo:stock market crash": "The request failed: Google returned a response wit"
   }
  },
  "bis_dsr": {
@@ -235,6 +236,6 @@
  "derivati_intraday": {
   "strumenti": 51,
   "giorni": 9,
-  "righe_nuove": 28
+  "righe_nuove": 0
  }
 }
