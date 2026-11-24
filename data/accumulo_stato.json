@@ -1,5 +1,5 @@
 {
- "data": "2026-11-24 11:58 UTC",
+ "data": "2026-11-24 12:39 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
@@ -26,8 +26,8 @@
    "f_bogz1lm153064486q": "FRED: la serie BOGZ1LM153064486Q non esiste (Bad Request.  T",
    "f_wlcflsecw": "FRED: la serie WLCFLSECW non esiste (Bad Request.  The serie",
    "f_wshoicb": "FRED: la serie WSHOICB non esiste (Bad Request.  The series ",
-   "f_acmtp02": "FRED: la serie ACMTP02 non esiste (Bad Request.  The series ",
    "f_acmtp10": "FRED: la serie ACMTP10 non esiste (Bad Request.  The series ",
+   "f_acmtp02": "FRED: la serie ACMTP02 non esiste (Bad Request.  The series ",
    "f_demdebt": "FRED: la serie DEMDEBT non esiste (Bad Request.  The series ",
    "f_netmanualliq": "FRED: la serie NETMANUALLIQ non esiste (Bad Request.  The se",
    "f_contclaims": "FRED: la serie CONTCLAIMS non esiste (Bad Request.  The seri",
@@ -49,7 +49,7 @@
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 1056,
+  "barre_nuove": 1176,
   "fallite": {}
  },
  "opzioni": {
@@ -110,9 +110,9 @@
   "righe_nuove": 29152,
   "senza_file": 0,
   "fallite": {
+   "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260403": "403 Client Error: Forbidden for url: https://cdn.f"
   }
@@ -120,17 +120,17 @@
  "gdelt_notizie": {
   "righe_nuove": 0,
   "fallite": {
-   "crollo_borsa_volume": "GDELT: risposta vuota o non CSV",
-   "crollo_borsa_tono": "GDELT: risposta vuota o non CSV",
-   "recessione_volume": "GDELT: risposta vuota o non CSV",
+   "crollo_borsa_volume": "429 troppe richieste",
+   "crollo_borsa_tono": "429 troppe richieste",
+   "recessione_volume": "429 troppe richieste",
    "recessione_tono": "429 troppe richieste",
    "crisi_bancaria_volume": "429 troppe richieste",
    "crisi_bancaria_tono": "429 troppe richieste",
    "stretta_credito_volume": "429 troppe richieste",
    "stretta_credito_tono": "429 troppe richieste",
-   "default_volume": "429 troppe richieste",
+   "default_volume": "GDELT: risposta vuota o non CSV",
    "default_tono": "GDELT: risposta vuota o non CSV",
-   "inflazione_volume": "429 troppe richieste",
+   "inflazione_volume": "GDELT: risposta vuota o non CSV",
    "inflazione_tono": "429 troppe richieste",
    "licenziamenti_volume": "429 troppe richieste",
    "licenziamenti_tono": "429 troppe richieste",
@@ -178,7 +178,9 @@
  "sec_parole_di_stress": {
   "richieste": 12,
   "righe_nuove": 0,
-  "problemi": {}
+  "problemi": {
+   "dubbio_sostanziale": "500 Server Error: Internal Server Error for url: h"
+  }
  },
  "cripto_leva": {
   "righe_nuove": 0,
@@ -189,8 +191,8 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 589,
-  "righe_conteggi_nuove": 1,
+  "titoli_oggi": 622,
+  "righe_conteggi_nuove": 2,
   "problemi": {}
  },
  "retail_forum": {
@@ -203,10 +205,10 @@
   "fallite": {}
  },
  "google_trends": {
-  "righe_giornaliere": 30,
+  "righe_giornaliere": 150,
   "righe_settimanali": 0,
   "problemi": {
-   "US:recession": "The request failed: Google returned a response wit",
+   "US:unemployment": "The request failed: Google returned a response wit",
    "IT:crollo borsa": "The request failed: Google returned a response wit",
    "mondo:stock market crash": "The request failed: Google returned a response wit"
   }
