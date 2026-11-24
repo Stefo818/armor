@@ -1,9 +1,9 @@
 {
- "data": "2026-11-24 06:27 UTC",
+ "data": "2026-11-24 11:58 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
-  "nuove_righe": 322,
+  "nuove_righe": 8,
   "fallite": {
    "sml": "simbolo inesistente",
    "tyvix": "simbolo inesistente",
@@ -18,106 +18,44 @@
   "fallite": {}
  },
  "fred": {
-  "richieste": 264,
-  "riuscite": 200,
-  "nuove_righe": 1097,
+  "richieste": 259,
+  "riuscite": 245,
+  "nuove_righe": 0,
   "fallite": {
-   "f_bamlemrecrpiemaoas": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_houst": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_houst1f": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_undcontsa": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_will5000indfc": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_will5000pr": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_bogz1lm153064486q": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_wlcflsecw": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_wshoicb": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_acmtp10": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_acmtp02": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_usd3mtd156n": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): R",
-   "f_usd1mtd156n": "nessuna risposta entro 480 secondi",
-   "f_ofrfsi": "nessuna risposta entro 480 secondi",
-   "f_demdebt": "nessuna risposta entro 480 secondi",
-   "f_netmanualliq": "nessuna risposta entro 480 secondi",
-   "f_totbkcr": "nessuna risposta entro 480 secondi",
-   "f_loans": "nessuna risposta entro 480 secondi",
-   "f_invest": "nessuna risposta entro 480 secondi",
-   "f_wei": "nessuna risposta entro 480 secondi",
-   "f_ic4wsa": "nessuna risposta entro 480 secondi",
-   "f_contclaims": "nessuna risposta entro 480 secondi",
-   "f_cscicp03usm665s": "nessuna risposta entro 480 secondi",
-   "f_ihlidxus": "nessuna risposta entro 480 secondi",
-   "f_ihlidxustpsoftdeve": "nessuna risposta entro 480 secondi",
-   "f_retailsmsa": "nessuna risposta entro 480 secondi",
-   "f_rsxfs": "nessuna risposta entro 480 secondi",
-   "f_mrtssm44x72uss": "nessuna risposta entro 480 secondi",
-   "f_txfsircp": "nessuna risposta entro 480 secondi",
-   "f_manemp": "nessuna risposta entro 480 secondi",
-   "f_uscons": "nessuna risposta entro 480 secondi",
-   "f_usgood": "nessuna risposta entro 480 secondi",
-   "f_ustpu": "nessuna risposta entro 480 secondi",
-   "f_awhman": "nessuna risposta entro 480 secondi",
-   "f_permit": "nessuna risposta entro 480 secondi",
-   "f_hsn1f": "nessuna risposta entro 480 secondi",
-   "f_mortgage5us": "nessuna risposta entro 480 secondi",
-   "f_mspus": "nessuna risposta entro 480 secondi",
-   "f_aspus": "nessuna risposta entro 480 secondi",
-   "f_dexusal": "nessuna risposta entro 480 secondi",
-   "f_dexusnz": "nessuna risposta entro 480 secondi",
-   "f_dexthus": "nessuna risposta entro 480 secondi",
-   "f_dexsius": "nessuna risposta entro 480 secondi",
-   "f_dexhkus": "nessuna risposta entro 480 secondi",
-   "f_dexmaus": "nessuna risposta entro 480 secondi",
-   "f_dextaus": "nessuna risposta entro 480 secondi",
-   "f_dexvzus": "nessuna risposta entro 480 secondi",
-   "f_dexsfus": "nessuna risposta entro 480 secondi",
-   "f_bogz1fl073164003q": "nessuna risposta entro 480 secondi",
-   "f_bogz1fl664090005q": "nessuna risposta entro 480 secondi",
-   "f_cmdebt": "nessuna risposta entro 480 secondi",
-   "f_bogz1fl104104016q": "nessuna risposta entro 480 secondi",
-   "f_tnwbshno": "nessuna risposta entro 480 secondi",
-   "f_fbcellq027s": "nessuna risposta entro 480 secondi",
-   "f_bamlc1a0c13y": "nessuna risposta entro 480 secondi",
-   "f_bamlc4a0c710y": "nessuna risposta entro 480 secondi",
-   "f_bamlc8a0c15py": "nessuna risposta entro 480 secondi",
-   "f_bamlhyh0a3cmtriv": "nessuna risposta entro 480 secondi",
-   "f_ir14210": "nessuna risposta entro 480 secondi",
-   "f_ir14220": "nessuna risposta entro 480 secondi",
-   "f_iq12260": "nessuna risposta entro 480 secondi",
-   "f_iq12220": "nessuna risposta entro 480 secondi",
-   "f_ir10040": "nessuna risposta entro 480 secondi",
-   "f_computsa": "nessuna risposta entro 480 secondi"
-  }
+   "f_bamlemrecrpiemaoas": "FRED: la serie BAMLEMRECRPIEMAOAS non esiste (Bad Request.  ",
+   "f_bogz1lm153064486q": "FRED: la serie BOGZ1LM153064486Q non esiste (Bad Request.  T",
+   "f_wlcflsecw": "FRED: la serie WLCFLSECW non esiste (Bad Request.  The serie",
+   "f_wshoicb": "FRED: la serie WSHOICB non esiste (Bad Request.  The series ",
+   "f_acmtp02": "FRED: la serie ACMTP02 non esiste (Bad Request.  The series ",
+   "f_acmtp10": "FRED: la serie ACMTP10 non esiste (Bad Request.  The series ",
+   "f_demdebt": "FRED: la serie DEMDEBT non esiste (Bad Request.  The series ",
+   "f_netmanualliq": "FRED: la serie NETMANUALLIQ non esiste (Bad Request.  The se",
+   "f_contclaims": "FRED: la serie CONTCLAIMS non esiste (Bad Request.  The seri",
+   "f_txfsircp": "FRED: la serie TXFSIRCP non esiste (Bad Request.  The series",
+   "f_bogz1fl104104016q": "FRED: la serie BOGZ1FL104104016Q non esiste (Bad Request.  T",
+   "f_ir14210": "FRED: la serie IR14210 non esiste (Bad Request.  The series ",
+   "f_iq12220": "FRED: la serie IQ12220 non esiste (Bad Request.  The series ",
+   "f_ir10040": "FRED: la serie IR10040 non esiste (Bad Request.  The series "
+  },
+  "codici_inesistenti_saltati": []
  },
  "cboe_putcall": {
   "richieste": 6,
-  "riuscite": 3,
+  "riuscite": 5,
   "fallite": {
-   "spx": "",
-   "vix": "",
    "etf": "403 Client Error: Forbidden for url: https://cdn.cboe.com/re"
   }
  },
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 5658,
+  "barre_nuove": 1056,
   "fallite": {}
  },
  "opzioni": {
   "richieste": 10,
-  "righe_oggi": 0,
-  "fallite": {
-   "IWM": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "QQQ": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "SPY": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "HYG": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "GLD": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "TLT": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "USO": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "XLF": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "_SPX": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co",
-   "_VIX": "403 Client Error: Forbidden for url: https://cdn-api.cboe.co"
-  }
+  "righe_oggi": 288,
+  "fallite": {}
  },
  "componenti": {
   "titoli": 503,
@@ -133,15 +71,15 @@
  },
  "ofr_stress": {
   "colonne": 9,
-  "righe_nuove": 9
+  "righe_nuove": 0
  },
  "tesoro_curve": {
-  "righe_nuove": 34,
+  "righe_nuove": 0,
   "fallite": {}
  },
  "tesoro_cassa_aste": {
-  "tga_nuove": 0,
-  "debito_errore": "404 Client Error: Not Found for url: https://api.fiscaldata.",
+  "tga_nuove": 1152,
+  "debito_nuove": 6749,
   "aste_righe": 9525
  },
  "cot_cftc": {
@@ -150,85 +88,63 @@
  },
  "wikipedia_attenzione": {
   "richieste": 42,
-  "riuscite": 19,
+  "riuscite": 41,
   "fallite": {
-   "Credit_default_swap": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Bankruptcy": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Federal_Reserve": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Bitcoin": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Gold_as_an_investment": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Layoff": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Debt_ceiling": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Unemployment": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Yield_curve": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Dot-com_bubble": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Stock_market_bubble": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Great_Depression": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Subprime_mortgage_crisis": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Lehman_Brothers": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Silicon_Valley_Bank": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Volatility_Index": "404 Client Error: Not Found for url: https://wikimedia.org/a",
-   "Deflation": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Hyperinflation": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Capital_control": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Currency_crisis": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Bank_failure": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Liquidity_crisis": "429 Client Error: Too Many Requests for url: https://wikimed",
-   "Credit_crunch": "429 Client Error: Too Many Requests for url: https://wikimed"
+   "Volatility_Index": "404 Client Error: Not Found for url: https://wikimedia.org/a"
   }
  },
  "cripto": {
-  "stablecoin": 1,
-  "tvl_errore": "404 Client Error: Not Found for url: https://api.llama.fi/v2",
-  "paura_cripto": 1
+  "stablecoin": 0,
+  "tvl": 3346,
+  "paura_cripto": 0
  },
  "nyfed_tassi_overnight": {
-  "righe_nuove": 0,
-  "fallite": {
-   "sofr": "400 Client Error: Bad Request for url: https://markets.newyo",
-   "tgcr": "400 Client Error: Bad Request for url: https://markets.newyo",
-   "bgcr": "400 Client Error: Bad Request for url: https://markets.newyo"
-  }
+  "righe_nuove": 9000,
+  "fallite": {}
  },
  "tsa": {
-  "righe_nuove": 3
+  "righe_nuove": 0
  },
  "finra_vendite_scoperto": {
   "giorni_richiesti": 60,
-  "righe_nuove": 30429,
+  "righe_nuove": 29152,
   "senza_file": 0,
   "fallite": {
    "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260619": "403 Client Error: Forbidden for url: https://cdn.f"
+   "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260403": "403 Client Error: Forbidden for url: https://cdn.f"
   }
  },
  "gdelt_notizie": {
-  "righe_nuove": 4,
+  "righe_nuove": 0,
   "fallite": {
-   "crollo_borsa_volume": "429 Client Error: Too Many Requests for url: https",
-   "crollo_borsa_tono": "429 Client Error: Too Many Requests for url: https",
-   "recessione_tono": "429 Client Error: Too Many Requests for url: https",
-   "crisi_bancaria_volume": "429 Client Error: Too Many Requests for url: https",
-   "crisi_bancaria_tono": "429 Client Error: Too Many Requests for url: https",
-   "stretta_credito_volume": "429 Client Error: Too Many Requests for url: https",
-   "stretta_credito_tono": "429 Client Error: Too Many Requests for url: https",
-   "default_volume": "list index out of range",
-   "default_tono": "429 Client Error: Too Many Requests for url: https",
-   "licenziamenti_volume": "429 Client Error: Too Many Requests for url: https",
-   "licenziamenti_tono": "429 Client Error: Too Many Requests for url: https",
-   "panico_tono": "429 Client Error: Too Many Requests for url: https"
+   "crollo_borsa_volume": "GDELT: risposta vuota o non CSV",
+   "crollo_borsa_tono": "GDELT: risposta vuota o non CSV",
+   "recessione_volume": "GDELT: risposta vuota o non CSV",
+   "recessione_tono": "429 troppe richieste",
+   "crisi_bancaria_volume": "429 troppe richieste",
+   "crisi_bancaria_tono": "429 troppe richieste",
+   "stretta_credito_volume": "429 troppe richieste",
+   "stretta_credito_tono": "429 troppe richieste",
+   "default_volume": "429 troppe richieste",
+   "default_tono": "GDELT: risposta vuota o non CSV",
+   "inflazione_volume": "429 troppe richieste",
+   "inflazione_tono": "429 troppe richieste",
+   "licenziamenti_volume": "429 troppe richieste",
+   "licenziamenti_tono": "429 troppe richieste",
+   "panico_volume": "429 troppe richieste",
+   "panico_tono": "429 troppe richieste"
   }
  },
  "vix_future_curva": {
   "scadenze_tentate": 10,
   "scaricate": 9,
-  "fallite": {
-   "2027-05-19": "403 Client Error: Forbidden for url: https://cdn.c"
-  }
+  "fallite": {}
  },
- "aaii": {
-  "errore": "403 Client Error: Forbidden for url: https://www.aaii.com/files/surveys/sentiment.xls"
+ "aaii_sondaggio": {
+  "righe_nuove": 6150
  },
  "mercati_previsione": {
   "righe_oggi": 133
@@ -244,8 +160,10 @@
   "righe": 15132,
   "problemi": []
  },
- "short_interest": {
-  "errore": "403 Client Error: Forbidden for url: https://cdn.finra.org/equity/otcmarket/biweekly/shrt20261113.csv"
+ "finra_short_interest": {
+  "file_letti": 6,
+  "righe": 3177,
+  "file_assenti": 1
  },
  "etf_patrimonio_quote": {
   "richiesti": 68,
@@ -254,16 +172,16 @@
  "sec_moduli_depositati": {
   "trimestri_letti": 6,
   "moduli": 35,
-  "righe_nuove": 6081,
+  "righe_nuove": 6267,
   "problemi": {}
  },
  "sec_parole_di_stress": {
-  "richieste": 118,
-  "righe_nuove": 93,
+  "richieste": 12,
+  "righe_nuove": 0,
   "problemi": {}
  },
  "cripto_leva": {
-  "righe_nuove": 16,
+  "righe_nuove": 0,
   "problemi": {}
  },
  "giappone_curva_titoli_di_stato": {
@@ -271,136 +189,37 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 586,
-  "righe_conteggi_nuove": 13,
-  "problemi": {
-   "fed_comunicati": "not well-formed (invalid token): line 1, column 1",
-   "fed_discorsi": "not well-formed (invalid token): line 1, column 1"
-  }
+  "titoli_oggi": 589,
+  "righe_conteggi_nuove": 1,
+  "problemi": {}
  },
  "retail_forum": {
   "titoli": 200,
-  "righe_nuove": 1
+  "righe_nuove": 0
  },
  "wikipedia_altre_lingue": {
   "pagine": 143,
-  "riuscite": 46,
-  "fallite": {
-   "it:Credit_default_swap": "429 Client Error: Too Many Requests for ",
-   "it:Deflation": "429 Client Error: Too Many Requests for ",
-   "it:Default_(finance)": "429 Client Error: Too Many Requests for ",
-   "it:Quantitative_easing": "429 Client Error: Too Many Requests for ",
-   "it:Recession": "429 Client Error: Too Many Requests for ",
-   "it:Silicon_Valley_Bank": "429 Client Error: Too Many Requests for ",
-   "it:Sovereign_default": "429 Client Error: Too Many Requests for ",
-   "it:Stagflation": "429 Client Error: Too Many Requests for ",
-   "it:Stock_market": "429 Client Error: Too Many Requests for ",
-   "it:Stock_market_crash": "429 Client Error: Too Many Requests for ",
-   "it:Subprime_mortgage_crisis": "429 Client Error: Too Many Requests for ",
-   "it:Unemployment": "429 Client Error: Too Many Requests for ",
-   "it:Yield_curve": "429 Client Error: Too Many Requests for ",
-   "it:2008_financial_crisis": "429 Client Error: Too Many Requests for ",
-   "it:Debt_limit": "429 Client Error: Too Many Requests for ",
-   "it:Margin_(finance)": "429 Client Error: Too Many Requests for ",
-   "it:Short_(finance)": "429 Client Error: Too Many Requests for ",
-   "de:Bailout": "429 Client Error: Too Many Requests for ",
-   "de:Bank_run": "429 Client Error: Too Many Requests for ",
-   "de:Bankruptcy": "429 Client Error: Too Many Requests for ",
-   "de:Bitcoin": "429 Client Error: Too Many Requests for ",
-   "de:Black_Monday_(1987)": "429 Client Error: Too Many Requests for ",
-   "de:Capital_control": "429 Client Error: Too Many Requests for ",
-   "de:Credit_crunch": "429 Client Error: Too Many Requests for ",
-   "de:Credit_default_swap": "429 Client Error: Too Many Requests for ",
-   "de:Currency_crisis": "429 Client Error: Too Many Requests for ",
-   "de:Default_(finance)": "429 Client Error: Too Many Requests for ",
-   "de:Deflation": "429 Client Error: Too Many Requests for ",
-   "de:Dot-com_bubble": "429 Client Error: Too Many Requests for ",
-   "de:Federal_Reserve": "429 Client Error: Too Many Requests for ",
-   "de:Gold_as_an_investment": "429 Client Error: Too Many Requests for ",
-   "de:Great_Depression": "429 Client Error: Too Many Requests for ",
-   "de:Great_Recession": "429 Client Error: Too Many Requests for ",
-   "de:Sovereign_default": "429 Client Error: Too Many Requests for ",
-   "de:Stagflation": "429 Client Error: Too Many Requests for ",
-   "de:Stock_market": "429 Client Error: Too Many Requests for ",
-   "de:Stock_market_crash": "429 Client Error: Too Many Requests for ",
-   "de:Stock_market_bubble": "429 Client Error: Too Many Requests for ",
-   "de:Unemployment": "429 Client Error: Too Many Requests for ",
-   "de:2008_financial_crisis": "429 Client Error: Too Many Requests for ",
-   "de:Yield_curve": "429 Client Error: Too Many Requests for ",
-   "de:Margin_(finance)": "429 Client Error: Too Many Requests for ",
-   "de:Short_(finance)": "429 Client Error: Too Many Requests for ",
-   "es:Bailout": "429 Client Error: Too Many Requests for ",
-   "es:Bank_run": "429 Client Error: Too Many Requests for ",
-   "es:Bankruptcy": "429 Client Error: Too Many Requests for ",
-   "es:Bitcoin": "429 Client Error: Too Many Requests for ",
-   "es:Black_Monday_(1987)": "429 Client Error: Too Many Requests for ",
-   "es:Credit_crunch": "429 Client Error: Too Many Requests for ",
-   "es:Capital_control": "429 Client Error: Too Many Requests for ",
-   "es:Credit_default_swap": "429 Client Error: Too Many Requests for ",
-   "es:Deflation": "429 Client Error: Too Many Requests for ",
-   "es:Currency_crisis": "429 Client Error: Too Many Requests for ",
-   "es:Default_(finance)": "429 Client Error: Too Many Requests for ",
-   "es:Dot-com_bubble": "429 Client Error: Too Many Requests for ",
-   "es:Federal_Reserve": "429 Client Error: Too Many Requests for ",
-   "es:Great_Depression": "429 Client Error: Too Many Requests for ",
-   "es:Great_Recession": "429 Client Error: Too Many Requests for ",
-   "es:Hyperinflation": "429 Client Error: Too Many Requests for ",
-   "es:Hedge_fund": "429 Client Error: Too Many Requests for ",
-   "es:Stock_market": "429 Client Error: Too Many Requests for ",
-   "es:Stock_market_bubble": "429 Client Error: Too Many Requests for ",
-   "es:Stock_market_crash": "429 Client Error: Too Many Requests for ",
-   "es:Subprime_mortgage_crisis": "429 Client Error: Too Many Requests for ",
-   "es:Unemployment": "429 Client Error: Too Many Requests for ",
-   "es:Yield_curve": "429 Client Error: Too Many Requests for ",
-   "es:2008_financial_crisis": "429 Client Error: Too Many Requests for ",
-   "es:Debt_limit": "429 Client Error: Too Many Requests for ",
-   "es:Margin_(finance)": "429 Client Error: Too Many Requests for ",
-   "es:Short_(finance)": "429 Client Error: Too Many Requests for ",
-   "fr:Bank_failure": "429 Client Error: Too Many Requests for ",
-   "fr:Bank_run": "429 Client Error: Too Many Requests for ",
-   "fr:Bankruptcy": "429 Client Error: Too Many Requests for ",
-   "fr:Bitcoin": "429 Client Error: Too Many Requests for ",
-   "fr:Black_Monday_(1987)": "429 Client Error: Too Many Requests for ",
-   "fr:Capital_control": "429 Client Error: Too Many Requests for ",
-   "fr:Credit_crunch": "429 Client Error: Too Many Requests for ",
-   "fr:Credit_default_swap": "429 Client Error: Too Many Requests for ",
-   "fr:Currency_crisis": "429 Client Error: Too Many Requests for ",
-   "fr:Default_(finance)": "429 Client Error: Too Many Requests for ",
-   "fr:Deflation": "429 Client Error: Too Many Requests for ",
-   "fr:Dot-com_bubble": "429 Client Error: Too Many Requests for ",
-   "fr:Federal_Reserve": "429 Client Error: Too Many Requests for ",
-   "fr:Gold_as_an_investment": "429 Client Error: Too Many Requests for ",
-   "fr:Great_Depression": "429 Client Error: Too Many Requests for ",
-   "fr:Great_Recession": "429 Client Error: Too Many Requests for ",
-   "fr:Hedge_fund": "429 Client Error: Too Many Requests for ",
-   "fr:Hyperinflation": "429 Client Error: Too Many Requests for ",
-   "fr:Inflation": "429 Client Error: Too Many Requests for ",
-   "fr:Stock_market": "429 Client Error: Too Many Requests for ",
-   "fr:Stock_market_bubble": "429 Client Error: Too Many Requests for ",
-   "fr:Stock_market_crash": "429 Client Error: Too Many Requests for ",
-   "fr:Subprime_mortgage_crisis": "429 Client Error: Too Many Requests for ",
-   "fr:Unemployment": "429 Client Error: Too Many Requests for ",
-   "fr:Yield_curve": "429 Client Error: Too Many Requests for ",
-   "fr:2008_financial_crisis": "429 Client Error: Too Many Requests for ",
-   "fr:Short_(finance)": "429 Client Error: Too Many Requests for "
-  }
+  "riuscite": 143,
+  "fallite": {}
  },
  "google_trends": {
-  "righe_giornaliere": 660,
+  "righe_giornaliere": 30,
   "righe_settimanali": 0,
   "problemi": {
-   "mondo:bankruptcy": "The request failed: Google returned a response wit"
+   "US:recession": "The request failed: Google returned a response wit",
+   "IT:crollo borsa": "The request failed: Google returned a response wit",
+   "mondo:stock market crash": "The request failed: Google returned a response wit"
   }
  },
  "derivati_componenti": {
   "indicatori": 30,
   "giorni": 2991,
   "ultimo": "2026-11-23",
-  "righe_nuove": 30
+  "righe_nuove": 0
  },
  "derivati_intraday": {
   "strumenti": 51,
   "giorni": 9,
-  "righe_nuove": 391
+  "righe_nuove": 7
  }
 }
