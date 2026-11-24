@@ -25,6 +25,13 @@ MECC = {
     "M6": ("Dollaro forte e debiti in valuta", "il dollaro sale in fretta e mette sotto pressione chi ha debiti in dollari"),
 }
 ORDINE = list(MECC)
+# Modello «per tipo di crisi» (PROTOCOLLO_TERRITORI.md, addendum 14:55; esito in ESITO_TERRITORI.md): esito della verifica sui picchi 1990-2024
+TIPI = {
+    "CREDITO": {"nome": "crisi di credito e banche", "mecc": ["M3", "M5"], "esito": "riconosce", "storia": "ha accompagnato 4 picchi su 4 (1990, 2007, 2011, 2023)"},
+    "BOLLA": {"nome": "bolla di prezzi", "mecc": ["M1", "M0"], "esito": "indizio", "storia": "ha accompagnato 2 picchi su 2 (2000, 2022): troppo pochi per una prova"},
+    "LEVA": {"nome": "leva e affollamento", "mecc": ["M2", "M0"], "esito": "non supportato", "storia": "non distinguibile dal caso"},
+    "VALUTE": {"nome": "dollaro forte e debiti in valuta", "mecc": ["M6"], "esito": "non supportato", "storia": "un solo caso (1997), non valutabile"},
+}
 ARCH = DATA / "territori.json"
 REG = DATA / "territori_registro.csv"
 
@@ -142,9 +149,14 @@ def costruisci() -> dict:
     for k, d in ind.items():
         for n, v in d.items():
             riga[f"{k}_{n}"] = v
+    tipi = {}
+    for t, v in TIPI.items():
+        fr = float(caldo[v["mecc"]].astype(float).mean(axis=1).iloc[-126:].mean())
+        tipi[t] = {"nome": v["nome"], "esito": v["esito"], "storia": v["storia"], "frazione_126": round(fr, 2)}
+    riga.update({f"tipo_{t}": tipi[t]["frazione_126"] for t in TIPI})
     storia = {"t": [str(d.date()) for d in cal[-1260::5]], **{k: [None if pd.isna(x) else round(float(x), 2) for x in I[k].iloc[-1260::5]] for k in ORDINE},
               "K": [int(x) for x in K.iloc[-1260::5]]}
-    return {"data": riga["data"], "K": riga["K"], "punteggio": riga["punteggio"], "meccanismi": mecc, "soglia": SOGLIA, "frase": FRASE, "storia": storia, "_riga_registro": riga}
+    return {"data": riga["data"], "K": riga["K"], "punteggio": riga["punteggio"], "meccanismi": mecc, "tipi": tipi, "soglia": SOGLIA, "frase": FRASE, "storia": storia, "_riga_registro": riga}
 
 
 def registra(riga: dict) -> None:
@@ -186,7 +198,14 @@ def striscia_html() -> str:
         chips.append(f"<span class='tr-c' style='border-color:{col};color:{col}' title='{_h.escape(tip, quote=True)}'>{_h.escape(m['nome'])} <b>{m['indice'] * 100:.0f}</b></span>")
     n = d["K"]
     tit = f"Cause dei crolli «di pancia»: {n} su 7 accese" if n else "Cause dei crolli «di pancia»: nessuna accesa"
+    riga_tipo = ""
+    pr = [(v["frazione_126"], t, v) for t, v in (d.get("tipi") or {}).items() if v["esito"] in ("riconosce", "indizio")]
+    if pr:
+        fr, t, v = max(pr)
+        if fr >= 0.30:
+            riga_tipo = (f"<div class='qd-s' style='margin-top:3px' title='{_h.escape(v['storia'], quote=True)}'>Clima più simile a una <b>{_h.escape(v['nome'])}</b> "
+                         f"(accese {fr * 100:.0f}% delle ultime sedute; in passato {_h.escape(v['storia'])}). Esito della prova: {v['esito']}.</div>")
     return ("<style>.tr{margin-top:8px}.tr-t{font-size:12px;font-weight:700}.tr-g{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}"
             ".tr-c{font-size:10.5px;border:1px solid;border-radius:999px;padding:1px 7px;white-space:nowrap}.tr-c b{margin-left:2px}</style>"
             f"<div class='tr'><div class='tr-t' title='{_h.escape(d['frase'], quote=True)}'>{_h.escape(tit)} <span style='font-weight:400;color:var(--mu)'>· informativo, non è un avviso</span></div>"
-            f"<div class='tr-g'>{''.join(chips)}</div></div>")
+            f"<div class='tr-g'>{''.join(chips)}</div>{riga_tipo}</div>")

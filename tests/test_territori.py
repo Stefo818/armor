@@ -27,3 +27,12 @@ def test_striscia_html_non_e_un_avviso(monkeypatch):
     monkeypatch.setattr(t, "leggi", lambda: d)
     h = t.striscia_html()
     assert "1 su 7 accese" in h and "non è un avviso" in h and "crollo probabile" not in h
+
+
+def test_striscia_riga_tipo(monkeypatch):
+    d = {"K": 2, "frase": "x", "meccanismi": {k: {"nome": t.MECC[k][0], "spiega": "s", "indice": 0.5, "caldo": False} for k in t.ORDINE},
+         "tipi": {"BOLLA": {"nome": "bolla di prezzi", "esito": "indizio", "storia": "2 su 2", "frazione_126": 0.62},
+                  "LEVA": {"nome": "leva", "esito": "non supportato", "storia": "x", "frazione_126": 0.9}}}
+    monkeypatch.setattr(t, "leggi", lambda: d)
+    h = t.striscia_html()
+    assert "bolla di prezzi" in h and "indizio" in h and "leva</b>" not in h

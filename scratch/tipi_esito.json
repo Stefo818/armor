@@ -1,0 +1,121 @@
+{
+ "tipi": {
+  "CREDITO": {
+   "meccanismi": [
+    "M3",
+    "M5"
+   ],
+   "picchi": [
+    "1990-07-16",
+    "2007-10-09",
+    "2011-04-29",
+    "2023-02-02"
+   ],
+   "frazione_propri": [
+    0.17,
+    0.41,
+    0.18,
+    0.59
+   ],
+   "media_propri": 0.337,
+   "media_altri_tipi": 0.104,
+   "media_casuali": 0.109,
+   "p95_caso": 0.244,
+   "catturati": 4,
+   "su": 4,
+   "oltre_caso": true,
+   "piu_che_altri": true,
+   "esito": "riconosce"
+  },
+  "BOLLA": {
+   "meccanismi": [
+    "M1",
+    "M0"
+   ],
+   "picchi": [
+    "2000-03-24",
+    "2022-01-03"
+   ],
+   "frazione_propri": [
+    0.96,
+    0.5
+   ],
+   "media_propri": 0.73,
+   "media_altri_tipi": 0.203,
+   "media_casuali": 0.196,
+   "p95_caso": 0.508,
+   "catturati": 2,
+   "su": 2,
+   "oltre_caso": true,
+   "piu_che_altri": true,
+   "esito": "indizio"
+  },
+  "LEVA": {
+   "meccanismi": [
+    "M2",
+    "M0"
+   ],
+   "picchi": [
+    "1998-07-17",
+    "2018-01-26",
+    "2024-07-16"
+   ],
+   "frazione_propri": [
+    0.01,
+    0.71,
+    0.23
+   ],
+   "media_propri": 0.316,
+   "media_altri_tipi": 0.19,
+   "media_casuali": 0.152,
+   "p95_caso": 0.363,
+   "catturati": 3,
+   "su": 3,
+   "oltre_caso": false,
+   "piu_che_altri": true,
+   "esito": "non supportato"
+  },
+  "VALUTE": {
+   "meccanismi": [
+    "M6"
+   ],
+   "picchi": [
+    "1997-10-07"
+   ],
+   "frazione_propri": [
+    0.39
+   ],
+   "media_propri": 0.394,
+   "media_altri_tipi": 0.075,
+   "media_casuali": 0.104,
+   "p95_caso": 0.504,
+   "catturati": 1,
+   "su": 1,
+   "oltre_caso": false,
+   "piu_che_altri": true,
+   "esito": "non supportato"
+  }
+ },
+ "oggi": {
+  "CREDITO": {
+   "acceso_oggi": 0.0,
+   "frazione_ultimi_126": 0.0,
+   "media_casuale_storica": 0.109
+  },
+  "BOLLA": {
+   "acceso_oggi": 0.5,
+   "frazione_ultimi_126": 0.62,
+   "media_casuale_storica": 0.196
+  },
+  "LEVA": {
+   "acceso_oggi": 0.0,
+   "frazione_ultimi_126": 0.6,
+   "media_casuale_storica": 0.152
+  },
+  "VALUTE": {
+   "acceso_oggi": 1.0,
+   "frazione_ultimi_126": 0.03,
+   "media_casuale_storica": 0.104
+  }
+ }
+}

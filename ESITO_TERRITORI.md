@@ -28,3 +28,12 @@ Meccanismi caldi: **prezzi da bolla (0,90), obbligazioni che drenano (0,87), dol
 
 ## Verifica in avanti (da oggi, regole fissate ora)
 Finestra 24/11/2026 → 24/05/2027. Si guarda per ogni meccanismo caldo e per K ≥ 3 e per il modello A se la frequenza dei cali (−8% in 63 sedute) nei giorni accesi supera quella nei giorni spenti. Servono almeno 6 episodi indipendenti: nella finestra è improbabile, quindi l'esito probabile è «insufficiente». Gli avvisi restano informativi finché non c'è una prova.
+
+## Addendum: modello «per tipo di crisi» (24/11/2026, scratch/tipi.py)
+Metodo: per ogni tipo, frazione di sedute con il meccanismo compatibile acceso nelle 126 prima dei picchi del tipo, contro 500 estrazioni di giorni casuali lontani dai picchi e dagli shock esterni.
+- **CREDITO (M3 + M5): «riconosce».** Acceso in media il 34% delle sedute prima dei suoi 4 picchi (1990, 2007, 2011, 2023), contro 11% a caso (95° percentile 24%) e 10% prima dei picchi degli altri tipi. 4 catturati su 4.
+- **BOLLA (M1 + M0): «indizio».** 73% contro 20% (95° percentile 51%), 2 su 2. Solo 2 episodi: non una prova.
+- **LEVA (M2 + M0): non supportato.** 32% contro 15% a caso, ma sotto il 95° percentile (36%): coerente col fatto che la leva nascosta nei derivati non lascia tracce pubbliche.
+- **VALUTE (M6): non supportato** (un solo caso, 1997, 39% contro soglia 50%).
+Cautele: pochi episodi per tipo (1-4); tipi assegnati dopo aver conosciuto gli esiti (con regole scritte prima del calcolo, ma non e' una vera verifica fuori campione); la prova dice che il meccanismo era acceso *prima* dei picchi, non quanto spesso e' acceso senza crolli (parzialmente coperto dal confronto con i giorni casuali), e il test sulle probabilita' di calo (sopra) mostrava che il credito dal 2015 non e' piu' predittivo.
+Oggi: BOLLA acceso (62% delle ultime 126 sedute, contro 20% a caso: sopra il 95° percentile), CREDITO spento (0%), LEVA 60% (ma non supportato), VALUTE 3%. Nell'app: una riga sul clima piu' simile a un tipo solo per i tipi «riconosce» o «indizio» e sopra il 30%.
