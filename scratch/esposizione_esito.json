@@ -1,0 +1,149 @@
+{
+ "scelta": "60/50%",
+ "bh_scelta": {
+  "finale_netto": 3.194,
+  "cagr": 0.0518,
+  "maxdd": -0.5678,
+  "calmar": 0.091
+ },
+ "varianti_scelta": {
+  "55/50%": {
+   "finale_netto": 2.602,
+   "cagr": 0.0425,
+   "maxdd": -0.5238,
+   "calmar": 0.081,
+   "operazioni": 62
+  },
+  "55/0%": {
+   "finale_netto": 2.228,
+   "cagr": 0.0354,
+   "maxdd": -0.4733,
+   "calmar": 0.075,
+   "operazioni": 62
+  },
+  "60/50%": {
+   "finale_netto": 2.686,
+   "cagr": 0.0439,
+   "maxdd": -0.5262,
+   "calmar": 0.083,
+   "operazioni": 42
+  },
+  "60/0%": {
+   "finale_netto": 2.231,
+   "cagr": 0.0355,
+   "maxdd": -0.5743,
+   "calmar": 0.062,
+   "operazioni": 42
+  },
+  "65/50%": {
+   "finale_netto": 2.442,
+   "cagr": 0.0396,
+   "maxdd": -0.6193,
+   "calmar": 0.064,
+   "operazioni": 48
+  },
+  "65/0%": {
+   "finale_netto": 1.924,
+   "cagr": 0.0289,
+   "maxdd": -0.673,
+   "calmar": 0.043,
+   "operazioni": 48
+  },
+  "70/50%": {
+   "finale_netto": 2.877,
+   "cagr": 0.047,
+   "maxdd": -0.5964,
+   "calmar": 0.079,
+   "operazioni": 22
+  },
+  "70/0%": {
+   "finale_netto": 2.506,
+   "cagr": 0.0408,
+   "maxdd": -0.6035,
+   "calmar": 0.068,
+   "operazioni": 22
+  }
+ },
+ "bh_verifica": {
+  "finale_netto": 4.015,
+  "cagr": 0.1053,
+  "maxdd": -0.3392,
+  "calmar": 0.31
+ },
+ "verifica": {
+  "55/50%": {
+   "finale_netto": 2.906,
+   "cagr": 0.0798,
+   "maxdd": -0.2969,
+   "calmar": 0.269,
+   "operazioni": 53
+  },
+  "55/0%": {
+   "finale_netto": 2.177,
+   "cagr": 0.0576,
+   "maxdd": -0.2925,
+   "calmar": 0.197,
+   "operazioni": 53
+  },
+  "60/50%": {
+   "finale_netto": 3.093,
+   "cagr": 0.0847,
+   "maxdd": -0.3284,
+   "calmar": 0.258,
+   "operazioni": 33
+  },
+  "60/0%": {
+   "finale_netto": 2.494,
+   "cagr": 0.068,
+   "maxdd": -0.3552,
+   "calmar": 0.192,
+   "operazioni": 33
+  },
+  "65/50%": {
+   "finale_netto": 3.272,
+   "cagr": 0.0891,
+   "maxdd": -0.3225,
+   "calmar": 0.276,
+   "operazioni": 24
+  },
+  "65/0%": {
+   "finale_netto": 2.851,
+   "cagr": 0.0783,
+   "maxdd": -0.3543,
+   "calmar": 0.221,
+   "operazioni": 24
+  },
+  "70/50%": {
+   "finale_netto": 3.232,
+   "cagr": 0.0881,
+   "maxdd": -0.3527,
+   "calmar": 0.25,
+   "operazioni": 20
+  },
+  "70/0%": {
+   "finale_netto": 2.657,
+   "cagr": 0.0729,
+   "maxdd": -0.4073,
+   "calmar": 0.179,
+   "operazioni": 20
+  }
+ },
+ "pulito_2024_26": {
+  "bh": {
+   "finale_netto": 1.383,
+   "cagr": 0.1186,
+   "maxdd": -0.189,
+   "calmar": 0.628
+  },
+  "regola": {
+   "60/50%": {
+    "finale_netto": 1.335,
+    "cagr": 0.105,
+    "maxdd": -0.1894,
+    "calmar": 0.555,
+    "operazioni": 3
+   }
+  }
+ },
+ "soglia_rumore": 0.398
+}
