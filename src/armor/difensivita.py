@@ -11,10 +11,27 @@ from . import concentrazione, store
 from .config import DATA
 
 REG = DATA / "difensivita_registro.csv"
+ARCH = DATA / "difensivita.json"
 
 
 def _pe(s: pd.Series, minimo: int) -> pd.Series:
     return s.dropna().expanding(min_periods=minimo).rank(pct=True)
+
+
+def mmf_serie() -> pd.Series:
+    """Fondi monetari USA, settimanali. Se la serie FRED (WRMFNS) e' ferma da piu' di 3 settimane e la fonte di riserva (OFR, mensile) e' piu' recente,
+    la si prolunga con la variazione della fonte di riserva (stessa crescita, stesso punto di partenza); poi griglia settimanale."""
+    m = store.load("mmf_assets").dropna()
+    try:
+        alt = store.load("mmfalt_ofr_tot").dropna()
+        if len(alt) > 2 and alt.index[-1] > m.index[-1] + pd.Timedelta(days=21):
+            ancora = alt[alt.index <= m.index[-1]]
+            if len(ancora):
+                nuovo = alt[alt.index > m.index[-1]] * (float(m.iloc[-1]) / float(ancora.iloc[-1]))
+                m = pd.concat([m, nuovo])
+    except Exception:  # noqa: BLE001
+        pass
+    return m.resample("W-MON").last().ffill()
 
 
 def calcola(sp: pd.Series, f13: pd.Series | None = None) -> pd.DataFrame:
@@ -25,7 +42,7 @@ def calcola(sp: pd.Series, f13: pd.Series | None = None) -> pd.DataFrame:
 
     def al(s):
         return s.reindex(s.index.union(cal)).ffill().reindex(cal)
-    mmf = lag(store.load("mmf_assets").dropna(), 2)
+    mmf = lag(mmf_serie(), 2)
     spw = np.log(sp).resample("W-MON").last().diff(52)
     ymm = np.log(mmf).diff(52).dropna()
     d1 = al(_pe((ymm - spw.reindex(ymm.index, method="ffill")).dropna(), 104))
@@ -61,5 +78,15 @@ def run() -> dict | None:
     riga = {"data": str(u.name.date()), **{k: (None if pd.isna(v) else round(float(v), 3)) for k, v in u.items()}}
     old = pd.read_csv(REG) if REG.exists() else pd.DataFrame()
     pd.concat([old, pd.DataFrame([riga])], ignore_index=True).drop_duplicates(subset=["data"], keep="last").sort_values("data").to_csv(REG, index=False)
+    dl = (m["DIF_L"].dropna() * 100).clip(1, 100)
+    ARCH.write_text(json.dumps({"data": riga["data"], "valore": round(float(dl.iloc[-1]), 1), "ultimi": [round(float(x), 1) for x in dl.iloc[-130:]],
+                                "serie": concentrazione._serie_grafico(dl)}, separators=(",", ":")), encoding="utf-8")
     print(f"[difensivita] {riga['data']}: DIF-L {riga['DIF_L']}, DIF-C {riga['DIF_C']}", flush=True)
     return riga
+
+
+def leggi() -> dict | None:
+    try:
+        return json.loads(ARCH.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return None

@@ -37,20 +37,22 @@ ZONE["super"] = ZONE["armor"]
 # pilastri mostrati dentro ogni indice (chiave -> figli, nell'ordine in cui compaiono)
 KIDS = {
     "armor": ["a_paura", "a_liquidita", "a_rimbalzo", "a_stress", "a_ciclo"],
-    "super": ["p1", "p2", "p3", "p4", "p5", "p6", "i7", "i8"],
+    "super": ["p1", "p2", "p3", "p4", "p5", "p6", "i9", "i7", "i8"],
     "sovr": ["sacc"],
     "bolla": ["sovr", "b_m1"],
     "cred": ["c_m3", "c_m5"],
 }
 PAR = {k: p for p, ks in KIDS.items() for k in ks}
 TAG = {"sacc": "quanto in fretta sale", "a_paura": "parte veloce", "a_liquidita": "parte veloce", "a_rimbalzo": "parte veloce",
-       "a_stress": "parte lenta", "a_ciclo": "parte lenta", "i7": "solo informativo", "i8": "solo informativo"}
+       "a_stress": "parte lenta", "a_ciclo": "parte lenta", "i7": "solo informativo", "i8": "solo informativo", "i9": "senza peso"}
 for _k in PAR:
     ZONE[_k] = ZONE["armor"]
 NOMI.update({"a_paura": "Paura sui mercati", "a_liquidita": "Liquidità", "a_rimbalzo": "Segnali di rimbalzo",
              "a_stress": "Stress di mercato e credito", "a_ciclo": "Ciclo, prezzi e valutazioni",
-             "i7": "7° Fondi a breve termine", "i8": "8° Indice Buffett"})
+             "i7": "7° Fondi a breve termine", "i8": "8° Indice Buffett", "i9": "Fondi (difensività)"})
 DESC.update({
+    "i9": "Quanto i grandi fondi sono difensivi: liquidità nei fondi monetari che cresce più del mercato e oro che batte le azioni (percentile rispetto alla storia dal 1984; più alto = più difensivi). "
+          "Provato come 7° pilastro del Super Armor: non lo migliora in modo stabile (peggiora fino al 2014, migliora dopo), quindi non ha peso. Non anticipa i crolli: un valore basso coincide con mercati in salita.",
     "a_paura": "Parte veloce dell'Indice Armor (peso 30% insieme alle altre due). È lo stesso pilastro «Paura sui mercati» del Super Armor: indice della paura, sua curva, volatilità delle obbligazioni.",
     "a_liquidita": "Parte veloce dell'Indice Armor. È lo stesso pilastro «Liquidità» del Super Armor: quanta moneta circola e quanto è facile ottenerla.",
     "a_rimbalzo": "Parte veloce dell'Indice Armor. Misura se ci sono segnali di rimbalzo (credito che migliora, acquisti istituzionali). Qui il numero è il rischio: più è alto, meno segnali di rimbalzo.",
@@ -230,6 +232,13 @@ def dati() -> dict:
                     out[k] = x
     except Exception:  # noqa: BLE001
         pass
+    try:   # difensivita' dei grandi fondi (7° pilastro informativo del Super Armor)
+        from . import difensivita
+        dj = difensivita.leggi()
+        if dj and dj.get("serie"):
+            out["i9"] = dj["serie"]
+    except Exception:  # noqa: BLE001
+        pass
     try:   # Sick Index (bolla e credito): serie compatte calcolate da territori.run()
         from . import territori
         tj = territori.leggi()
@@ -406,7 +415,7 @@ box.innerHTML=h}
 function kids(k){var box=document.getElementById('gi-kd'),ks=(KD.kids[k]||[]).filter(function(x){return S[x]});if(!ks.length){box.innerHTML='';return}
 var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
-h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
+h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'||x==='i9'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
 box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}
 function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';RG=cfg().rng||RGD;chips();
 document.body.style.overflow='hidden';ov.classList.add('on');requestAnimationFrame(function(){ov.classList.add('in')});size();

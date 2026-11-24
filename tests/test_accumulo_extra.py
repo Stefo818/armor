@@ -166,3 +166,16 @@ def test_fred_inesistente_e_ritmo(monkeypatch):
     monkeypatch.setattr(accumulo, "_fred_pausa", lambda *a, **k: None)
     with pytest.raises(accumulo.FredInesistente):
         accumulo.fetch_fred_acc("XXXX", chiave="k")
+
+
+def test_parse_ofr_mmf_e_prolungamento(monkeypatch):
+    s = ex.parse_ofr_mmf([["2026-08-31", 7000.0], ["2026-09-30", 7100.0], ["2026-10-31", 7200.0]])
+    assert len(s) == 3 and s.iloc[-1] == 7200.0
+    s2 = ex.parse_ofr_mmf({"timeseries": [["2026-08-31", 1.0], ["2026-09-30", 2.0]]})
+    assert len(s2) == 2
+    import pandas as pd
+    from armor import difensivita
+    base = pd.Series(100.0, index=pd.date_range("2026-08-03", periods=10, freq="W-MON"))
+    monkeypatch.setattr("armor.store.load", lambda n: base if n == "mmf_assets" else pd.Series([7000.0, 7100.0, 7200.0, 7300.0], index=pd.to_datetime(["2026-08-31", "2026-09-30", "2026-10-31", "2026-11-30"])))
+    out = difensivita.mmf_serie()
+    assert out.index[-1] > base.index[-1] and out.iloc[-1] > 100.0

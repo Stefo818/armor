@@ -109,6 +109,29 @@ def aggiorna_ofr(stato: dict) -> None:
     stato["ofr_stress"] = {"colonne": len(df.columns), "righe_nuove": _upsert_tutte("ofr_", df)}
 
 
+# ----------------------------------------------------------------------------- Fondi monetari USA: fonte di riserva (la serie FRED settimanale WRMFNS si e' fermata il 05/10/2026)
+def parse_ofr_mmf(js) -> pd.Series:
+    """Risposta dell'API OFR (lista di [data, valore], oppure dizionario con 'timeseries'/'values'): attivita' totali dei fondi monetari, mensile."""
+    if isinstance(js, dict):
+        for k in ("timeseries", "values", "data"):
+            if k in js:
+                js = js[k]
+                break
+        if isinstance(js, dict) and "aggregation" in js:
+            js = js["aggregation"]
+    righe = [r for r in js if isinstance(r, (list, tuple)) and len(r) >= 2]
+    if not righe:
+        raise RuntimeError("OFR fondi monetari: risposta vuota")
+    s = pd.Series([r[1] for r in righe], index=pd.to_datetime([r[0] for r in righe], errors="coerce"), dtype="float64").dropna()
+    return s[s.index.notna()]
+
+
+def aggiorna_mmf_alt(stato: dict) -> None:
+    r = _get("https://data.financialresearch.gov/v1/series/timeseries?mnemonic=MMF-MMF_TOT-M")
+    s = parse_ofr_mmf(r.json())
+    stato["mmf_ofr"] = {"ultima": str(s.index[-1].date()), "righe_nuove": store.upsert("mmfalt_ofr_tot", s)}
+
+
 # ----------------------------------------------------------------------------- Tesoro USA: curve ufficiali giornaliere
 UST = {"curva": "daily_treasury_yield_curve", "bills": "daily_treasury_bill_rates", "reali": "daily_treasury_real_yield_curve", "reali_lungo": "daily_treasury_real_long_term"}
 

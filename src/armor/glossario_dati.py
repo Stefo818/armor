@@ -217,6 +217,7 @@ def _archivio(k: str):
             ("x_", "Prezzo di chiusura giornaliero di un indice, di un fondo (ETF), di una valuta, di una materia prima o di una criptovaluta, archiviato per le ricerche future.", "Yahoo Finance."),
             ("f_", "Serie economica o finanziaria della Federal Reserve (tassi, credito, lavoro, prezzi, produzione, cambi), archiviata per le ricerche future.", "FRED, Federal Reserve di St. Louis."),
             ("bce_", "Dato della Banca centrale europea: stress sistemico (CISS), rendimenti dei titoli di Stato euro, tassi della BCE o cambi dell'euro.", "BCE."),
+            ("mmfalt_", "Attività totali dei fondi monetari USA, mensile (fonte di riserva per la serie settimanale FRED WRMFNS, ferma al 05/10/2026).", "OFR (Money Market Fund Monitor)."),
             ("ofr_", "Indice di stress finanziario dell'Office of Financial Research (Tesoro USA) o una sua componente: credito, valutazioni, finanziamento, beni rifugio, volatilità.", "OFR."),
             ("ust_", "Rendimento ufficiale del Tesoro americano per una scadenza (titoli nominali, buoni a breve o rendimenti reali).", "Dipartimento del Tesoro USA."),
             ("fisc_", "Conti dello Stato americano: cassa del Tesoro presso la Fed o debito pubblico.", "Treasury FiscalData."),

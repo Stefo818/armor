@@ -15,3 +15,16 @@ DIF-L 0,22 (poco difensivi) e DIF-C 0,39. Componenti: fondi monetari 0,34, oro c
 
 ## Cosa entra nell'app
 Nulla di visibile (nessun test è «dimostrato/utile»). Solo il registro giornaliero `data/difensivita_registro.csv` (peso zero) per verificare in avanti. Un'eventuale prova che l'indice aggiunge informazione oltre al momentum richiede un nuovo protocollo.
+
+## Addendum: prova come 7° pilastro del Super Armor (24/11/2026, scratch/pilastro_fondi.py)
+Regola scritta prima (PROTOCOLLO_DIFENSIVITA.md, addendum delle 15:50): adottato solo se l'AUC migliora di ≥ 0,01 in entrambi i blocchi su almeno 2 bersagli su 3 e nessuno peggiora di più di 0,01.
+| Bersaglio | 1990-2014: sei → sette pilastri | 2015-2026: sei → sette pilastri |
+|---|---|---|
+| −8% in 63 sedute | 0,764 → 0,741 (−0,023) | 0,566 → 0,605 (+0,039) |
+| −12% in 63 sedute | 0,789 → 0,761 (−0,028) | 0,546 → 0,593 (+0,048) |
+| −5% in 21 sedute | 0,702 → 0,694 (−0,008) | 0,624 → 0,625 (+0,002) |
+**Non adottato**: peggiora fino al 2014, migliora dopo il 2015; il segno cambia, quindi nessun peso. (Nota tecnica: la prova confronta la media dei sei pilastri con la media dei sette; l'indice Super Armor pubblicato si discosta dalla media semplice fino a 16 punti, quindi è una prova sul principio, non sul numero esatto.)
+**Nell'app:** il pilastro «Fondi (difensività)» compare come settimo riquadro accanto agli altri sei, con la scritta «senza peso» e con il suo grafico interattivo (oggi 22 su 100: fondi poco difensivi). Sotto ai pilastri del Super Armor ci sono ora anche i cinque pilastri dell'Indice Armor.
+
+## Dati dei fondi monetari fermi
+La serie FRED WRMFNS (fondi monetari al dettaglio, settimanale) ha come ultimo dato il 05/10/2026 anche alla fonte; la serie mensile RMFNS si ferma a settembre e quella degli istituzionali (IMFNS) dal 2021. Non è un problema di salvataggio: lo stato registra «ok, 0 righe nuove». Aggiunta una fonte di riserva (OFR, attività totali dei fondi monetari, mensile, `mmfalt_ofr_tot`) e, se la serie FRED è ferma da più di tre settimane, l'indice di difensività la prolunga con la crescita della fonte di riserva. Non testata da qui (il sito OFR non è raggiungibile dal mio ambiente): al prossimo giro dell'accumulo su GitHub si vede in `data/accumulo_stato.json` alla voce `mmf_ofr`.
