@@ -86,26 +86,28 @@ def leggi() -> dict | None:
             "sopra60_5sedute": sop, "settimana_acceso": m5 >= 60}
 
 
-def _tessera_sovraccarico() -> tuple[str, int]:
-    """Quarto numero: sovraccarico del mercato (concentrazione). Informativo: indizio dal 1990, non dimostrato."""
+def _tessera_sick() -> tuple[str, int]:
+    """Quarto riquadro: Sick Index = Bolla + Credito (0-100). Informativo; in zona rossa mostra i casi simili del passato."""
     import html as _h
     try:
-        from . import concentrazione
-        c = concentrazione.leggi()
+        from . import territori
+        t = territori.leggi()
     except Exception:  # noqa: BLE001
-        c = None
-    if not c:
+        t = None
+    if not t or not t.get("sick"):
         return "", 3
-    v = c["sovraccarico"]
-    col = "#8b5cf6" if v >= 90 else ("#ef4444" if v >= 80 else ("#f59e0b" if v >= 60 else "#22c55e"))
-    tipo = c["testo"]["tipo"]
-    cs = {"margine": "#f59e0b", "calo": "#ef4444"}.get(tipo, "var(--mu)")
-    tit = _h.escape(c["testo"]["dettaglio"], quote=True)
-    return (f"<div class='qd-c' data-gi='sovr'><div class='qd-n' style='color:{col}'>{v:.0f}{_freccia(c['tendenza'])}</div><div class='qd-l'>Sovraccarico</div>"
-            f"<div class='qd-u'>Mercato sbilanciato su pochi titoli · indizio, non dimostrato</div>"
-            f"<div class='qd-s' title='{tit}' style='color:{cs};font-weight:{700 if tipo in ('margine', 'calo') else 400}'>{_h.escape(c['testo']['riga'])}</div>"
-            f"<div class='qd-s' title='{_h.escape(concentrazione.testo_analoghi(c.get('analoghi')), quote=True)}'>{_h.escape(concentrazione.riga_analoghi(c.get('analoghi')))}</div>"
-            f"<div class='qd-s' title='{_h.escape(concentrazione.testo_orizzonti(c.get('orizzonti')), quote=True)}'>{_h.escape(concentrazione.riga_orizzonti(c.get('orizzonti')))}</div></div>"), 4
+    celle = []
+    for k, nome, sotto in (("bolla", "Bolla", "prezzi e concentrazione"), ("cred", "Credito", "stress su credito e banche")):
+        d = t["sick"][k]
+        v = d["valore"]
+        col = "#8b5cf6" if v >= 90 else ("#ef4444" if v >= 80 else ("#f59e0b" if v >= 60 else "#22c55e"))
+        rosso = v >= 80
+        tit = _h.escape(territori.testo_sick(d) + " " + d["spiega"].capitalize() + ". " + d["stato"].capitalize() + ".", quote=True)
+        riga = territori.riga_sick(d) if rosso else ("Nella norma" if v < 60 else "Sopra la norma, non ancora rosso")
+        celle.append(f"<div class='sk' data-gi='{k}'><div class='qd-n' style='color:{col}'>{v:.0f}{_freccia(d['tendenza'])}</div><div class='qd-l'>{nome}</div>"
+                     f"<div class='qd-u'>{sotto}</div><div class='qd-s' title='{tit}' style='color:{('#ef4444' if rosso else 'var(--mu)')};font-weight:{700 if rosso else 400}'>{_h.escape(riga)}</div></div>")
+    return (f"<div class='qd-c qd-sick'><div class='qd-l' style='font-size:10.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.4px'>Sick Index · il mercato è malato?</div>"
+            f"<div class='sk-g'>{''.join(celle)}</div></div>"), 5
 
 
 def _striscia_territori() -> str:
@@ -121,7 +123,7 @@ def html() -> str:
     d = leggi()
     if not d:
         return ""
-    quarta, ncol = _tessera_sovraccarico()
+    quarta, ncol = _tessera_sick()
     tre = "".join(
         f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}{_freccia(d['tendenza'][g])}</div><div class='qd-l'>{_h.escape(n)}</div><div class='qd-u'>{_h.escape(SOTTO[n])}</div>"
         f"<div class='qd-s'>{d['sopra60_5sedute'][n]}/5 sedute sopra 60</div></div>"
@@ -140,6 +142,7 @@ def html() -> str:
         """<style>
 .qd{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:11px 13px 9px;margin:10px 0}
 .qd-h{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.qd-sick{grid-column:span 2}.sk-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:3px}.sk{cursor:pointer}
 .qd-g{display:grid;grid-template-columns:repeat(var(--nc,3),1fr);gap:8px;text-align:center}
 .qd-n{font-size:28px;font-weight:800;line-height:1}
 .qd-a{font-size:15px;margin-left:5px;vertical-align:middle}

@@ -42,14 +42,18 @@ def test_serie_grafico_settimanale_poi_giornaliera():
     assert x["dt"][0] == 0 and len(x["dt"]) == len(x["v"]) and len(x["v"]) < len(s)
 
 
-def test_tessera_nel_quadro(monkeypatch):
+def test_tessera_sick_index(monkeypatch):
     from armor import quadro
-    fake = {"sovraccarico": 84.0, "tendenza": 3.0, "testo": {"tipo": "margine", "riga": "margine tipico ancora +7% prima del calo", "dettaglio": "x"}}
-    monkeypatch.setattr("armor.concentrazione.leggi", lambda: fake)
-    h, n = quadro._tessera_sovraccarico()
-    assert n == 4 and "data-gi='sovr'" in h and "84" in h and "margine tipico" in h
-    monkeypatch.setattr("armor.concentrazione.leggi", lambda: None)
-    assert quadro._tessera_sovraccarico() == ("", 3)
+    an = {"giorni": 300, "episodi": 10, "salita_max": {"p25": .03, "med": .07, "p75": .12}, "calo_max": {"p25": -.1, "med": -.05, "p75": -.01},
+          "base": {"salita_max_med": .08, "calo_max_med": -.04, "fine_med": .03}}
+    mk = lambda v: {"valore": v, "tendenza": 2.0, "analoghi": an, "orizzonti": {}, "stato": "indizio", "spiega": "x", "nome": "n"}
+    fake = {"sick": {"bolla": mk(84.0), "cred": mk(40.0)}}
+    monkeypatch.setattr("armor.territori.leggi", lambda: fake)
+    h, n = quadro._tessera_sick()
+    assert n == 5 and "data-gi='bolla'" in h and "data-gi='cred'" in h and "Sick Index" in h
+    assert "fino a +7% al rialzo" in h and h.count("Casi simili") == 1 and "Nella norma" in h   # i casi simili solo se rosso (>= 80)
+    monkeypatch.setattr("armor.territori.leggi", lambda: None)
+    assert quadro._tessera_sick() == ("", 3)
 
 
 def test_analoghi_e_frasi():

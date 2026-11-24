@@ -39,6 +39,8 @@ KIDS = {
     "armor": ["a_paura", "a_liquidita", "a_rimbalzo", "a_stress", "a_ciclo"],
     "super": ["p1", "p2", "p3", "p4", "p5", "p6", "i7", "i8"],
     "sovr": ["sacc"],
+    "bolla": ["sovr", "b_m1"],
+    "cred": ["c_m3", "c_m5"],
 }
 PAR = {k: p for p, ks in KIDS.items() for k in ks}
 TAG = {"sacc": "quanto in fretta sale", "a_paura": "parte veloce", "a_liquidita": "parte veloce", "a_rimbalzo": "parte veloce",
@@ -68,6 +70,20 @@ DESC.update({
 _ZSOV = {"lim": [60, 80, 90], "col": ["#22c55e", "#f59e0b", "#ef4444", "#8b5cf6"], "nom": ["Nella norma", "Sbilanciato", "Molto sbilanciato", "Estremo"]}
 ZONE["sovr"] = _ZSOV
 ZONE["sacc"] = _ZSOV
+ZONE["bolla"] = {"lim": [60, 80, 90], "col": _ZSOV["col"], "nom": ["Nella norma", "Caldo", "Molto caldo", "Estremo"]}
+ZONE["cred"] = {"lim": [60, 80, 90], "col": _ZSOV["col"], "nom": ["Credito sereno", "Credito teso", "Molto teso", "Estremo"]}
+for _k in ("b_m1", "c_m3", "c_m5"):
+    ZONE[_k] = ZONE["bolla"] if _k.startswith("b") else ZONE["cred"]
+NOMI.update({"bolla": "Indice Bolla", "cred": "Indice Credito", "b_m1": "Prezzi da bolla", "c_m3": "Credito e banche", "c_m5": "Stress del debito europeo"})
+DESC.update({
+    "bolla": "Quanto il mercato somiglia a una bolla: unisce prezzi alti rispetto agli utili, salita forte negli ultimi tre anni e concentrazione su pochi titoli (il Sovraccarico). "
+             "Da 0 a 100: 80 vuol dire più bolla dell'80% dei giorni dal 1971. È un indizio, non dimostrato: nei due casi del passato (2000 e 2022) era acceso prima del picco, ma sono pochi. Peso zero negli altri indici.",
+    "cred": "Quanto il credito è sotto stress: spread che si allargano, banche che irrigidiscono i prestiti, curva dei tassi rovesciata e tensione sul debito europeo. Da 0 a 100: 80 vuol dire più teso dell'80% dei giorni dal 1971. "
+            "Era acceso prima di 4 picchi su 4 (1990, 2007, 2011, 2023), ma dal 2015 non ha più previsto i cali: pochi casi, non una certezza. Peso zero negli altri indici.",
+    "b_m1": "Prezzi da bolla: valutazioni delle azioni (rapporto prezzo/utili corretto per il ciclo) e salita dell'S&P 500 negli ultimi tre anni, come percentile della storia.",
+    "c_m3": "Credito e banche: allargamento dello spread tra obbligazioni aziendali e titoli di Stato, banche che irrigidiscono i prestiti, curva dei tassi rovesciata, condizioni finanziarie sul credito.",
+    "c_m5": "Stress del debito e delle banche europee: indice di stress sistemico dell'area euro e quanto è salito negli ultimi tre mesi.",
+})
 CFG_SOVR = {"val": 1, "dec": 0, "u": "", "pp": "sul giorno precedente", "def": 2,
             "rng": [["1M", 30], ["3M", 91], ["1A", 365], ["5A", 1826], ["20A", 7305], ["Max", 0]],
             "prev": [["Ieri", 1], ["Una settimana fa", 7], ["Due settimane fa", 14], ["Un mese fa", 30], ["3 mesi fa", 91], ["6 mesi fa", 182]],
@@ -212,6 +228,14 @@ def dati() -> dict:
                 x = _serie(pct.dropna().reindex(d.index, method="ffill").dropna().clip(1, 100))
                 if x:
                     out[k] = x
+    except Exception:  # noqa: BLE001
+        pass
+    try:   # Sick Index (bolla e credito): serie compatte calcolate da territori.run()
+        from . import territori
+        tj = territori.leggi()
+        for k in ("bolla", "cred", "b_m1", "c_m3", "c_m5"):
+            if tj and tj.get("serie", {}).get(k):
+                out[k] = tj["serie"][k]
     except Exception:  # noqa: BLE001
         pass
     try:   # sovraccarico del mercato (concentrazione): serie gia' compatta, calcolata da concentrazione.run()
@@ -380,7 +404,7 @@ h+='<div class="gi-sc">Com’era prima</div><div class="gi-g">'+prev('Ieri',1)+p
 h+='<div class="gi-hint" style="margin-top:6px">La freccia mostra di quanto è cambiato l’indice da allora a oggi: rossa se il rischio è salito, verde se è sceso.</div>';
 box.innerHTML=h}
 function kids(k){var box=document.getElementById('gi-kd'),ks=(KD.kids[k]||[]).filter(function(x){return S[x]});if(!ks.length){box.innerHTML='';return}
-var h='<div class="gi-kt">'+(k==='sovr'?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
+var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
 h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
 box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}
@@ -427,12 +451,20 @@ def html() -> str:
     vser, vcfg, vzone = val_cfg()
     zone = {k: {"lim": ZONE[k]["lim"], "col": ZONE[k]["col"], "nom": ZONE[k]["nom"]} for k in d if k in ZONE}
     zone.update(vzone)
-    vcfg = {**vcfg, "sovr": CFG_SOVR, "sacc": CFG_SOVR}
+    vcfg = {**vcfg, **{k: CFG_SOVR for k in ("sovr", "sacc", "bolla", "cred", "b_m1", "c_m3", "c_m5")}}
     try:
         from . import concentrazione
         cj = concentrazione.leggi()
         if cj:
             DESC["sovr"] = DESC["sovr"] + " " + cj["testo"]["dettaglio"] + " " + concentrazione.testo_analoghi(cj.get("analoghi")) + " " + concentrazione.testo_orizzonti(cj.get("orizzonti"))
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from . import territori
+        tj = territori.leggi()
+        for k in ("bolla", "cred"):
+            if tj and k in tj.get("sick", {}):
+                DESC[k] = DESC[k] + " " + territori.testo_sick(tj["sick"][k])
     except Exception:  # noqa: BLE001
         pass
     return (

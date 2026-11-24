@@ -32,6 +32,12 @@ TIPI = {
     "LEVA": {"nome": "leva e affollamento", "mecc": ["M2", "M0"], "esito": "non supportato", "storia": "non distinguibile dal caso"},
     "VALUTE": {"nome": "dollaro forte e debiti in valuta", "mecc": ["M6"], "esito": "non supportato", "storia": "un solo caso (1997), non valutabile"},
 }
+SICK = {
+    "bolla": {"nome": "Bolla", "mecc": ["M1", "M0"], "stato": "indizio, non dimostrato",
+              "spiega": "prezzi alti rispetto agli utili, salita forte in tre anni e mercato concentrato su pochi titoli"},
+    "cred": {"nome": "Credito", "mecc": ["M3", "M5"], "stato": "provato su soli 4 casi",
+             "spiega": "spread che si allargano, banche che irrigidiscono i prestiti, curva dei tassi rovesciata e stress del debito europeo"},
+}
 ARCH = DATA / "territori.json"
 REG = DATA / "territori_registro.csv"
 
@@ -133,6 +139,42 @@ FRASE = ("Non è dimostrato che questi segnali prevedano i crolli: provati su 19
          "(il credito funzionava fino al 2014 e poi no). Servono a capire in che clima siamo, non a dire «sta per crollare». Peso zero sugli altri indici.")
 
 
+def _sick(I: pd.DataFrame, cal: pd.DatetimeIndex, sp: pd.Series) -> tuple[dict, dict]:
+    """Sick Index: due numeri 0-100 (Bolla, Credito), ciascuno percentile storico di un gruppo di meccanismi; con le situazioni analoghe del passato."""
+    dati, serie = {}, {}
+    for k, v in SICK.items():
+        m = pe(I[v["mecc"]].mean(axis=1, skipna=True).dropna(), minimo=252).reindex(cal)
+        a = pe(m.diff(63).dropna(), minimo=252).reindex(cal)
+        mm = pd.DataFrame({"livello": m, "accel": a}).dropna()
+        an = concentrazione.analoghi(sp, mm)
+        orizz = {h: concentrazione.analoghi(sp, mm, orizzonte=h) for h in concentrazione.ORIZZONTI}
+        val = float(m.iloc[-1]) * 100
+        dati[k] = {"valore": round(val, 1), "tendenza": round(val - float(m.iloc[-6]) * 100, 1), "analoghi": an, "orizzonti": orizz, "stato": v["stato"], "spiega": v["spiega"], "nome": v["nome"]}
+        serie[k] = concentrazione._serie_grafico(m * 100)
+    serie["b_m1"] = concentrazione._serie_grafico(I["M1"] * 100)
+    serie["c_m3"] = concentrazione._serie_grafico(I["M3"] * 100)
+    serie["c_m5"] = concentrazione._serie_grafico(I["M5"] * 100)
+    return dati, serie
+
+
+def riga_sick(d: dict) -> str:
+    """Quanto margine resta, in tipico, nei casi simili del passato (6 mesi): salita ancora possibile e calo possibile."""
+    a = d.get("analoghi")
+    if not a:
+        return ""
+    return f"Casi simili (6 mesi): fino a {a['salita_max']['med'] * 100:+.0f}% al rialzo, fino a {a['calo_max']['med'] * 100:+.0f}% al ribasso"
+
+
+def testo_sick(d: dict) -> str:
+    a, o = d.get("analoghi"), {str(h): v for h, v in (d.get("orizzonti") or {}).items() if v}
+    if not a:
+        return ""
+    t = (f"Nei {a['giorni']} giorni più simili a oggi dal 1990 ({a['episodi']} episodi), in sei mesi il mercato è salito al massimo di {a['salita_max']['med'] * 100:+.1f}% (tipico; metà dei casi "
+         f"fra {a['salita_max']['p25'] * 100:+.1f}% e {a['salita_max']['p75'] * 100:+.1f}%) e sceso al minimo di {a['calo_max']['med'] * 100:+.1f}% (metà dei casi fra {a['calo_max']['p25'] * 100:+.1f}% e {a['calo_max']['p75'] * 100:+.1f}%). "
+         f"Un giorno qualunque: salita {a['base']['salita_max_med'] * 100:+.1f}%, calo {a['base']['calo_max_med'] * 100:+.1f}%. ")
+    return t + concentrazione.testo_orizzonti(o) + " Calcolato sull'S&P 500; il VWCE può differire. Sono situazioni simili, non una previsione."
+
+
 def costruisci() -> dict:
     P = {k: store.load("cn_" + k.lower()).dropna() for k in concentrazione.SIMBOLI}
     sp = store.load("sp500").dropna()
@@ -154,9 +196,11 @@ def costruisci() -> dict:
         fr = float(caldo[v["mecc"]].astype(float).mean(axis=1).iloc[-126:].mean())
         tipi[t] = {"nome": v["nome"], "esito": v["esito"], "storia": v["storia"], "frazione_126": round(fr, 2)}
     riga.update({f"tipo_{t}": tipi[t]["frazione_126"] for t in TIPI})
+    sick, serie = _sick(I, cal, sp[sp.index.isin(cal) | True])
+    riga["bolla"], riga["credito"] = sick["bolla"]["valore"], sick["cred"]["valore"]
     storia = {"t": [str(d.date()) for d in cal[-1260::5]], **{k: [None if pd.isna(x) else round(float(x), 2) for x in I[k].iloc[-1260::5]] for k in ORDINE},
               "K": [int(x) for x in K.iloc[-1260::5]]}
-    return {"data": riga["data"], "K": riga["K"], "punteggio": riga["punteggio"], "meccanismi": mecc, "tipi": tipi, "soglia": SOGLIA, "frase": FRASE, "storia": storia, "_riga_registro": riga}
+    return {"data": riga["data"], "K": riga["K"], "punteggio": riga["punteggio"], "meccanismi": mecc, "tipi": tipi, "sick": sick, "serie": serie, "soglia": SOGLIA, "frase": FRASE, "storia": storia, "_riga_registro": riga}
 
 
 def registra(riga: dict) -> None:
