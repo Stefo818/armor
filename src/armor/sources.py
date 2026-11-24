@@ -424,6 +424,13 @@ def update_all(full: bool = False, only: list[str] | None = None) -> dict:
             fred_fails += 1
             store.set_status(st, sid, False, str(e))
     print(f"[dati] FRED in {_t.time() - t1:.0f}s", flush=True)
+    if not only or any(str(k).startswith("bis_dsr_") for k in only) or "bis_dsr" in only:   # debito delle famiglie e imprese (BIS): archivio sperimentale, peso zero
+        try:
+            from . import bis_dsr
+            bis_dsr.aggiorna(full=full, status=st)
+        except Exception as e:  # noqa: BLE001 - una fonte nuova non deve fermare l'aggiornamento
+            store.set_status(st, "bis_dsr", False, str(e)[:150])
+
     if not only or any(k in only for k in OHLC_IDS):
         try:   # una sola richiesta per tre serie: se Yahoo non risponde, il ciclo continua
             for sid, ser in fetch_sp_ohlc().items():
