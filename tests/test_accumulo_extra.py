@@ -128,3 +128,41 @@ def test_wiki_lingue_e_cucitura_trends():
     b = pd.Series([30, 35, 40, 45, 50, 55, 60, 65, 70, 75.0], index=idx2)    # stessa realta' vista con un'altra scala (meta')
     s = e2.cuci_finestre([("2026-10-10", a), ("2026-10-15", b)])
     assert len(s) == 15 and abs(s.iloc[-1] - 150.0) < 1e-9 and abs(s[pd.Timestamp("2026-10-06")] - 60.0) < 1e-9
+
+
+# ----------------------------------------------------------------------------- correzioni dopo il primo giro su GitHub (24/11/2026)
+def test_parse_tga_con_null_come_testo():
+    from armor.accumulo_extra import parse_tga
+    j = {"data": [{"record_date": "2026-11-20", "account_type": "Treasury General Account (TGA) Closing Balance", "close_today_bal": "null", "open_today_bal": "812345"}]}
+    assert parse_tga(j).iloc[0] == 812345.0
+
+
+def test_parse_rss_tollera_bom_e_rifiuta_html():
+    import pytest
+    from armor.accumulo_extra2 import parse_rss
+    xml = '﻿<?xml version="1.0" encoding="UTF-8"?><rss><channel><item><title>A</title><pubDate>Mon, 23 Nov 2026 10:00:00 GMT</pubDate><link>x</link></item></channel></rss>'
+    assert parse_rss(xml)[0]["titolo"] == "A"
+    with pytest.raises(RuntimeError):
+        parse_rss("<!DOCTYPE html><html>blocked</html>")
+
+
+def test_cboe_pc_largo_ricava_rapporto_da_put_e_call():
+    from armor.accumulo import parse_cboe_pc_largo
+    txt = "Cboe nota\nTrade Date,Call Volume,Put Volume\n2026-11-20,100,80\n2026-11-23,200,300\n"
+    s = parse_cboe_pc_largo(txt)
+    assert round(float(s.iloc[1]), 2) == 1.5
+
+
+def test_fred_inesistente_e_ritmo(monkeypatch):
+    import pytest
+    from armor import accumulo
+
+    class R:
+        status_code = 400
+        text = ""
+        def json(self):
+            return {"error_message": "Bad Request.  The series does not exist."}
+    monkeypatch.setattr(accumulo.requests, "get", lambda *a, **k: R())
+    monkeypatch.setattr(accumulo, "_fred_pausa", lambda *a, **k: None)
+    with pytest.raises(accumulo.FredInesistente):
+        accumulo.fetch_fred_acc("XXXX", chiave="k")

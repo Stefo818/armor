@@ -86,15 +86,36 @@ def leggi() -> dict | None:
             "sopra60_5sedute": sop, "settimana_acceso": m5 >= 60}
 
 
+def _tessera_sovraccarico() -> tuple[str, int]:
+    """Quarto numero: sovraccarico del mercato (concentrazione). Informativo: indizio dal 1990, non dimostrato."""
+    import html as _h
+    try:
+        from . import concentrazione
+        c = concentrazione.leggi()
+    except Exception:  # noqa: BLE001
+        c = None
+    if not c:
+        return "", 3
+    v = c["sovraccarico"]
+    col = "#8b5cf6" if v >= 90 else ("#ef4444" if v >= 80 else ("#f59e0b" if v >= 60 else "#22c55e"))
+    tipo = c["testo"]["tipo"]
+    cs = {"margine": "#f59e0b", "calo": "#ef4444"}.get(tipo, "var(--mu)")
+    tit = _h.escape(c["testo"]["dettaglio"], quote=True)
+    return (f"<div class='qd-c' data-gi='sovr'><div class='qd-n' style='color:{col}'>{v:.0f}{_freccia(c['tendenza'])}</div><div class='qd-l'>Sovraccarico</div>"
+            f"<div class='qd-u'>Mercato sbilanciato su pochi titoli · indizio, non dimostrato</div>"
+            f"<div class='qd-s' title='{tit}' style='color:{cs};font-weight:{700 if tipo in ('margine', 'calo') else 400}'>{_h.escape(c['testo']['riga'])}</div></div>"), 4
+
+
 def html() -> str:
     import html as _h
     d = leggi()
     if not d:
         return ""
+    quarta, ncol = _tessera_sovraccarico()
     tre = "".join(
         f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}{_freccia(d['tendenza'][g])}</div><div class='qd-l'>{_h.escape(n)}</div><div class='qd-u'>{_h.escape(SOTTO[n])}</div>"
         f"<div class='qd-s'>{d['sopra60_5sedute'][n]}/5 sedute sopra 60</div></div>"
-        for n, v, g in (("Indice Armor", d["armor"], "armor"), ("Super Armor", d["super"], "super"), ("Indice crollo", d["crollo"], "crollo")))
+        for n, v, g in (("Indice Armor", d["armor"], "armor"), ("Super Armor", d["super"], "super"), ("Indice crollo", d["crollo"], "crollo"))) + quarta
     m5 = d["crollo_m5"]
     acceso = m5 >= 60
     cls = "bad" if acceso else "ok"
@@ -109,7 +130,7 @@ def html() -> str:
         """<style>
 .qd{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:11px 13px 9px;margin:10px 0}
 .qd-h{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
-.qd-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.qd-g{display:grid;grid-template-columns:repeat(var(--nc,3),1fr);gap:8px;text-align:center}
 .qd-n{font-size:28px;font-weight:800;line-height:1}
 .qd-a{font-size:15px;margin-left:5px;vertical-align:middle}
 .qd-l{font-size:11.5px;font-weight:600;margin-top:2px}
@@ -128,7 +149,7 @@ details.qdd[open]>summary::after{transform:rotate(225deg)}
 .qd-x p{margin:8px 0 0}.qd-x b{color:var(--tx)}.qd-x ul{margin:5px 0 0;padding-left:18px}
 </style>""" +
         f"<div class='qd'><div class='qd-h'>Quadro di oggi · {_freschezza(d['data'])} · tocca un numero per il grafico · freccia = andamento in una settimana</div>"
-        f"<div class='qd-g'>{tre}</div>"
+        f"<div class='qd-g' style='--nc:{ncol}'>{tre}</div>"
         f"<div class='qd-b {cls}'><div class='qd-t'>{tit}</div><div class='qd-d'>{det}</div></div>"
         "<details class='qdd'><summary>Cosa è stato provato, e cosa non funziona</summary><div class='qd-x'>"
         "<p><b>A un mese e a tre mesi non c'è un segnale affidabile.</b> Sono stati messi in gara 81 candidati "
@@ -140,6 +161,9 @@ details.qdd[open]>summary::after{transform:rotate(225deg)}
         "appena sopra la soglia di 0,7460 che la migliore di 81 raggiunge per puro caso. Anche questo, quindi, è un "
         "indizio stretto e non una certezza.</p>"
         f"<p><b>Quando un indice resta sopra 60 per una settimana</b>, il calo dell'8% entro tre mesi è poi arrivato:</p><ul>{righe60}</ul>"
+        "<p><b>Il Sovraccarico non è un indice di rischio dimostrato.</b> Misura quanto il mercato è sbilanciato su pochi titoli e sulla tecnologia "
+        "e quanto in fretta lo sta diventando. Dal 1990 è un indizio che anticipa di mesi e non di giorni; prima del 1990 non funzionava. Non pesa su nessun altro indice, "
+        "e ogni giorno viene registrato per verificarlo in avanti.</p>"
         "<p>Gli episodi indipendenti sono pochi (da 17 a 68): sono ordini di grandezza, non probabilità precise. "
         "E un numero alto segnala turbolenza, non discesa sicura: in tutte le fasce il prezzo di un mese dopo è stato "
         "in mediana più alto.</p>"

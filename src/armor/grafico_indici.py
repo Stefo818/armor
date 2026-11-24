@@ -38,9 +38,10 @@ ZONE["super"] = ZONE["armor"]
 KIDS = {
     "armor": ["a_paura", "a_liquidita", "a_rimbalzo", "a_stress", "a_ciclo"],
     "super": ["p1", "p2", "p3", "p4", "p5", "p6", "i7", "i8"],
+    "sovr": ["sacc"],
 }
 PAR = {k: p for p, ks in KIDS.items() for k in ks}
-TAG = {"a_paura": "parte veloce", "a_liquidita": "parte veloce", "a_rimbalzo": "parte veloce",
+TAG = {"sacc": "quanto in fretta sale", "a_paura": "parte veloce", "a_liquidita": "parte veloce", "a_rimbalzo": "parte veloce",
        "a_stress": "parte lenta", "a_ciclo": "parte lenta", "i7": "solo informativo", "i8": "solo informativo"}
 for _k in PAR:
     ZONE[_k] = ZONE["armor"]
@@ -56,6 +57,22 @@ DESC.update({
     "i7": "Fondi a leva che riducono il rischio (percentuale rispetto alla storia disponibile, dal 2010). Solo informativo: provato come 7° pilastro, non è entrato nel Super Armor perché non lo migliorava.",
     "i8": "Valore di tutte le azioni USA diviso il PIL (indice Buffett), come percentuale rispetto alla storia. Solo informativo: provato come 8° pilastro, non è entrato nel Super Armor perché non lo migliorava.",
 })
+
+
+NOMI.update({"sovr": "Sovraccarico del mercato", "sacc": "Accelerazione dello sbilanciamento"})
+DESC.update({
+    "sovr": "Quanto il mercato americano è sbilanciato su pochi titoli e sulla tecnologia, rispetto alla sua storia (da 0 a 100: 80 vuol dire più sbilanciato dell'80% dei giorni dal 1971). "
+            "Non è un indice di rischio dimostrato: dal 1990 è un indizio, che anticipa di mesi e non di giorni. Peso zero negli altri indici.",
+    "sacc": "Quanto in fretta sale lo sbilanciamento del mercato (0-100, rispetto alla storia). Insieme al sovraccarico sopra 80 forma lo stato «sbilanciato e in accelerazione».",
+})
+_ZSOV = {"lim": [60, 80, 90], "col": ["#22c55e", "#f59e0b", "#ef4444", "#8b5cf6"], "nom": ["Nella norma", "Sbilanciato", "Molto sbilanciato", "Estremo"]}
+ZONE["sovr"] = _ZSOV
+ZONE["sacc"] = _ZSOV
+CFG_SOVR = {"val": 1, "dec": 0, "u": "", "pp": "sul giorno precedente", "def": 2,
+            "rng": [["1M", 30], ["3M", 91], ["1A", 365], ["5A", 1826], ["20A", 7305], ["Max", 0]],
+            "prev": [["Ieri", 1], ["Una settimana fa", 7], ["Due settimane fa", 14], ["Un mese fa", 30], ["3 mesi fa", 91], ["6 mesi fa", 182]],
+            "mean": [["Ultima settimana", 7], ["Ultimo mese", 30], ["Ultimi 3 mesi", 91]],
+            "hint": "Verde nella norma, giallo sbilanciato, rosso molto sbilanciato, viola estremo. Freccia rossa = oggi è più sbilanciato di allora. Fino al 2020 un punto a settimana."}
 
 
 def _serie(s: pd.Series) -> dict | None:
@@ -194,6 +211,14 @@ def dati() -> dict:
                 x = _serie(pct.dropna().reindex(d.index, method="ffill").dropna().clip(1, 100))
                 if x:
                     out[k] = x
+    except Exception:  # noqa: BLE001
+        pass
+    try:   # sovraccarico del mercato (concentrazione): serie gia' compatta, calcolata da concentrazione.run()
+        from . import concentrazione
+        cj = concentrazione.leggi()
+        for k, ch in (("sovr", "sovr"), ("sacc", "acc")):
+            if cj and cj["serie"].get(ch):
+                out[k] = cj["serie"][ch]
     except Exception:  # noqa: BLE001
         pass
     try:
@@ -343,7 +368,7 @@ function statsVal(){var n=T.length-1,box=document.getElementById('gi-st'),c=cfg(
 function tile(lbl,v,sub){var cc=zc(v);return '<div class="gi-c" style="--c:'+cc+'"><div class="gi-cn">'+fv(v)+'</div><div class="gi-cl">'+lbl+'</div><div class="gi-cs">'+sub+'</div></div>'}
 if(c.mean){h+='<div class="gi-sc">Valore medio</div><div class="gi-g">'+c.mean.map(function(m){var a=atDay(m[1]),s=0,k=0;for(var i=a+1;i<=n;i++){s+=V[i];k++}if(!k){s=V[n];k=1}return tile(m[0],s/k,m[1]+' giorni')}).join('')+'</div>'}
 h+='<div class="gi-sc">Com\u2019era prima</div><div class="gi-g">'+c.prev.map(function(m){var i=atDay(m[1]),df=V[n]-V[i],cl=Math.abs(df)<.05?'var(--mu)':df>0?'var(--bad)':'var(--ok)';return tile(m[0],V[i],dshort(T[i])+' \u00b7 <b style="color:'+cl+'">'+(Math.abs(df)<.05?'=':(df>0?'\u25b2 ':'\u25bc ')+it(Math.abs(df),c.dec||0))+'</b>')}).join('')+'</div>';
-h+='<div class="gi-hint" style="margin-top:6px">Colori rispetto alla storia: verde nella norma, giallo sopra la norma, rosso caro, viola estremo. Freccia rossa = oggi \u00e8 pi\u00f9 caro di allora.</div>';
+h+='<div class="gi-hint" style="margin-top:6px">'+(c.hint||'Colori rispetto alla storia: verde nella norma, giallo sopra la norma, rosso caro, viola estremo. Freccia rossa = oggi \u00e8 pi\u00f9 caro di allora.')+'</div>';
 box.innerHTML=h}
 function stats(){if(cfg().val)return statsVal();var n=T.length-1,box=document.getElementById('gi-st'),h='';
 function tile(lbl,v,sub){var c=zc(v);return '<div class="gi-c" style="--c:'+c+'"><div class="gi-cn">'+it(v)+'</div><div class="gi-cl">'+lbl+'</div><div class="gi-cs">'+sub+'</div></div>'}
@@ -354,7 +379,7 @@ h+='<div class="gi-sc">Com’era prima</div><div class="gi-g">'+prev('Ieri',1)+p
 h+='<div class="gi-hint" style="margin-top:6px">La freccia mostra di quanto è cambiato l’indice da allora a oggi: rossa se il rischio è salito, verde se è sceso.</div>';
 box.innerHTML=h}
 function kids(k){var box=document.getElementById('gi-kd'),ks=(KD.kids[k]||[]).filter(function(x){return S[x]});if(!ks.length){box.innerHTML='';return}
-var h='<div class="gi-kt">'+(k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
+var h='<div class="gi-kt">'+(k==='sovr'?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
 h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
 box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}
@@ -401,6 +426,14 @@ def html() -> str:
     vser, vcfg, vzone = val_cfg()
     zone = {k: {"lim": ZONE[k]["lim"], "col": ZONE[k]["col"], "nom": ZONE[k]["nom"]} for k in d if k in ZONE}
     zone.update(vzone)
+    vcfg = {**vcfg, "sovr": CFG_SOVR, "sacc": CFG_SOVR}
+    try:
+        from . import concentrazione
+        cj = concentrazione.leggi()
+        if cj:
+            DESC["sovr"] = DESC["sovr"] + " " + cj["testo"]["dettaglio"]
+    except Exception:  # noqa: BLE001
+        pass
     return (
         CSS
         + f"<script type='application/json' id='gi-dati'>{json.dumps(d, separators=(',', ':'))}</script>"

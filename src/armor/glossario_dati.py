@@ -212,6 +212,7 @@ def _archivio(k: str):
         n, c = _SINGOLE[k]
         return (f"{n}. {c}", "Per ora non entra in nessun indice: è un archivio per cercare segnali che anticipano le correzioni.", "Si legge come ogni serie storica: conta il confronto con il passato.", "Yahoo Finance.")
     for pre, cosa, fonte in (
+            ("cn_", "Prezzo di chiusura di un indice o di un fondo usato per misurare lo sbilanciamento del mercato su pochi titoli e sulla tecnologia (Sovraccarico del mercato).", "Yahoo Finance."),
             ("xv_", "Volume giornaliero scambiato (quante quote o azioni passano di mano in un giorno) di uno strumento di Borsa.", "Yahoo Finance, dal 2015."),
             ("x_", "Prezzo di chiusura giornaliero di un indice, di un fondo (ETF), di una valuta, di una materia prima o di una criptovaluta, archiviato per le ricerche future.", "Yahoo Finance."),
             ("f_", "Serie economica o finanziaria della Federal Reserve (tassi, credito, lavoro, prezzi, produzione, cambi), archiviata per le ricerche future.", "FRED, Federal Reserve di St. Louis."),

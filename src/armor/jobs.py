@@ -414,6 +414,11 @@ def tutto(skip_download: bool = False) -> None:
         candidati.run(closed_sp500())
     except Exception as e:  # noqa: BLE001
         print("[grandi fondi] non aggiornati:", str(e)[:100])
+    try:   # sovraccarico del mercato (concentrazione): informativo, peso zero, registro giornaliero per la verifica in avanti
+        from . import concentrazione
+        concentrazione.run()
+    except Exception as e:  # noqa: BLE001
+        print("[concentrazione] non aggiornata:", str(e)[:100])
     try:   # classifica dei modelli (voto 1-100), una riga per modello al giorno
         from . import classifica
         classifica.registra(str(closed_sp500().index[-1].date()))

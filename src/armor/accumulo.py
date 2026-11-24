@@ -36,6 +36,7 @@ from .config import DATA
 from .guard import run_parallel
 
 UA = {"User-Agent": "Mozilla/5.0 (Armor personal research)"}
+BROWSER = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36", "Accept": "*/*", "Accept-Language": "en-US,en;q=0.9"}
 STATO = DATA / "accumulo_stato.json"
 
 # ----------------------------------------------------------------------------- elenchi
@@ -72,11 +73,11 @@ BACTSAMFRBDAL TOTALSA CFNAIMA3 CFNAIDIFF USSLIND TLAACBW027SBOG GFDEGDQ188S HDTG
 DEXJPUS DEXUSUK DEXCHUS DEXSZUS DEXCAUS DEXMXUS DEXINUS DEXBZUS DEXKOUS DTWEXAFEGS DTWEXEMEGS
 IRLTLT01DEM156N IRLTLT01JPM156N IRLTLT01GBM156N IRLTLT01ITM156N IRLTLT01FRM156N IRSTCI01EZM156N IR3TIB01EZM156N CP0000EZ19M086NEST LRHUTTTTEZM156S LRHUTTTTJPM156S ECBASSETSW JPNASSETS
 DCOILWTICO DCOILBRENTEU DHHNGSP GASREGW PCOPPUSDM PALUMUSDM PNGASEUUSDM PWHEAMTUSDM PCOTTINDUSDM
-NASDAQCOM DJIA WILL5000INDFC WILL5000PR NIKKEI225 SP500 BOGZ1LM153064486Q
+NASDAQCOM DJIA NIKKEI225 SP500 BOGZ1LM153064486Q
 RECPROUSM156N SAHMREALTIME USREC STLENI
 RRPONTSYD RPONTSYD RRPONTTLD WTREGEN WDTGAL WLCFLPCL WLCFLSECW SWPT WALCL WSHOICB WSHOTSL WSHOFDSL WORAL WRESBAL WGCAL H41RESPPALGTRFNWW
-THREEFYTP10 ACMTP10 ACMTP02 THREEFF1 T10Y2Y T10Y3M T10YIE T5YIE DFF DAAA DBAA AAA10Y BAA10Y TEDRATE USD3MTD156N USD1MTD156N
-STLFSI4 STLFSI3 OFRFSI DRTSCILM DRTSCIS DRTSSP DEMDEBT DRCLACBS NETFI NETMANUALLIQ TOTBKCR LOANS INVEST TLAACBW027SBOG DPSACBW027SBOG
+THREEFYTP10 ACMTP10 ACMTP02 THREEFF1 T10Y2Y T10Y3M T10YIE T5YIE DFF DAAA DBAA AAA10Y BAA10Y TEDRATE
+STLFSI4 STLFSI3 DRTSCILM DRTSCIS DRTSSP DEMDEBT DRCLACBS NETFI NETMANUALLIQ TOTBKCR LOANS INVEST TLAACBW027SBOG DPSACBW027SBOG
 GDPNOW WEI ICSA IC4WSA CCSA CONTCLAIMS UMCSENT CSCICP03USM665S IHLIDXUS IHLIDXUSTPSOFTDEVE RETAILSMSA RSAFS RSXFS TOTALSA MRTSSM44X72USS
 GACDISA066MSFRBNY GACDFSA066MSFRBPHI BACTSAMFRBDAL TXFSIRCP MANEMP USCONS USGOOD USTPU AWHMAN PERMIT HSN1F MORTGAGE5US MSPUS ASPUS
 DTWEXBGS DEXUSEU DEXUSAL DEXUSNZ DEXTHUS DEXSIUS DEXHKUS DEXMAUS DEXTAUS DEXVZUS DEXSFUS
@@ -201,30 +202,127 @@ def aggiorna_yahoo(stato: dict) -> None:
 
 
 # ----------------------------------------------------------------------------- FRED
+_FRED_LOCK = threading.Lock()
+_FRED_ULTIMA = [0.0]
+FRED_INVALIDE = DATA / "accumulo_fred_invalide.json"   # codici che FRED dichiara inesistenti: non si richiedono piu'
+
+
+def _fred_pausa(intervallo: float = 0.7) -> None:
+    """FRED accetta circa 120 richieste al minuto: una ogni 0,7 secondi in tutto il programma, qualunque sia il numero di thread."""
+    with _FRED_LOCK:
+        att = _FRED_ULTIMA[0] + intervallo - time.time()
+        if att > 0:
+            time.sleep(att)
+        _FRED_ULTIMA[0] = time.time()
+
+
+class FredInesistente(RuntimeError):
+    pass
+
+
+def fetch_fred_acc(code: str, start: str | None = None, chiave: str | None = None) -> pd.Series:
+    """FRED per l'accumulo: solo API ufficiale (il CSV pubblico da GitHub resta appeso), ritmo controllato,
+    attesa e nuovo tentativo su «troppe richieste», messaggio vero di FRED nell'errore."""
+    import os
+    key = (chiave if chiave is not None else os.environ.get("FRED_API_KEY", "")).strip()
+    if not key:
+        return sources.fetch_fred(code, start)
+    url = f"https://api.stlouisfed.org/fred/series/observations?series_id={code}&api_key={key}&file_type=json"
+    if start:
+        url += f"&observation_start={start}"
+    ultimo = ""
+    for i in range(4):
+        _fred_pausa()
+        try:
+            r = requests.get(url, timeout=45)
+        except requests.RequestException as e:
+            ultimo = type(e).__name__
+            time.sleep(3)
+            continue
+        if r.status_code == 429:
+            ultimo = "429 troppe richieste"
+            time.sleep(15 * (i + 1))
+            continue
+        if r.status_code == 200:
+            return sources.parse_fred_json(r.text)
+        try:
+            msg = str(r.json().get("error_message", ""))[:80]
+        except ValueError:
+            msg = r.text[:80]
+        if r.status_code == 400 and "does not exist" in msg.lower():
+            raise FredInesistente(f"FRED: la serie {code} non esiste ({msg})")
+        ultimo = f"{r.status_code} {msg}".replace(key, "***")
+        if r.status_code in (400, 401, 403, 404):
+            break
+    raise RuntimeError(f"FRED {code}: {ultimo}")
+
+
 def aggiorna_fred(stato: dict) -> None:
     ids = {"f_" + c.lower(): c for c in FRED_EXT}
     gia = set(sources.FRED.values())
     ids = {k: c for k, c in ids.items() if c not in gia}
+    try:
+        invalide = set(json.loads(FRED_INVALIDE.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        invalide = set()
+    saltate = sorted(c for c in ids.values() if c in invalide)
+    ids = {k: c for k, c in ids.items() if c not in invalide}
 
     def mk(sid, code):
         def job():
             old = store.load(sid)
             start = None if old.empty else (old.index[-1] - timedelta(days=400)).strftime("%Y-%m-%d")
-            return store.upsert(sid, sources.fetch_fred(code, start))
+            try:
+                return store.upsert(sid, fetch_fred_acc(code, start))
+            except FredInesistente:
+                invalide.add(code)
+                raise
         return job
-    res = run_parallel({k: mk(k, c) for k, c in ids.items()}, workers=4, deadline=480)
+    res = run_parallel({k: mk(k, c) for k, c in ids.items()}, workers=3, deadline=900)
+    if invalide:
+        FRED_INVALIDE.write_text(json.dumps(sorted(invalide)), encoding="utf-8")
     ok = [k for k, (t, _) in res.items() if t == "ok"]
     err = {k: str(v)[:60] for k, (t, v) in res.items() if t != "ok"}
-    stato["fred"] = {"richieste": len(ids), "riuscite": len(ok), "nuove_righe": int(sum(v for k, (t, v) in res.items() if t == "ok")), "fallite": err}
+    stato["fred"] = {"richieste": len(ids), "riuscite": len(ok), "nuove_righe": int(sum(v for k, (t, v) in res.items() if t == "ok")), "fallite": err,
+                     "codici_inesistenti_saltati": saltate}
     print(f"[accumulo] FRED: {len(ok)}/{len(ids)}", flush=True)
 
 
 # ----------------------------------------------------------------------------- CBOE put/call
+def parse_cboe_pc_largo(text: str) -> pd.Series:
+    """Come sources.parse_cboe_pc ma tollera intestazioni diverse (S&P 500, VIX): cerca la riga con DATE e, se manca
+    la colonna del rapporto, lo ricava da put e call."""
+    try:
+        return sources.parse_cboe_pc(text)
+    except Exception:  # noqa: BLE001
+        pass
+    righe = text.splitlines()
+    k = next((i for i, ln in enumerate(righe) if "DATE" in ln.upper() and "," in ln), None)
+    if k is None:
+        raise RuntimeError("CBOE: intestazione non trovata")
+    df = pd.read_csv(io.StringIO("\n".join(righe[k:])))
+    df.columns = [str(c).strip().upper() for c in df.columns]
+    dc = next(c for c in df.columns if "DATE" in c)
+    idx = pd.to_datetime(df[dc], errors="coerce")
+    col = next((c for c in df.columns if "P/C" in c or "RATIO" in c), None)
+    if col is not None:
+        v = pd.to_numeric(df[col], errors="coerce")
+    else:
+        pc = next(c for c in df.columns if "PUT" in c and "RATIO" not in c)
+        cc = next(c for c in df.columns if "CALL" in c and "RATIO" not in c)
+        v = pd.to_numeric(df[pc], errors="coerce") / pd.to_numeric(df[cc], errors="coerce")
+    s = pd.Series(v.values, index=idx).dropna()
+    s = s[s > 0]
+    if s.empty:
+        raise RuntimeError("CBOE: nessun valore")
+    return s
+
+
 def aggiorna_cboe_pc(stato: dict) -> None:
     ok, err = 0, {}
     for nome, f in CBOE_PC.items():
         try:
-            s = sources.parse_cboe_pc(sources._get(CBOE_URL.format(f), tries=2).text)
+            s = parse_cboe_pc_largo(sources._get(CBOE_URL.format(f), tries=1).text)
             store.upsert("cboe_pc_" + nome, s)
             ok += 1
         except Exception as e:  # noqa: BLE001
@@ -390,6 +488,36 @@ def riepilogo_catena(j: dict, data: str, simbolo: str) -> list[dict]:
     return out
 
 
+def catena_yahoo(sym: str, max_scadenze: int = 8) -> dict:
+    """Riserva quando CBOE rifiuta: catena di opzioni da Yahoo, riportata nello stesso formato di CBOE
+    (volatilita' di Yahoo; delta e gamma ricavati con Black-Scholes, tasso 4%, senza dividendi)."""
+    import yfinance as yf
+    from scipy.stats import norm
+    ticker = {"_SPX": "^SPX", "_VIX": "^VIX"}.get(sym, sym)
+    t = yf.Ticker(ticker)
+    spot = float(t.fast_info["last_price"])
+    oggi = pd.Timestamp(datetime.now(timezone.utc).date())
+    radice = sym.strip("_")
+    opzioni = []
+    for exp in list(t.options)[:max_scadenze]:
+        T = max((pd.Timestamp(exp) - oggi).days, 1) / 365.0
+        ch = t.option_chain(exp)
+        for tipo, df in (("C", ch.calls), ("P", ch.puts)):
+            for _, r in df.iterrows():
+                iv = float(r.get("impliedVolatility") or 0)
+                k = float(r["strike"])
+                if iv <= 0.01 or k <= 0:
+                    continue
+                d1 = (np.log(spot / k) + (0.04 + iv * iv / 2) * T) / (iv * np.sqrt(T))
+                delta = norm.cdf(d1) if tipo == "C" else norm.cdf(d1) - 1
+                gamma = norm.pdf(d1) / (spot * iv * np.sqrt(T))
+                vol = r.get("volume")
+                oi = r.get("openInterest")
+                opzioni.append({"option": f"{radice}{pd.Timestamp(exp).strftime('%y%m%d')}{tipo}{int(round(k * 1000)):08d}", "iv": iv, "delta": float(delta),
+                                "gamma": float(gamma), "volume": 0 if pd.isna(vol) else float(vol), "open_interest": 0 if pd.isna(oi) else float(oi)})
+    return {"data": {"current_price": spot, "options": opzioni}}
+
+
 def aggiorna_opzioni(stato: dict) -> None:
     oggi = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     base = DATA / "opzioni_ext"
@@ -397,9 +525,12 @@ def aggiorna_opzioni(stato: dict) -> None:
 
     def mk(sym):
         def job():
-            r = requests.get(CBOE_OPT.format(sym), headers=UA, timeout=60)
-            r.raise_for_status()
-            return riepilogo_catena(r.json(), oggi, sym.strip("_"))
+            try:
+                r = requests.get(CBOE_OPT.format(sym), headers={**BROWSER, "Referer": "https://www.cboe.com/", "Origin": "https://www.cboe.com"}, timeout=60)
+                r.raise_for_status()
+                return riepilogo_catena(r.json(), oggi, sym.strip("_"))
+            except Exception:  # noqa: BLE001
+                return riepilogo_catena(catena_yahoo(sym), oggi, sym.strip("_"))   # CBOE rifiuta i server di GitHub: si ripiega su Yahoo
         return job
     res = run_parallel({s: mk(s) for s in OPZIONI}, workers=3, deadline=240)
     righe, err = [], {}

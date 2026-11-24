@@ -17,18 +17,33 @@ from . import store
 from .config import DATA
 from .guard import run_parallel
 
-UA = {"User-Agent": "Mozilla/5.0 (Armor personal research)"}
+UA = {"User-Agent": "ArmorResearch/1.0 (+https://github.com/Stefo818/armor; ricerca personale)"}   # Wikimedia e altri chiedono un nome riconoscibile
+BROWSER = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+           "Accept": "*/*", "Accept-Language": "en-US,en;q=0.9"}   # per i siti che rifiutano i programmi (CBOE, AAII)
 
 
-def _get(url: str, tries: int = 3, timeout: int = 60, **kw) -> requests.Response:
+def _get(url: str, tries: int = 3, timeout: int = 60, headers: dict | None = None, **kw) -> requests.Response:
+    """Scarica con nuovi tentativi. Se il sito dice «troppe richieste» (429) aspetta quanto indicato e riprova;
+    con 400/401/403/404 non insiste (riprovare non serve e fa solo perdere tempo)."""
     last = None
     for i in range(tries):
         try:
-            r = requests.get(url, headers=UA, timeout=timeout, **kw)
+            r = requests.get(url, headers=headers or UA, timeout=timeout, **kw)
+            if r.status_code == 429:
+                try:
+                    att = int(r.headers.get("Retry-After", 20))
+                except ValueError:
+                    att = 20
+                last = RuntimeError("429 troppe richieste")
+                time.sleep(min(60, max(5, att)))
+                continue
             r.raise_for_status()
             return r
         except Exception as e:  # noqa: BLE001
             last = e
+            cod = getattr(getattr(e, "response", None), "status_code", None)
+            if cod in (400, 401, 403, 404):
+                break
             time.sleep(2 * 2 ** i)
     raise RuntimeError(str(last)[:100])
 
@@ -133,12 +148,24 @@ def parse_tga(j: dict) -> pd.Series:
         righe = [r for r in j.get("data", []) if "clos" in str(r.get("account_type", "")).lower()]
     s = {}
     for r in righe:
-        v = r.get("close_today_bal") or r.get("open_today_bal")
-        try:
-            s[pd.Timestamp(r["record_date"])] = float(v)
-        except (TypeError, ValueError, KeyError):
-            continue
+        for campo in ("close_today_bal", "open_today_bal"):   # l'API scrive "null" come testo nel campo vuoto
+            try:
+                s[pd.Timestamp(r["record_date"])] = float(r.get(campo))
+                break
+            except (TypeError, ValueError, KeyError):
+                continue
     return pd.Series(s, dtype=float).sort_index()
+
+
+def _fd_righe(url: str, pagine: int = 12) -> list[dict]:
+    """Legge tutte le pagine di un dataset FiscalData (10.000 righe per pagina)."""
+    out: list[dict] = []
+    for n in range(1, pagine + 1):
+        j = _get(f"{url}&page[size]=10000&page[number]={n}").json()
+        out += j.get("data", [])
+        if len(j.get("data", [])) < 10000:
+            break
+    return out
 
 
 COL_ASTE = ["auction_date", "issue_date", "security_type", "security_term", "cusip", "offering_amt", "total_tendered", "total_accepted", "bid_to_cover_ratio",
@@ -152,15 +179,14 @@ def aggiorna_fiscal(stato: dict) -> None:
     try:
         old = store.load("fisc_tga_milioni")
         da = "2005-01-01" if old.empty else (old.index[-1] - timedelta(days=15)).strftime("%Y-%m-%d")
-        j = _get(f"{FD}accounting/dts/operating_cash_balance?filter=record_date:gte:{da}&sort=record_date&page[size]=10000").json()
-        out["tga_nuove"] = store.upsert("fisc_tga_milioni", parse_tga(j))
+        out["tga_nuove"] = store.upsert("fisc_tga_milioni", parse_tga({"data": _fd_righe(f"{FD}accounting/dts/operating_cash_balance?filter=record_date:gte:{da}&sort=record_date")}))
     except Exception as e:  # noqa: BLE001
         out["tga_errore"] = str(e)[:60]
     try:
         old = store.load("fisc_debito_pubblico")
         da = "2000-01-01" if old.empty else (old.index[-1] - timedelta(days=15)).strftime("%Y-%m-%d")
-        j = _get(f"{FD}accounting/od/debt_to_penny?filter=record_date:gte:{da}&sort=record_date&page[size]=10000").json()
-        s = pd.Series({pd.Timestamp(r["record_date"]): float(r["tot_pub_debt_out_amt"]) for r in j.get("data", [])}).sort_index()
+        righe = _fd_righe(f"{FD.replace('/v1/', '/v2/')}accounting/od/debt_to_penny?filter=record_date:gte:{da}&sort=record_date")
+        s = pd.Series({pd.Timestamp(r["record_date"]): float(r["tot_pub_debt_out_amt"]) for r in righe}).sort_index()
         out["debito_nuove"] = store.upsert("fisc_debito_pubblico", s)
     except Exception as e:  # noqa: BLE001
         out["debito_errore"] = str(e)[:60]
@@ -256,6 +282,8 @@ GDELT = {"crollo_borsa": '"stock market crash"', "recessione": "recession", "cri
 
 
 def parse_gdelt(txt: str) -> pd.Series:
+    if "," not in txt[:300]:
+        raise RuntimeError("GDELT: risposta vuota o non CSV")
     df = pd.read_csv(io.StringIO(txt))
     col = [c for c in df.columns if c.lower() == "value"][0]
     dcol = [c for c in df.columns if c.lower() == "date"][0]
@@ -272,7 +300,7 @@ def aggiorna_gdelt(stato: dict) -> None:
                 n += store.upsert(f"gdelt_{nome}_{suff}", parse_gdelt(r.text))
             except Exception as e:  # noqa: BLE001
                 err[f"{nome}_{suff}"] = str(e)[:50]
-            time.sleep(6)   # il servizio accetta una richiesta ogni 5 secondi
+            time.sleep(9)   # il servizio accetta una richiesta ogni 5 secondi: meglio stare larghi
     stato["gdelt_notizie"] = {"righe_nuove": n, "fallite": err}
 
 
@@ -286,7 +314,7 @@ def aggiorna_cripto(stato: dict) -> None:
     except Exception as e:  # noqa: BLE001
         out["stablecoin_errore"] = str(e)[:60]
     try:
-        j = _get("https://api.llama.fi/v2/historicalChartTvl").json()
+        j = _get("https://api.llama.fi/v2/historicalChainTvl").json()
         s = pd.Series({pd.Timestamp(int(i["date"]), unit="s"): float(i["tvl"]) for i in j})
         out["tvl"] = store.upsert("cripto_defi_tvl_usd", s.sort_index())
     except Exception as e:  # noqa: BLE001
@@ -318,7 +346,15 @@ def aggiorna_nyfed(stato: dict) -> None:
     n, err = 0, {}
     for tasso in ("sofr", "tgcr", "bgcr"):
         try:
-            j = _get(f"https://markets.newyorkfed.org/api/rates/secured/{tasso}/last/1500.json").json()
+            j = None
+            for n_giorni in (1000, 500, 250, 100):   # un numero troppo alto viene rifiutato: si scende finche' risponde
+                try:
+                    j = _get(f"https://markets.newyorkfed.org/api/rates/secured/{tasso}/last/{n_giorni}.json", tries=1).json()
+                    break
+                except Exception:  # noqa: BLE001
+                    continue
+            if j is None:
+                raise RuntimeError("nessun intervallo accettato")
             for suff, s in parse_nyfed(j, campi).items():
                 if len(s):
                     n += store.upsert(f"nyfed_{tasso}_{suff}", s)
@@ -434,7 +470,7 @@ def aggiorna_vix_future(stato: dict) -> None:
         k = d.strftime("%Y-%m-%d")
         try:
             r = requests.get(f"https://cdn.cboe.com/data/us/futures/market_statistics/historical_data/VX/VX_{k}.csv", headers=UA, timeout=60)
-            if r.status_code == 404:
+            if r.status_code in (403, 404):   # scadenza non ancora listata
                 continue
             r.raise_for_status()
             txt = "\n".join(l for l in r.text.splitlines() if l.strip() and not l.lower().startswith(("product", "cboe")))
@@ -462,7 +498,7 @@ def parse_aaii(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def aggiorna_aaii(stato: dict) -> None:
-    r = _get("https://www.aaii.com/files/surveys/sentiment.xls")
+    r = _get("https://www.aaii.com/files/surveys/sentiment.xls", tries=2, headers={**BROWSER, "Referer": "https://www.aaii.com/sentimentsurvey/sent_results"})
     df = pd.read_excel(io.BytesIO(r.content), header=None)
     t = parse_aaii(df)
     t = t / 100.0 if t.max().max() > 1.5 else t
@@ -645,7 +681,7 @@ def aggiorna_short_interest(stato: dict) -> None:
     pezzi, assenti = [], 0
     for d in date_short_interest(pd.Timestamp(datetime.now(timezone.utc).date())):
         r = requests.get(f"https://cdn.finra.org/equity/otcmarket/biweekly/shrt{d}.csv", headers=UA, timeout=90)
-        if r.status_code == 404:
+        if r.status_code in (403, 404):   # il sito risponde 403 quando il file di quella data non esiste ancora
             assenti += 1
             continue
         r.raise_for_status()

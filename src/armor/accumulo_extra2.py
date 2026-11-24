@@ -16,7 +16,7 @@ import pandas as pd
 import requests
 
 from . import store
-from .accumulo_extra import UA, _get, slug
+from .accumulo_extra import BROWSER, UA, _get, slug
 from .config import DATA
 
 
@@ -186,6 +186,13 @@ GNEWS = {"corsa_agli_sportelli": '"bank run"', "margin_call": '"margin call"', "
 
 
 def parse_rss(txt: str) -> list[dict]:
+    txt = txt.lstrip("\ufeff \r\n\t")
+    if "<" in txt:
+        txt = txt[txt.index("<"):]
+    if txt[:15].lower().startswith(("<!doctype html", "<html")):
+        raise RuntimeError("pagina web al posto del feed (accesso rifiutato)")
+    if txt.startswith("<?xml"):
+        txt = txt.split("?>", 1)[-1]   # dichiarazione di codifica: ElementTree non la vuole in un testo gia' decodificato
     root = ET.fromstring(txt)
     out = []
     for it in list(root.iter("item")) + list(root.iter("{http://www.w3.org/2005/Atom}entry")):
@@ -212,7 +219,7 @@ def aggiorna_testi(stato: dict) -> None:
     righe, err = [], {}
     for nome, url in FEED.items():
         try:
-            righe += [{**r, "fonte": nome} for r in parse_rss(_get(url, tries=2).text)]
+            righe += [{**r, "fonte": nome} for r in parse_rss(_get(url, tries=2, headers=BROWSER).text)]
         except Exception as e:  # noqa: BLE001
             err[nome] = str(e)[:50]
     conteggi = {}
