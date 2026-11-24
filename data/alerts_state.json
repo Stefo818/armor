@@ -7,7 +7,7 @@
  },
  "regime": "Calma",
  "vix": "stress",
- "aix_band": "elevato",
+ "aix_band": "moderato",
  "divergence": false,
  "event": "2026-11-10",
  "minimi": {
@@ -19,6 +19,6 @@
  "fase": "Rischio di contrazione lunga",
  "t1": false,
  "crescita": "verde",
- "sent_day": "2026-11-23",
+ "sent_day": "2026-11-24",
  "move_day": "2026-11-22"
 }

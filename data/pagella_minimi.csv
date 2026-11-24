@@ -59,3 +59,7 @@ date,serie,scala,verdetto,q,candidato
 2026-11-23,usd,1m,non_ancora,0.3953,0
 2026-11-23,usd,3m,non_ancora,0.4463,0
 2026-11-23,usd,1a,non_ancora,0.533,0
+2026-11-23,eur,1s,non_ancora,0.5308,0
+2026-11-23,eur,1m,non_ancora,0.4233,0
+2026-11-23,eur,3m,non_ancora,0.4743,1
+2026-11-23,eur,1a,non_ancora,0.5263,0

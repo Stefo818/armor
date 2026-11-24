@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-24T07:05:09Z",
+ "data_utc": "2026-11-24T14:21:30Z",
  "oggi": "2026-11-24",
  "ultima_previsione": "2026-11-23",
  "giorni_da_ultima": 1,
@@ -43,8 +43,8 @@
   {
    "nome": "armor_index",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -78,8 +78,8 @@
   {
    "nome": "bce_ciss_area_euro",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -92,43 +92,43 @@
   {
    "nome": "bce_ciss_francia",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_germania",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_italia",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_regno_unito",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_spagna",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_usa",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -169,43 +169,43 @@
   {
    "nome": "bce_rend_aaa_10a",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_aaa_2a",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_aaa_30a",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_tutti_10a",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_tutti_2a",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_tutti_30a",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -246,8 +246,8 @@
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -293,7 +293,21 @@
    "stato": "warning"
   },
   {
+   "nome": "cboe_pc_spx",
+   "chiave": false,
+   "ultima_data": "2019-10-04",
+   "giorni_ritardo": 2608,
+   "stato": "warning"
+  },
+  {
    "nome": "cboe_pc_totale",
+   "chiave": false,
+   "ultima_data": "2019-10-04",
+   "giorni_ritardo": 2608,
+   "stato": "warning"
+  },
+  {
+   "nome": "cboe_pc_vix",
    "chiave": false,
    "ultima_data": "2019-10-04",
    "giorni_ritardo": 2608,
@@ -330,8 +344,8 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -339,6 +353,76 @@
    "chiave": false,
    "ultima_data": "2026-11-14",
    "giorni_ritardo": 10,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_gspc",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_ixic",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_mid",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_ndx",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_nya",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_oex",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_rsp",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_spxew",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_spy",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cn_xlk",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -462,6 +546,13 @@
   },
   {
    "nome": "cripto_capitalizzazione_totale_usd",
+   "chiave": false,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
+   "stato": "ok"
+  },
+  {
+   "nome": "cripto_defi_tvl_usd",
    "chiave": false,
    "ultima_data": "2026-11-24",
    "giorni_ritardo": 0,
@@ -2766,50 +2857,50 @@
   {
    "nome": "di_vix_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_barre",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -3795,8 +3886,8 @@
   {
    "nome": "epu",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -3816,8 +3907,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5557,6 +5648,20 @@
    "stato": "ok"
   },
   {
+   "nome": "fisc_debito_pubblico",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 4,
+   "stato": "ok"
+  },
+  {
+   "nome": "fisc_tga_milioni",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 4,
+   "stato": "ok"
+  },
+  {
    "nome": "ftsemib",
    "chiave": false,
    "ultima_data": "2026-11-23",
@@ -6077,8 +6182,8 @@
   {
    "nome": "mweq",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -6156,6 +6261,132 @@
    "chiave": false,
    "ultima_data": "2026-11-24",
    "giorni_ritardo": 0,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_bgcr_p1",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_bgcr_p25",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_bgcr_p75",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_bgcr_p99",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_bgcr_tasso",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_bgcr_volume_mld",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_sofr_p1",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_sofr_p25",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_sofr_p75",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_sofr_p99",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_sofr_tasso",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_sofr_volume_mld",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_tgcr_p1",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_tgcr_p25",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_tgcr_p75",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_tgcr_p99",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_tgcr_tasso",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "nyfed_tgcr_volume_mld",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -7344,8 +7575,8 @@
   {
    "nome": "vwce_de",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -7384,7 +7615,21 @@
    "stato": "ok"
   },
   {
+   "nome": "wiki_bank_failure",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "wiki_bank_run",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_bankruptcy",
    "chiave": false,
    "ultima_data": "2026-11-22",
    "giorni_ritardo": 2,
@@ -7400,8 +7645,8 @@
   {
    "nome": "wiki_bitcoin",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7412,10 +7657,150 @@
    "stato": "ok"
   },
   {
+   "nome": "wiki_capital_control",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_credit_crunch",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_credit_default_swap",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_currency_crisis",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "wiki_de_2008_financial_crisis",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_bailout",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_bank_run",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_bankruptcy",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_bitcoin",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_black_monday_1987",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_capital_control",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_credit_crunch",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_credit_default_swap",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_currency_crisis",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_default_finance",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_deflation",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_dot_com_bubble",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_federal_reserve",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_gold_as_an_investment",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_great_depression",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_de_great_recession",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7463,8 +7848,8 @@
   {
    "nome": "wiki_de_margin_finance",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7489,6 +7874,13 @@
    "stato": "warning"
   },
   {
+   "nome": "wiki_de_short_finance",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "wiki_de_silicon_valley_bank",
    "chiave": false,
    "ultima_data": "2026-11-22",
@@ -7498,57 +7890,57 @@
   {
    "nome": "wiki_de_sovereign_default",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_de_stagflation",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_de_stock_market",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_de_stock_market_bubble",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_de_stock_market_crash",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_de_unemployment",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_de_yield_curve",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_debt_ceiling",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7559,24 +7951,150 @@
    "stato": "ok"
   },
   {
+   "nome": "wiki_deflation",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "wiki_dot_com_bubble",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_es_2008_financial_crisis",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_bailout",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_bank_run",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_bankruptcy",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_bitcoin",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_black_monday_1987",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_capital_control",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_credit_crunch",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_credit_default_swap",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_currency_crisis",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_es_debt_limit",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_default_finance",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_deflation",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_dot_com_bubble",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_federal_reserve",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_great_depression",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_great_recession",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_hedge_fund",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_es_hyperinflation",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7610,8 +8128,8 @@
   {
    "nome": "wiki_es_margin_finance",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7638,8 +8156,8 @@
   {
    "nome": "wiki_es_short_finance",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7664,6 +8182,13 @@
    "stato": "ok"
   },
   {
+   "nome": "wiki_es_stock_market",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "wiki_es_stock_market_bubble",
    "chiave": false,
    "ultima_data": "2026-11-21",
@@ -7673,29 +8198,36 @@
   {
    "nome": "wiki_es_stock_market_crash",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_es_subprime_mortgage_crisis",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_es_unemployment",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_es_yield_curve",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_federal_reserve",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7708,15 +8240,141 @@
   {
    "nome": "wiki_fr_2008_financial_crisis",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_fr_bank_failure",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_bank_run",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_bankruptcy",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_bitcoin",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_black_monday_1987",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_capital_control",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_credit_crunch",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_credit_default_swap",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_currency_crisis",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_default_finance",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_deflation",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_dot_com_bubble",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_federal_reserve",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_gold_as_an_investment",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_great_depression",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_great_recession",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_hedge_fund",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_hyperinflation",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_fr_inflation",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7771,8 +8429,8 @@
   {
    "nome": "wiki_fr_short_finance",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7799,57 +8457,57 @@
   {
    "nome": "wiki_fr_stock_market",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_fr_stock_market_bubble",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_fr_stock_market_crash",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_fr_subprime_mortgage_crisis",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_fr_unemployment",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_fr_yield_curve",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_gold_as_an_investment",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_great_depression",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -7867,6 +8525,13 @@
    "stato": "ok"
   },
   {
+   "nome": "wiki_hyperinflation",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "wiki_inflation",
    "chiave": false,
    "ultima_data": "2026-11-22",
@@ -7875,6 +8540,13 @@
   },
   {
    "nome": "wiki_interest_rate",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_it_2008_financial_crisis",
    "chiave": false,
    "ultima_data": "2026-11-22",
    "giorni_ritardo": 2,
@@ -7917,6 +8589,34 @@
   },
   {
    "nome": "wiki_it_credit_crunch",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_it_credit_default_swap",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_it_debt_limit",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_it_default_finance",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_it_deflation",
    "chiave": false,
    "ultima_data": "2026-11-22",
    "giorni_ritardo": 2,
@@ -7986,6 +8686,13 @@
    "stato": "ok"
   },
   {
+   "nome": "wiki_it_margin_finance",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "wiki_it_market_trend",
    "chiave": false,
    "ultima_data": "2026-11-22",
@@ -7995,71 +8702,99 @@
   {
    "nome": "wiki_it_quantitative_easing",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_it_recession",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_it_short_finance",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_it_silicon_valley_bank",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_it_sovereign_default",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_it_stagflation",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_it_stock_market",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_it_stock_market_crash",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_it_subprime_mortgage_crisis",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_it_unemployment",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_it_yield_curve",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_layoff",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_lehman_brothers",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
+   "nome": "wiki_liquidity_crisis",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -8098,6 +8833,13 @@
    "stato": "ok"
   },
   {
+   "nome": "wiki_silicon_valley_bank",
+   "chiave": false,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "wiki_sovereign_default",
    "chiave": false,
    "ultima_data": "2026-11-22",
@@ -8121,8 +8863,8 @@
   {
    "nome": "wiki_stock_market_bubble",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -8135,22 +8877,22 @@
   {
    "nome": "wiki_subprime_mortgage_crisis",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_unemployment",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "wiki_yield_curve",
    "chiave": false,
-   "ultima_data": "2026-11-21",
-   "giorni_ritardo": 3,
+   "ultima_data": "2026-11-22",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -8191,8 +8933,8 @@
   {
    "nome": "x_ada_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -8275,8 +9017,8 @@
   {
    "nome": "x_avax_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -8359,8 +9101,8 @@
   {
    "nome": "x_bnb_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -8604,8 +9346,8 @@
   {
    "nome": "x_doge_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -9136,8 +9878,8 @@
   {
    "nome": "x_inds",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -9297,8 +10039,8 @@
   {
    "nome": "x_link_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -9717,8 +10459,8 @@
   {
    "nome": "x_sol_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -10375,8 +11117,8 @@
   {
    "nome": "x_xrp_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -10508,8 +11250,8 @@
   {
    "nome": "xv_ada_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -10571,8 +11313,8 @@
   {
    "nome": "xv_avax_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -10634,8 +11376,8 @@
   {
    "nome": "xv_bnb_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -10802,8 +11544,8 @@
   {
    "nome": "xv_doge_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -11250,8 +11992,8 @@
   {
    "nome": "xv_inds",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 4,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -11369,8 +12111,8 @@
   {
    "nome": "xv_link_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -11684,8 +12426,8 @@
   {
    "nome": "xv_sol_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -12139,8 +12881,8 @@
   {
    "nome": "xv_xrp_usd",
    "chiave": false,
-   "ultima_data": "2026-11-22",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
