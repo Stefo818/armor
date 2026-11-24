@@ -186,8 +186,31 @@ def scheda(k: str):
     return (d["cosa"], d["perche"], d["lettura"], d["fonte"])
 
 
+_SINGOLE = {   # serie Yahoo aggiunte il 23/11/2026 per le ricerche future (nome, cosa)
+    "tlt": ("ETF dei titoli di Stato USA a 20+ anni", "Prezzo di un fondo che replica i titoli di Stato americani a lunga scadenza: scende quando i rendimenti salgono."),
+    "shy": ("ETF dei titoli di Stato USA a 1-3 anni", "Prezzo di un fondo sui titoli di Stato americani a breve scadenza: segue le attese sui tassi della Fed."),
+    "lqd": ("ETF obbligazioni aziendali sicure (investment grade)", "Prezzo di un fondo sulle obbligazioni di aziende solide: scende quando il credito si irrigidisce."),
+    "jnk": ("ETF obbligazioni aziendali rischiose (high yield)", "Prezzo di un fondo sulle obbligazioni di aziende più rischiose: cala per primo quando cresce la paura sul credito."),
+    "emb": ("ETF obbligazioni dei paesi emergenti", "Prezzo di un fondo sui titoli di Stato dei paesi emergenti in dollari: misura la fiducia verso i mercati fragili."),
+    "kbe": ("ETF delle banche USA", "Prezzo di un fondo sulle banche americane: le banche soffrono per prime nelle crisi finanziarie."),
+    "rut": ("Russell 2000", "Indice delle piccole aziende americane: più sensibile al credito e all'economia reale."),
+    "tnx": ("Rendimento dei titoli di Stato USA a 10 anni", "Rendimento (in %) del Treasury a 10 anni: tassi che salgono pesano sulle azioni care."),
+    "fvx": ("Rendimento dei titoli di Stato USA a 5 anni", "Rendimento (in %) del Treasury a 5 anni."),
+    "irx": ("Rendimento dei buoni del Tesoro USA a 13 settimane", "Rendimento (in %) a brevissimo termine, vicino al tasso della Fed."),
+    "tyx": ("Rendimento dei titoli di Stato USA a 30 anni", "Rendimento (in %) del Treasury a 30 anni."),
+    "vxn": ("Paura sul Nasdaq 100 (VXN)", "Come il VIX ma per il Nasdaq 100: sopra 30 indica stress sulle azioni tecnologiche."),
+    "vxd": ("Paura sul Dow Jones (VXD)", "Come il VIX ma per il Dow Jones."),
+    "ovx": ("Paura sul petrolio (OVX)", "Volatilità attesa del petrolio: sale con shock di offerta e con le crisi."),
+    "gvz": ("Paura sull'oro (GVZ)", "Volatilità attesa dell'oro: sale quando gli investitori cercano rifugio."),
+    "jpy": ("Cambio dollaro/yen", "Quanti yen servono per un dollaro: movimenti bruschi dello yen possono scaricare operazioni di carry trade."),
+}
+
+
 def _archivio(k: str):
     """Serie solo archiviate per le ricerche future (accumulo.py): non compaiono nell'app, ma hanno una spiegazione comune."""
+    if k in _SINGOLE:
+        n, c = _SINGOLE[k]
+        return (f"{n}. {c}", "Per ora non entra in nessun indice: è un archivio per cercare segnali che anticipano le correzioni.", "Si legge come ogni serie storica: conta il confronto con il passato.", "Yahoo Finance.")
     for pre, cosa, fonte in (
             ("xv_", "Volume giornaliero scambiato (quante quote o azioni passano di mano in un giorno) di uno strumento di Borsa.", "Yahoo Finance, dal 2015."),
             ("x_", "Prezzo di chiusura giornaliero di un indice, di un fondo (ETF), di una valuta, di una materia prima o di una criptovaluta, archiviato per le ricerche future.", "Yahoo Finance."),

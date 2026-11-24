@@ -6,7 +6,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from . import armor_index, semafori
+from . import armor_index, semafori, store
 
 e = _h.escape
 
@@ -128,7 +128,8 @@ def kpi_html(sem: list, sp: pd.Series, vwce: pd.Series, vix: pd.Series) -> str:
     cards += (f"<div class='kc' data-chart='pc_oi'><div class='kt'>Put/Call (SPY) <span class='sdot {lt}'></span><small>{ltxt}</small></div>{body}"
               "<div class='mu'>Più alto = più protezioni comprate.</div></div>")
     # S&P 500 e VWCE
-    for key, nm, ser, chart in (("sp500", "S&P 500", sp, "sp500"), ("vwce", "VWCE", vwce, "vwce")):
+    ndx = store.load("nasdaq100")
+    for key, nm, ser, chart in (("sp500", "S&P 500", sp, "sp500"), ("ndx", "Nasdaq 100", ndx, "ndx"), ("vwce", "VWCE", vwce, "vwce")):
         s = ser.dropna()
         if s.empty:
             continue

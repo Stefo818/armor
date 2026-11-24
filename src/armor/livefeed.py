@@ -1,11 +1,11 @@
-"""Prezzi in tempo reale nel telefono (VWCE e S&P 500), senza server: la pagina interroga ogni 15 secondi l'API pubblica di onvista.de
+"""Prezzi in tempo reale nel telefono (VWCE, S&P 500 e Nasdaq 100), senza server: la pagina interroga ogni 15 secondi l'API pubblica di onvista.de
 (quotazioni delle sedi tedesche/italiane per il VWCE, indicazione in tempo reale sull'indice S&P 500), che accetta richieste dal browser.
 Yahoo (usato da GitHub ogni 15 minuti) non lo permette. Se onvista non risponde si resta sui dati di GitHub, aggiornati ogni 15 minuti.
 Le quotazioni ricevute si accumulano in window.LIVETICKS e il grafico (1 ora, 6 ore, 1 giorno e ultimo punto degli altri intervalli) le aggiunge."""
 
 JS = r"""<script>(function(){
 if(location.protocol.indexOf('http')!==0)return;
-var SRC={vwce:'FUND/ISIN:IE00BK5BQT80',sp500:'INDEX/ISIN:US78378X1072'},API='https://api.onvista.de/api/v1/instruments/',EVERY=15000;
+var SRC={vwce:'FUND/ISIN:IE00BK5BQT80',sp500:'INDEX/ISIN:US78378X1072',ndx:'INDEX/ISIN:US6311011026'},API='https://api.onvista.de/api/v1/instruments/',EVERY=15000;
 window.LIVETICKS=window.LIVETICKS||{};var fails=0,busy=false,timer=null;
 function best(j,key){var L=[];if(j&&j.quote)L.push(j.quote);if(j&&j.quoteList&&j.quoteList.list)L=L.concat(j.quoteList.list);
 L=L.filter(function(q){return q&&q.last>0&&q.datetimeLast&&(key!=='vwce'||q.isoCurrency==='EUR')});if(!L.length)return null;

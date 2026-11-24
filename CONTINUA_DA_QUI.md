@@ -822,3 +822,6 @@ Aggiunte fonti in `src/armor/accumulo_extra.py`: BCE (CISS per paese, curve euro
 
 ## (16) Wikipedia in altre lingue e Google Trends (23/11/2026)
 `accumulo_extra2.aggiorna_wiki_lingue` e `aggiorna_trends` (+ `cuci_finestre`). Trends è fragile (429): leggere `accumulo_stato.json`. 289 test.
+
+## (17) Nasdaq 100 in diretta + bozza concentrazione (24/11/2026)
+Scheda «Nasdaq 100» in «Paura, protezioni e prezzi» (cruscotto.kpi_html, grafico `ndx`); livefeed onvista ogni 15 s ora include `INDEX/ISIN:US6311011026` (non verificabile dal sandbox: se onvista non risponde si resta sui dati di live.json ogni 15 minuti); `report.py` mantiene il «live» di ndx. Glossario: schede per le 16 serie Yahoo aggiunte il 23/11. SW armor-v89. **Concentrazione**: solo PROTOCOLLO_CONCENTRAZIONE.md (bozza), in attesa di approvazione dell'utente prima di calcolare o inserire qualcosa.

@@ -1270,11 +1270,11 @@ var tt=el.querySelector('.lqt');if(tt&&q.time){var qd2=new Date(q.time);tt.textC
 var c=el.querySelector('.lqc');if(chg!=null){var bad=k==='vix';var up=chg>=0;c.className='lqc '+((up!==bad)?'up':'dn');
 c.innerHTML=(up?'▲ ':'▼ ')+fmt(Math.abs(chg)*100,2)+'% <span class="muted">'+(q.live?'in diretta':(q.open?'mercato aperto':'mercato chiuso'))+'</span>'}});
 var u=new Date(L.updated),m=Math.round((now-u)/60000),la=L.liveAt,txt;
-if(la&&now-la<90000){txt='In tempo reale: VWCE e S&P 500 si aggiornano ogni 15 secondi (ultimo controllo '+new Date(la).toLocaleTimeString('it-IT')+'). Gli altri prezzi, con ritardo di circa 15 minuti, ogni 15 minuti.'}
+if(la&&now-la<90000){txt='In tempo reale: VWCE, S&P 500 e Nasdaq 100 si aggiornano ogni 15 secondi (ultimo controllo '+new Date(la).toLocaleTimeString('it-IT')+'). Gli altri prezzi, con ritardo di circa 15 minuti, ogni 15 minuti.'}
 else{txt='Prezzi con ritardo di circa 15 minuti · aggiornati '+(m<1?'ora':(m===1?'1 minuto fa':(m<90?m+' minuti fa':Math.round(m/60)+' ore fa')))+' ('+u.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')'}
 document.querySelectorAll('#liveinfo,.liveinfo').forEach(function(i){i.textContent=txt})}
 paint(window.LIVE);window.armorPaint=function(){paint(window.LIVE)};
-function refresh(){fetch('live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(L){var o=window.LIVE;if(o&&o.quotes&&L.quotes){['vwce','sp500'].forEach(function(k){var a=o.quotes[k],b=L.quotes[k];if(a&&a.live&&b&&new Date(a.time)>=new Date(b.time))L.quotes[k]=a});L.liveAt=o.liveAt}window.LIVE=L;paint(L)}).catch(function(){})}
+function refresh(){fetch('live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(L){var o=window.LIVE;if(o&&o.quotes&&L.quotes){['vwce','sp500','ndx'].forEach(function(k){var a=o.quotes[k],b=L.quotes[k];if(a&&a.live&&b&&new Date(a.time)>=new Date(b.time))L.quotes[k]=a});L.liveAt=o.liveAt}window.LIVE=L;paint(L)}).catch(function(){})}
 if(location.protocol.indexOf('http')===0){refresh();setInterval(refresh,300000);setInterval(function(){paint(window.LIVE)},60000)}
 function off(){var b=document.getElementById('offline');if(!b)return;if(navigator.onLine){b.style.display='none'}else{b.style.display='';b.textContent='Sei offline: mostro gli ultimi dati salvati sul telefono.'}}
 window.addEventListener('online',off);window.addEventListener('offline',off);off();
