@@ -17,7 +17,7 @@ SERIES = [
     ("mweq", "MSCI World Equal Weight (MWEQ)", "#14b8a6", "", 0, "a"), ("rsp", "S&P 500 Equal Weight", "#f97316", "", 0, "a"),
     ("urth", "MSCI World (URTH)", "#84cc16", "", 0, "a"), ("stoxx600", "Europa STOXX 600", "#ec4899", "", 0, "a"), ("eem", "Mercati emergenti", "#ef4444", "", 0, "a"),
     ("dax", "DAX", "#06b6d4", "", 0, "a"), ("ftsemib", "FTSE MIB", "#22c55e", "", 0, "a"), ("nikkei", "Nikkei 225", "#eab308", "", 0, "a"), ("iwm", "Small cap USA", "#8b5cf6", "", 0, "a"),
-    ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("super", "Super Armor (SAI)", "#f59e0b", "", 1, "rischio"), ("crollo", "Indice crollo", "#8b5cf6", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"),
+    ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("super", "Super Armor (SAI)", "#f59e0b", "", 1, "rischio"), ("crollo", "Indice crollo", "#8b5cf6", "", 1, "rischio"), ("bolla", "Indice Bolla (Sick Index)", "#f43f5e", "", 1, "rischio"), ("cred", "Indice Credito (Sick Index)", "#22d3ee", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"),
     ("t_p1", "Pilastro Andamento dei prezzi", "#8b5cf6", "", 0, "rischio"), ("t_p2", "Pilastro Credito", "#14b8a6", "", 0, "rischio"), ("t_p3", "Pilastro Paura sui mercati", "#06b6d4", "", 0, "rischio"),
     ("t_p4", "Pilastro Rischio tra i mercati", "#ec4899", "", 0, "rischio"), ("t_p5", "Pilastro Lavoro ed economia", "#84cc16", "", 0, "rischio"), ("t_p6", "Pilastro Liquidità", "#3b82f6", "", 0, "rischio"),
     ("pm_Titan_10g", "Titan (stato di salute) · calo ≥5% a 10 giorni", "#eab308", "%", 0, "prev"),
@@ -108,6 +108,16 @@ def build(sp: pd.Series, vw: pd.Series, aix: dict | None) -> dict | None:
     try:   # Indice crollo (probabilita' che il mercato scenda forte)
         from . import indice_crollo as _ic
         out["crollo"] = al(_ic.calcola_serie()["indice"], 3)
+    except Exception:  # noqa: BLE001
+        pass
+    try:   # Sick Index: Indice Bolla e Indice Credito (serie compatte di territori.json: settimanali fino al 2020, giornaliere dopo)
+        from . import territori
+        tj = territori.leggi()
+        for k in ("bolla", "cred"):
+            c = (tj or {}).get("serie", {}).get(k)
+            if c:
+                g = (np.cumsum(c["dt"]) + c["t0"]).astype("int64")
+                out[k] = al(pd.Series(np.asarray(c["v"], dtype=float) / 10, index=pd.to_datetime(g, unit="D")), 7)
     except Exception:  # noqa: BLE001
         pass
     try:   # indici e pilastri del motore Titan (storia completa dal 1990)

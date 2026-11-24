@@ -106,8 +106,7 @@ def _tessera_sick() -> tuple[str, int]:
         riga = territori.riga_sick(d) if rosso else ("Nella norma" if v < 60 else "Sopra la norma, non ancora rosso")
         celle.append(f"<div class='sk' data-gi='{k}'><div class='qd-n' style='color:{col}'>{v:.0f}{_freccia(d['tendenza'])}</div><div class='qd-l'>{nome}</div>"
                      f"<div class='qd-u'>{sotto}</div><div class='qd-s' title='{tit}' style='color:{('#ef4444' if rosso else 'var(--mu)')};font-weight:{700 if rosso else 400}'>{_h.escape(riga)}</div></div>")
-    return (f"<div class='qd-c qd-sick'><div class='qd-l' style='font-size:10.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.4px'>Sick Index · il mercato è malato?</div>"
-            f"<div class='sk-g'>{''.join(celle)}</div></div>"), 5
+    return (f"<div class='qd-c qd-sick'><div class='sk-t'>Sick Index · il mercato è malato?</div>{''.join(celle)}</div>"), 5
 
 
 def _striscia_territori() -> str:
@@ -142,8 +141,13 @@ def html() -> str:
         """<style>
 .qd{border:1px solid var(--bd);border-radius:14px;background:var(--card);padding:11px 13px 9px;margin:10px 0}
 .qd-h{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
-.qd-sick{grid-column:span 2}.sk-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:3px}.sk{cursor:pointer}
-.qd-g{display:grid;grid-template-columns:repeat(var(--nc,3),1fr);gap:8px;text-align:center}
+.qd-g{display:grid;grid-template-columns:repeat(var(--nc,3),1fr);grid-auto-rows:auto;column-gap:8px;row-gap:0;text-align:center;align-items:start}
+.qd-c,.sk{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:0;justify-items:center;align-content:start;padding:15px 2px 4px}
+.qd-sick{grid-column:span 2;grid-template-columns:1fr 1fr;column-gap:8px;position:relative;background:rgba(127,127,127,.07);border-radius:11px;padding:15px 6px 4px;align-items:start}
+.qd-sick>.sk{padding:0}
+.sk-t{position:absolute;top:4px;left:0;right:0;text-align:center;font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--mu)}
+.sk{cursor:pointer}.qd-l{white-space:nowrap}.qd-u,.qd-s{max-width:100%}
+@media(max-width:560px){.qd-g{grid-template-columns:repeat(3,1fr)!important}.qd-sick{grid-column:1/-1;margin-top:6px}.qd-n{font-size:26px}}
 .qd-n{font-size:28px;font-weight:800;line-height:1}
 .qd-a{font-size:15px;margin-left:5px;vertical-align:middle}
 .qd-l{font-size:11.5px;font-weight:600;margin-top:2px}

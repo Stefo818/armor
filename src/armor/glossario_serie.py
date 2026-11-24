@@ -120,6 +120,12 @@ G["armor"] = ("L'Indice Armor (motore Titan): giudizio da 1 a 100 sul pericolo d
 G["crollo"] = ("Indice crollo: da 0 a 100, dice quanto il mercato somiglia ai momenti che in passato hanno preceduto cali forti. Più è alto, più è alto il rischio di un calo importante.",
                "Serve a capire se conviene essere prudenti. Non dice il giorno del calo.",
                "Fasce: fino a 35 calma, 36-40 attenzione leggera, 41-60 cautela, 61-80 pericolo, sopra 80 rischio molto alto.", "Calcolato ogni giorno da famiglie di segnali (prezzi, paura, credito, liquidità).")
+G["bolla"] = ("Indice Bolla (Sick Index): da 0 a 100, quanto il mercato somiglia a una bolla. Unisce prezzi alti rispetto agli utili, salita forte in tre anni e concentrazione su pochi titoli.",
+              "Aiuta a capire se i prezzi sono gonfiati. Una bolla può durare anni prima di rompersi, quindi non dice il giorno del calo.",
+              "Sotto 60 nella norma, 60-80 sopra la norma, da 80 rosso. È un indizio, non dimostrato (2 casi su 2: 2000 e 2022).", "Calcolato ogni giorno dalla storia dal 1971.")
+G["cred"] = ("Indice Credito (Sick Index): da 0 a 100, quanto il credito è sotto stress. Unisce spread che si allargano, banche che irrigidiscono i prestiti, curva dei tassi rovesciata e tensione sul debito europeo.",
+             "Le crisi di credito sono le più gravi: quando le banche si fermano, il mercato scende forte.",
+             "Sotto 60 sereno, 60-80 teso, da 80 rosso. Era acceso prima di 4 picchi su 4 (1990, 2007, 2011, 2023) ma dal 2015 non ha più previsto i cali.", "Calcolato ogni giorno dalla storia dal 1971.")
 G["super"] = ("Super Armor (SAI): la media dei sei pilastri Titan (prezzi, credito, paura, rischio tra i mercati, lavoro ed economia, liquidità).",
               "Riassume da quali aree arriva il rischio.", "Zone dai dati dal 1995: sotto 35 tranquillo, 35-45 neutro, 45-55 allarme, da 55 pericolo.", "Motore Titan, giornaliero.")
 for _m, _d in (("Titan", "il motore che misura lo stato di salute del mercato"), ("Titan+", "FHS+VIX corretto dai pilastri di Titan, in ombra dal 12 novembre 2026"), ("FHS+VIX", "simulazione della nervosità ancorata all'indice della paura (il modello che prevede)"),
