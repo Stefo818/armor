@@ -26,3 +26,8 @@ Qualunque esito: l'indice viene registrato ogni giorno (`data/difensivita_regist
 
 ## Limiti dichiarati
 Gli investitori istituzionali privati non pubblicano la liquidità in modo diretto: i fondi monetari includono anche aziende e famiglie; il COT riguarda un solo mercato; il 13F è trimestrale e in ritardo. I dati dei fondi monetari nel repository finiscono il 05/10/2026.
+
+## Addendum del 24/11/2026 ore 15:50: prova come 7° pilastro del Super Armor (richiesta dell'utente; ancora nessun risultato)
+Il Super Armor è la media dei sei pilastri (data/titan_storia.csv). Candidato: **p7 = DIF-L × 100** (limitato fra 1 e 100; più difensivi = più stress; segno fissato ora), disponibile dal 1990. **SAI7** = media dei sette pilastri; **SAI6** = media dei sei (riferimento).
+Misura: area sotto la curva (AUC) dell'indice di ieri contro i bersagli B1 (−8% entro 63 sedute), B2 (−12% entro 63 sedute) e B3 (−5% entro 21 sedute), sull'S&P 500, nei blocchi 1990-2014 e 2015-2026, con le stesse esclusioni degli shock esterni.
+**Regola di adozione (fissata ora):** SAI7 entra come pilastro (peso 1/7) solo se l'AUC migliora di almeno 0,01 in entrambi i blocchi per almeno 2 bersagli su 3 e nessuna delle 6 combinazioni peggiora di più di 0,01. Altrimenti il pilastro resta **solo informativo, senza peso**, mostrato accanto agli altri sei con la dicitura «senza peso».
