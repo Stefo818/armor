@@ -558,30 +558,48 @@ def aggiorna_bis_dsr(stato: dict) -> None:
     stato["bis_dsr"] = {"serie": len(r), "nuove_righe": int(sum(r.values()))}
 
 
+# limiti di tempo: nessuna fonte puo' tenere fermo il lavoro (il 25/11/2026 tre fonti hanno perso 45 minuti)
+LIMITE_STANDARD = 240
+LIMITE_PASSO = {"fred": 600, "yahoo": 420, "dealer": 300, "opzioni": 300, "componenti": 300, "gdelt": 120, "tesoro_curve": 180, "short_interest": 120, "trends": 120}
+BUDGET_TOTALE = 36 * 60
+
+
 def aggiorna(solo: list[str] | None = None) -> dict:
     stato: dict = {"data": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}
     from . import accumulo_derivati as dv
     from . import accumulo_extra as ex
     from . import accumulo_extra2 as ex2
+    inaffidabili = ("tesoro_curve", "gdelt", "short_interest", "trends", "wiki_lingue", "wikipedia")   # a volte non rispondono: vanno in fondo
     passi = (("yahoo", aggiorna_yahoo), ("ohlc", aggiorna_ohlc), ("fred", aggiorna_fred), ("cboe_putcall", aggiorna_cboe_pc), ("intraday", aggiorna_intraday),
-             ("opzioni", aggiorna_opzioni), ("componenti", aggiorna_componenti),
-             ("bce", ex.aggiorna_bce), ("ofr", ex.aggiorna_ofr), ("mmf_alt", ex.aggiorna_mmf_alt), ("tesoro_curve", ex.aggiorna_ust), ("tesoro_cassa_aste", ex.aggiorna_fiscal), ("cot", ex.aggiorna_cot),
-             ("wikipedia", ex.aggiorna_wiki), ("cripto", ex.aggiorna_cripto), ("nyfed", ex.aggiorna_nyfed), ("tsa", ex.aggiorna_tsa),
-             ("finra", ex.aggiorna_finra), ("gdelt", ex.aggiorna_gdelt),
+             ("opzioni", aggiorna_opzioni), ("componenti", aggiorna_componenti), ("bis_dsr", aggiorna_bis_dsr),
+             ("bce", ex.aggiorna_bce), ("ofr", ex.aggiorna_ofr), ("mmf_alt", ex.aggiorna_mmf_alt), ("tesoro_cassa_aste", ex.aggiorna_fiscal), ("cot", ex.aggiorna_cot),
+             ("cripto", ex.aggiorna_cripto), ("nyfed", ex.aggiorna_nyfed), ("tsa", ex.aggiorna_tsa), ("finra", ex.aggiorna_finra),
              ("vix_future", ex.aggiorna_vix_future), ("aaii", ex.aggiorna_aaii), ("previsioni", ex.aggiorna_previsioni),
-             ("dealer", ex.aggiorna_dealer), ("ftd", ex.aggiorna_ftd), ("short_interest", ex.aggiorna_short_interest), ("etf_quote", ex.aggiorna_etf_quote),
+             ("dealer", ex.aggiorna_dealer), ("ftd", ex.aggiorna_ftd), ("etf_quote", ex.aggiorna_etf_quote),
              ("moduli_sec", ex2.aggiorna_moduli_sec), ("parole_sec", ex2.aggiorna_parole_sec), ("cripto_leva", ex2.aggiorna_cripto_leva), ("jgb", ex2.aggiorna_jgb),
-             ("testi", ex2.aggiorna_testi), ("retail", ex2.aggiorna_retail), ("wiki_lingue", ex2.aggiorna_wiki_lingue), ("trends", ex2.aggiorna_trends),
-             ("bis_dsr", aggiorna_bis_dsr), ("derivati_componenti", dv.aggiorna_derivati_componenti), ("derivati_intraday", dv.aggiorna_derivati_intraday))
+             ("testi", ex2.aggiorna_testi), ("retail", ex2.aggiorna_retail),
+             ("derivati_componenti", dv.aggiorna_derivati_componenti), ("derivati_intraday", dv.aggiorna_derivati_intraday),
+             ("tesoro_curve", ex.aggiorna_ust), ("short_interest", ex.aggiorna_short_interest), ("wikipedia", ex.aggiorna_wiki),
+             ("wiki_lingue", ex2.aggiorna_wiki_lingue), ("gdelt", ex.aggiorna_gdelt), ("trends", ex2.aggiorna_trends))
+    from .guard import with_timeout
+    t_inizio = time.time()
     for nome, fn in passi:
         if solo and nome not in solo:
             continue
+        if time.time() - t_inizio > BUDGET_TOTALE:   # tempo finito: salto il resto, cosi' il salvataggio parte comunque
+            stato[nome] = {"errore": "saltata: tempo totale esaurito"}
+            print(f"[accumulo] {nome} SALTATA: tempo totale esaurito", flush=True)
+            continue
         t0 = time.time()
         try:
-            fn(stato)
+            with_timeout(lambda: fn(stato), LIMITE_PASSO.get(nome, LIMITE_STANDARD), nome, True)
         except Exception as e:  # noqa: BLE001
             stato[nome] = {"errore": str(e)[:120]}
             print(f"[accumulo] {nome} ERRORE: {str(e)[:120]}", flush=True)
         print(f"[accumulo] {nome} fatto in {time.time() - t0:.0f}s", flush=True)
+        try:   # stato salvato dopo ogni passo: se il lavoro viene interrotto, non si perde
+            STATO.write_text(json.dumps(stato, ensure_ascii=False, indent=1), encoding="utf-8")
+        except Exception:  # noqa: BLE001
+            pass
     STATO.write_text(json.dumps(stato, ensure_ascii=False, indent=1), encoding="utf-8")
     return stato

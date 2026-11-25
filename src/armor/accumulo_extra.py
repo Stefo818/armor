@@ -28,7 +28,8 @@ def _get(url: str, tries: int = 3, timeout: int = 60, headers: dict | None = Non
     last = None
     for i in range(tries):
         try:
-            r = requests.get(url, headers=headers or UA, timeout=timeout, **kw)
+            from .guard import with_timeout   # il timeout di requests vale per ogni lettura: un sito che gocciola lo aggira
+            r = with_timeout(lambda: requests.get(url, headers=headers or UA, timeout=(15, min(timeout, 40)), **kw), min(timeout, 40) + 20, "scarico", True)
             if r.status_code == 429:
                 try:
                     att = int(r.headers.get("Retry-After", 20))

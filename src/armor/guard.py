@@ -3,7 +3,7 @@ import threading
 import time
 
 
-def with_timeout(fn, seconds: int, label: str = ""):
+def with_timeout(fn, seconds: int, label: str = "", silenzioso: bool = False):
     box: dict = {}
 
     def target():
@@ -20,7 +20,8 @@ def with_timeout(fn, seconds: int, label: str = ""):
         raise TimeoutError(f"{label or 'operazione'} bloccata oltre {seconds} secondi: saltata")
     if "e" in box:
         raise box["e"]
-    print(f"   [{label}] fatto in {time.time() - t0:.0f}s", flush=True)
+    if not silenzioso:
+        print(f"   [{label}] fatto in {time.time() - t0:.0f}s", flush=True)
     return box.get("v")
 
 
