@@ -1,7 +1,8 @@
 """Status index: Crollo, Minimi, Stato. Tre numeri da 1 a 100, stessa scala a colori (fasce 35 / 40 / 60 / 80).
 
 - Crollo: Indice crollo (PROTOCOLLO_INDICE_CROLLO_2.md; versione 2, senza distanza dal massimo).
-- Minimi: ex «Indice Occasione» (occasione.py): panico recente e segni di svolta. Alto = il minimo e' probabilmente toccato.
+- Minimi (dal 25/11/2026, lettura scelta dall'utente): alto = il mercato continua a scendere e non si vede la fine; basso = ha smesso di scendere.
+  Formula: minimo fra «panico recente» e (100 - «segni di svolta»). Misura in ESITO_MINIMI_2.md: non dimostrata (indizio).
 - Stato: ex «Terreno fragile» (predisposizione.py): media di dieci percentili di fragilita', resa sulla stessa scala a tratti
   del Crollo (percentile espanso del punteggio, dal 1990). Alto = terreno molto fragile; non dice il giorno.
 Ogni indice ha le sue componenti, salvate come serie compatte per i grafici (data/status_index.json).
@@ -23,7 +24,7 @@ ZONE_LIM = [35, 40, 60, 80]
 ZONE_COL = ["#22c55e", "#9ca3af", "#f59e0b", "#ef4444", "#8b5cf6"]
 NOMI_ZONE = {
     "crollo": ["Nessuna tensione", "Zona di passaggio", "Mercato teso", "Mercato molto teso", "Mercato in panico"],
-    "minimi": ["Nessun panico da cui ripartire", "Zona di passaggio", "Si sta formando un minimo", "Minimo probabile", "Minimo molto probabile"],
+    "minimi": ["Ha smesso di scendere", "Zona di passaggio", "Discesa ancora aperta", "Discesa in corso", "Discesa senza fine in vista"],
     "stato": ["Terreno solido", "Zona di passaggio", "Terreno fragile", "Terreno molto fragile", "Terreno estremamente fragile"],
 }
 # componenti: chiave grafico -> (colonna, nome semplice, spiegazione corta)
@@ -58,7 +59,7 @@ def calcola() -> dict:
         ser[k] = X[c]
     d = occasione.calcola(occasione.serie_archivio())
     d = d[d.index >= INIZIO]
-    ser["minimi"] = d["occasione"].clip(1, 100)
+    ser["minimi"] = pd.concat([d["panico_rec"], 100 - d["svolta"]], axis=1).min(axis=1, skipna=False).clip(1, 100)   # lettura «continua a scendere»
     ser["mi_panico"] = d["panico_rec"]
     ser["mi_svolta"] = d["svolta"]
     for k, (c, _) in {**MINIMI_PAN, **MINIMI_SVO}.items():

@@ -96,7 +96,7 @@ try:
     from . import status_index as _si
     for _k in ("crollo", "minimi", "stato"):
         ZONE[_k] = {"lim": _si.ZONE_LIM, "col": _si.ZONE_COL, "nom": _si.NOMI_ZONE[_k], "le": 1}
-    NOMI.update({"crollo": "Crollo", "minimi": "Minimi", "stato": "Stato", "mi_panico": "Panico recente", "mi_svolta": "Segni di svolta"})
+    NOMI.update({"crollo": "Crollo", "minimi": "Minimi", "stato": "Stato", "mi_panico": "Panico recente", "mi_svolta": "Segni di svolta (abbassano l'indice)"})
     # nome corto sulle tessere, nome intero nella spiegazione
     _CORTI = {"cr_paura": "Paura", "cr_curva": "Paura a breve", "cr_tend": "Sotto le medie", "cr_cred": "Debito aziende", "cr_rot": "Fuga dai rischiosi", "cr_tassi": "Tassi",
               "mp_caduta": "Caduta", "mp_paura": "Paura", "mp_breve": "Paura a breve", "mp_credito": "Credito", "mp_sotto": "Sotto la media",
@@ -124,10 +124,9 @@ DESC.update({
     "crollo": "Quanto è teso il mercato adesso e nella prossima settimana: unisce la paura (e la sua curva), il prezzo sotto le medie, il costo del debito delle aziende, "
               "la fuga dai settori rischiosi e le scosse sui tassi. Da 1 a 100: fino a 35 verde, da 40 giallo, da 60 rosso, da 80 viola. "
               "Anticipa di pochi giorni (misurato), non di settimane. Dal 25 novembre 2026 non usa più la distanza dal massimo: la differenza misurata è piccola, scelta per coerenza con l'obiettivo.",
-    "minimi": "Quanto è probabile che il mercato stia toccando un minimo. Sale quando c'è stato un panico negli ultimi tre mesi E compaiono segni di svolta (paura che rientra, credito che smette di peggiorare, prezzo che risale). "
-              "Da 1 a 100. Come leggere i colori: ROSSO = un minimo è vicino (c'è stato panico e i segni di svolta ci sono); VERDE = il mercato è lontano dai minimi (nessun panico da cui ripartire). Non è un indice di pericolo: rosso qui non vuol dire «scappa», vuol dire «il peggio potrebbe essere passato». Misurato nel passato, distingue poco i minimi che reggono da quelli che non reggono: va letto come indizio.",
+    "minimi": "Il mercato ha già smesso di scendere? 1 = sì: la discesa è finita, il minimo è già toccato e nelle prossime settimane ci si aspetta in media una risalita. 100 = no: il mercato continua a scendere e non si intravede ancora una fine. Sta in alto solo se c'è stato un forte panico negli ultimi tre mesi E non ci sono ancora segni di svolta (paura che rientra, credito che smette di peggiorare, prezzo che risale). Se non c'è stato panico, o se i segni di svolta ci sono, scende. COLORI: ROSSO = discesa senza fine in vista; VERDE = ha smesso di scendere. ATTENZIONE, MISURATO NEL PASSATO: questa lettura NON è dimostrata. Dal 2013 non ha previsto meglio del caso se il ribasso sarebbe continuato, e nei pochi giorni con valore sopra 80 il mercato è poi risalito in media del 14% in un mese (9 giorni soltanto). Va letta come un indizio sullo stato del panico, non come una previsione.",
     "mi_panico": "Il punto più alto del panico negli ultimi tre mesi (media di cinque voci: caduta, paura, paura a breve, credito, prezzo sotto la media). Per un minimo serve che il panico ci sia stato.",
-    "mi_svolta": "Segni che la discesa si sta esaurendo (media di cinque voci: paura che rientra, curva normale, credito che smette di peggiorare, prezzo che risale, settori che risalgono).",
+    "mi_svolta": "Segni che la discesa si sta esaurendo (media di cinque voci: paura che rientra, curva normale, credito che smette di peggiorare, prezzo che risale, settori che risalgono). Più è alto, più l'indice Minimi scende.",
     "stato": "Quanto il terreno è fragile rispetto alla storia, da 1 (terreno solido) a 100 (molto fragile). Media di dieci misure: mercato caro, Borsa grande rispetto all'economia, debiti per comprare azioni, "
              "costo del debito, assicurazioni sul ribasso, tassi, fuga dai settori rischiosi, titoli di Stato, condizioni finanziarie, liquidità. Dice quanto il mercato è predisposto, non quando scende.",
 })

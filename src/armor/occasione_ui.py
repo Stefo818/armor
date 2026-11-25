@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Schede «Bussola di oggi»: salute del mercato e dell'economia, fase, Minimi, fasce per orizzonte e pagella storica.
+"""Schede «Bussola di oggi»: salute del mercato e dell'economia, fase, Indice Occasione, fasce per orizzonte e pagella storica.
 Tutti i numeri vengono da data/occasione.json (lavoro giornaliero) e data/occasione_verifica.json (convalida mensile)."""
 import html as _h
 import json
@@ -46,7 +46,7 @@ def consiglio(o: dict) -> str:
         "coltello": f"Il mercato sta scendendo con forza ({sc}% dal massimo dell'anno) e non ci sono ancora segni di svolta. In passato, in questa situazione, chi voleva fare un'entrata extra ha fatto meglio ad aspettare la svolta o a dividerla in più parti.",
         "occasione": f"C'è stato panico e ora ci sono segni di svolta (mercato a {sc}% dal massimo dell'anno). In passato questa è stata spesso una buona finestra per un'entrata extra. Attenzione: nei grandi ribassi (2001, 2008) i primi segnali sono arrivati troppo presto, quindi meglio dividere in più parti.",
         "occasione_forte": f"Panico forte seguito da una svolta chiara (mercato a {sc}% dal massimo dell'anno): è la situazione che in passato ha accompagnato i minimi importanti. Resta valido dividere l'entrata in più parti: nei grandi ribassi il primo segnale non è stato l'ultimo.",
-    }.get(st, "Dati insufficienti per l'indice Minimi di oggi.")
+    }.get(st, "Dati insufficienti per l'Indice Occasione di oggi.")
 
 
 def _tessera(titolo: str, valore: str, chip: str, col: str, nota: str) -> str:
@@ -77,7 +77,7 @@ def _tessere(o: dict, v: dict) -> str:
         out += _tessera("Fase del mercato", nome, um, COL_FASE[t], f"{perche[0].upper()}{perche[1:]}. Oscillazioni attese: {umore}.")
     if o.get("occasione") is not None:
         st = o.get("stato", "nd")
-        out += _tessera("Minimi", f"{_n(o['occasione'], 0)}<small>/100</small>", occasione.STATI[st][0], COL_ST[st],
+        out += _tessera("Indice Occasione", f"{_n(o['occasione'], 0)}<small>/100</small>", occasione.STATI[st][0], COL_ST[st],
                         f"Sale solo quando c'è stato panico <i>e</i> ci sono segni di svolta. Da 50 in su è «occasione». Sconto dal massimo dell'anno: {_n(o.get('sconto'))}%.")
     return out
 
@@ -119,7 +119,7 @@ def dettaglio_occasione(o: dict) -> str:
     return ("<div class='oc-2'><div><h4>Panico <small>quanto è stata forte la discesa negli ultimi 3 mesi</small></h4>"
             + _barra("Panico (massimo degli ultimi 3 mesi)", o.get("panico_rec"), "#dc2626") + _barra("Panico di oggi", o.get("panico"), "#dc2626") + "<div class='oc-voci'>" + vp + "</div></div>"
             "<div><h4>Svolta <small>segni che la discesa si sta esaurendo</small></h4>" + _barra("Svolta di oggi", o.get("svolta"), "#16a34a") + "<div class='oc-voci'>" + vs + "</div></div></div>"
-            "<p class='oc-nota'>L'indice Minimi è il più basso tra «Panico degli ultimi 3 mesi» e «Svolta»: servono tutti e due. "
+            "<p class='oc-nota'>L'Indice Occasione è il più basso tra «Panico degli ultimi 3 mesi» e «Svolta»: servono tutti e due. "
             "Senza panico non c'è sconto; senza svolta si rischia di comprare mentre si scende ancora («coltello che cade»).</p>"
             f"<h4>Livelli da tenere d'occhio <small>S&amp;P 500 oggi {_n(o.get('sp'), 0)}, massimo dell'anno {_n(o.get('massimo'), 0)}</small></h4>"
             "<div class='scroll'><table class='oc-tab'><thead><tr><th>Sconto</th><th>Livello dell'S&amp;P 500</th><th>Distanza da oggi</th></tr></thead><tbody>" + sc + "</tbody></table></div>")
@@ -152,7 +152,7 @@ def pagella(v: dict) -> str:
                  f"Chi ha aspettato il segnale di occasione (al massimo un anno) ha chiuso in media {_n(s['attesa']['media'], 1)}% rispetto a chi ha investito subito, e ha fatto meglio solo {s['attesa']['vince']} volte su 100. "
                  f"Chi ha diviso in 12 rate mensili: {_n(s['rate']['media'], 1)}%, meglio {s['rate']['vince']} volte su 100. Il motivo: mentre si aspetta, il mercato di solito sale. "
                  "Quindi l'indice non serve a tenere soldi fermi in attesa: serve a riconoscere i momenti in cui uno sforzo in più, se puoi farlo, è stato pagato meglio.</p>")
-    return ("<h4>Quanto ha funzionato in passato <small>segnale = Minimi da 50 in su</small></h4>"
+    return ("<h4>Quanto ha funzionato in passato <small>segnale = Indice Occasione da 50 in su</small></h4>"
             "<div class='scroll'><table class='oc-tab'><thead><tr><th>Periodo</th><th>Occasioni</th><th>Rendimento tipico nei 12 mesi dopo</th><th>Volte in positivo dopo 12 mesi</th><th>Giudizio</th></tr></thead><tbody>"
             + righe + "</tbody></table></div>"
             "<p class='oc-nota'><b>Come leggere.</b> Ha funzionato bene nei cali veloci e nelle crisi brevi. Non ha funzionato nei ribassi lunghi (1929-1932, 2000-2002 e in parte 2008), "
@@ -169,7 +169,7 @@ def html() -> str:
     return (CSS + "<section class='b5'><div class='oc'><h3>La bussola di oggi <small>salute, fase del mercato e occasioni per le entrate extra</small></h3>"
             f"<div class='oc-g'>{_tessere(o, v)}</div><p class='oc-msg'><b>Per le entrate extra:</b> {consiglio(o)}</p>"
             "<details class='oc-d'><summary>Cosa può succedere da qui: fasce per 1 settimana, 1, 3, 6 e 12 mesi</summary>" + tabella_fasce(o, v) + "</details>"
-            "<details class='oc-d'><summary>Minimi: come è fatto oggi e i livelli da tenere d'occhio</summary>" + dettaglio_occasione(o) + "</details>"
+            "<details class='oc-d'><summary>Indice Occasione: come è fatto oggi e i livelli da tenere d'occhio</summary>" + dettaglio_occasione(o) + "</details>"
             "<details class='oc-d'><summary>Le prove: quanto ha funzionato in passato (anche dove ha sbagliato)</summary>" + pagella(v) + "</details>"
             f"<p class='oc-fine'>Dati al {E('/'.join(reversed(str(o.get('data')).split('-'))))}. Osservazioni sul passato, non previsioni e non consigli. Regole scritte prima delle prove in PROTOCOLLO_OCCASIONE.md.</p></div></section>")
 
