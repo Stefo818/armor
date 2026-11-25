@@ -1,0 +1,30 @@
+{
+ "T1_nb_30": {
+  "allarme_prima_W": 0.3142857142857143,
+  "allarme_dopo_1_5": 0.3142857142857143,
+  "allarme_intorno_pm5": 0.3142857142857143,
+  "calo_residuo_mediano_al_primo_allarme": -0.07550466767733177,
+  "giorni_in_allarme": 0.19768664563617244
+ },
+ "T1_et_300": {
+  "allarme_prima_W": 0.17142857142857143,
+  "allarme_dopo_1_5": 0.14285714285714285,
+  "allarme_intorno_pm5": 0.14285714285714285,
+  "calo_residuo_mediano_al_primo_allarme": -0.08140495867768593,
+  "giorni_in_allarme": 0.1017875920084122
+ },
+ "T3_nb_300": {
+  "allarme_prima_W": 0.45714285714285713,
+  "allarme_dopo_1_5": 0.4,
+  "allarme_intorno_pm5": 0.45714285714285713,
+  "calo_residuo_mediano_al_primo_allarme": -0.1218848095832824,
+  "giorni_in_allarme": 0.2786540483701367
+ },
+ "T2_nb_30": {
+  "allarme_prima_W": 0.3142857142857143,
+  "allarme_dopo_1_5": 0.34285714285714286,
+  "allarme_intorno_pm5": 0.34285714285714286,
+  "calo_residuo_mediano_al_primo_allarme": -0.07845481317750885,
+  "giorni_in_allarme": 0.18275499474237644
+ }
+}

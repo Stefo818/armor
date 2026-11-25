@@ -50,6 +50,14 @@ def riga() -> dict:
         r["c21"], r["c21_rientra"] = (round(x, 4) for x in correlazione_settori())
     except Exception:  # noqa: BLE001
         r["c21"] = r["c21_rientra"] = np.nan
+    try:   # segnali candidati per il test in avanti (ESITO_RICERCA_10000.md): volatilita' dell'S&P 500 e distanza dal massimo a 20 sedute
+        sp = store.load("sp500").dropna(); sp = sp[~sp.index.duplicated()].loc["1990-01-01":]; rr = sp.pct_change()
+        for n in (20, 60):
+            v = rr.rolling(n).std().dropna(); r[f"vol{n}_sp"] = round(float(v.iloc[-1]) * 100, 3); r[f"vol{n}_sp_pct"] = round(float((v <= v.iloc[-1]).mean()) * 100, 1)
+        r["vol_coppia_pct"] = round(r["vol20_sp_pct"] * r["vol60_sp_pct"] / 100, 1); r["dist_max20_sp"] = round(float(sp.iloc[-1] / sp.iloc[-20:].max() - 1) * 100, 2)
+        r["segnale_vol_allarme"] = int(r["vol60_sp_pct"] >= 90)
+    except Exception:  # noqa: BLE001
+        pass
     for nome, chiave in (("nfci", "nfci"), ("liquidita_netta_13s", "net_liq_13w"), ("rend_2anni", "dgs2"), ("rend_10anni", "dgs10"),
                          ("spread_baa", "baa10y"), ("curva_10_2", "t10y2y"),
                          ("mutuo_30_anni", "f_mortgage30us"), ("petrolio_wti", "wti"), ("inflazione_cpi", "cpi"), ("tasso_fed", "fedfunds"), ("debito_famiglie_reddito", "f_tdsp"),
