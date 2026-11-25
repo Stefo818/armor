@@ -30,3 +30,6 @@ Se qualcosa passa: si registra ogni giorno il segnale (test in avanti, nessuna m
 
 ## Limiti dichiarati
 Cali correlati, pochi episodi indipendenti (~81 correzioni endogene); 10000+ tentativi → soglia severa, voluta; segnali basati su dati giornalieri; nessuna informazione intraday/notizie/posizionamento.
+
+## Aggiunta (25/11/2026, prima di eseguire): conteggio dei tentativi
+Per raggiungere ≥ 10000 tentativi come dichiarato: (a) la fabbrica estesa comprende anche, per ogni serie, le variazioni a 5 e 20 sedute ritardate di 1, 2, 3, 5 sedute, il massimo mobile a 20 sedute delle variazioni a 5 sedute (e minimo), la variazione a 20 della volatilità a 20 e lo z a 252 della volatilità a 20; (b) per ogni coppia di mattoni si prova anche la differenza delle posizioni (1770 in più). Resto invariato.
