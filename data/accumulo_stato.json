@@ -1,5 +1,5 @@
 {
- "data": "2026-11-25 17:39 UTC",
+ "data": "2026-11-25 18:03 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
@@ -18,9 +18,9 @@
   "fallite": {}
  },
  "fred": {
-  "richieste": 257,
-  "riuscite": 257,
-  "nuove_righe": 6402,
+  "richieste": 258,
+  "riuscite": 258,
+  "nuove_righe": 0,
   "fallite": {},
   "codici_inesistenti_saltati": [
    "ACMTP02",
@@ -49,7 +49,7 @@
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 2173,
+  "barre_nuove": 304,
   "fallite": {}
  },
  "opzioni": {
@@ -75,7 +75,7 @@
  },
  "ofr_stress": {
   "colonne": 9,
-  "righe_nuove": 9
+  "righe_nuove": 0
  },
  "mmf_ofr": {
   "ultima": "2026-10-31",
@@ -104,25 +104,30 @@
  },
  "finra_vendite_scoperto": {
   "giorni_richiesti": 60,
-  "righe_nuove": 23171,
+  "righe_nuove": 20481,
   "senza_file": 0,
   "fallite": {
+   "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260101": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260101": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20251225": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20250704": "403 Client Error: Forbidden for url: https://cdn.f",
    "20251127": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250901": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20251225": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250704": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250526": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250418": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20250217": "403 Client Error: Forbidden for url: https://cdn.f"
+   "20250217": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250120": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250109": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250101": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20241225": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20241128": "403 Client Error: Forbidden for url: https://cdn.f"
   }
  },
  "vix_future_curva": {
@@ -154,7 +159,7 @@
  "sec_moduli_depositati": {
   "trimestri_letti": 6,
   "moduli": 36,
-  "righe_nuove": 6149,
+  "righe_nuove": 6198,
   "problemi": {}
  },
  "sec_parole_di_stress": {
@@ -171,7 +176,7 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 618,
+  "titoli_oggi": 670,
   "righe_conteggi_nuove": 0,
   "problemi": {}
  },
@@ -188,7 +193,7 @@
  "derivati_intraday": {
   "strumenti": 51,
   "giorni": 10,
-  "righe_nuove": 281
+  "righe_nuove": 0
  },
  "tesoro_curve": {
   "errore": "tesoro_curve bloccata oltre 180 secondi: saltata"

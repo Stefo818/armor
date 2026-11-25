@@ -274,9 +274,9 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-25,recession,US GDP growth in Q1 2025?,Will U.S. GDP growth be between -1% and -2% in Q1 2025?,0.0,80917.712504,2025-04-30
 2026-11-25,recession,US GDP growth in Q1 2025?,Will U.S. GDP growth be less than -2% in Q1 2025?,0.0,162013.207461,2025-04-30
 2026-11-25,recession,US recession by end of 2027?,US recession by end of 2027?,0.355,38753.206664000005,2027-12-31
-2026-11-25,recession,US recession by end of 2026?,US recession by end of 2026?,0.0305,2538552.2601980004,2027-01-31
-2026-11-25,recession,Dem sweep & US recession by end of 2027?,Will the Democrats sweep the House and Senate and the US enter a recession by the end of 2027?,0.327,2684.201335,2028-02-01
-2026-11-25,recession,Dem sweep & US recession by end of 2027?,Will the Democrats sweep the House and Senate and the US not enter a recession by the end of 2027?,0.6745,2826.576785,2028-02-01
+2026-11-25,recession,US recession by end of 2026?,US recession by end of 2026?,0.03,2538552.260198001,2027-01-31
+2026-11-25,recession,Dem sweep & US recession by end of 2027?,Will the Democrats sweep the House and Senate and the US enter a recession by the end of 2027?,0.3325,2684.201335,2028-02-01
+2026-11-25,recession,Dem sweep & US recession by end of 2027?,Will the Democrats sweep the House and Senate and the US not enter a recession by the end of 2027?,0.6735,2826.576785,2028-02-01
 2026-11-25,recession,Dem sweep & US recession by end of 2027?,Will the Democrats fail to sweep the House and Senate and the US enter a recession by the end of 202,0.0,16916.503835,2028-02-01
 2026-11-25,recession,Dem sweep & US recession by end of 2027?,Will the Democrats fail to sweep the House and Senate and the US not enter a recession by the end of,0.0,11202.933880999999,2028-02-01
 2026-11-25,recession,When will the next recession happen in the US?,Will the next recession in the US happen in Q4 2021?,2.642985862270381e-07,1648.395942,2022-01-27
@@ -286,15 +286,15 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-25,recession,When will the next recession happen in the US?,Will the next recession in the US happen by Q4 2022?,0.9999995909264291,27035.205181,2023-01-27
 2026-11-25,recession,Will there be a recession in Q2 of 2022?,Will there be a recession in Q2 of 2022?,0.9999992103229602,104780.227449,2022-07-28
 2026-11-25,recession,"Will Biden say ""recession"" in his Tuesday remarks on inflation?","Will Biden say ""recession"" in his Tuesday remarks on inflation?",6.194094419512708e-07,1984.032159,2022-05-10
-2026-11-25,fed rate,Another Fed rate hike in 2026?,Another Fed rate hike in 2026?,0.9435,2534112.007803,2026-12-10
+2026-11-25,fed rate,Another Fed rate hike in 2026?,Another Fed rate hike in 2026?,0.9445,2534211.997803,2026-12-10
 2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will no Fed rate cuts happen in 2026?,0.9845,9867747.645006001,2027-01-01
-2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will 1 Fed rate cut happen in 2026?,0.0025,3945919.6063619996,2027-01-01
-2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will 2 Fed rate cuts happen in 2026?,0.0005,3686687.0856580003,2027-01-01
-2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will 3 Fed rate cuts happen in 2026?,0.0015,3056434.0535260006,2027-01-01
+2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will 1 Fed rate cut happen in 2026?,0.0025,3945919.606362,2027-01-01
+2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will 2 Fed rate cuts happen in 2026?,0.0005,3686687.0856579994,2027-01-01
+2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will 3 Fed rate cuts happen in 2026?,0.0015,3056434.053526001,2027-01-01
 2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will 4 Fed rate cuts happen in 2026?,0.0015,2851753.382673,2027-01-01
 2026-11-25,fed rate,How many Fed rate cuts in 2026?,Will 5 Fed rate cuts happen in 2026?,0.0005,3084058.710133999,2027-01-01
 2026-11-25,fed rate,How many Fed rate hikes in 2026?,Will no Fed rate hikes happen in 2026?,0.0,140419.60613400003,2026-12-31
-2026-11-25,fed rate,How many Fed rate hikes in 2026?,Will 1 Fed rate hike happen in 2026?,0.0485,1082724.025493,2026-12-31
+2026-11-25,fed rate,How many Fed rate hikes in 2026?,Will 1 Fed rate hike happen in 2026?,0.0495,1082724.0254930002,2026-12-31
 2026-11-25,fed rate,How many Fed rate hikes in 2026?,Will 2 Fed rate hikes happen in 2026?,0.92,303092.62448799994,2026-12-31
 2026-11-25,fed rate,How many Fed rate hikes in 2026?,Will 3 Fed rate hikes happen in 2026?,0.027,251595.528196,2026-12-31
 2026-11-25,fed rate,How many Fed rate hikes in 2026?,Will 4 Fed rate hikes happen in 2026?,0.002,102826.306478,2026-12-31
@@ -303,8 +303,8 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-25,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 2.5% at the end of 2026?,0.0015,194887.93101499995,2027-01-01
 2026-11-25,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 2.75% at the end of 2026?,0.0005,75207.520549,2027-01-01
 2026-11-25,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 3.0% at the end of 2026?,0.0005,511817.090233,2027-01-01
-2026-11-25,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 3.25% at the end of 2026?,0.0005,100385.47201399998,2027-01-01
-2026-11-25,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 3.5% at the end of 2026?,0.0005,231373.17897999994,2027-01-01
+2026-11-25,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 3.25% at the end of 2026?,0.0005,100385.472014,2027-01-01
+2026-11-25,fed rate,What will the Fed rate be at the end of 2026?,Will the upper bound of the target federal funds rate be 3.5% at the end of 2026?,0.0005,231373.17897999997,2027-01-01
 2026-11-25,fed rate,Fed rate cut by...?,Fed rate cut by January 2026 meeting?,0.0,588114.763678,2026-01-28
 2026-11-25,fed rate,Fed rate cut by...?,Fed rate cut by March 2026 meeting?,0.0,,2026-03-18
 2026-11-25,fed rate,Fed rate cut by...?,Fed rate cut by April 2026 meeting?,0.0,542979.3072430016,2026-04-29
@@ -350,15 +350,15 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-25,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Tuesday?,0.0,400,2024-02-07
 2026-11-25,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Wednesday?,1.0,0,2024-02-07
 2026-11-25,stock market crash,Which day will Farcaster's daily user growth stop?,Will Farcaster's growth peak on Monday?,0.0,1200,2024-02-07
-2026-11-25,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will Bitcoin have the best performance in 2026?,0.0115,487994.0722720001,2027-01-01
-2026-11-25,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will Gold have the best performance in 2026?,0.041,328886.87298800005,2027-01-01
-2026-11-25,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will the S&P 500 have the best performance in 2026?,0.93,234347.61816500002,2027-01-01
-2026-11-25,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $9,000 (HIGH) in December?",0.0165,342.77333200000004,2026-12-31
+2026-11-25,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will Bitcoin have the best performance in 2026?,0.0115,487994.0722719999,2027-01-01
+2026-11-25,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will Gold have the best performance in 2026?,0.0215,328886.872988,2027-01-01
+2026-11-25,S&P 500,Bitcoin vs. Gold vs. S&P 500 in 2026,Will the S&P 500 have the best performance in 2026?,0.935,234347.61816500002,2027-01-01
+2026-11-25,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $9,000 (HIGH) in December?",0.0245,342.77333200000004,2026-12-31
 2026-11-25,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $7,400 (LOW) in December?",1.0,1784.378577,2026-12-31
 2026-11-25,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $10,000 (HIGH) in December?",0.01,1308.153136,2026-12-31
 2026-11-25,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $7,200 (LOW) in December?",1.0,8004.802776,2026-12-31
 2026-11-25,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $6,000 (LOW) in December?",0.0855,19218.304460000003,2026-12-31
-2026-11-25,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $8,000 (HIGH) in December?",0.075,5807.277123000001,2026-12-31
+2026-11-25,S&P 500,What will S&P 500 (SPX) hit by end of December?,"Will S&P 500 (SPX) hit $8,000 (HIGH) in December?",0.08,5807.277123,2026-12-31
 2026-11-25,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Cheniere Energy (LNG) be added to the S&P 500 by December 31, 2026?",0.46,3959.513588,2027-01-01
 2026-11-25,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Astera Labs (ALAB) be added to the S&P 500 by December 31, 2026?",0.245,2531.195979,2027-01-01
 2026-11-25,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Okta (OKTA) be added to the S&P 500 by December 31, 2026?",1.0,2690.277499,2027-01-01
@@ -366,12 +366,12 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-25,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Credo Technology (CRDO) be added to the S&P 500 by December 31, 2026?",0.0245,3529.342274,2027-01-01
 2026-11-25,S&P 500,Which companies added to S&P 500 in Q4 2026?,"Will Rocket Companies (RKT) be added to the S&P 500 by December 31, 2026?",0.225,2252.4908849999997,2027-01-01
 2026-11-25,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by December 31, 2026?",0.165,719.990633,2027-01-01
-2026-11-25,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by March 31, 2027?",0.355,170.169912,2027-04-01
+2026-11-25,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by March 31, 2027?",0.36,170.169912,2027-04-01
 2026-11-25,S&P 500,S&P 500 bear market by...?,"Will the S&P 500 close in a bear market by June 30, 2027?",0.51,178.639343,2027-07-01
 2026-11-25,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at <$6,000 in December?",0.0755,36455.712661000005,2026-12-31
-2026-11-25,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $6,000-$6,500 in December?",0.2285,4332.859254000001,2026-12-31
+2026-11-25,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $6,000-$6,500 in December?",0.227,4332.859254000001,2026-12-31
 2026-11-25,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $6,500-$7,000 in December?",0.34,6249.676988000001,2026-12-31
-2026-11-25,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at >$8,000 in December?",0.045,8423.371496,2026-12-31
+2026-11-25,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at >$8,000 in December?",0.045,8423.371496000002,2026-12-31
 2026-11-25,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $7,000-$7,500 in December?",0.23,3887.594809,2026-12-31
 2026-11-25,S&P 500,What will S&P 500 (SPX) close at end of 2026?,"Will S&P 500 (SPX) close at $7,500-$8,000 in December?",0.2,5402.340016,2026-12-31
 2026-11-25,S&P 500,S&P 500 (SPX) Opens Up or Down on February 2?,S&P 500 (SPX) Opens Up or Down on February 2?,0.0,1059512.569103,2026-02-02
@@ -390,7 +390,7 @@ data,tema,evento,mercato,prob_si,volume,fine
 2026-11-25,bank failure,US bank failure by October 31?,US bank failure by October 31?,1.0,204194.479453,2024-10-31
 2026-11-25,bank failure,US bank failure before December?,US bank failure before December?,0.0,145735.134524,2024-11-30
 2026-11-25,bank failure,US bank failure before September?,US bank failure before September?,0.0,121125.603379,2024-08-31
-2026-11-25,default,Which AI companies default before 2028?,Will OpenAI or any subsidiary default before 2028?,0.15,255,2028-01-01
+2026-11-25,default,Which AI companies default before 2028?,Will OpenAI or any subsidiary default before 2028?,0.155,255,2028-01-01
 2026-11-25,default,Which AI companies default before 2028?,Will Anthropic or any subsidiary default before 2028?,0.145,51,2028-01-01
 2026-11-25,default,Which AI companies default before 2028?,Will Oracle or any subsidiary default before 2028?,0.145,51,2028-01-01
 2026-11-25,default,Which AI companies default before 2028?,Will CoreWeave or any subsidiary default before 2028?,0.315,500,2028-01-01
