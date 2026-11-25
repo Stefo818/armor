@@ -1,0 +1,2774 @@
+{
+ "n_endogene": 81,
+ "fasce": {
+  "moderata": 49,
+  "forte": 24,
+  "grave": 8
+ },
+ "soglia": 0.711605487254838,
+ "n": 120,
+ "ipotesi": {
+  "vicino_max252_0.01_10": {
+   "fasce": {
+    "moderata": 0.6044085981700509,
+    "forte": 0.4323240385979849,
+    "grave": 0.1851674471406272
+   },
+   "E": 0.5597674951697941,
+   "sel": 0.517942980849512,
+   "n_sel": 43,
+   "ver": 0.4968103955077135,
+   "n_ver": 35,
+   "tutti": 0.5084604105038333,
+   "senza_2001_2020": 0.521899677455233,
+   "ver_W2": 0.5012680167852581,
+   "ic90_basso": 0.4097653915546636,
+   "episodi_con_segnale": 30,
+   "anticipo_mediano": 13.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vicino_max252_0.01_20": {
+   "fasce": {
+    "moderata": 0.5883739337464327,
+    "forte": 0.4091102596849723,
+    "grave": 0.15297289626791544
+   },
+   "E": 0.5337189857113228,
+   "sel": 0.4788765229378257,
+   "n_sel": 42,
+   "ver": 0.4973269273652415,
+   "n_ver": 35,
+   "tutti": 0.48726307040483285,
+   "senza_2001_2020": 0.5024658311804693,
+   "ver_W2": 0.5041817186644774,
+   "ic90_basso": 0.41064485393987304,
+   "episodi_con_segnale": 25,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vicino_max252_0.005_10": {
+   "fasce": {
+    "moderata": 0.6101779357234963,
+    "forte": 0.4336336975545149,
+    "grave": 0.22424081169291898
+   },
+   "E": 0.5716275338114418,
+   "sel": 0.5272126354279076,
+   "n_sel": 43,
+   "ver": 0.5028336272780717,
+   "n_ver": 35,
+   "tutti": 0.5162733368991351,
+   "senza_2001_2020": 0.5266007386697042,
+   "ver_W2": 0.505148695493523,
+   "ic90_basso": 0.4164857183401245,
+   "episodi_con_segnale": 29,
+   "anticipo_mediano": 14.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vicino_max252_0.005_20": {
+   "fasce": {
+    "moderata": 0.5868218154297338,
+    "forte": 0.39930348611702376,
+    "grave": 0.15599545906059314
+   },
+   "E": 0.5398881138727882,
+   "sel": 0.48124294701561626,
+   "n_sel": 42,
+   "ver": 0.4864578645421558,
+   "n_ver": 35,
+   "tutti": 0.4836133640731342,
+   "senza_2001_2020": 0.4975676038185879,
+   "ver_W2": 0.4937164750957854,
+   "ic90_basso": 0.3955823957509782,
+   "episodi_con_segnale": 25,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vicino_max60_0.005_10": {
+   "fasce": {
+    "moderata": 0.6189124573515711,
+    "forte": 0.4697861974362613,
+    "grave": 0.33775010642826736
+   },
+   "E": 0.635573239021515,
+   "sel": 0.5465749898521884,
+   "n_sel": 43,
+   "ver": 0.5412605161264166,
+   "n_ver": 35,
+   "tutti": 0.5441902901034446,
+   "senza_2001_2020": 0.5494293143718431,
+   "ver_W2": 0.57168035030104,
+   "ic90_basso": 0.46128549129315416,
+   "episodi_con_segnale": 31,
+   "anticipo_mediano": 11.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vicino_max60_0.005_20": {
+   "fasce": {
+    "moderata": 0.5917960361383094,
+    "forte": 0.4255427841634738,
+    "grave": 0.2637097346388534
+   },
+   "E": 0.5945471613670849,
+   "sel": 0.48553555379864444,
+   "n_sel": 42,
+   "ver": 0.5303152303918587,
+   "n_ver": 35,
+   "tutti": 0.5058899522501055,
+   "senza_2001_2020": 0.5140763289926151,
+   "ver_W2": 0.5584017515051999,
+   "ic90_basso": 0.4449877759532932,
+   "episodi_con_segnale": 25,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rotture_fallite_20": {
+   "fasce": {
+    "moderata": 0.5874004698610913,
+    "forte": 0.35890508963625184,
+    "grave": 0.28801795090109267
+   },
+   "E": 0.5792017334162929,
+   "sel": 0.4781950441592842,
+   "n_sel": 42,
+   "ver": 0.49333414421537025,
+   "n_ver": 35,
+   "tutti": 0.485076453275687,
+   "senza_2001_2020": 0.4952988836209326,
+   "ver_W2": 0.5106112023353403,
+   "ic90_basso": 0.40486920472744226,
+   "episodi_con_segnale": 21,
+   "anticipo_mediano": 18.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "sedute_dal_max252": {
+   "fasce": {
+    "moderata": 0.4042145593869731,
+    "forte": 0.5504475899910127,
+    "grave": 0.8828756917837378
+   },
+   "E": 0.48564004322625,
+   "sel": 0.4965556842595068,
+   "n_sel": 43,
+   "ver": 0.5004492286484623,
+   "n_ver": 35,
+   "tutti": 0.4983027875109612,
+   "senza_2001_2020": 0.48784646715681196,
+   "ver_W2": 0.4978726509760992,
+   "ic90_basso": 0.4158524802854304,
+   "episodi_con_segnale": 9,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "distanza_max252_vicino": {
+   "fasce": {
+    "moderata": 0.6041495473911048,
+    "forte": 0.5052321318764487,
+    "grave": 0.09975521498510004
+   },
+   "E": 0.4315667943805874,
+   "sel": 0.5373538385128424,
+   "n_sel": 40,
+   "ver": 0.4973682823491252,
+   "n_ver": 35,
+   "tutti": 0.5186939123031077,
+   "senza_2001_2020": 0.5316040988373837,
+   "ver_W2": 0.5181134829410692,
+   "ic90_basso": 0.4082714427618643,
+   "episodi_con_segnale": 37,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "ampiezza_5_60": {
+   "fasce": {
+    "moderata": 0.44087854563801776,
+    "forte": 0.37677380445579683,
+    "grave": 0.4642933163048105
+   },
+   "E": 0.4670627456834354,
+   "sel": 0.43655658943015263,
+   "n_sel": 42,
+   "ver": 0.4074593038577713,
+   "n_ver": 35,
+   "tutti": 0.4233305505336157,
+   "senza_2001_2020": 0.44142129848317846,
+   "ver_W2": 0.35293924466338256,
+   "ic90_basso": 0.3295790711346268,
+   "episodi_con_segnale": 26,
+   "anticipo_mediano": 18.5,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "ampiezza_20_60_bassa": {
+   "fasce": {
+    "moderata": 0.5538072938839222,
+    "forte": 0.5717149141478642,
+    "grave": 0.42791968213424153
+   },
+   "E": 0.5808843774361016,
+   "sel": 0.5072334056369817,
+   "n_sel": 42,
+   "ver": 0.5932011595613129,
+   "n_ver": 35,
+   "tutti": 0.5463096574207685,
+   "senza_2001_2020": 0.5309932721783874,
+   "ver_W2": 0.6213610654989965,
+   "ic90_basso": 0.5100382128159906,
+   "episodi_con_segnale": 25,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vol_5_alta": {
+   "fasce": {
+    "moderata": 0.4607338306155564,
+    "forte": 0.5716640650867982,
+    "grave": 0.7851816375762737
+   },
+   "E": 0.5832400039296591,
+   "sel": 0.5178743387421995,
+   "n_sel": 43,
+   "ver": 0.5407585801455533,
+   "n_ver": 35,
+   "tutti": 0.5281429086026788,
+   "senza_2001_2020": 0.5310762870149843,
+   "ver_W2": 0.4939390622149243,
+   "ic90_basso": 0.4793944738389182,
+   "episodi_con_segnale": 29,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vol_5_bassa": {
+   "fasce": {
+    "moderata": 0.53934236585411,
+    "forte": 0.42826853034388157,
+    "grave": 0.21477756492124306
+   },
+   "E": 0.4167825916101779,
+   "sel": 0.4823035367185773,
+   "n_sel": 43,
+   "ver": 0.4590674856575241,
+   "n_ver": 35,
+   "tutti": 0.47187710355015594,
+   "senza_2001_2020": 0.46894768331549946,
+   "ver_W2": 0.5059040321109286,
+   "ic90_basso": 0.3925802469135803,
+   "episodi_con_segnale": 38,
+   "anticipo_mediano": 15.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vol_10_alta": {
+   "fasce": {
+    "moderata": 0.46512064955176735,
+    "forte": 0.5996481954496004,
+    "grave": 0.8380197247055485
+   },
+   "E": 0.5627720470249206,
+   "sel": 0.5372774164166841,
+   "n_sel": 43,
+   "ver": 0.5539524417685338,
+   "n_ver": 35,
+   "tutti": 0.5447597995873857,
+   "senza_2001_2020": 0.5425010067538804,
+   "ver_W2": 0.5226236088305053,
+   "ic90_basso": 0.4828582780919946,
+   "episodi_con_segnale": 25,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vol_10_bassa": {
+   "fasce": {
+    "moderata": 0.5349424053405396,
+    "forte": 0.4002826261766235,
+    "grave": 0.16191287072513125
+   },
+   "E": 0.4372518584012837,
+   "sel": 0.462892010784731,
+   "n_sel": 43,
+   "ver": 0.4458594335988972,
+   "n_ver": 35,
+   "tutti": 0.45524918768852357,
+   "senza_2001_2020": 0.4575153697759061,
+   "ver_W2": 0.47723773034117867,
+   "ic90_basso": 0.3694332340002838,
+   "episodi_con_segnale": 21,
+   "anticipo_mediano": 17.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vol_20_alta": {
+   "fasce": {
+    "moderata": 0.4523828894880407,
+    "forte": 0.6377601579868503,
+    "grave": 0.8758922236412657
+   },
+   "E": 0.5566774732291975,
+   "sel": 0.554442282092346,
+   "n_sel": 42,
+   "ver": 0.553829593139938,
+   "n_ver": 35,
+   "tutti": 0.5541637871139786,
+   "senza_2001_2020": 0.544992039748771,
+   "ver_W2": 0.5346433132640029,
+   "ic90_basso": 0.4725983295830039,
+   "episodi_con_segnale": 23,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vol_20_bassa": {
+   "fasce": {
+    "moderata": 0.5476937388644498,
+    "forte": 0.36219431436545096,
+    "grave": 0.12393571732652192
+   },
+   "E": 0.4433542915152111,
+   "sel": 0.44574286930608775,
+   "n_sel": 42,
+   "ver": 0.4459762006122159,
+   "n_ver": 35,
+   "tutti": 0.44584892899069134,
+   "senza_2001_2020": 0.45502176190781657,
+   "ver_W2": 0.46518153621601904,
+   "ic90_basso": 0.3623325021792455,
+   "episodi_con_segnale": 16,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vol_10_60": {
+   "fasce": {
+    "moderata": 0.4562165145136621,
+    "forte": 0.4262369329738423,
+    "grave": 0.537473392933163
+   },
+   "E": 0.4813275613275614,
+   "sel": 0.4804256454958882,
+   "n_sel": 42,
+   "ver": 0.42518113077500047,
+   "n_ver": 35,
+   "tutti": 0.45531450244093924,
+   "senza_2001_2020": 0.4739852380591371,
+   "ver_W2": 0.39122787812442983,
+   "ic90_basso": 0.3470128727523363,
+   "episodi_con_segnale": 24,
+   "anticipo_mediano": 18.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vol_discesa_salita": {
+   "fasce": {
+    "moderata": 0.3962325970073948,
+    "forte": 0.4027872380682087,
+    "grave": 0.40739676458067264
+   },
+   "E": 0.4251969741624914,
+   "sel": 0.4155949509078499,
+   "n_sel": 42,
+   "ver": 0.38004419307101295,
+   "n_ver": 35,
+   "tutti": 0.3994355155274695,
+   "senza_2001_2020": 0.40798105090867387,
+   "ver_W2": 0.3255427841634738,
+   "ic90_basso": 0.31714593849459755,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "giorni_rialzo_alta": {
+   "fasce": {
+    "moderata": 0.5996562761143434,
+    "forte": 0.5954105766047018,
+    "grave": 0.36305165318575283
+   },
+   "E": 0.5653540513693771,
+   "sel": 0.5809898842465891,
+   "n_sel": 42,
+   "ver": 0.5650635528796449,
+   "n_ver": 35,
+   "tutti": 0.5737506427161599,
+   "senza_2001_2020": 0.5657641160816514,
+   "ver_W2": 0.6069768290457946,
+   "ic90_basso": 0.48848462364937456,
+   "episodi_con_segnale": 28,
+   "anticipo_mediano": 11.5,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "giorni_rialzo_bassa": {
+   "fasce": {
+    "moderata": 0.4003929173958973,
+    "forte": 0.40463908992006054,
+    "grave": 0.6370760607350645
+   },
+   "E": 0.4346390717271943,
+   "sel": 0.41922770243332186,
+   "n_sel": 42,
+   "ver": 0.43480184070222383,
+   "n_ver": 35,
+   "tutti": 0.4263068561919137,
+   "senza_2001_2020": 0.43429439516669865,
+   "ver_W2": 0.3928188286808976,
+   "ic90_basso": 0.3591687445518863,
+   "episodi_con_segnale": 16,
+   "anticipo_mediano": 19.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_3_alto": {
+   "fasce": {
+    "moderata": 0.5799094280020484,
+    "forte": 0.6291601627169955,
+    "grave": 0.5781148006243791
+   },
+   "E": 0.2813838949471133,
+   "sel": 0.5938677517399784,
+   "n_sel": 43,
+   "ver": 0.5961223620993735,
+   "n_ver": 35,
+   "tutti": 0.5948794358756044,
+   "senza_2001_2020": 0.5905092832295896,
+   "ver_W2": 0.6620835613939063,
+   "ic90_basso": 0.5697361795292829,
+   "episodi_con_segnale": 57,
+   "anticipo_mediano": 15.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_3_basso": {
+   "fasce": {
+    "moderata": 0.4201467167650742,
+    "forte": 0.3707848493448749,
+    "grave": 0.42179650915283096
+   },
+   "E": 0.7186652257916626,
+   "sel": 0.4062959332851518,
+   "n_sel": 43,
+   "ver": 0.40369235135518666,
+   "n_ver": 35,
+   "tutti": 0.4051276593422187,
+   "senza_2001_2020": 0.40950337310490564,
+   "ver_W2": 0.33772669220945084,
+   "ic90_basso": 0.3749078229844513,
+   "episodi_con_segnale": 42,
+   "anticipo_mediano": 17.5,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_5_alto": {
+   "fasce": {
+    "moderata": 0.5977983230606919,
+    "forte": 0.6680502341421882,
+    "grave": 0.5755427841634738
+   },
+   "E": 0.33936110292432137,
+   "sel": 0.6186419423076288,
+   "n_sel": 43,
+   "ver": 0.6152762066938312,
+   "n_ver": 35,
+   "tutti": 0.6171316763270787,
+   "senza_2001_2020": 0.611444586348801,
+   "ver_W2": 0.707662835249042,
+   "ic90_basso": 0.5774393156155608,
+   "episodi_con_segnale": 59,
+   "anticipo_mediano": 15.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_5_basso": {
+   "fasce": {
+    "moderata": 0.4022717036543456,
+    "forte": 0.3319213849865191,
+    "grave": 0.42436852561373634
+   },
+   "E": 0.6606461014506991,
+   "sel": 0.38153131301130944,
+   "n_sel": 43,
+   "ver": 0.3845632386628555,
+   "n_ver": 35,
+   "tutti": 0.38289179247033645,
+   "senza_2001_2020": 0.38858552038628663,
+   "ver_W2": 0.2921802590768108,
+   "ic90_basso": 0.3448529668146527,
+   "episodi_con_segnale": 32,
+   "anticipo_mediano": 18.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_10_alto": {
+   "fasce": {
+    "moderata": 0.6432878005441723,
+    "forte": 0.678936072087413,
+    "grave": 0.6100042571306938
+   },
+   "E": 0.5410226937813145,
+   "sel": 0.6522543322079989,
+   "n_sel": 43,
+   "ver": 0.6491086379208985,
+   "n_ver": 35,
+   "tutti": 0.6508428027201973,
+   "senza_2001_2020": 0.6446566489861508,
+   "ver_W2": 0.7009925196132093,
+   "ic90_basso": 0.5950569847351456,
+   "episodi_con_segnale": 52,
+   "anticipo_mediano": 12.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_10_basso": {
+   "fasce": {
+    "moderata": 0.3568014758053073,
+    "forte": 0.32101721772858427,
+    "grave": 0.3899496239534554
+   },
+   "E": 0.4589786161050529,
+   "sel": 0.3479424858343151,
+   "n_sel": 43,
+   "ver": 0.35072432037949286,
+   "n_ver": 35,
+   "tutti": 0.34919074492510005,
+   "senza_2001_2020": 0.35538197201032445,
+   "ver_W2": 0.2988688195584747,
+   "ic90_basso": 0.2970972855723813,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_20_alto": {
+   "fasce": {
+    "moderata": 0.6423515128581114,
+    "forte": 0.6598132775176199,
+    "grave": 0.5665921668795232
+   },
+   "E": 0.631566296623768,
+   "sel": 0.6258749079311021,
+   "n_sel": 42,
+   "ver": 0.6567807983133653,
+   "n_ver": 35,
+   "tutti": 0.6399230399230397,
+   "senza_2001_2020": 0.6282125299602862,
+   "ver_W2": 0.7282703886152162,
+   "ic90_basso": 0.5867531269638548,
+   "episodi_con_segnale": 37,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_20_basso": {
+   "fasce": {
+    "moderata": 0.35771155574476143,
+    "forte": 0.3401524289295681,
+    "grave": 0.43332623811551013
+   },
+   "E": 0.36844778465468114,
+   "sel": 0.37430990559981614,
+   "n_sel": 42,
+   "ver": 0.3430363477873057,
+   "n_ver": 35,
+   "tutti": 0.360094652048675,
+   "senza_2001_2020": 0.3718115743413597,
+   "ver_W2": 0.2715161466885605,
+   "ic90_basso": 0.2745135721380932,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_60_alto": {
+   "fasce": {
+    "moderata": 0.6158456711287704,
+    "forte": 0.48778794758999106,
+    "grave": 0.1798141052930325
+   },
+   "E": 0.5484546615581097,
+   "sel": 0.5282710643502471,
+   "n_sel": 42,
+   "ver": 0.5334598309310954,
+   "n_ver": 35,
+   "tutti": 0.5306295946142688,
+   "senza_2001_2020": 0.5362882485697791,
+   "ver_W2": 0.5804196314541143,
+   "ic90_basso": 0.448952908025705,
+   "episodi_con_segnale": 24,
+   "anticipo_mediano": 13.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend_60_basso": {
+   "fasce": {
+    "moderata": 0.38419090866089584,
+    "forte": 0.5121824890024124,
+    "grave": 0.8200901092663544
+   },
+   "E": 0.4515632515632516,
+   "sel": 0.47190091021508657,
+   "n_sel": 42,
+   "ver": 0.4663386648827262,
+   "n_ver": 35,
+   "tutti": 0.4693726168821955,
+   "senza_2001_2020": 0.4637210821276323,
+   "ver_W2": 0.41941616493340633,
+   "ic90_basso": 0.3804037381661903,
+   "episodi_con_segnale": 21,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "dist_media50": {
+   "fasce": {
+    "moderata": 0.6513378427384388,
+    "forte": 0.6259294735348376,
+    "grave": 0.42469845324251454
+   },
+   "E": 0.5769159576056128,
+   "sel": 0.6012183502604959,
+   "n_sel": 42,
+   "ver": 0.6422550629447181,
+   "n_ver": 35,
+   "tutti": 0.6198714014805968,
+   "senza_2001_2020": 0.6090608847445041,
+   "ver_W2": 0.6990914066776135,
+   "ic90_basso": 0.5646212978167001,
+   "episodi_con_segnale": 32,
+   "anticipo_mediano": 15.5,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "dist_media200": {
+   "fasce": {
+    "moderata": 0.5799363740466832,
+    "forte": 0.4975320467338347,
+    "grave": 0.09744217397474103
+   },
+   "E": 0.49979429544487014,
+   "sel": 0.4989857386121754,
+   "n_sel": 40,
+   "ver": 0.5056611729408664,
+   "n_ver": 35,
+   "tutti": 0.5021009412988978,
+   "senza_2001_2020": 0.5123492765875799,
+   "ver_W2": 0.5321693121693122,
+   "ic90_basso": 0.41473871353564834,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "pendenza_media50_bassa": {
+   "fasce": {
+    "moderata": 0.37987733156741244,
+    "forte": 0.5616728158554468,
+    "grave": 0.8440151837661416
+   },
+   "E": 0.3960995836857905,
+   "sel": 0.5058430808111524,
+   "n_sel": 42,
+   "ver": 0.4594668450607148,
+   "n_ver": 35,
+   "tutti": 0.48476297365186255,
+   "senza_2001_2020": 0.4840699724550036,
+   "ver_W2": 0.42839262908228426,
+   "ic90_basso": 0.3667844472825315,
+   "episodi_con_segnale": 17,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "peggior_giorno_5": {
+   "fasce": {
+    "moderata": 0.4283441612527071,
+    "forte": 0.500289130126295,
+    "grave": 0.6912267631616291
+   },
+   "E": 0.6461427121197235,
+   "sel": 0.4681754729870207,
+   "n_sel": 43,
+   "ver": 0.4888296945001926,
+   "n_ver": 35,
+   "tutti": 0.47744339289677723,
+   "senza_2001_2020": 0.48249207061467586,
+   "ver_W2": 0.40707900018244847,
+   "ic90_basso": 0.4365201808266942,
+   "episodi_con_segnale": 24,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "peggior_giorno_10": {
+   "fasce": {
+    "moderata": 0.44036358364027867,
+    "forte": 0.5375857338820301,
+    "grave": 0.7453065134099617
+   },
+   "E": 0.5555175688509023,
+   "sel": 0.4864245052323107,
+   "n_sel": 43,
+   "ver": 0.5201423097974822,
+   "n_ver": 35,
+   "tutti": 0.5015542893320671,
+   "senza_2001_2020": 0.5024559808850997,
+   "ver_W2": 0.4724575807334428,
+   "ic90_basso": 0.4562073830809464,
+   "episodi_con_segnale": 18,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "giorni_sotto_1pct_5": {
+   "fasce": {
+    "moderata": 0.4122062425577335,
+    "forte": 0.49663568421550547,
+    "grave": 0.6713246771675889
+   },
+   "E": 0.5935281789304779,
+   "sel": 0.5073912369109732,
+   "n_sel": 43,
+   "ver": 0.4123862231141925,
+   "n_ver": 35,
+   "tutti": 0.46476078200216125,
+   "senza_2001_2020": 0.46482689586137854,
+   "ver_W2": 0.3331435869366904,
+   "ic90_basso": 0.34657114476271567,
+   "episodi_con_segnale": 28,
+   "anticipo_mediano": 19.5,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "giorni_sotto_1pct_10": {
+   "fasce": {
+    "moderata": 0.4064005034519777,
+    "forte": 0.5229435693675796,
+    "grave": 0.7163367390378885
+   },
+   "E": 0.5005455676720044,
+   "sel": 0.4815672841156224,
+   "n_sel": 43,
+   "ver": 0.46481055768412094,
+   "n_ver": 35,
+   "tutti": 0.4740482402040512,
+   "senza_2001_2020": 0.4721518453319219,
+   "ver_W2": 0.42977193942711184,
+   "ic90_basso": 0.39019761195240116,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "gap_ribasso_10": {
+   "fasce": {
+    "moderata": 0.5038940406340041,
+    "forte": 0.5424548271131924,
+    "grave": 0.7040974882928905
+   },
+   "E": 0.5379555948521466,
+   "sel": 0.5534566911204174,
+   "n_sel": 43,
+   "ver": 0.5152052545155994,
+   "n_ver": 35,
+   "tutti": 0.5362925849515887,
+   "senza_2001_2020": 0.5290884754486288,
+   "ver_W2": 0.49128991060025545,
+   "ic90_basso": 0.426732753552677,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "chiusura_nel_range_bassa": {
+   "fasce": {
+    "moderata": 0.4481314898106503,
+    "forte": 0.419046520978194,
+    "grave": 0.5378707251312616
+   },
+   "E": 0.6377794151357369,
+   "sel": 0.4732757795664327,
+   "n_sel": 43,
+   "ver": 0.4178077804131444,
+   "n_ver": 35,
+   "tutti": 0.44838629276688013,
+   "senza_2001_2020": 0.4490799228347121,
+   "ver_W2": 0.32664112388250316,
+   "ic90_basso": 0.3668439660240426,
+   "episodi_con_segnale": 42,
+   "anticipo_mediano": 16.5,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "ombra_superiore_10": {
+   "fasce": {
+    "moderata": 0.5437111691068046,
+    "forte": 0.5563165176670924,
+    "grave": 0.576596424010217
+   },
+   "E": 0.48482856862167223,
+   "sel": 0.5778708406348075,
+   "n_sel": 43,
+   "ver": 0.5179038699345213,
+   "n_ver": 35,
+   "tutti": 0.5509625845513458,
+   "senza_2001_2020": 0.545074576492201,
+   "ver_W2": 0.45921182266009847,
+   "ic90_basso": 0.45700646678424456,
+   "episodi_con_segnale": 33,
+   "anticipo_mediano": 13.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "volume_5_60_alto": {
+   "fasce": {
+    "moderata": 0.45109155984422056,
+    "forte": 0.4725622014095832,
+    "grave": 0.4878139633886761
+   },
+   "E": 0.47520459106666,
+   "sel": 0.5082240331921047,
+   "n_sel": 42,
+   "ver": 0.40564900971031237,
+   "n_ver": 35,
+   "tutti": 0.46159902251856266,
+   "senza_2001_2020": 0.471774057162185,
+   "ver_W2": 0.3714285714285714,
+   "ic90_basso": 0.34374428834965226,
+   "episodi_con_segnale": 27,
+   "anticipo_mediano": 18.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "volume_5_60_basso": {
+   "fasce": {
+    "moderata": 0.5489614177821925,
+    "forte": 0.5273757154344638,
+    "grave": 0.5121363700865617
+   },
+   "E": 0.5248119951568228,
+   "sel": 0.49194084615540556,
+   "n_sel": 42,
+   "ver": 0.5941673255083215,
+   "n_ver": 35,
+   "tutti": 0.5384074276794583,
+   "senza_2001_2020": 0.5282389669362849,
+   "ver_W2": 0.6283816821747856,
+   "ic90_basso": 0.5322658071317077,
+   "episodi_con_segnale": 31,
+   "anticipo_mediano": 11.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "volume_giorni_calo_rialzo": {
+   "fasce": {
+    "moderata": 0.4021421250965737,
+    "forte": 0.39946667612695713,
+    "grave": 0.6107528026110403
+   },
+   "E": 0.41834332121688445,
+   "sel": 0.4175775574881577,
+   "n_sel": 42,
+   "ver": 0.4294674532222424,
+   "n_ver": 35,
+   "tutti": 0.4229820555491053,
+   "senza_2001_2020": 0.4321502786573905,
+   "ver_W2": 0.3897172048896187,
+   "ic90_basso": 0.35844874211924016,
+   "episodi_con_segnale": 21,
+   "anticipo_mediano": 18.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "asimmetria_20_bassa": {
+   "fasce": {
+    "moderata": 0.508848209640036,
+    "forte": 0.4980015136464689,
+    "grave": 0.33346459486306235
+   },
+   "E": 0.5084995251661919,
+   "sel": 0.4684985843351105,
+   "n_sel": 42,
+   "ver": 0.5097423422327637,
+   "n_ver": 35,
+   "tutti": 0.48724574701586193,
+   "senza_2001_2020": 0.4963705530965279,
+   "ver_W2": 0.5302207626345558,
+   "ic90_basso": 0.44387431328427496,
+   "episodi_con_segnale": 26,
+   "anticipo_mediano": 16.5,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "curtosi_60": {
+   "fasce": {
+    "moderata": 0.4849619223310156,
+    "forte": 0.4305413651199092,
+    "grave": 0.4626259401163616
+   },
+   "E": 0.45228607918263075,
+   "sel": 0.36827694324501475,
+   "n_sel": 42,
+   "ver": 0.5825615763546798,
+   "n_ver": 35,
+   "tutti": 0.4656790492039533,
+   "senza_2001_2020": 0.45448446924854835,
+   "ver_W2": 0.5907498631636562,
+   "ic90_basso": 0.5092459810659044,
+   "episodi_con_segnale": 14,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "autocorr_alta": {
+   "fasce": {
+    "moderata": 0.46584015262601886,
+    "forte": 0.4874615675701244,
+    "grave": 0.44994323825741456
+   },
+   "E": 0.5276002881750008,
+   "sel": 0.490083250555792,
+   "n_sel": 42,
+   "ver": 0.44794096778771114,
+   "n_ver": 35,
+   "tutti": 0.4709276674793916,
+   "senza_2001_2020": 0.4760099993973924,
+   "ver_W2": 0.4307754059478197,
+   "ic90_basso": 0.3857459912019299,
+   "episodi_con_segnale": 16,
+   "anticipo_mediano": 14.5,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "autocorr_bassa": {
+   "fasce": {
+    "moderata": 0.5342058874540782,
+    "forte": 0.5124875833688094,
+    "grave": 0.5499929047821769
+   },
+   "E": 0.47243049415463206,
+   "sel": 0.5100566265955793,
+   "n_sel": 42,
+   "ver": 0.5519009102150865,
+   "n_ver": 35,
+   "tutti": 0.5290767555135371,
+   "senza_2001_2020": 0.5240004976371953,
+   "ver_W2": 0.5690530925013683,
+   "ic90_basso": 0.48673591599262095,
+   "episodi_con_segnale": 32,
+   "anticipo_mediano": 14.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "nuovi_minimi_20_in_10": {
+   "fasce": {
+    "moderata": 0.4300129256359475,
+    "forte": 0.45569154723050004,
+    "grave": 0.4458581665957145
+   },
+   "E": 0.38162131185119696,
+   "sel": 0.4715912428511556,
+   "n_sel": 43,
+   "ver": 0.4001609600843317,
+   "n_ver": 35,
+   "tutti": 0.43953919289168325,
+   "senza_2001_2020": 0.43785921937262934,
+   "ver_W2": 0.3731800766283525,
+   "ic90_basso": 0.34608885239919723,
+   "episodi_con_segnale": 14,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "massimi_decrescenti": {
+   "fasce": {
+    "moderata": 0.3764041436072087,
+    "forte": 0.40383260016082495,
+    "grave": 0.5822761458776784
+   },
+   "E": 0.27485362657776446,
+   "sel": 0.42552116064248874,
+   "n_sel": 42,
+   "ver": 0.3833282653206025,
+   "n_ver": 35,
+   "tutti": 0.4063425718598132,
+   "senza_2001_2020": 0.41139122642298,
+   "ver_W2": 0.32688925378580547,
+   "ic90_basso": 0.3003153520241643,
+   "episodi_con_segnale": 22,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "rend60_su_vol60": {
+   "fasce": {
+    "moderata": 0.6206470838654747,
+    "forte": 0.45893524431200033,
+    "grave": 0.1873243933588761
+   },
+   "E": 0.5348924383407142,
+   "sel": 0.5233523890612014,
+   "n_sel": 42,
+   "ver": 0.5274674126781407,
+   "n_ver": 35,
+   "tutti": 0.5252228543416284,
+   "senza_2001_2020": 0.5335426908564997,
+   "ver_W2": 0.5650538222952016,
+   "ic90_basso": 0.4454379776601999,
+   "episodi_con_segnale": 23,
+   "anticipo_mediano": 14.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vix_alto": {
+   "fasce": {
+    "moderata": 0.4586478365755394,
+    "forte": 0.63846081074689,
+    "grave": 0.7984887186036611
+   },
+   "E": 0.5799921406817958,
+   "sel": 0.528105312833104,
+   "n_sel": 43,
+   "ver": 0.5742926067830283,
+   "n_ver": 35,
+   "tutti": 0.548830380631147,
+   "senza_2001_2020": 0.5347297489059941,
+   "ver_W2": 0.5393030468892538,
+   "ic90_basso": 0.5118939771736706,
+   "episodi_con_segnale": 21,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vix_basso": {
+   "fasce": {
+    "moderata": 0.5414465606702821,
+    "forte": 0.36150016555508263,
+    "grave": 0.20144387682701856
+   },
+   "E": 0.42003078232963287,
+   "sel": 0.47208345296200604,
+   "n_sel": 43,
+   "ver": 0.42555738004013866,
+   "n_ver": 35,
+   "tutti": 0.451206368958604,
+   "senza_2001_2020": 0.4653132059262327,
+   "ver_W2": 0.4605072067141032,
+   "ic90_basso": 0.3585998094427214,
+   "episodi_con_segnale": 17,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vix_var5": {
+   "fasce": {
+    "moderata": 0.4750680215447832,
+    "forte": 0.34502329596518616,
+    "grave": 0.3111128849155669
+   },
+   "E": 0.6709375511674361,
+   "sel": 0.4299863705815769,
+   "n_sel": 43,
+   "ver": 0.4038050639583206,
+   "n_ver": 35,
+   "tutti": 0.41823834837883367,
+   "senza_2001_2020": 0.420994557776167,
+   "ver_W2": 0.3123079729976282,
+   "ic90_basso": 0.36522199922966203,
+   "episodi_con_segnale": 34,
+   "anticipo_mediano": 18.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vix_su_media60": {
+   "fasce": {
+    "moderata": 0.45290162874666906,
+    "forte": 0.33430833451586955,
+    "grave": 0.41899212430821625
+   },
+   "E": 0.5159814897745932,
+   "sel": 0.44367309290680934,
+   "n_sel": 42,
+   "ver": 0.3749040118388777,
+   "n_ver": 35,
+   "tutti": 0.41241441969411313,
+   "senza_2001_2020": 0.42688543264305606,
+   "ver_W2": 0.3238022258711914,
+   "ic90_basso": 0.2918654543980215,
+   "episodi_con_segnale": 25,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vix_su_vol_realizzata_alto": {
+   "fasce": {
+    "moderata": 0.507389748198603,
+    "forte": 0.4057944278889362,
+    "grave": 0.13839577125017738
+   },
+   "E": 0.4953675868618396,
+   "sel": 0.4265857811834823,
+   "n_sel": 42,
+   "ver": 0.45034766567333623,
+   "n_ver": 35,
+   "tutti": 0.4373866377697795,
+   "senza_2001_2020": 0.43888976364177124,
+   "ver_W2": 0.4431819011129356,
+   "ic90_basso": 0.36477240568428315,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vix_su_vol_realizzata_basso": {
+   "fasce": {
+    "moderata": 0.492624126894029,
+    "forte": 0.5941499929047822,
+    "grave": 0.8614889314601958
+   },
+   "E": 0.5046301208370175,
+   "sel": 0.5735355132545427,
+   "n_sel": 42,
+   "ver": 0.5494601552839101,
+   "n_ver": 35,
+   "tutti": 0.5625921687224369,
+   "senza_2001_2020": 0.561094879585406,
+   "ver_W2": 0.5566064586754242,
+   "ic90_basso": 0.4621672849642199,
+   "episodi_con_segnale": 34,
+   "anticipo_mediano": 16.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "corr_vix_borsa_positiva": {
+   "fasce": {
+    "moderata": 0.5203017832647462,
+    "forte": 0.5056655314318149,
+    "grave": 0.40589612601106856
+   },
+   "E": 0.5362147558699283,
+   "sel": 0.4379577260164744,
+   "n_sel": 42,
+   "ver": 0.5829285004763932,
+   "n_ver": 35,
+   "tutti": 0.5038535325891649,
+   "senza_2001_2020": 0.5018171533208535,
+   "ver_W2": 0.6072030651340996,
+   "ic90_basso": 0.5128931054754808,
+   "episodi_con_segnale": 8,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "giorni_vix_su_borsa_su": {
+   "fasce": {
+    "moderata": 0.5426391742400405,
+    "forte": 0.43371647509578537,
+    "grave": 0.2935398041719881
+   },
+   "E": 0.5472197661852836,
+   "sel": 0.44199906937142974,
+   "n_sel": 43,
+   "ver": 0.5346558819355754,
+   "n_ver": 35,
+   "tutti": 0.48357584423995664,
+   "senza_2001_2020": 0.4761182638577274,
+   "ver_W2": 0.5032439335887612,
+   "ic90_basso": 0.4691232743416652,
+   "episodi_con_segnale": 21,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "skew_alto": {
+   "fasce": {
+    "moderata": 0.5248940344642494,
+    "forte": 0.4520759424814342,
+    "grave": 0.3372960124875834
+   },
+   "E": 0.4650764646166945,
+   "sel": 0.37333023123809905,
+   "n_sel": 43,
+   "ver": 0.6182890389020658,
+   "n_ver": 35,
+   "tutti": 0.4832476449334687,
+   "senza_2001_2020": 0.4833841504339589,
+   "ver_W2": 0.6594781974092317,
+   "ic90_basso": 0.5522716860264753,
+   "episodi_con_segnale": 42,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "skew_var10": {
+   "fasce": {
+    "moderata": 0.5666178022100061,
+    "forte": 0.5217681282815382,
+    "grave": 0.5860259684972329
+   },
+   "E": 0.4840491862330944,
+   "sel": 0.5594422828780843,
+   "n_sel": 43,
+   "ver": 0.5491155304182124,
+   "n_ver": 35,
+   "tutti": 0.5548084836973726,
+   "senza_2001_2020": 0.5477910094002048,
+   "ver_W2": 0.6323627075351212,
+   "ic90_basso": 0.4901216323055404,
+   "episodi_con_segnale": 57,
+   "anticipo_mediano": 14.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "vix_max10_su_media60": {
+   "fasce": {
+    "moderata": 0.4215899594784227,
+    "forte": 0.39801452154581146,
+    "grave": 0.4865545622250603
+   },
+   "E": 0.42487303245923935,
+   "sel": 0.4385223026346909,
+   "n_sel": 42,
+   "ver": 0.39995418516491305,
+   "n_ver": 35,
+   "tutti": 0.4209913401484284,
+   "senza_2001_2020": 0.43476170759538213,
+   "ver_W2": 0.3673161831782521,
+   "ic90_basso": 0.30852976950678096,
+   "episodi_con_segnale": 23,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "borsa_vicino_max_x_vix_var5": {
+   "fasce": {
+    "moderata": 0.5215447831639736,
+    "forte": 0.43090262996073975,
+    "grave": 0.48624237264084
+   },
+   "E": 0.6050492844745718,
+   "sel": 0.4672811455311679,
+   "n_sel": 43,
+   "ver": 0.5179877962253442,
+   "n_ver": 35,
+   "tutti": 0.49003412981701605,
+   "senza_2001_2020": 0.48217431991378346,
+   "ver_W2": 0.47596971355592044,
+   "ic90_basso": 0.46779184658111855,
+   "episodi_con_segnale": 43,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "baa_liv": {
+   "fasce": {
+    "moderata": 0.44710360868948235,
+    "forte": 0.655264651624805,
+    "grave": 0.8739144316730524
+   },
+   "E": 0.5336686642433769,
+   "sel": 0.528748172568898,
+   "n_sel": 43,
+   "ver": 0.5870931906180948,
+   "n_ver": 35,
+   "tutti": 0.5549286293858452,
+   "senza_2001_2020": 0.5397623677317165,
+   "ver_W2": 0.5800000000000001,
+   "ic90_basso": 0.509285775101867,
+   "episodi_con_segnale": 22,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "baa_var5": {
+   "fasce": {
+    "moderata": 0.4125825975900938,
+    "forte": 0.46008466959935673,
+    "grave": 0.3702958705832269
+   },
+   "E": 0.3976048727772865,
+   "sel": 0.42929895947805596,
+   "n_sel": 43,
+   "ver": 0.4149526647610939,
+   "n_ver": 35,
+   "tutti": 0.4228615195409576,
+   "senza_2001_2020": 0.4295694161594545,
+   "ver_W2": 0.44062397372742196,
+   "ic90_basso": 0.34712007135761924,
+   "episodi_con_segnale": 36,
+   "anticipo_mediano": 18.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "baa_var20": {
+   "fasce": {
+    "moderata": 0.41439919272188325,
+    "forte": 0.5163450167920155,
+    "grave": 0.4713849865190861
+   },
+   "E": 0.3807083210531486,
+   "sel": 0.47037307331049355,
+   "n_sel": 42,
+   "ver": 0.43016156824585944,
+   "n_ver": 35,
+   "tutti": 0.45209511646293254,
+   "senza_2001_2020": 0.46192978261418927,
+   "ver_W2": 0.3873818646232439,
+   "ic90_basso": 0.34653668227614587,
+   "episodi_con_segnale": 17,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "hy_fondo_var5": {
+   "fasce": {
+    "moderata": 0.5423677050363708,
+    "forte": 0.5545710940825884,
+    "grave": 0.5059990066695048
+   },
+   "E": 0.5407427055702917,
+   "sel": 0.5143402602459896,
+   "n_sel": 43,
+   "ver": 0.5768566157838189,
+   "n_ver": 35,
+   "tutti": 0.5423924710642462,
+   "senza_2001_2020": 0.5346098972535753,
+   "ver_W2": 0.6015033752964788,
+   "ic90_basso": 0.5179625777939955,
+   "episodi_con_segnale": 63,
+   "anticipo_mediano": 15.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "hy_fondo_var20": {
+   "fasce": {
+    "moderata": 0.5237784399981079,
+    "forte": 0.5416577976443877,
+    "grave": 0.44193628494394777
+   },
+   "E": 0.5626331990699805,
+   "sel": 0.47822984451336936,
+   "n_sel": 42,
+   "ver": 0.5719901072391493,
+   "n_ver": 35,
+   "tutti": 0.5208481457523604,
+   "senza_2001_2020": 0.5011904414780602,
+   "ver_W2": 0.6079511038131727,
+   "ic90_basso": 0.48896198990451867,
+   "episodi_con_segnale": 41,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "ig_fondo_var5": {
+   "fasce": {
+    "moderata": 0.5034310005491082,
+    "forte": 0.5399715008750768,
+    "grave": 0.469910955016319
+   },
+   "E": 0.5099528440907751,
+   "sel": 0.5000726022288885,
+   "n_sel": 43,
+   "ver": 0.5249516511585477,
+   "n_ver": 35,
+   "tutti": 0.5112362780306586,
+   "senza_2001_2020": 0.5149908529218874,
+   "ver_W2": 0.4859770114942529,
+   "ic90_basso": 0.4774449309736667,
+   "episodi_con_segnale": 72,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "ig_fondo_var20": {
+   "fasce": {
+    "moderata": 0.46280308405468046,
+    "forte": 0.5082523295965187,
+    "grave": 0.34346175677593305
+   },
+   "E": 0.4794092412483216,
+   "sel": 0.48687215768952674,
+   "n_sel": 42,
+   "ver": 0.43780737497212596,
+   "n_ver": 35,
+   "tutti": 0.4645699837270718,
+   "senza_2001_2020": 0.4714229896720842,
+   "ver_W2": 0.4476190476190475,
+   "ic90_basso": 0.36776330353341835,
+   "episodi_con_segnale": 47,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "ciss_liv": {
+   "fasce": {
+    "moderata": 0.4806701587477866,
+    "forte": 0.6958552102549548,
+    "grave": 0.8754682843763304
+   },
+   "E": 0.5805111831548613,
+   "sel": 0.5164823560083295,
+   "n_sel": 43,
+   "ver": 0.6744673518619878,
+   "n_ver": 35,
+   "tutti": 0.5873730592759967,
+   "senza_2001_2020": 0.5762225827359927,
+   "ver_W2": 0.6550556467797847,
+   "ic90_basso": 0.5985586977234486,
+   "episodi_con_segnale": 23,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "ciss_var5": {
+   "fasce": {
+    "moderata": 0.43840456315052356,
+    "forte": 0.47481788940920494,
+    "grave": 0.38695898964098197
+   },
+   "E": 0.5093024855093821,
+   "sel": 0.4918461096755669,
+   "n_sel": 43,
+   "ver": 0.38595795576638486,
+   "n_ver": 35,
+   "tutti": 0.4443321944599084,
+   "senza_2001_2020": 0.45618281116365406,
+   "ver_W2": 0.2778069695311075,
+   "ic90_basso": 0.32113928926189467,
+   "episodi_con_segnale": 29,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "curva_bassa": {
+   "fasce": {
+    "moderata": 0.4912691802247024,
+    "forte": 0.49745518187408355,
+    "grave": 0.2787143465304385
+   },
+   "E": 0.46960736156138455,
+   "sel": 0.523798680619495,
+   "n_sel": 43,
+   "ver": 0.4069622331691298,
+   "n_ver": 35,
+   "tutti": 0.4713720695840746,
+   "senza_2001_2020": 0.4630231764331381,
+   "ver_W2": 0.40501733260353945,
+   "ic90_basso": 0.31880897646414896,
+   "episodi_con_segnale": 20,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "curva_var20_bassa": {
+   "fasce": {
+    "moderata": 0.49683301010674363,
+    "forte": 0.46124769405420746,
+    "grave": 0.43924719738895984
+   },
+   "E": 0.4787654320987655,
+   "sel": 0.5156064384033733,
+   "n_sel": 42,
+   "ver": 0.43674106509355554,
+   "n_ver": 35,
+   "tutti": 0.4797585414443652,
+   "senza_2001_2020": 0.4968252302058002,
+   "ver_W2": 0.41428206531654815,
+   "ic90_basso": 0.36697249082689704,
+   "episodi_con_segnale": 26,
+   "anticipo_mediano": 19.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "tasso10_scossa5": {
+   "fasce": {
+    "moderata": 0.4945289700828598,
+    "forte": 0.49378813679579964,
+    "grave": 0.6494075493117639
+   },
+   "E": 0.5210544585257229,
+   "sel": 0.5020724636246332,
+   "n_sel": 43,
+   "ver": 0.5201540675870177,
+   "n_ver": 35,
+   "tutti": 0.5101860038641647,
+   "senza_2001_2020": 0.5118561089825457,
+   "ver_W2": 0.54727969348659,
+   "ic90_basso": 0.47341446208112875,
+   "episodi_con_segnale": 45,
+   "anticipo_mediano": 15.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "tasso10_var20": {
+   "fasce": {
+    "moderata": 0.5554117591410056,
+    "forte": 0.46408755498793813,
+    "grave": 0.6095962821058606
+   },
+   "E": 0.5630399187870452,
+   "sel": 0.49433666470703513,
+   "n_sel": 42,
+   "ver": 0.5784645948630622,
+   "n_ver": 35,
+   "tutti": 0.5325766329597748,
+   "senza_2001_2020": 0.5234233551243996,
+   "ver_W2": 0.5995511767925562,
+   "ic90_basso": 0.5109382716049382,
+   "episodi_con_segnale": 26,
+   "anticipo_mediano": 15.5,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "tasso2_var20": {
+   "fasce": {
+    "moderata": 0.5497437838008293,
+    "forte": 0.4100716617000142,
+    "grave": 0.5427415921668796
+   },
+   "E": 0.5644807937911386,
+   "sel": 0.47109002817815077,
+   "n_sel": 42,
+   "ver": 0.5467526201625817,
+   "n_ver": 35,
+   "tutti": 0.5054821154438012,
+   "senza_2001_2020": 0.515326448056202,
+   "ver_W2": 0.5678197409231892,
+   "ic90_basso": 0.47987998945853355,
+   "episodi_con_segnale": 15,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "dollaro_var5": {
+   "fasce": {
+    "moderata": 0.4693526693443402,
+    "forte": 0.5123716948110307,
+    "grave": 0.5763942103022563
+   },
+   "E": 0.5403091331826964,
+   "sel": 0.4834575821477719,
+   "n_sel": 43,
+   "ver": 0.505989174724807,
+   "n_ver": 35,
+   "tutti": 0.4935679121502875,
+   "senza_2001_2020": 0.49296672151078286,
+   "ver_W2": 0.4386973180076629,
+   "ic90_basso": 0.446963206227574,
+   "episodi_con_segnale": 46,
+   "anticipo_mediano": 14.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "dollaro_var20": {
+   "fasce": {
+    "moderata": 0.4596427163647257,
+    "forte": 0.45874130835816657,
+    "grave": 0.6434298282957287
+   },
+   "E": 0.5018397354029538,
+   "sel": 0.46407420922108017,
+   "n_sel": 42,
+   "ver": 0.49571529931683195,
+   "n_ver": 35,
+   "tutti": 0.4784565229009674,
+   "senza_2001_2020": 0.4870701804518001,
+   "ver_W2": 0.47855135924101433,
+   "ic90_basso": 0.4130414158000365,
+   "episodi_con_segnale": 15,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "yen_scossa5": {
+   "fasce": {
+    "moderata": 0.47790763104358747,
+    "forte": 0.5519727390588318,
+    "grave": 0.5916758646063283
+   },
+   "E": 0.5139661515820456,
+   "sel": 0.50655287501314,
+   "n_sel": 28,
+   "ver": 0.5254346683485757,
+   "n_ver": 35,
+   "tutti": 0.5170427601994931,
+   "senza_2001_2020": 0.5205715817961861,
+   "ver_W2": 0.47967833491012285,
+   "ic90_basso": 0.4696407547566488,
+   "episodi_con_segnale": 31,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "nasdaq_su_sp_var20": {
+   "fasce": {
+    "moderata": 0.5830140485312899,
+    "forte": 0.584200723712218,
+    "grave": 0.5081736909323116
+   },
+   "E": 0.590095949176409,
+   "sel": 0.5553724313622143,
+   "n_sel": 42,
+   "ver": 0.5998913418070506,
+   "n_ver": 35,
+   "tutti": 0.5756082997462311,
+   "senza_2001_2020": 0.5659888303776406,
+   "ver_W2": 0.6126327312534209,
+   "ic90_basso": 0.5476608891321535,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "nasdaq_su_sp_basso_var20": {
+   "fasce": {
+    "moderata": 0.41704933541459727,
+    "forte": 0.41574074074074074,
+    "grave": 0.4917447140627217
+   },
+   "E": 0.40991878704522383,
+   "sel": 0.44475730976369543,
+   "n_sel": 42,
+   "ver": 0.3999756735388919,
+   "n_ver": 35,
+   "tutti": 0.42440202057060294,
+   "senza_2001_2020": 0.43402866468000567,
+   "ver_W2": 0.38723590585659556,
+   "ic90_basso": 0.345627683512741,
+   "episodi_con_segnale": 13,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "piccole_su_sp_alto_var20": {
+   "fasce": {
+    "moderata": 0.5401359128391908,
+    "forte": 0.5522976680384087,
+    "grave": 0.5783205619412516
+   },
+   "E": 0.561278449094541,
+   "sel": 0.5467216714981722,
+   "n_sel": 42,
+   "ver": 0.5493004115226338,
+   "n_ver": 35,
+   "tutti": 0.5478938260547455,
+   "senza_2001_2020": 0.5371029350875045,
+   "ver_W2": 0.614957124612297,
+   "ic90_basso": 0.4867952725577246,
+   "episodi_con_segnale": 27,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "piccole_su_sp_basso_var20": {
+   "fasce": {
+    "moderata": 0.4599258943916245,
+    "forte": 0.44765030036422115,
+    "grave": 0.42164041436072086
+   },
+   "E": 0.4387133641156629,
+   "sel": 0.4534601012251076,
+   "n_sel": 42,
+   "ver": 0.4505163291370188,
+   "n_ver": 35,
+   "tutti": 0.452122023003249,
+   "senza_2001_2020": 0.46291650386543576,
+   "ver_W2": 0.38483123517606277,
+   "ic90_basso": 0.3870382128159906,
+   "episodi_con_segnale": 24,
+   "anticipo_mediano": 17.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "medie_su_sp_basso_var20": {
+   "fasce": {
+    "moderata": 0.4447969979345033,
+    "forte": 0.4544829951279504,
+    "grave": 0.3914892862210869
+   },
+   "E": 0.4569928283721387,
+   "sel": 0.42448323163521123,
+   "n_sel": 42,
+   "ver": 0.46363072432037955,
+   "n_ver": 35,
+   "tutti": 0.4422775464921059,
+   "senza_2001_2020": 0.44565315853826853,
+   "ver_W2": 0.42180988870644043,
+   "ic90_basso": 0.38694029881003056,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 19.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "sp100_su_sp_var20": {
+   "fasce": {
+    "moderata": 0.46567270548539186,
+    "forte": 0.5619891443167305,
+    "grave": 0.5153611465872001
+   },
+   "E": 0.4932016897534139,
+   "sel": 0.4935423381783535,
+   "n_sel": 42,
+   "ver": 0.5096320622757405,
+   "n_ver": 35,
+   "tutti": 0.5008558491317112,
+   "senza_2001_2020": 0.495704380179266,
+   "ver_W2": 0.4905564677978471,
+   "ic90_basso": 0.4401466480163798,
+   "episodi_con_segnale": 25,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "dax_meno_sp_5": {
+   "fasce": {
+    "moderata": 0.49017805911858875,
+    "forte": 0.4925387871907667,
+    "grave": 0.44534908471690077
+   },
+   "E": 0.47492451779808104,
+   "sel": 0.46686962289742284,
+   "n_sel": 43,
+   "ver": 0.5101863001479858,
+   "n_ver": 35,
+   "tutti": 0.4863065934585731,
+   "senza_2001_2020": 0.4872232385642348,
+   "ver_W2": 0.5379365079365078,
+   "ic90_basso": 0.46134203004317953,
+   "episodi_con_segnale": 38,
+   "anticipo_mediano": 17.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "nikkei_meno_sp_5": {
+   "fasce": {
+    "moderata": 0.4845040442741593,
+    "forte": 0.5552433659713353,
+    "grave": 0.5228536966084859
+   },
+   "E": 0.4107004617349445,
+   "sel": 0.5141201434884051,
+   "n_sel": 43,
+   "ver": 0.5053911492225669,
+   "n_ver": 35,
+   "tutti": 0.5102032870870673,
+   "senza_2001_2020": 0.5086239496201183,
+   "ver_W2": 0.5101660280970626,
+   "ic90_basso": 0.4609919114516816,
+   "episodi_con_segnale": 36,
+   "anticipo_mediano": 15.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "dax_20_basso": {
+   "fasce": {
+    "moderata": 0.369357803951248,
+    "forte": 0.37295775980322593,
+    "grave": 0.45527174684262806
+   },
+   "E": 0.3788289615875822,
+   "sel": 0.40328103144195093,
+   "n_sel": 42,
+   "ver": 0.3507559447789333,
+   "n_ver": 35,
+   "tutti": 0.37940599204967024,
+   "senza_2001_2020": 0.3853591638140003,
+   "ver_W2": 0.28622514139755517,
+   "ic90_basso": 0.2807377404772042,
+   "episodi_con_segnale": 22,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "nikkei_20_basso": {
+   "fasce": {
+    "moderata": 0.3720177222774073,
+    "forte": 0.47729471169764914,
+    "grave": 0.42889882219384134
+   },
+   "E": 0.3849006123718767,
+   "sel": 0.429835390946502,
+   "n_sel": 42,
+   "ver": 0.3878278497435585,
+   "n_ver": 35,
+   "tutti": 0.4107410540360732,
+   "senza_2001_2020": 0.4169218029240073,
+   "ver_W2": 0.3261777047983944,
+   "ic90_basso": 0.3197999148573861,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 19.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "difensivi_su_ciclici_var20": {
+   "fasce": {
+    "moderata": 0.4114868953578631,
+    "forte": 0.4271421918480742,
+    "grave": 0.4189523475237761
+   },
+   "E": 0.4536851845942755,
+   "sel": 0.4866171366171367,
+   "n_sel": 20,
+   "ver": 0.3776524205095634,
+   "n_ver": 35,
+   "tutti": 0.41727595363958997,
+   "senza_2001_2020": 0.4446780623251211,
+   "ver_W2": 0.33245750388607537,
+   "ic90_basso": 0.2968754840183412,
+   "episodi_con_segnale": 12,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "finanza_su_sp_var20_bassa": {
+   "fasce": {
+    "moderata": 0.49599180244341545,
+    "forte": 0.5531650825768474,
+    "grave": 0.525102096530668
+   },
+   "E": 0.5557739557739558,
+   "sel": 0.5743096993096994,
+   "n_sel": 20,
+   "ver": 0.48483065625922755,
+   "n_ver": 35,
+   "tutti": 0.5173684900957628,
+   "senza_2001_2020": 0.5053858289152406,
+   "ver_W2": 0.4361229504086647,
+   "ic90_basso": 0.4156162284733713,
+   "episodi_con_segnale": 16,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "tecnologia_su_sp_alto": {
+   "fasce": {
+    "moderata": 0.5944115460244493,
+    "forte": 0.5071186541774777,
+    "grave": 0.5022703594132165
+   },
+   "E": 0.5698605571332844,
+   "sel": 0.48096018096018095,
+   "n_sel": 20,
+   "ver": 0.5984132555561126,
+   "n_ver": 35,
+   "tutti": 0.5557030466121375,
+   "senza_2001_2020": 0.5360043007101829,
+   "ver_W2": 0.5763551120693978,
+   "ic90_basso": 0.5349958771387343,
+   "episodi_con_segnale": 15,
+   "anticipo_mediano": 12.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "tecnologia_su_sp_basso": {
+   "fasce": {
+    "moderata": 0.4056343733763089,
+    "forte": 0.49299031651972824,
+    "grave": 0.4980527837670695
+   },
+   "E": 0.43028303391939743,
+   "sel": 0.5194785694785694,
+   "n_sel": 20,
+   "ver": 0.40149425863711585,
+   "n_ver": 35,
+   "tutti": 0.4443976443976444,
+   "senza_2001_2020": 0.4640683464212876,
+   "ver_W2": 0.42354710926139494,
+   "ic90_basso": 0.33864497150211437,
+   "episodi_con_segnale": 6,
+   "anticipo_mediano": 18.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "voluttuari_su_base_basso": {
+   "fasce": {
+    "moderata": 0.4463403495661561,
+    "forte": 0.4341484341484342,
+    "grave": 0.39741596884454033
+   },
+   "E": 0.45763170490443217,
+   "sel": 0.5056511056511057,
+   "n_sel": 20,
+   "ver": 0.3967418253132538,
+   "n_ver": 35,
+   "tutti": 0.4363451999815636,
+   "senza_2001_2020": 0.4617902853196971,
+   "ver_W2": 0.32394825251968107,
+   "ic90_basso": 0.31239348810777384,
+   "episodi_con_segnale": 13,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "utility_su_sp_alto": {
+   "fasce": {
+    "moderata": 0.44595789757080084,
+    "forte": 0.5017194428959134,
+    "grave": 0.44181472752901324
+   },
+   "E": 0.49135964772328405,
+   "sel": 0.5422506922506922,
+   "n_sel": 20,
+   "ver": 0.4171889886175601,
+   "n_ver": 35,
+   "tutti": 0.4626659717568808,
+   "senza_2001_2020": 0.48537536772830897,
+   "ver_W2": 0.38375369803941234,
+   "ic90_basso": 0.3390911319482748,
+   "episodi_con_segnale": 10,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "settori_sotto_media50": {
+   "fasce": {
+    "moderata": 0.3430594398336334,
+    "forte": 0.39538010126245426,
+    "grave": 0.4635321778178921
+   },
+   "E": 0.3975021538657902,
+   "sel": 0.32122187122187124,
+   "n_sel": 20,
+   "ver": 0.40504549075977647,
+   "n_ver": 35,
+   "tutti": 0.37456417456417457,
+   "senza_2001_2020": 0.38329314799903036,
+   "ver_W2": 0.32746327032041317,
+   "ic90_basso": 0.3299109127680556,
+   "episodi_con_segnale": 10,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "dispersione_settori_5": {
+   "fasce": {
+    "moderata": 0.477848606880865,
+    "forte": 0.565853859971507,
+    "grave": 0.7018057018057019
+   },
+   "E": 0.5235712690258145,
+   "sel": 0.4117000117000117,
+   "n_sel": 20,
+   "ver": 0.6031846317560603,
+   "n_ver": 35,
+   "tutti": 0.5335538608265881,
+   "senza_2001_2020": 0.5202238143414614,
+   "ver_W2": 0.5627287770144913,
+   "ic90_basso": 0.543444539158825,
+   "episodi_con_segnale": 16,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "correlazione_settori_20": {
+   "fasce": {
+    "moderata": 0.5047347305411821,
+    "forte": 0.609178315060668,
+    "grave": 0.5527976956548385
+   },
+   "E": 0.5555416573598391,
+   "sel": 0.606992706992707,
+   "n_sel": 20,
+   "ver": 0.5066439352153639,
+   "n_ver": 35,
+   "tutti": 0.5431343976798523,
+   "senza_2001_2020": 0.556973321679204,
+   "ver_W2": 0.48507747079175656,
+   "ic90_basso": 0.4277345434488291,
+   "episodi_con_segnale": 18,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "settori_ai_massimi60_pochi": {
+   "fasce": {
+    "moderata": 0.4282531379305573,
+    "forte": 0.39908281084751673,
+    "grave": 0.5085326513897942
+   },
+   "E": 0.593083378537924,
+   "sel": 0.3510549510549511,
+   "n_sel": 20,
+   "ver": 0.47425384568241713,
+   "n_ver": 35,
+   "tutti": 0.42945424763606577,
+   "senza_2001_2020": 0.43248213836449134,
+   "ver_W2": 0.4198666198666199,
+   "ic90_basso": 0.4231584460155889,
+   "episodi_con_segnale": 0,
+   "anticipo_mediano": null,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "mesi_ago_ott": {
+   "fasce": {
+    "moderata": 0.5269365317341329,
+    "forte": 0.5299400454093941,
+    "grave": 0.500917056903647
+   },
+   "E": 0.5108111471329861,
+   "sel": 0.5485840915316099,
+   "n_sel": 43,
+   "ver": 0.49645320197044335,
+   "n_ver": 35,
+   "tutti": 0.5251920257028814,
+   "senza_2001_2020": 0.5251638611791868,
+   "ver_W2": 0.4973508483853311,
+   "ic90_basso": 0.4296651868069492,
+   "episodi_con_segnale": 0,
+   "anticipo_mediano": null,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "settimana_scadenza_trimestrale": {
+   "fasce": {
+    "moderata": 0.5432265348807078,
+    "forte": 0.4178521593112909,
+    "grave": 0.578639846743295
+   },
+   "E": 0.5489655172413793,
+   "sel": 0.6223667666597364,
+   "n_sel": 43,
+   "ver": 0.3681205781588923,
+   "n_ver": 35,
+   "tutti": 0.5082819384862807,
+   "senza_2001_2020": 0.5069669286144382,
+   "ver_W2": 0.39311986863711007,
+   "ic90_basso": 0.31948387358349045,
+   "episodi_con_segnale": 26,
+   "anticipo_mediano": 15.5,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N01_stallo_max40": {
+   "fasce": {
+    "moderata": 0.6189048137111143,
+    "forte": 0.42133886760323547,
+    "grave": 0.17999503334752376
+   },
+   "E": 0.5502370171335689,
+   "sel": 0.491247879881341,
+   "n_sel": 42,
+   "ver": 0.5362971071783332,
+   "n_ver": 35,
+   "tutti": 0.5117248013799739,
+   "senza_2001_2020": 0.5202680242831401,
+   "ver_W2": 0.5513957307060756,
+   "ic90_basso": 0.45217908329785717,
+   "episodi_con_segnale": 23,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N02_ampiezza40_bassa": {
+   "fasce": {
+    "moderata": 0.5230991911451681,
+    "forte": 0.3721885199375621,
+    "grave": 0.1522527316588619
+   },
+   "E": 0.42693270969133035,
+   "sel": 0.469915938562171,
+   "n_sel": 42,
+   "ver": 0.39867258610553624,
+   "n_ver": 35,
+   "tutti": 0.437532596536428,
+   "senza_2001_2020": 0.4527664545876901,
+   "ver_W2": 0.3963035942346288,
+   "ic90_basso": 0.32428433578625143,
+   "episodi_con_segnale": 16,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N03_vicino_max20": {
+   "fasce": {
+    "moderata": 0.6420667581161409,
+    "forte": 0.6153853885814294,
+    "grave": 0.4614587767844473
+   },
+   "E": 0.4141389134492582,
+   "sel": 0.6210042098292418,
+   "n_sel": 42,
+   "ver": 0.6077641955036591,
+   "n_ver": 35,
+   "tutti": 0.6149860214994315,
+   "senza_2001_2020": 0.6099393310278736,
+   "ver_W2": 0.6640540047436598,
+   "ic90_basso": 0.5495685296681464,
+   "episodi_con_segnale": 67,
+   "anticipo_mediano": 17.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N04_rend120": {
+   "fasce": {
+    "moderata": 0.5707768475158854,
+    "forte": 0.48747871434653045,
+    "grave": 0.17710727969348658
+   },
+   "E": 0.49358743427708945,
+   "sel": 0.5070915012805178,
+   "n_sel": 42,
+   "ver": 0.5000989276085062,
+   "n_ver": 35,
+   "tutti": 0.5039130587023306,
+   "senza_2001_2020": 0.5155809039501896,
+   "ver_W2": 0.5183835066593687,
+   "ic90_basso": 0.40944229560704654,
+   "episodi_con_segnale": 19,
+   "anticipo_mediano": 13.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N05_settori_sotto_media200": {
+   "fasce": {
+    "moderata": 0.38516827523618696,
+    "forte": 0.5531600679626996,
+    "grave": 0.7760589536905327
+   },
+   "E": 0.48482581389731333,
+   "sel": 0.3410120646962752,
+   "n_sel": 18,
+   "ver": 0.551683262209578,
+   "n_ver": 35,
+   "tutti": 0.4801345536201544,
+   "senza_2001_2020": 0.4661674057958887,
+   "ver_W2": 0.508108108108108,
+   "ic90_basso": 0.46576508839666736,
+   "episodi_con_segnale": 8,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N06_divergenza_settori": {
+   "fasce": {
+    "moderata": 0.5717380556090234,
+    "forte": 0.4371193194722607,
+    "grave": 0.3441697727412013
+   },
+   "E": 0.49018347745620483,
+   "sel": 0.6002281502281502,
+   "n_sel": 20,
+   "ver": 0.44455810170095883,
+   "n_ver": 35,
+   "tutti": 0.5011653920744831,
+   "senza_2001_2020": 0.507307154365978,
+   "ver_W2": 0.44880409166123447,
+   "ic90_basso": 0.36434023076880223,
+   "episodi_con_segnale": 24,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N07_volume_rialzi_20_60_basso": {
+   "fasce": {
+    "moderata": 0.4602138025637387,
+    "forte": 0.3821241899626318,
+    "grave": 0.3805626507733787
+   },
+   "E": 0.45334361679189267,
+   "sel": 0.40114401940711003,
+   "n_sel": 42,
+   "ver": 0.45934440187313746,
+   "n_ver": 35,
+   "tutti": 0.42759873870984993,
+   "senza_2001_2020": 0.43303416784758303,
+   "ver_W2": 0.42215289180806426,
+   "ic90_basso": 0.3895735976808774,
+   "episodi_con_segnale": 21,
+   "anticipo_mediano": 16.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N08_vix_su_min20": {
+   "fasce": {
+    "moderata": 0.43451397757911164,
+    "forte": 0.3537640130552007,
+    "grave": 0.3366858237547893
+   },
+   "E": 0.5653965135191189,
+   "sel": 0.4085152749903708,
+   "n_sel": 42,
+   "ver": 0.3879802955665025,
+   "n_ver": 35,
+   "tutti": 0.39918119343406694,
+   "senza_2001_2020": 0.40940825883354615,
+   "ver_W2": 0.3129064039408867,
+   "ic90_basso": 0.32733021143749114,
+   "episodi_con_segnale": 26,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N09_vix_var20": {
+   "fasce": {
+    "moderata": 0.4424025984264383,
+    "forte": 0.3234627028049761,
+    "grave": 0.3396338867603236
+   },
+   "E": 0.4578291908176965,
+   "sel": 0.4271155574476137,
+   "n_sel": 42,
+   "ver": 0.3556982707940562,
+   "n_ver": 35,
+   "tutti": 0.39465315442326937,
+   "senza_2001_2020": 0.4077100719046869,
+   "ver_W2": 0.2867542419266557,
+   "ic90_basso": 0.2854606418131322,
+   "episodi_con_segnale": 25,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N10_baa_var60": {
+   "fasce": {
+    "moderata": 0.4517408511107958,
+    "forte": 0.5783300222316825,
+    "grave": 0.6982315169575706
+   },
+   "E": 0.4700615348891211,
+   "sel": 0.5105117341388095,
+   "n_sel": 42,
+   "ver": 0.5243605181536216,
+   "n_ver": 35,
+   "tutti": 0.5168066359637241,
+   "senza_2001_2020": 0.5176587336299717,
+   "ver_W2": 0.5085969713555921,
+   "ic90_basso": 0.4270266577469643,
+   "episodi_con_segnale": 18,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N11_curva_var60_bassa": {
+   "fasce": {
+    "moderata": 0.5018964728883843,
+    "forte": 0.40052622865521964,
+    "grave": 0.3423407123598694
+   },
+   "E": 0.4510537227778607,
+   "sel": 0.4758441619872016,
+   "n_sel": 42,
+   "ver": 0.427178333231973,
+   "n_ver": 35,
+   "tutti": 0.45372333073482507,
+   "senza_2001_2020": 0.47158958149878216,
+   "ver_W2": 0.4145885787265097,
+   "ic90_basso": 0.34154996046950065,
+   "episodi_con_segnale": 20,
+   "anticipo_mediano": 18.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N12_tasso10_var60": {
+   "fasce": {
+    "moderata": 0.5309260047616795,
+    "forte": 0.5067948536020056,
+    "grave": 0.5364091102596851
+   },
+   "E": 0.5444869051765603,
+   "sel": 0.5194658990316716,
+   "n_sel": 42,
+   "ver": 0.5293843378134566,
+   "n_ver": 35,
+   "tutti": 0.5239742802961194,
+   "senza_2001_2020": 0.5296255474495122,
+   "ver_W2": 0.5477941981390257,
+   "ic90_basso": 0.44613193050740946,
+   "episodi_con_segnale": 20,
+   "anticipo_mediano": 16.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N13_dollaro_var60": {
+   "fasce": {
+    "moderata": 0.48882298219888687,
+    "forte": 0.4845631710893524,
+    "grave": 0.7111891585071661
+   },
+   "E": 0.5183805211391418,
+   "sel": 0.49694804273348325,
+   "n_sel": 42,
+   "ver": 0.5269784508098684,
+   "n_ver": 35,
+   "tutti": 0.5105982282227493,
+   "senza_2001_2020": 0.5166070862759047,
+   "ver_W2": 0.5038168217478561,
+   "ic90_basso": 0.44769166210545525,
+   "episodi_con_segnale": 11,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N14_vol60_su_252": {
+   "fasce": {
+    "moderata": 0.4940014058431594,
+    "forte": 0.5078922472919919,
+    "grave": 0.6881438910174542
+   },
+   "E": 0.5121389527458492,
+   "sel": 0.5274670072371221,
+   "n_sel": 40,
+   "ver": 0.5096555778548116,
+   "n_ver": 35,
+   "tutti": 0.5191550068587105,
+   "senza_2001_2020": 0.5120129033031736,
+   "ver_W2": 0.503743842364532,
+   "ic90_basso": 0.42103310425915796,
+   "episodi_con_segnale": 15,
+   "anticipo_mediano": 20.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N15_giorni_sopra_1pct_20": {
+   "fasce": {
+    "moderata": 0.49559560411837966,
+    "forte": 0.6609479211011778,
+    "grave": 0.8980630055342699
+   },
+   "E": 0.5877822532228661,
+   "sel": 0.5784440525181266,
+   "n_sel": 42,
+   "ver": 0.6015544608648057,
+   "n_ver": 35,
+   "tutti": 0.5889487835847989,
+   "senza_2001_2020": 0.5742325015405372,
+   "ver_W2": 0.6217971173143587,
+   "ic90_basso": 0.5153947373755803,
+   "episodi_con_segnale": 34,
+   "anticipo_mediano": 18.5,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N16_dist_media20": {
+   "fasce": {
+    "moderata": 0.6522800876653579,
+    "forte": 0.7013404049004303,
+    "grave": 0.6074251454519655
+   },
+   "E": 0.5147628559889097,
+   "sel": 0.6527593639981889,
+   "n_sel": 42,
+   "ver": 0.6750937582355206,
+   "n_ver": 35,
+   "tutti": 0.6629113613787944,
+   "senza_2001_2020": 0.6536553979056471,
+   "ver_W2": 0.7555208903484765,
+   "ic90_basso": 0.6157784062113565,
+   "episodi_con_segnale": 37,
+   "anticipo_mediano": 12.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N17_nasdaq_meno_sp_20_basso": {
+   "fasce": {
+    "moderata": 0.417236333822115,
+    "forte": 0.41412066600444636,
+    "grave": 0.4918440471122464
+   },
+   "E": 0.4099675803124078,
+   "sel": 0.444927594991452,
+   "n_sel": 42,
+   "ver": 0.39892355409596786,
+   "n_ver": 35,
+   "tutti": 0.4240166673116864,
+   "senza_2001_2020": 0.4338441890166028,
+   "ver_W2": 0.38617040686006204,
+   "ic90_basso": 0.344075675566097,
+   "episodi_con_segnale": 12,
+   "anticipo_mediano": 20.0,
+   "dir": -1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  },
+  "N18_grandi_meno_piccole_60": {
+   "fasce": {
+    "moderata": 0.5079513741071852,
+    "forte": 0.4228418712454472,
+    "grave": 0.4441038739889315
+   },
+   "E": 0.42855550579688517,
+   "sel": 0.4258772730037097,
+   "n_sel": 42,
+   "ver": 0.5334857791562773,
+   "n_ver": 35,
+   "tutti": 0.47479023034578594,
+   "senza_2001_2020": 0.474769211031217,
+   "ver_W2": 0.49990877577084486,
+   "ic90_basso": 0.4628215045916196,
+   "episodi_con_segnale": 12,
+   "anticipo_mediano": 19.0,
+   "dir": 1,
+   "passa_selezione": false,
+   "passa_verifica": false
+  }
+ },
+ "parte1": {
+  "crollo": {
+   "base": 33.61093231162197,
+   "auc": {
+    "moderata": [
+     0.41,
+     42
+    ],
+    "forte": [
+     0.514,
+     24
+    ],
+    "grave": [
+     0.719,
+     8
+    ],
+    "tutte": [
+     0.477,
+     74
+    ]
+   },
+   "valori": {
+    "moderata": {
+     "p-2": 22.4,
+     "p-5": 24.5,
+     "p-10": 26.8
+    },
+    "forte": {
+     "p-2": 35.7,
+     "p-5": 38.1,
+     "p-10": 46.0
+    },
+    "grave": {
+     "p-2": 55.3,
+     "p-5": 62.8,
+     "p-10": 72.6
+    }
+   },
+   "sopra": {
+    "50": [
+     55,
+     60.0
+    ],
+    "60": [
+     47,
+     58.0
+    ]
+   }
+  },
+  "armor": {
+   "base": 41.59915708812261,
+   "auc": {
+    "moderata": [
+     0.389,
+     46
+    ],
+    "forte": [
+     0.648,
+     24
+    ],
+    "grave": [
+     0.765,
+     8
+    ],
+    "tutte": [
+     0.507,
+     78
+    ]
+   },
+   "valori": {
+    "moderata": {
+     "p-2": 37.5,
+     "p-5": 38.4,
+     "p-10": 38.6
+    },
+    "forte": {
+     "p-2": 42.7,
+     "p-5": 44.2,
+     "p-10": 47.1
+    },
+    "grave": {
+     "p-2": 50.8,
+     "p-5": 55.8,
+     "p-10": 58.9
+    }
+   },
+   "sopra": {
+    "50": [
+     40,
+     59.0
+    ],
+    "60": [
+     22,
+     51.5
+    ]
+   }
+  },
+  "minimi": {
+   "base": 44.75074679943101,
+   "auc": {
+    "moderata": [
+     0.346,
+     31
+    ],
+    "forte": [
+     0.434,
+     13
+    ],
+    "grave": [
+     0.712,
+     5
+    ],
+    "tutte": [
+     0.407,
+     49
+    ]
+   },
+   "valori": {
+    "moderata": {
+     "p-2": 28.3,
+     "p-5": 30.8,
+     "p-10": 33.5
+    },
+    "forte": {
+     "p-2": 32.1,
+     "p-5": 37.0,
+     "p-10": 47.2
+    },
+    "grave": {
+     "p-2": 58.5,
+     "p-5": 66.4,
+     "p-10": 74.1
+    }
+   },
+   "sopra": {
+    "50": [
+     43,
+     60.0
+    ],
+    "60": [
+     39,
+     59.0
+    ]
+   }
+  },
+  "super": {
+   "base": 49.032694763729246,
+   "auc": {
+    "moderata": [
+     0.442,
+     43
+    ],
+    "forte": [
+     0.638,
+     24
+    ],
+    "grave": [
+     0.868,
+     8
+    ],
+    "tutte": [
+     0.55,
+     75
+    ]
+   },
+   "valori": {
+    "moderata": {
+     "p-2": 42.3,
+     "p-5": 41.2,
+     "p-10": 42.5
+    },
+    "forte": {
+     "p-2": 62.6,
+     "p-5": 62.1,
+     "p-10": 64.1
+    },
+    "grave": {
+     "p-2": 87.8,
+     "p-5": 89.0,
+     "p-10": 91.8
+    }
+   },
+   "sopra": {
+    "50": [
+     55,
+     60.0
+    ],
+    "60": [
+     52,
+     60.0
+    ]
+   }
+  },
+  "stato": {
+   "base": 43.47008939974458,
+   "auc": {
+    "moderata": [
+     0.446,
+     42
+    ],
+    "forte": [
+     0.567,
+     24
+    ],
+    "grave": [
+     0.437,
+     8
+    ],
+    "tutte": [
+     0.484,
+     74
+    ]
+   },
+   "valori": {
+    "moderata": {
+     "p-2": 42.6,
+     "p-5": 41.3,
+     "p-10": 41.4
+    },
+    "forte": {
+     "p-2": 52.8,
+     "p-5": 53.7,
+     "p-10": 55.0
+    },
+    "grave": {
+     "p-2": 47.8,
+     "p-5": 42.4,
+     "p-10": 48.2
+    }
+   },
+   "sopra": {
+    "50": [
+     55,
+     59.0
+    ],
+    "60": [
+     40,
+     60.0
+    ]
+   }
+  }
+ }
+}
