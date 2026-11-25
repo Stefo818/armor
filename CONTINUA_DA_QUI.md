@@ -893,3 +893,5 @@ Prima: 63 sedute prima di qualunque calo ≥15% (compreso il Covid, esterno) = f
 - Sezione «Paura, protezioni e prezzi» spostata subito dopo il Quadro di oggi.
 
 (50) 25/11/2026 sera: «Salute dell'economia» ricalibrata (src/armor/salute_economia.py): 16 misure (lavoro 7, PIL USA+euro 2, famiglie 7), retta calibrata su recessioni (100 = forti 2008-09/2020), costi esclusi dal voto; oggi ~15 (era 88 in percentile). Pilastro nuovo sa_pil. Protocollo/esito: PROTOCOLLO_SALUTE_ECONOMIA.md, ESITO_SALUTE_ECONOMIA.md. Serie f_clvmnacscab1gqea19 e f_totalsl nell'archivio e in FRED_EXT. sw armor-v114.
+
+(51) 25/11/2026 sera: «Prima di un crollo» ora usa una finestra variabile per indice: mediana (fra i 12 crolli endogeni) delle sedute con cui l'indice supera 60 (se raro 50) entro 60 sedute dal picco; media dal momento dell'anticipo al picco; riga storia = 8 valori (…, sedute, soglia, crolli attivi). Mostrato nella scheda ("quanti giorni prima"). Risultato: finestre 46-60 sedute, medie ancora modeste (crollo 33,6 vs calmi 22,5) perché l'indice oscilla. sw armor-v115.

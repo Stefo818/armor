@@ -358,19 +358,36 @@ def _maschere():
         a = sp.to_numpy()
         fmin = pd.Series([a[i + 1:i + 64].min() / a[i] - 1 if i + 63 < len(a) else float("nan") for i in range(len(a))], index=sp.index)
         calmo = ((ora > -0.05) & (fmin > -0.05)).where(fmin.notna())
-        fin = []
+        fin = []; picchi = []
         for p in PICCHI_ENDOGENI:
             t = pd.Timestamp(p)
             i = sp.index.get_loc(sp.index[sp.index.searchsorted(t)])
             fin.append((sp.index[max(0, i - FINESTRA_PRIMA + 1)], sp.index[i]))
+            picchi.append(i)
+        _maschere.cal = sp.index; _maschere.picchi = picchi
         return calmo, fin
     except Exception:  # noqa: BLE001
         return None
 
 
+SOGLIE_ATTIVA = (60, 50)   # l'indice «inizia a dare informazioni importanti» quando supera 60 (se troppo raro, 50)
+MAX_PRIMA = 60            # si guarda al massimo 60 sedute (circa 3 mesi) prima del picco
+
+
+def _anticipo(v, cal, picchi, soglia):
+    """Per ogni crollo: quante sedute prima del picco l'indice supera per la prima volta la soglia (entro MAX_PRIMA). None se non la supera."""
+    out = []
+    for i in picchi:
+        w = v[(v.index >= cal[max(0, i - MAX_PRIMA)]) & (v.index <= cal[i] + pd.Timedelta(days=1))]
+        s = w[w >= soglia]
+        out.append(int((cal[i] >= s.index[0]) and cal.searchsorted(cal[i]) - cal.searchsorted(s.index[0])) if len(s) else None)
+    return out
+
+
 def storia(d: dict) -> dict:
-    """Per ogni serie: [media di sempre, media nei mercati calmi, media delle 4 settimane prima dei crolli endogeni (ogni crollo pesa uno),
-    numero di crolli con dati, in quanti di questi la media supera quella dei mercati calmi]."""
+    """Per ogni serie: [media di sempre, media nei mercati calmi, media prima dei crolli endogeni (ogni crollo pesa uno), numero di crolli con dati,
+    in quanti di questi la media supera quella dei mercati calmi, sedute prima del crollo a cui si riferisce la media, soglia usata, crolli in cui l'indice
+    ha superato la soglia]. Le sedute sono la mediana, fra i crolli in cui l'indice supera la soglia, dell'anticipo con cui la supera la prima volta."""
     m = _maschere()
     out: dict = {}
     for k, r in d.items():
@@ -378,15 +395,26 @@ def storia(d: dict) -> dict:
             t = pd.to_datetime(pd.Series(r["dt"]).cumsum() + r["t0"], unit="D")
             v = pd.Series([x / 10 for x in r["v"]], index=t.values)
             v = v[~v.index.duplicated()]
-            row = [round(float(v.mean()), 1), None, None, 0, 0]
+            row = [round(float(v.mean()), 1), None, None, 0, 0, FINESTRA_PRIMA, 0, 0]
             if m is not None:
+                cal, picchi = _maschere.cal, _maschere.picchi
                 z = m[0].reindex(v.index, method="ffill", tolerance=pd.Timedelta(days=7)).fillna(False).astype(bool).to_numpy()
                 if z.sum() >= 5:
                     row[1] = round(float(v[z].mean()), 1)
-                eps = [float(w.mean()) for a, b in m[1] for w in [v[(v.index >= a) & (v.index <= b + pd.Timedelta(days=1))]] if len(w)]
+                n_sed, soglia, att = FINESTRA_PRIMA, 0, 0
+                for s in SOGLIE_ATTIVA:
+                    a = [x for x in _anticipo(v, cal, picchi, s) if x is not None]
+                    if len(a) >= 4:
+                        n_sed, soglia, att = max(5, int(round(float(pd.Series(a).median())))), s, len(a); break
+                eps = []
+                for i in picchi:
+                    w = v[(v.index >= cal[max(0, i - n_sed)]) & (v.index <= cal[i] + pd.Timedelta(days=1))]
+                    if len(w):
+                        eps.append(float(w.mean()))
                 if len(eps) >= 5:
                     row[2] = round(sum(eps) / len(eps), 1)
                     row[3] = len(eps)
+                    row[5], row[6], row[7] = n_sed, soglia, att
                     if row[1] is not None:
                         row[4] = sum(1 for e in eps if e > row[1])
             out[k] = row
@@ -550,7 +578,7 @@ box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.add
 function storiaBox(k){var b=document.getElementById('gi-hs'),r=ST[k];if(!b)return;if(!r){b.innerHTML='';return}
 function f(x){return x==null?'\u2013':(cfg().val&&fv?fv(x):it(x,1))}
 function t(l,x,s,c){return '<div class="gi-hc"><b style="color:'+(x==null?'var(--mu)':zc(x))+'">'+f(x)+'</b><span>'+l+'</span><small>'+s+'</small></div>'}
-b.innerHTML='<div class="gi-hr">'+t('Media storica',r[0],'tutti i giorni')+t('Mercati calmi',r[1],'Borsa vicina ai massimi, nessun calo in vista')+t('Prima di un crollo',r[2],r[3]?('ultime 4 settimane prima di '+r[3]+' crolli nati dentro la finanza; sopra i mercati calmi in '+r[4]+' su '+r[3]):'dati troppo pochi')+'</div>'}
+b.innerHTML='<div class="gi-hr">'+t('Media storica',r[0],'tutti i giorni')+t('Mercati calmi',r[1],'Borsa vicina ai massimi, nessun calo in vista')+t('Prima di un crollo',r[2],r[3]?('media delle '+r[5]+' sedute (circa '+Math.round(r[5]/5)+' settimane) prima del picco di '+r[3]+' crolli nati dentro la finanza'+(r[6]?('. Quanti giorni prima: '+r[5]+' = il tempo tipico con cui l\u2019indice supera '+r[6]+' prima del crollo (lo fa in '+r[7]+' crolli su '+r[3]+')'):'. L\u2019indice non supera 50 prima dei crolli: finestra fissa')+'; sopra i mercati calmi in '+r[4]+' su '+r[3]):'dati troppo pochi')+'</div>'}
 function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';storiaBox(k);RG=cfg().rng||RGD;chips();
 document.body.style.overflow='hidden';ov.classList.add('on');requestAnimationFrame(function(){ov.classList.add('in')});size();
 cursor=null;range(cfg().def!=null?cfg().def:2);v0=tv0;v1=tv1;fit();ya=tya;yb=tyb;stats();kids(k);var pr=KD.par[k],bk=document.getElementById('gi-bk');if(pr){bk.hidden=false;bk.textContent='\u2039 '+NM[pr];bk.onclick=function(){open(pr)}}else{bk.hidden=true}head();draw();sh.scrollTop=0}
