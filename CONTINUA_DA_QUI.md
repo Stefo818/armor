@@ -875,3 +875,6 @@ Anche: layout compatto di «Paura, protezioni e prezzi» (commit fee2664, SW arm
 
 ## (45) 25/11/2026 — Super Armor versione 2 (economia nei prossimi mesi)
 Il Super Armor mostrato nell'app ora è "il peggiore fra pilastro finanza (6 misure) e pilastro economia (7 misure)", percentile 1–100, serie giornaliera dal 1990 (src/armor/super_armor_2.py, dentro status_index.json). Scelto con PROTOCOLLO_SUPER_ARMOR_ECONOMIA.md fra 26 alternative: correlazione con l'economia a 6 mesi 0,61 (vecchio Super Armor 0,31, Indice Armor 0,07). Esito in ESITO_SUPER_ARMOR_ECONOMIA.md. Il vecchio SAI resta nei moduli interni. Da fare: rilanciare le Actions e verificare l'app.
+
+## (46) 25/11/2026 — Schede con i pilastri dentro
+Indice Armor e Super Armor (src/armor/titan_schede.py) sono due schede affiancate; ognuna contiene i propri pilastri cliccabili (grafico, medie 1 sett./1 mese/3 mesi, "com'era prima"). Armor: 5 pilastri. Super Armor v2: 2 pilastri (+ Fondi senza peso) e le 13 misure (6 finanza, 7 economia). Misura descrittiva su cosa descrive l'Indice Armor: scratch/armor_salute.py (nervosismo oggi 0,58, distanza dal massimo 0,54, calo nei 63 giorni dopo 0,23; il VIX da solo fa meglio sul nervosismo, 0,83).

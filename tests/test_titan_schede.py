@@ -24,7 +24,7 @@ def test_schede_titan_fresche_e_vecchie(tmp_path, monkeypatch):
     monkeypatch.setattr(tv, "FILE", tmp_path / "t.csv")
     monkeypatch.setattr("armor.difensivita.leggi", lambda: None)
     h = ts.super_html()
-    assert "Super Armor" in h and "Indice Armor" in h and h.count("class='ts-t'") == 6 and "Liquidità" in h and "Credito" in h
+    assert "Super Armor" in h and "Indice Armor" in h and h.count("class='ts-t'") == 15 and "Finanza" in h and "Economia" in h
     assert "rischio di crollo" in h and ts.indici_html() == h   # scala tarata: 40 difficolta, 60 pericolo, 80 crollo
     assert "Super Armor" in ts.guida_html()
     _csv(tmp_path, pd.Timestamp("2020-01-10"))
@@ -37,4 +37,4 @@ def test_settimo_pilastro_fondi_senza_peso(tmp_path, monkeypatch):
     monkeypatch.setattr(tv, "FILE", tmp_path / "t.csv")
     monkeypatch.setattr("armor.difensivita.leggi", lambda: {"ultimi": [20.0 + i * 0.1 for i in range(30)]})
     h = ts.super_html()
-    assert h.count("class='ts-t'") >= 7 and "Fondi (difensività)" in h and "senza peso" in h
+    assert h.count("class='ts-t'") >= 16 and "Fondi (difensività)" in h and "senza peso" in h

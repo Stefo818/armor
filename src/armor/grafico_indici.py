@@ -59,8 +59,8 @@ NOMI.update({"a_paura": "Paura sui mercati", "a_liquidita": "Liquidità", "a_rim
 DESC.update({
     "i9": "Quanto i grandi fondi sono difensivi: liquidità nei fondi monetari che cresce più del mercato e oro che batte le azioni (percentile rispetto alla storia dal 1984; più alto = più difensivi). "
           "Provato come 7° pilastro del Super Armor: non lo migliora in modo stabile (peggiora fino al 2014, migliora dopo), quindi non ha peso. Non anticipa i crolli: un valore basso coincide con mercati in salita.",
-    "a_paura": "Parte veloce dell'Indice Armor (peso 30% insieme alle altre due). È lo stesso pilastro «Paura sui mercati» del Super Armor: indice della paura, sua curva, volatilità delle obbligazioni.",
-    "a_liquidita": "Parte veloce dell'Indice Armor. È lo stesso pilastro «Liquidità» del Super Armor: quanta moneta circola e quanto è facile ottenerla.",
+    "a_paura": "Parte veloce dell'Indice Armor (peso 30% insieme alle altre due). Cosa guarda: indice della paura, sua curva, volatilità delle obbligazioni.",
+    "a_liquidita": "Parte veloce dell'Indice Armor. Cosa guarda: quanta moneta circola e quanto è facile ottenerla.",
     "a_rimbalzo": "Parte veloce dell'Indice Armor. Misura se ci sono segnali di rimbalzo (credito che migliora, acquisti istituzionali). Qui il numero è il rischio: più è alto, meno segnali di rimbalzo.",
     "a_stress": "Parte lenta dell'Indice Armor (peso 70% insieme al ciclo). Unisce paura, costo del credito e distanza dai massimi dell'ultimo anno: è il termometro di fondo dello stress.",
     "a_ciclo": "Parte lenta dell'Indice Armor. Riassume ciclo economico, prezzi, valutazioni, inflazione e movimenti dei grandi fondi. Si muove piano: oscilla di meno degli altri.",

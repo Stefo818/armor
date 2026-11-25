@@ -101,35 +101,68 @@ def _dett(i: int, k: str, s: pd.Series) -> str:
             f"<div><p><b>{E(nome)} · cosa guarda.</b> {E(cosa)}</p><p><b>Come leggerlo.</b> {E(sale)} Da 1 (nessuna tensione) a 100 (tensione massima); da 40 è zona di attenzione, da 60 di pericolo, da 80 di rischio di crollo.</p></div></div>")
 
 
+def _medie(s: pd.Series) -> str:
+    v = s.dropna()
+    return " · ".join(f"{lab} <b>{_it(float(v.iloc[-n:].mean()))}</b>" for lab, n in (("media 1 sett.", 5), ("1 mese", 21), ("3 mesi", 63)) if len(v) >= n)
+
+
+def _scheda(nome: str, k: str, s: pd.Series, nota: str, tiles: str) -> str:
+    """Una scheda: valore, grafico piccolo, medie e subito sotto i suoi pilastri (tutti cliccabili)."""
+    s = s.dropna()
+    v = float(s.iloc[-1])
+    i = soglie.zona("armor", v)
+    c = soglie.COL[i]
+    prev = " · ".join(f"{lab} <b>{_it(float(s.iloc[-1 - n]))}</b>" for lab, n in (("ieri", 1), ("1 sett. fa", 5), ("1 mese fa", 21)) if len(s) > n)
+    return (f"<div class='ts-c ts-big' data-gi='{k}'><div class='ts-ct'><span class='ts-k'>{E(nome)}</span><span class='ts-chip' style='--c:{c}'>{soglie.NOMI[i]}</span></div>"
+            f"<div class='ts-cb'><div class='ts-v' style='color:{c}'>{_it(v)}<small>/100</small></div>"
+            f"<div class='ts-cs'>{_spark([float(x) for x in s.iloc[-120:]], c, 40, 150, 38)}</div></div>"
+            f"<div class='ts-cm'>{_freccia(_delta(s, 5))}<span class='ts-pv2'>{prev}</span></div><div class='ts-cm'><span class='ts-pv2'>{_medie(s)}</span></div>"
+            f"<div class='ts-nt'>{nota}</div><div class='ts-in'>{tiles}</div></div>")
+
+
+def _gruppo(titolo: str, tiles: str, n: int) -> str:
+    return f"<div class='ts-ph'>{titolo} <small>(tocca per il grafico)</small></div><div class='ts-tg' style='--n:{n}'>{tiles}</div>"
+
+
 def combo_html() -> str:
-    """Scheda compatta: Indice Armor e Super Armor affiancati, sei pilastri in miniatura con dettagli a comparsa."""
+    """Due schede affiancate: Indice Armor e Super Armor, ognuna con i propri pilastri dentro (cliccabili: grafico, medie, dettaglio)."""
     df = dati()
     if df is None:
         return ""
-    a, sa = df["armor_index"], df["super_armor_index"]
-    rig = sorted(((k, df[f"{k}_stress"]) for k in PIL), key=lambda kv: -float(kv[1].iloc[-1]))
-    top, low = rig[0], rig[-1]
-    tiles = "".join(_tile(i, k, x) for i, (k, x) in enumerate(rig))
-    n_t = len(rig)
-    try:   # 7° pilastro informativo: difensività dei grandi fondi (provato, non migliora il Super Armor: senza peso)
-        from . import difensivita
-        dj = difensivita.leggi()
-        if dj and len(dj.get("ultimi", [])) > 10:
-            tiles += _tile(9, "i9", pd.Series(dj["ultimi"]), "Fondi (difensività)", "senza peso")
-            n_t += 1
-    except Exception:  # noqa: BLE001
-        pass
+    a = df["armor_index"]
     arm = "".join(_tile(20 + i, k, df[k], APIL[k][0], APIL[k][1]) for i, k in enumerate(APIL) if k in df and df[k].notna().any())
-    arm_html = (f"<div class='ts-ph'>I pilastri dell'Indice Armor <small>(tocca un pilastro per il grafico)</small></div><div class='ts-tg' style='--n:5'>{arm}</div>" if arm else "")
-    dett = ""   # le spiegazioni dei pilastri sono nel grafico a comparsa
+    arm_html = _gruppo("I 5 pilastri dell'Indice Armor", arm, 5) if arm else ""
+    try:
+        from . import super_armor_2 as s2
+        from . import grafico_indici as gi
+        S = s2.calcola()
+        nm = lambda k: getattr(gi, "_CORTI", {}).get(k) or s2.NOMI[k]
+        pil = "".join(_tile(40 + i, k, S[k].dropna(), n, t) for i, (k, n, t) in enumerate((("sa_fin", "Finanza", "parte veloce"), ("sa_eco", "Economia", "parte lenta"))))
+        n_p = 2
+        try:   # pilastro informativo: difensività dei grandi fondi (provato, non migliora l'indice: senza peso)
+            from . import difensivita
+            dj = difensivita.leggi()
+            if dj and len(dj.get("ultimi", [])) > 10:
+                pil += _tile(9, "i9", pd.Series(dj["ultimi"]), "Fondi (difensività)", "senza peso")
+                n_p = 3
+        except Exception:  # noqa: BLE001
+            pass
+        fin = "".join(_tile(50 + i, k, S[k].dropna(), nm(k), "peso uguale") for i, k in enumerate(s2.FIN))
+        eco = "".join(_tile(70 + i, k, S[k].dropna(), nm(k), "peso uguale") for i, k in enumerate(s2.ECO))
+        sa = S["super"].dropna()
+        top = max(("sa_fin", "sa_eco"), key=lambda k: float(S[k].dropna().iloc[-1]))
+        nota = (f"È il più alto fra due pilastri: finanza (veloce) {_it(float(S['sa_fin'].dropna().iloc[-1]))} ed economia (lenta) {_it(float(S['sa_eco'].dropna().iloc[-1]))}. "
+                f"Spinge di più <b>{'la finanza' if top == 'sa_fin' else 'l’economia'}</b>. Dice come sarà l'economia nei prossimi mesi.")
+        sa_card = _scheda("Super Armor", "super", sa, nota,
+                          _gruppo("I pilastri", pil, n_p) + _gruppo("Le 6 misure della finanza", fin, 6) + _gruppo("Le 7 misure dell'economia", eco, 7))
+    except Exception:  # noqa: BLE001
+        sa_card = ""
     return (CSS + "<section class='b5'><div class='ts'><div class='ts-g'>"
-            + _mini("Indice Armor", "armor", a, "Da 40 mercato in difficoltà, da 60 in pericolo, da 80 rischio di crollo.")
-            + _mini("Super Armor", "super", sa, f"Media dei sei pilastri: spinge di più <b>{E(PIL[top[0]][0])}</b> ({_it(float(top[1].iloc[-1]))}), il più tranquillo è <b>{E(PIL[low[0]][0])}</b> ({_it(float(low[1].iloc[-1]))}).")
-            + "</div><div class='ts-ph'>I sei pilastri del Super Armor <small>(tocca un pilastro per il grafico)</small></div>"
-            f"<div class='ts-tg' style='--n:{n_t}'>{tiles}</div>{arm_html}{dett}"
-            "<details class='ts-how'><summary>Come sono fatti i due indici</summary><p><b>Indice Armor.</b> Misura quanto oggi il mercato è in pericolo di calo e di nervosità. Mescola una parte <b>veloce</b> (30%: paura sui mercati, liquidità, segnali di rimbalzo) "
-            "e una <b>lenta</b> (70%: prezzi, ciclo del credito, valutazioni, inflazione, grandi fondi). <b>Super Armor.</b> È la media dei sei pilastri con lo stesso peso: mostra da dove arriva il rischio. "
-            "Entrambi vanno da 1 (mercato sano) a 100 (pericolo massimo); le zone di rischio sono nella scheda «Zone di rischio».</p></details></div></section>" + JS)
+            + _scheda("Indice Armor", "armor", a, "Misura la salute del mercato: quanto è nervoso, quanto è sceso dai massimi, quanto sono tesi credito e liquidità. Da 40 in difficoltà, da 60 in pericolo, da 80 rischio di crollo.", arm_html)
+            + sa_card
+            + "</div><details class='ts-how'><summary>Come sono fatti i due indici</summary><p><b>Indice Armor.</b> Misura la salute del mercato di oggi: nervosismo, distanza dai massimi, tensione su credito e liquidità. Mescola una parte <b>veloce</b> (30%: paura sui mercati, liquidità, segnali di rimbalzo) "
+            "e una <b>lenta</b> (70%: prezzi, ciclo del credito, valutazioni, inflazione, grandi fondi). <b>Super Armor.</b> Guarda avanti all'economia dei prossimi mesi: prende il più alto fra il pilastro della <b>finanza</b> (6 misure veloci, peso uguale) e quello dell'<b>economia</b> (7 misure lente, peso uguale). "
+            "Entrambi vanno da 1 (sano) a 100 (pericolo massimo); le zone di rischio sono nella scheda «Zone di rischio».</p></details></div></section>" + JS)
 
 
 def super_html() -> str:
@@ -147,7 +180,6 @@ def indici_html() -> str:
 def guida_html() -> str:
     if dati() is None:
         return ""
-    pil = "".join(f"<li>{E(n)}</li>" for n, _c, _s in PIL.values())
     return (CSS + "<details class='gi'><summary><i>?</i><span><b>Nuovo qui? Cosa sono questi due numeri</b><small>Indice Armor e Super Armor in 30 secondi</small></span></summary><div class='gi-b'>"
             "<p class='gi-lead'>Sono due <b>termometri del rischio</b> dell'S&amp;P 500 (le 500 maggiori aziende americane, il mercato che guida le Borse del mondo, VWCE compreso). "
             "Vanno da <b>1 (mercato sano)</b> a <b>100 (pericolo massimo)</b>. Dicono <b>quanto oggi i segnali sono preoccupanti</b>, non quando scenderà la Borsa e non cosa comprare o vendere.</p>"
@@ -157,15 +189,15 @@ def guida_html() -> str:
             "Sopra 80 però il mercato è già sceso in mediana del 20% dal massimo, e quei giorni sono tre soli episodi (1998, 2008, 2022): è la fotografia di dove sei, non la previsione di dove vai. "
             "In tutte e quattro le zone il prezzo di un mese dopo è stato in mediana più alto, non più basso: un numero alto segnala turbolenza, non discesa sicura. "
             "La scala non cambia cosa sa il modello, sposta solo dove cadono i confini.</p></div>"
-            f"<div class='gi-c' style='border-top:4px solid hsl(35,90%,55%)'><h4>Super Armor</h4><p>La <b>media di sei pilastri</b> con lo stesso peso:</p><ul>{pil}</ul>"
-            "<p>Zone: sotto 35 tranquillo, 35-45 neutro, 45-55 allarme, da 55 pericolo.</p></div></div>"
-            "<div class='gi-diff'><b>La differenza in una riga:</b> l'Indice Armor è il termometro veloce; il Super Armor mostra <b>da quali pilastri</b> arriva il rischio.</div>"
+            f"<div class='gi-c' style='border-top:4px solid hsl(35,90%,55%)'><h4>Super Armor</h4><p>Guarda <b>l'economia dei prossimi mesi</b>: vale il più alto fra due pilastri a peso uguale al loro interno.</p><ul><li>Finanza (veloce): curve dei tassi, costo del credito, condizioni finanziarie, Borsa a 12 mesi</li><li>Economia (lenta): lavoro, produzione, permessi, fiducia</li></ul>"
+            "<p>Soglie come l'Indice Armor: 40, 60, 80.</p></div></div>"
+            "<div class='gi-diff'><b>La differenza in una riga:</b> l'Indice Armor misura la salute del mercato oggi; il Super Armor guarda l'economia dei prossimi mesi.</div>"
             "<p class='gi-lim'><b>Cosa non sono:</b> non sono consigli di investimento e non prevedono il futuro. Le zone vengono dai dati storici dal 1995 (vedi «Zone di rischio»).</p></div></details>")
 
 
 JS = ""
 
-CSS = ("<style>.ts{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:10px 12px}.ts-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:700px){.ts-g{grid-template-columns:1fr}}"
+CSS = ("<style>.ts{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:10px 12px}.ts-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:900px){.ts-g{grid-template-columns:1fr}}"
        ".ts-c{border:1px solid var(--bd);border-radius:12px;padding:8px 10px;background:var(--bg)}.ts-ct{display:flex;justify-content:space-between;align-items:center;gap:8px}.ts-k{font-size:12px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.4px}"
        ".ts-chip{font-weight:800;font-size:12px;padding:1px 10px;border-radius:99px;border:1.5px solid var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}"
        ".ts-cb{display:flex;align-items:center;justify-content:space-between;gap:10px}.ts-v{font-size:38px;font-weight:800;line-height:1.1}.ts-v small{font-size:13px;color:var(--mu);font-weight:600}.ts-cs{flex:1;max-width:190px}.ts-sp{width:100%;height:38px;display:block;color:var(--tx)}"
@@ -177,6 +209,6 @@ CSS = ("<style>.ts{background:var(--card);border:1px solid var(--bd);border-radi
        ".ts-tv{font-size:22px;font-weight:800;line-height:1.1}.ts-t em{font-style:normal;font-size:11px;font-weight:700;align-self:end;text-align:right}.ts-tb{grid-column:1/3;height:5px;border-radius:99px;background:var(--bd);overflow:hidden;margin-top:3px}.ts-tb i{display:block;height:100%;border-radius:99px}"
        ".ts-d2{display:grid;grid-template-columns:260px 1fr;gap:12px;margin-top:8px;padding:8px 10px;border-left:3px solid var(--bd);font-size:12.5px;line-height:1.5}@media(max-width:640px){.ts-d2{grid-template-columns:1fr}}.ts-d2[hidden]{display:none}"
        ".ts-d2 p{margin:2px 0}.ts-d2s small{display:block;font-size:10px;color:var(--mu);text-align:right}.ts-d2 .ts-sp{height:44px}"
-       ".ts-how{font-size:12px;color:var(--mu);margin-top:8px}.ts-how summary{cursor:pointer;font-weight:700;color:var(--tx)}.ts-how p{margin:5px 0 0;line-height:1.5}"
-       '@media(max-width:560px){.ts{padding:8px 7px}.ts-g{grid-template-columns:1fr 1fr!important;gap:6px}.ts-c{padding:6px 7px}.ts-k{font-size:9.5px;letter-spacing:.2px}.ts-chip{font-size:9px;padding:0 6px;border-width:1px}.ts-cb{gap:4px}.ts-v{font-size:28px}.ts-v small{font-size:10px}.ts-cs{max-width:none}.ts-sp{height:24px}.ts-cm{font-size:9px;gap:0 6px}.ts-d{font-size:9.5px}.ts-nt{font-size:9.5px;line-height:1.25;margin-top:2px}.ts-ph{font-size:9.5px;margin:7px 0 3px}.ts-ph small{display:block;font-size:9px}.ts-tg{grid-template-columns:1fr!important;gap:3px}.ts-t{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 28px 46px;grid-template-areas:"n b v d" "t b v d";align-items:center;gap:0 8px;padding:4px 8px;border-radius:8px}.ts-tn{grid-area:n;grid-column:auto;font-size:11px;color:var(--tx);white-space:normal;line-height:1.12}.ts-tag{grid-area:t;grid-column:auto;font-size:8.5px;margin:0;line-height:1.1}.ts-tb{grid-area:b;grid-column:auto;height:7px;margin:0}.ts-tv{grid-area:v;font-size:17px;text-align:right}.ts-t em{grid-area:d;font-size:9.5px;text-align:left;align-self:center}.ts-how{font-size:11px}}'
+       ".ts-big{cursor:pointer}.ts-in{cursor:default;margin-top:6px}.ts-in .ts-tg{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}.ts-how{font-size:12px;color:var(--mu);margin-top:8px}.ts-how summary{cursor:pointer;font-weight:700;color:var(--tx)}.ts-how p{margin:5px 0 0;line-height:1.5}"
+       '@media(max-width:560px){.ts{padding:8px 7px}.ts-g{grid-template-columns:1fr!important;gap:8px}.ts-c{padding:6px 7px}.ts-k{font-size:9.5px;letter-spacing:.2px}.ts-chip{font-size:9px;padding:0 6px;border-width:1px}.ts-cb{gap:4px}.ts-v{font-size:28px}.ts-v small{font-size:10px}.ts-cs{max-width:none}.ts-sp{height:24px}.ts-cm{font-size:9px;gap:0 6px}.ts-d{font-size:9.5px}.ts-nt{font-size:9.5px;line-height:1.25;margin-top:2px}.ts-ph{font-size:9.5px;margin:7px 0 3px}.ts-ph small{display:block;font-size:9px}.ts-tg{grid-template-columns:1fr!important;gap:3px}.ts-t{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 28px 46px;grid-template-areas:"n b v d" "t b v d";align-items:center;gap:0 8px;padding:4px 8px;border-radius:8px}.ts-tn{grid-area:n;grid-column:auto;font-size:11px;color:var(--tx);white-space:normal;line-height:1.12}.ts-tag{grid-area:t;grid-column:auto;font-size:8.5px;margin:0;line-height:1.1}.ts-tb{grid-area:b;grid-column:auto;height:7px;margin:0}.ts-tv{grid-area:v;font-size:17px;text-align:right}.ts-t em{grid-area:d;font-size:9.5px;text-align:left;align-self:center}.ts-how{font-size:11px}}'
        "</style>")
