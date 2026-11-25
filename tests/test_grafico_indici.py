@@ -59,3 +59,20 @@ def test_spia_caro_stato():
     x = spia_caro.stato()
     assert x and x["livello"] in (0, 1, 2) and x["q80"] < x["q90"]
     assert "Spia" in spia_caro.html()
+
+
+def test_storia_tre_medie_per_ogni_serie():
+    d = grafico_indici.dati()
+    st = grafico_indici.storia(d)
+    assert "armor" in st and "super" in st and "sa_fin" in st
+    assert len(st["armor"]) == 4 and st["armor"][0] is not None
+    h = grafico_indici.html()
+    assert "gi-storia" in h and "Prima di un crollo" in h and "Mercati calmi" in h and "Media storica" in h
+
+
+def test_nasdaq_ha_lo_storico_giornaliero():
+    import pandas as pd
+    from armor import sitedata
+    s = pd.Series([1.0, 2.0], index=pd.to_datetime(["2026-11-23", "2026-11-24"]))
+    out = sitedata.build([], s, s, lambda *a: None)
+    assert len(out["ndx"]["d"]) > 1000

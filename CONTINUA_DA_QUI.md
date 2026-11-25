@@ -878,3 +878,6 @@ Il Super Armor mostrato nell'app ora è "il peggiore fra pilastro finanza (6 mis
 
 ## (46) 25/11/2026 — Schede con i pilastri dentro
 Indice Armor e Super Armor (src/armor/titan_schede.py) sono due schede affiancate; ognuna contiene i propri pilastri cliccabili (grafico, medie 1 sett./1 mese/3 mesi, "com'era prima"). Armor: 5 pilastri. Super Armor v2: 2 pilastri (+ Fondi senza peso) e le 13 misure (6 finanza, 7 economia). Misura descrittiva su cosa descrive l'Indice Armor: scratch/armor_salute.py (nervosismo oggi 0,58, distanza dal massimo 0,54, calo nei 63 giorni dopo 0,23; il VIX da solo fa meglio sul nervosismo, 0,83).
+
+## (47) 25/11/2026 — Tre medie in ogni scheda e grafico Nasdaq
+Ogni scheda cliccabile (indici, pilastri, misure, senza peso) mostra sotto la descrizione: media storica, media nei mercati calmi (S&P 500 a meno del 5% dal massimo e nessun calo oltre il 5% nelle 63 sedute dopo), media nei 63 giorni prima di un crollo (non ancora sceso oltre il 10% e poi calo ≥15%; pochi episodi, ~245 giorni). Calcolo in grafico_indici.storia(). Risultato onesto: prima dei crolli Armor vale 42,0 contro 38,3 nei calmi, Crollo 29,8 contro 22,5: la differenza è piccola. Il Nasdaq 100 dal vivo (ndx) non aveva storico giornaliero: ora usa quello di nasdaq100 (sitedata.build).

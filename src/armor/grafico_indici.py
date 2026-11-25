@@ -333,6 +333,49 @@ def dati() -> dict:
     return out
 
 
+def _maschere() -> tuple[pd.Series, pd.Series] | None:
+    """Giorni di Borsa 'calmi' e 'prima di un crollo' (S&P 500).
+    Calmo: a meno del 5% dal massimo di un anno e nessun calo oltre il 5% nelle 63 sedute dopo.
+    Prima di un crollo: non ancora sceso oltre il 10% dal massimo e calo di almeno il 15% nelle 63 sedute dopo."""
+    try:
+        from . import store
+        sp = store.load("sp500").dropna()
+        sp = sp[~sp.index.duplicated()].loc["1989-01-01":]
+        ora = sp / sp.rolling(252, min_periods=60).max() - 1
+        a = sp.to_numpy()
+        fmin = pd.Series([a[i + 1:i + 64].min() / a[i] - 1 if i + 63 < len(a) else float("nan") for i in range(len(a))], index=sp.index)
+        calmo = (ora > -0.05) & (fmin > -0.05)
+        pre = (ora > -0.10) & (fmin <= -0.15)
+        ok = fmin.notna()
+        return calmo.where(ok), pre.where(ok)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def storia(d: dict) -> dict:
+    """Per ogni serie: media di sempre, media nei mercati calmi, media nei giorni prima di un crollo (valori come mostrati)."""
+    m = _maschere()
+    out: dict = {}
+    for k, r in d.items():
+        try:
+            t = pd.to_datetime(pd.Series(r["dt"]).cumsum() + r["t0"], unit="D")
+            v = pd.Series([x / 10 for x in r["v"]], index=t.values)
+            v = v[~v.index.duplicated()]
+            row = [round(float(v.mean()), 1), None, None, 0]
+            if m is not None:
+                for j, mk in ((1, m[0]), (2, m[1])):
+                    z = mk.reindex(v.index, method="ffill", tolerance=pd.Timedelta(days=7))
+                    sel = v[z.fillna(False).astype(bool).to_numpy()]
+                    if len(sel) >= 5:
+                        row[j] = round(float(sel.mean()), 1)
+                        if j == 2:
+                            row[3] = int(len(sel))
+            out[k] = row
+        except Exception:  # noqa: BLE001
+            continue
+    return out
+
+
 CSS = """<style>
 [data-gi]{cursor:pointer;-webkit-tap-highlight-color:transparent}
 #gi-ov{position:fixed;inset:0;z-index:9999;display:none;align-items:flex-end;justify-content:center;background:rgba(8,12,20,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;transition:opacity .2s}
@@ -369,7 +412,7 @@ CSS = """<style>
 .vl-g i{display:block;height:100%}.vl-g i:first-child{border-radius:99px 0 0 99px}.vl-g i:nth-child(4){border-radius:0 99px 99px 0}
 .vl-g u{position:absolute;top:-4px;width:3px;height:16px;border-radius:2px;background:var(--tx);box-shadow:0 0 0 2px var(--card);transform:translateX(-1px)}
 .vl-p{font-size:11.5px;color:var(--mu);line-height:1.4}.vl-p b{color:var(--tx)}
-.gi-ds{font-size:11.5px;color:var(--mu);line-height:1.4;margin:6px 0 0}
+.gi-hs{margin:8px 0 0}.gi-hr{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.gi-hc{border:1px solid var(--bd);background:var(--bg);border-radius:10px;padding:6px 7px;text-align:center}.gi-hc b{display:block;font-size:20px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}.gi-hc span{display:block;font-size:11px;font-weight:700;color:var(--tx)}.gi-hc small{display:block;font-size:9.5px;color:var(--mu);line-height:1.2;margin-top:1px}.gi-ds{font-size:11.5px;color:var(--mu);line-height:1.4;margin:6px 0 0}
 .gi-rg{display:flex;gap:5px;margin:10px 0 6px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
 .gi-rg::-webkit-scrollbar{display:none}
 .gi-rg button{flex:1 0 auto;min-width:38px;border:1px solid var(--bd);background:var(--bg);color:var(--mu);border-radius:99px;padding:5px 9px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
@@ -389,7 +432,7 @@ CSS = """<style>
 JS = r"""<script>(function(){
 if(window.giOn)return;window.giOn=1;
 var el=document.getElementById('gi-dati');if(!el)return;
-var RAW=JSON.parse(el.textContent),Z=JSON.parse(document.getElementById('gi-zone').textContent),NM=JSON.parse(document.getElementById('gi-nomi').textContent),DS=JSON.parse(document.getElementById('gi-desc').textContent),KD=JSON.parse(document.getElementById('gi-kids').textContent),CF=JSON.parse(document.getElementById('gi-cfg').textContent);
+var RAW=JSON.parse(el.textContent),Z=JSON.parse(document.getElementById('gi-zone').textContent),NM=JSON.parse(document.getElementById('gi-nomi').textContent),DS=JSON.parse(document.getElementById('gi-desc').textContent),KD=JSON.parse(document.getElementById('gi-kids').textContent),CF=JSON.parse(document.getElementById('gi-cfg').textContent),ST=JSON.parse((document.getElementById('gi-storia')||{textContent:'{}'}).textContent);
 var S={};Object.keys(RAW).forEach(function(k){var r=RAW[k],t=[],a=r.t0;for(var i=0;i<r.dt.length;i++){a+=r.dt[i];t.push(a)}S[k]={t:t,v:r.v.map(function(x){return x/10})}});
 var ov=document.getElementById('gi-ov');document.body.appendChild(ov);
 var sh=document.getElementById('gi-sh'),cv=document.getElementById('gi-cv'),cx=cv.getContext('2d');
@@ -485,7 +528,11 @@ var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred'||k==='crollo'|
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
 h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'||x==='i9'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
 box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}
-function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';RG=cfg().rng||RGD;chips();
+function storiaBox(k){var b=document.getElementById('gi-hs'),r=ST[k];if(!b)return;if(!r){b.innerHTML='';return}
+function f(x){return x==null?'\u2013':(cfg().val&&fv?fv(x):it(x,1))}
+function t(l,x,s,c){return '<div class="gi-hc"><b style="color:'+(x==null?'var(--mu)':zc(x))+'">'+f(x)+'</b><span>'+l+'</span><small>'+s+'</small></div>'}
+b.innerHTML='<div class="gi-hr">'+t('Media storica',r[0],'tutti i giorni')+t('Mercati calmi',r[1],'Borsa vicina ai massimi, nessun calo in vista')+t('Prima di un crollo',r[2],'63 sedute prima di un calo di almeno 15% (pochi episodi)')+'</div>'}
+function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';storiaBox(k);RG=cfg().rng||RGD;chips();
 document.body.style.overflow='hidden';ov.classList.add('on');requestAnimationFrame(function(){ov.classList.add('in')});size();
 cursor=null;range(cfg().def!=null?cfg().def:2);v0=tv0;v1=tv1;fit();ya=tya;yb=tyb;stats();kids(k);var pr=KD.par[k],bk=document.getElementById('gi-bk');if(pr){bk.hidden=false;bk.textContent='\u2039 '+NM[pr];bk.onclick=function(){open(pr)}}else{bk.hidden=true}head();draw();sh.scrollTop=0}
 function close(){ov.classList.remove('in');document.body.style.overflow='';setTimeout(function(){if(!ov.classList.contains('in'))ov.classList.remove('on')},220)}
@@ -551,12 +598,13 @@ def html() -> str:
         + f"<script type='application/json' id='gi-nomi'>{json.dumps(NOMI, ensure_ascii=False)}</script>"
         + f"<script type='application/json' id='gi-kids'>{json.dumps({'kids': KIDS, 'par': PAR, 'tag': TAG}, ensure_ascii=False)}</script>"
         + f"<script type='application/json' id='gi-cfg'>{json.dumps(vcfg, ensure_ascii=False, separators=(',', ':'))}</script>"
+        + f"<script type='application/json' id='gi-storia'>{json.dumps(storia(d), separators=(',', ':'))}</script>"
         + f"<script type='application/json' id='gi-desc'>{json.dumps(DESC, ensure_ascii=False)}</script>"
         + "<div id='gi-ov' role='dialog' aria-modal='true' aria-label='Grafico dell&#39;indice'><div id='gi-sh'>"
         "<div class='gi-hd'><div class='gi-t'><div class='gi-nm' id='gi-nm'>x<span class='gi-zn' id='gi-zn'></span></div>"
         "<div class='gi-big'><span class='gi-v' id='gi-v'></span><span class='gi-dd' id='gi-dd'></span></div></div>"
         "<button type='button' class='gi-bk' id='gi-bk' hidden></button><button type='button' class='gi-x' id='gi-xb' aria-label='Chiudi'>&times;</button></div>"
-        "<div class='gi-ds' id='gi-ds'></div>"
+        "<div class='gi-ds' id='gi-ds'></div><div class='gi-hs' id='gi-hs'></div>"
         f"<div class='gi-rg' id='gi-rg'></div>"
         "<canvas id='gi-cv'></canvas>"
         "<div class='gi-hint'>Trascina per scorrere · pizzica con due dita per ingrandire · tocca per leggere un giorno</div>"

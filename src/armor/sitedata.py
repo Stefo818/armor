@@ -60,7 +60,7 @@ def build(indicators: list, vwce: pd.Series, sp: pd.Series, indicator_series) ->
             if col in h:
                 s = pd.Series((h[col] * 100).values, index=pd.to_datetime(h["date"]))
         if s is None:
-            s = store.load(key)
+            s = store.load({"ndx": "nasdaq100"}.get(key, key))   # il Nasdaq 100 dal vivo (ndx) usa lo storico di nasdaq100
         if s is not None and len(s) >= 2:
             out[key] = {"l": lab, "dec": dec, **ser_payload(s, dec)}
     intra = livemod.load_intraday()
