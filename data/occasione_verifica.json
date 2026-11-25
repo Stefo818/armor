@@ -600,20 +600,20 @@
   "economia": {
    "1995-2010": [
     {
-     "giorni": 52,
-     "discesa": 6.2
+     "giorni": 25,
+     "discesa": 5.1
     },
     {
-     "giorni": 35,
-     "discesa": 24.4
+     "giorni": 24,
+     "discesa": 8.9
     },
     {
-     "giorni": 11,
-     "discesa": 42.5
+     "giorni": 23,
+     "discesa": 13.6
     },
     {
-     "giorni": 2,
-     "discesa": 84.3
+     "giorni": 28,
+     "discesa": 40.9
     },
     {
      "base": 18.1
@@ -621,20 +621,20 @@
    ],
    "2011-2026": [
     {
-     "giorni": 59,
-     "discesa": 6.6
+     "giorni": 34,
+     "discesa": 8.3
     },
     {
-     "giorni": 36,
-     "discesa": 21.0
+     "giorni": 24,
+     "discesa": 17.4
     },
     {
-     "giorni": 5,
-     "discesa": 13.2
+     "giorni": 26,
+     "discesa": 14.3
     },
     {
-     "giorni": 0,
-     "discesa": 5.6
+     "giorni": 16,
+     "discesa": 8.1
     },
     {
      "base": 12.0
@@ -642,20 +642,20 @@
    ],
    "1995-2026": [
     {
-     "giorni": 55,
-     "discesa": 6.4
+     "giorni": 30,
+     "discesa": 7.0
     },
     {
-     "giorni": 36,
-     "discesa": 22.7
+     "giorni": 24,
+     "discesa": 13.1
     },
     {
-     "giorni": 8,
-     "discesa": 33.9
+     "giorni": 24,
+     "discesa": 14.0
     },
     {
-     "giorni": 1,
-     "discesa": 68.2
+     "giorni": 22,
+     "discesa": 29.2
     },
     {
      "base": 15.1

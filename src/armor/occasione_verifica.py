@@ -172,8 +172,9 @@ def salute() -> dict:
     ev.iloc[-63:] = np.nan
     out = {}
     from . import soglie
+    nuovo = fasi.super_nuovo()
     for k, col in (("mercato", "armor_tarato"), ("economia", "super_armor_index")):
-        x, tagli = t[col].reindex(sp.index), soglie.ZONE["armor" if k == "mercato" else "super"]["lim"][:3]
+        x, tagli = (nuovo if (k == "economia" and nuovo is not None) else t[col]).reindex(sp.index), soglie.ZONE["armor" if k == "mercato" else "sea"]["lim"][:3]
         out[k] = {}
         for a, b in (("1995", "2010"), ("2011", "2026"), ("1995", "2026")):
             xx, ee = x.loc[a:b], ev.loc[a:b]

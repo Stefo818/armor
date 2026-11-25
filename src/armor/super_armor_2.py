@@ -26,8 +26,13 @@ ECO = {"se_sussidi": ("icsa", "Richieste di sussidio di disoccupazione in aument
 COSTI = {"sc_infl": ("cpi", "Inflazione: prezzi al consumo su 12 mesi"), "sc_infl_acc": ("cpi_acc", "Inflazione: accelerazione negli ultimi 6 mesi"),
          "sc_petrolio": ("wti", "Petrolio: prezzo su 12 mesi"), "sc_tassi": ("fedfunds", "Tassi della banca centrale: rialzo in 12 mesi"),
          "sc_tassi2": ("dgs2", "Tassi a 2 anni: rialzo in 12 mesi")}
-NOMI = {"super": "Super Armor", "sa_fin": "Pilastro finanza (veloce)", "sa_eco": "Pilastro economia (lenta)", "sa_costi": "Costi e tassi (senza peso)",
-        **{k: v[1] for k, v in {**FIN, **ECO, **COSTI}.items()}}
+# Famiglie e mutui: SENZA PESO (PROTOCOLLO_SUPER_ARMOR_COSTI.md, addendum): nessuna variante supera la soglia del caso.
+FAMIGLIE = {"sm_mutuo_var": ("f_mortgage30us", "Tasso del mutuo a 30 anni: variazione in 12 mesi"), "sm_mutuo": ("f_mortgage30us", "Tasso del mutuo a 30 anni: livello"),
+            "sm_insol_mutui": ("f_drsfrmacbs", "Mutui non pagati (insolvenze)"), "sm_insol_carte": ("f_drcclacbs", "Carte di credito non pagate (insolvenze)"),
+            "sm_stretta": ("f_drtsclcc", "Banche che stringono il credito alle famiglie (accesso)"), "sm_consumo": ("f_totalsl", "Credito al consumo: crescita debole in 12 mesi"),
+            "sm_debito": ("f_tdsp", "Quota del reddito delle famiglie per ripagare i debiti")}
+NOMI = {"super": "Super Armor", "sa_fin": "Pilastro finanza (veloce)", "sa_eco": "Pilastro economia (lenta)", "sa_costi": "Costi e tassi (senza peso)", "sa_fam": "Famiglie e mutui (senza peso)", "sa_w6": "Prova: media dei tre pilastri", "sea": "Salute dell'economia",
+        **{k: v[1] for k, v in {**FIN, **ECO, **COSTI, **FAMIGLIE}.items()}}
 MIN = 1300   # circa 5 anni di giorni di Borsa di storia prima di dare un percentile
 
 
@@ -53,10 +58,28 @@ def calcola() -> dict[str, pd.Series]:
     cy = _L("cpi").pct_change(12) * 100; wti = asof(_L("wti"), 1)
     C["sc_infl"] = pe(asof(cy, 45)); C["sc_infl_acc"] = pe(asof(cy - cy.shift(6), 45)); C["sc_petrolio"] = pe(wti / wti.shift(252) - 1)
     ff = asof(_L("fedfunds"), 1); d2 = asof(_L("dgs2"), 1); C["sc_tassi"] = pe(ff - ff.shift(252)); C["sc_tassi2"] = pe(d2 - d2.shift(252))
+    def _f(k):
+        x = store.load(k).dropna()
+        return x if len(x) > 20 else None
+    mg, dm, dc, st, tc, td = (_f(k) for k in ("f_mortgage30us", "f_drsfrmacbs", "f_drcclacbs", "f_drtsclcc", "f_totalsl", "f_tdsp"))
+    if mg is not None:
+        m3 = asof(mg, 3); C["sm_mutuo_var"] = pe(m3 - m3.shift(252)); C["sm_mutuo"] = pe(m3)
+    for k, x, lag in (("sm_insol_mutui", dm, 75), ("sm_insol_carte", dc, 75), ("sm_stretta", st, 45), ("sm_debito", td, 90)):
+        if x is not None:
+            C[k] = pe(asof(x, lag))
+    if tc is not None:
+        C["sm_consumo"] = pe(-asof(tc.pct_change(12), 45))
     mean = lambda cols: C[cols].mean(axis=1, skipna=True).where(C[cols].notna().sum(axis=1) >= max(2, len(cols) // 2))
     fin, eco = mean(list(FIN)), mean(list(ECO))
     peggiore = pd.concat([fin, eco], axis=1).max(axis=1, skipna=False)
     ser = {"super": 1 + 99 * peggiore.expanding(MIN).rank(pct=True), "sa_fin": fin, "sa_eco": eco, "sa_costi": mean(list(COSTI))}
+    fam_c = [c for c in FAMIGLIE if c in C]
+    if fam_c:
+        fam = mean(fam_c); ser["sa_fam"] = fam
+        # Salute dell'economia (oggi, non il futuro): lavoro e produzione + costi e tassi + famiglie e mutui, peso uguale, percentile 1-100 (100 = economia allo sfascio)
+        tre = pd.concat([eco, ser["sa_costi"], fam], axis=1)
+        ser["sea"] = 1 + 99 * tre.mean(axis=1, skipna=True).where(tre.notna().sum(axis=1) >= 2).expanding(MIN).rank(pct=True)
+        ser["sa_w6"] = pd.concat([fin, eco, fam], axis=1).mean(axis=1, skipna=False)
     for c in C.columns:
         ser[c] = C[c]
     return {k: v.dropna() for k, v in ser.items() if v.dropna().size}

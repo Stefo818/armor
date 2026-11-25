@@ -60,6 +60,15 @@ def fasce(sp: pd.Series, vix: pd.Series) -> list:
     return out
 
 
+def super_nuovo() -> pd.Series | None:
+    """Serie giornaliera del Super Armor versione 2 (economia nei prossimi mesi), 1-100."""
+    try:
+        from . import super_armor_2
+        return super_armor_2.calcola()["sea"]
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def salute(armor: float | None, super_: float | None) -> dict:
     """Stato di salute del mercato (Indice Armor) e di economia e finanza (Super Armor), con la posizione nella storia dal 1990."""
     out = {}
@@ -68,8 +77,9 @@ def salute(armor: float | None, super_: float | None) -> dict:
     for k, v, col in (("mercato", armor, "armor_tarato"), ("economia", super_, "super_armor_index")):
         if v is None:
             continue
-        z = soglie.zona("armor" if k == "mercato" else "super", v)
-        pos = float((st[col].dropna() < v).mean()) if st is not None and col in st else None
+        z = soglie.zona("armor" if k == "mercato" else "sea", v)
+        ref = super_nuovo() if k == "economia" else None   # Salute dell'economia
+        pos = float((ref < v).mean()) if ref is not None and len(ref) else (float((st[col].dropna() < v).mean()) if st is not None and col in st else None)
         out[k] = {"valore": round(float(v), 1), "zona": z, "stato": SALUTE[z], "posizione": pos}
     return out
 

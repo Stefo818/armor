@@ -123,6 +123,22 @@ def _gruppo(titolo: str, tiles: str, n: int) -> str:
     return f"<div class='ts-ph'>{titolo} <small>(tocca per il grafico)</small></div><div class='ts-tg' style='--n:{n}'>{tiles}</div>"
 
 
+def _flash_html(S: dict) -> str:
+    """Come è prevista l'economia e le indicazioni flash (super_armor_flash)."""
+    try:
+        from . import store, super_armor_flash
+        r = super_armor_flash.flash(S, store.load("sp500"))
+    except Exception:  # noqa: BLE001
+        return ""
+    if not r:
+        return ""
+    sp = ", ".join(f"{E(n)} <b>{_it(v)}</b>" for n, v in r["spingono"]) or "nessuna misura in zona di allarme"
+    ra = ", ".join(f"{E(n)} <b>{_it(v)}</b>" for n, v in r["rassicurano"]) or "nessuna misura molto bassa"
+    fl = "".join(f"<div class='fl {t}'><b>{E(a)}.</b> {E(b)}</div>" for t, a, b in r["flash"])
+    return (f"<div class='ts-fr'>{E(r['frase'])}</div><div class='ts-pr'><span>Spingono in su:</span> {sp}.<br><span>Rassicurano:</span> {ra}.</div>"
+            f"<div class='ts-fh'>Indicazioni flash di oggi</div><div class='ts-fl'>{fl}</div>")
+
+
 def combo_html() -> str:
     """Due schede affiancate: Indice Armor e Super Armor, ognuna con i propri pilastri dentro (cliccabili: grafico, medie, dettaglio)."""
     df = dati()
@@ -136,18 +152,20 @@ def combo_html() -> str:
         from . import grafico_indici as gi
         S = s2.calcola()
         nm = lambda k: getattr(gi, "_CORTI", {}).get(k) or s2.NOMI[k]
-        pil = "".join(_tile(40 + i, k, S[k].dropna(), n, t) for i, (k, n, t) in enumerate((("sa_fin", "Finanza", "parte veloce"), ("sa_eco", "Economia", "parte lenta"))))
-        n_p = 2
+        pil = "".join(_tile(40 + i, k, S[k].dropna(), n, t) for i, (k, n, t) in enumerate((("sa_fin", "Finanza", ""), ("sa_eco", "Economia", ""), ("sa_costi", "Costi e tassi", ""), ("sa_fam", "Famiglie e mutui", ""))) if k in S)
+        n_p = 4
         try:   # pilastro informativo: difensività dei grandi fondi (provato, non migliora l'indice: senza peso)
             from . import difensivita
             dj = difensivita.leggi()
             if dj and len(dj.get("ultimi", [])) > 10:
                 pil += _tile(9, "i9", pd.Series(dj["ultimi"]), "Fondi (difensività)", "senza peso")
-                n_p = 3
+                n_p = 5
         except Exception:  # noqa: BLE001
             pass
         fin = "".join(_tile(50 + i, k, S[k].dropna(), nm(k), "peso uguale") for i, k in enumerate(s2.FIN))
         eco = "".join(_tile(70 + i, k, S[k].dropna(), nm(k), "peso uguale") for i, k in enumerate(s2.ECO))
+        cos = "".join(_tile(90 + i, k, S[k].dropna(), nm(k), "") for i, k in enumerate(s2.COSTI) if k in S)
+        fam = "".join(_tile(100 + i, k, S[k].dropna(), nm(k), "") for i, k in enumerate(s2.FAMIGLIE) if k in S)
         sa = S["super"].dropna()
         top = max(("sa_fin", "sa_eco"), key=lambda k: float(S[k].dropna().iloc[-1]))
         nota = ("<b>Fotografa e anticipa la situazione economica.</b> Unisce i dati della <b>finanza</b> (veloci: tassi, costo del credito, Borsa; anticipano) "
@@ -155,7 +173,8 @@ def combo_html() -> str:
                 f"Vale il più alto dei due pilastri: se uno vede guai il numero sale. Oggi finanza {_it(float(S['sa_fin'].dropna().iloc[-1]))}, economia {_it(float(S['sa_eco'].dropna().iloc[-1]))}: "
                 f"spinge di più {'la finanza' if top == 'sa_fin' else 'l’economia'}. Più è alto, più l'economia dei prossimi mesi rischia di rallentare.")
         sa_card = _scheda("Super Armor", "super", sa, nota,
-                          _gruppo("I pilastri", pil, n_p) + _gruppo("Le 6 misure della finanza", fin, 6) + _gruppo("Le 7 misure dell'economia", eco, 7))
+                          _flash_html(S) + _gruppo("I pilastri (finanza ed economia decidono il numero; gli altri sono informazioni senza peso)", pil, n_p) + _gruppo("Le 6 misure della finanza", fin, 6)
+                          + _gruppo("Le 7 misure dell'economia", eco, 7) + _gruppo("Costi e tassi (senza peso)", cos, 5) + _gruppo("Famiglie e mutui (senza peso)", fam, 7))
     except Exception:  # noqa: BLE001
         sa_card = ""
     return (CSS + "<section class='b5'><div class='ts'><div class='ts-g'>"
@@ -210,6 +229,6 @@ CSS = ("<style>.ts{background:var(--card);border:1px solid var(--bd);border-radi
        ".ts-tv{font-size:22px;font-weight:800;line-height:1.1}.ts-t em{font-style:normal;font-size:11px;font-weight:700;align-self:end;text-align:right}.ts-tb{grid-column:1/3;height:5px;border-radius:99px;background:var(--bd);overflow:hidden;margin-top:3px}.ts-tb i{display:block;height:100%;border-radius:99px}"
        ".ts-d2{display:grid;grid-template-columns:260px 1fr;gap:12px;margin-top:8px;padding:8px 10px;border-left:3px solid var(--bd);font-size:12.5px;line-height:1.5}@media(max-width:640px){.ts-d2{grid-template-columns:1fr}}.ts-d2[hidden]{display:none}"
        ".ts-d2 p{margin:2px 0}.ts-d2s small{display:block;font-size:10px;color:var(--mu);text-align:right}.ts-d2 .ts-sp{height:44px}"
-       ".ts-big{cursor:pointer}.ts-in{cursor:default;margin-top:6px}.ts-in .ts-tg{grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:4px}.ts-in .ts-t{grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:0 6px;padding:3px 8px}.ts-in .ts-tn{grid-column:auto;font-size:11px}.ts-in .ts-tv{font-size:16px}.ts-in .ts-t em{font-size:10px}.ts-how{font-size:12px;color:var(--mu);margin-top:8px}.ts-how summary{cursor:pointer;font-weight:700;color:var(--tx)}.ts-how p{margin:5px 0 0;line-height:1.5}"
+       ".ts-fr{font-size:14px;font-weight:800;margin:6px 0 4px}.ts-pr{font-size:12px;color:var(--mu);margin-bottom:6px}.ts-pr span{font-weight:700;color:var(--tx)}.ts-fh{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mu);margin:8px 0 4px}.ts-fl{display:grid;gap:4px}.fl{font-size:12.5px;line-height:1.35;padding:5px 8px;border-left:4px solid var(--bd);background:var(--bg);border-radius:6px}.fl.r{border-left-color:#dc2626}.fl.a{border-left-color:#f59e0b}.fl.v{border-left-color:#16a34a}.fl.n{border-left-color:#64748b}.ts-big{cursor:pointer}.ts-in{cursor:default;margin-top:6px}.ts-in .ts-tg{grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:4px}.ts-in .ts-t{grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:0 6px;padding:3px 8px}.ts-in .ts-tn{grid-column:auto;font-size:11px}.ts-in .ts-tv{font-size:16px}.ts-in .ts-t em{font-size:10px}.ts-how{font-size:12px;color:var(--mu);margin-top:8px}.ts-how summary{cursor:pointer;font-weight:700;color:var(--tx)}.ts-how p{margin:5px 0 0;line-height:1.5}"
        '@media(max-width:560px){.ts{padding:8px 7px}.ts-g{grid-template-columns:1fr!important;gap:8px}.ts-c{padding:6px 7px}.ts-k{font-size:9.5px;letter-spacing:.2px}.ts-chip{font-size:9px;padding:0 6px;border-width:1px}.ts-cb{gap:4px}.ts-v{font-size:28px}.ts-v small{font-size:10px}.ts-cs{max-width:none}.ts-sp{height:24px}.ts-cm{font-size:9px;gap:0 6px}.ts-d{font-size:9.5px}.ts-nt{font-size:9.5px;line-height:1.25;margin-top:2px}.ts-ph{font-size:9.5px;margin:7px 0 3px}.ts-ph small{display:block;font-size:9px}.ts-tg,.ts-in .ts-tg{grid-template-columns:1fr 1fr!important;gap:3px}.ts-t,.ts-in .ts-t{grid-template-columns:minmax(0,1fr) 30px 46px;grid-template-areas:"n v d";align-items:center;gap:0 8px;padding:3px 8px;border-radius:8px}.ts-tn{grid-area:n;grid-column:auto;font-size:11px;color:var(--tx);white-space:normal;line-height:1.12}.ts-tag{grid-area:t;grid-column:auto;font-size:8.5px;margin:0;line-height:1.1}.ts-tb{grid-area:b;grid-column:auto;height:7px;margin:0}.ts-tv{grid-area:v;font-size:17px;text-align:right}.ts-t em{grid-area:d;font-size:9.5px;text-align:left;align-self:center}.ts-how{font-size:11px}}'
        "</style>")

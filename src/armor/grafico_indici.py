@@ -33,11 +33,15 @@ ZONE = {
     "crollo": {"lim": [35, 40, 60, 80], "col": ["#22c55e", "#9ca3af", "#f59e0b", "#ef4444", "#8b5cf6"],
                "nom": ["Nessuna tensione", "Zona di passaggio", "Mercato teso", "Mercato molto teso", "Mercato in panico"]},
 }
+ZONE["sea"] = {**ZONE["armor"], "nom": ["Economia in salute", "Segnali di rallentamento", "Economia in difficoltà", "Economia in forte difficoltà"]}
 ZONE["super"] = {**ZONE["armor"], "nom": ["Economia solida", "Segnali di rallentamento", "Rallentamento probabile", "Forte rallentamento atteso"]}
 # pilastri mostrati dentro ogni indice (chiave -> figli, nell'ordine in cui compaiono)
 KIDS = {
     "armor": ["a_paura", "a_liquidita", "a_rimbalzo", "a_stress", "a_ciclo"],
-    "super": ["sa_fin", "sa_eco"],
+    "sea": ["sa_eco", "sa_costi", "sa_fam"],
+    "super": ["sa_fin", "sa_eco", "sa_costi", "sa_fam"],
+    "sa_costi": ["sc_infl", "sc_infl_acc", "sc_petrolio", "sc_tassi", "sc_tassi2"],
+    "sa_fam": ["sm_mutuo_var", "sm_mutuo", "sm_insol_mutui", "sm_insol_carte", "sm_stretta", "sm_consumo", "sm_debito"],
     "sa_fin": ["sf_curva", "sf_cred", "sf_cred6", "sf_nfci", "sf_mom", "sf_curva2"],
     "sa_eco": ["se_sussidi", "se_lavoro", "se_prod", "se_chicago", "se_permessi", "se_sahm", "se_fiducia"],
     "crollo": ["cr_paura", "cr_curva", "cr_tend", "cr_cred", "cr_rot", "cr_tassi"],
@@ -97,7 +101,7 @@ try:
     from . import status_index as _si
     for _k in ("crollo", "minimi", "stato"):
         ZONE[_k] = {"lim": _si.ZONE_LIM, "col": _si.ZONE_COL, "nom": _si.NOMI_ZONE[_k], "le": 1}
-    NOMI.update({"super": "Super Armor", "crollo": "Crollo", "minimi": "Minimi", "stato": "Stato", "mi_modello": "Modello su 14 mercati", "mi_semplice": "Cinque segnali semplici"})
+    NOMI.update({"sea": "Salute dell'economia", "super": "Super Armor", "crollo": "Crollo", "minimi": "Minimi", "stato": "Stato", "mi_modello": "Modello su 14 mercati", "mi_semplice": "Cinque segnali semplici"})
     # nome corto sulle tessere, nome intero nella spiegazione
     _CORTI = {"cr_paura": "Paura", "cr_curva": "Paura a breve", "cr_tend": "Sotto le medie", "cr_cred": "Debito aziende", "cr_rot": "Fuga dai rischiosi", "cr_tassi": "Tassi",
               "mp_caduta": "Caduta", "mp_paura": "Paura", "mp_breve": "Paura a breve", "mp_credito": "Credito", "mp_sotto": "Sotto la media",
@@ -108,7 +112,7 @@ try:
     try:
         from . import super_armor_2 as _s2
         for _k, _n in _s2.NOMI.items():
-            _LUNGHI[_k] = _n; _CORTI.setdefault(_k, {"sa_fin": "Finanza (veloce)", "sa_eco": "Economia (lenta)", "sf_curva": "Curva tassi", "sf_cred": "Spread credito", "sf_cred6": "Credito in 6 mesi",
+            _LUNGHI[_k] = _n; _CORTI.setdefault(_k, {"sa_fin": "Finanza (veloce)", "sa_eco": "Economia (lenta)", "sa_costi": "Costi e tassi", "sa_fam": "Famiglie e mutui", "sa_w6": "Prova: tre pilastri", "sc_infl": "Inflazione", "sc_infl_acc": "Inflazione in salita", "sc_petrolio": "Petrolio", "sc_tassi": "Rialzo tassi", "sc_tassi2": "Rialzo tassi 2 anni", "sm_mutuo_var": "Mutui: rialzo tassi", "sm_mutuo": "Tasso del mutuo", "sm_insol_mutui": "Mutui non pagati", "sm_insol_carte": "Carte non pagate", "sm_stretta": "Banche e famiglie", "sm_consumo": "Credito al consumo", "sm_debito": "Debito sul reddito", "sf_curva": "Curva tassi", "sf_cred": "Spread credito", "sf_cred6": "Credito in 6 mesi",
                     "sf_nfci": "Condizioni fin.", "sf_mom": "Borsa a 12 mesi", "sf_curva2": "Curva 10-2 anni", "se_sussidi": "Sussidi", "se_lavoro": "Posti di lavoro", "se_prod": "Produzione",
                     "se_chicago": "Indice Chicago", "se_permessi": "Permessi edili", "se_sahm": "Disoccupazione", "se_fiducia": "Fiducia"}.get(_k, _n))
     except Exception:  # noqa: BLE001
@@ -129,13 +133,16 @@ _PESI_C = {"cr_paura": 23, "cr_curva": 23, "cr_tend": 19, "cr_cred": 12, "cr_rot
 TAG.update({k: f"peso {v}%" for k, v in _PESI_C.items()})
 TAG.update({"st_" + c: "peso uguale" for c in ("cape", "buffett", "margin", "f5", "f4", "f6", "f10", "f11", "nfci", "liq")})
 TAG.update({"mi_modello": "peso uguale", "mi_semplice": "peso uguale"})
-TAG.update({"sa_fin": "il peggiore dei due decide", "sa_eco": "il peggiore dei due decide", **{k: "peso uguale nel pilastro" for k in ("sf_curva", "sf_cred", "sf_cred6", "sf_nfci", "sf_mom", "sf_curva2", "se_sussidi", "se_lavoro", "se_prod", "se_chicago", "se_permessi", "se_sahm", "se_fiducia")}})
+TAG.update({"sa_costi": "peso uguale", "sa_fam": "peso uguale", "sa_eco": "peso uguale", **{k: "senza peso" for k in ("sc_infl", "sc_infl_acc", "sc_petrolio", "sc_tassi", "sc_tassi2", "sm_mutuo_var", "sm_mutuo", "sm_insol_mutui", "sm_insol_carte", "sm_stretta", "sm_consumo", "sm_debito")}, "sa_fin": "il peggiore dei due decide", "sa_eco": "peso uguale", **{k: "peso uguale nel pilastro" for k in ("sf_curva", "sf_cred", "sf_cred6", "sf_nfci", "sf_mom", "sf_curva2", "se_sussidi", "se_lavoro", "se_prod", "se_chicago", "se_permessi", "se_sahm", "se_fiducia")}})
 DESC.update({
     "crollo": "Quanto è teso il mercato adesso e nella prossima settimana: unisce la paura (e la sua curva), il prezzo sotto le medie, il costo del debito delle aziende, "
               "la fuga dai settori rischiosi e le scosse sui tassi. Da 1 a 100: fino a 35 verde, da 40 giallo, da 60 rosso, da 80 viola. "
               "Anticipa di pochi giorni (misurato), non di settimane. Dal 25 novembre 2026 non usa più la distanza dal massimo: la differenza misurata è piccola, scelta per coerenza con l'obiettivo.",
     "minimi": "In che fase del ciclo è il mercato: sta andando verso un minimo oppure si sta allontanando dai minimi per fare nuovi massimi? 1 (verde) = si allontana dai minimi: la discesa, se c'è stata, è alle spalle e il mercato tende a risalire verso nuovi massimi. 100 (rosso) = sta andando verso un minimo: la discesa è in corso e il fondo non si intravede ancora. Si calcola mescolando in parti uguali un modello statistico (addestrato ogni anno su 14 borse nelle discese del passato) e cinque segnali semplici. COSA HA DIMOSTRATO IL PASSATO: separa i giorni «prima del fondo» da quelli «dopo il fondo» molto meglio del caso (punteggio 0,77 su 1; il caso è 0,5), in 14 mercati e anche sul solo S&P 500. ATTENZIONE: riconosce soprattutto quando il fondo è già alle spalle (conferma, con ritardo di giorni o settimane); non indica la data del minimo né di quanto scenderà ancora. Considera solo crisi interne al mercato: i cigni neri esterni sono stati esclusi dalla misura.",
     "mi_modello_vecchio": "Il punto più alto del panico negli ultimi tre mesi (media di cinque voci: caduta, paura, paura a breve, credito, prezzo sotto la media). Per un minimo serve che il panico ci sia stato.",
+    "sea": "Salute dell'economia di oggi, da 1 (ottima) a 100 (economia allo sfascio). Non guarda al futuro (quello è il Super Armor) ed è staccata dall'Indice Armor. È la media, con lo stesso peso, di tre pilastri: lavoro e produzione, costi e tassi (inflazione, petrolio, rialzo dei tassi) e famiglie e mutui. Attenzione: con i soli lavoro e produzione il numero descrive meglio le recessioni in corso (0,98 su 1 contro 0,87), perché inflazione e tassi salgono anche quando l'economia cresce. Se «Economia (lenta)» è più bassa degli altri pilastri, sono i costi a spingere il numero.",
+    "sa_costi": "Costi e tassi, senza peso: inflazione, accelerazione dell'inflazione, prezzo del petrolio e rialzo dei tassi (banca centrale e tassi a 2 anni). Nei test aggiungerli al Super Armor ha peggiorato il punteggio: nel passato salivano anche nelle fasi di crescita, quindi non anticipavano il rallentamento. Restano come informazione e alimentano le indicazioni flash.",
+    "sa_fam": "Famiglie e mutui, senza peso: tasso e rialzo del tasso dei mutui, mutui e carte di credito non pagati, banche che stringono il credito alle famiglie (l'accesso), credito al consumo e quota del reddito che serve a ripagare i debiti. Nessuna combinazione ha superato la soglia del caso nei test; la più utile da sola è la stretta delle banche. Informazione in più, senza peso.",
     "sa_fin": "Pilastro finanza, la parte veloce: media di sei misure con lo stesso peso (curva dei tassi, costo del debito delle aziende e sua crescita, condizioni finanziarie, andamento della Borsa a 12 mesi, seconda curva dei tassi). I prezzi anticipano l'economia ma danno anche falsi allarmi. Il Super Armor prende il più alto fra questo pilastro e quello dell'economia.",
     "sa_eco": "Pilastro economia, la parte lenta: media di sette misure con lo stesso peso (sussidi di disoccupazione, posti di lavoro, produzione, indice di Chicago, permessi di costruzione, indicatore di Sahm, fiducia dei consumatori). Dice dove si trova l'economia vera, con ritardi di settimane o mesi. Il Super Armor prende il più alto fra questo pilastro e quello della finanza.",
     "mi_semplice": "Cinque segnali semplici, senza addestramento (media dei loro percentili storici): poco rimbalzo dal minimo recente, pochi giorni dal massimo, media a 50 giorni in discesa, molti giorni neri nell'ultimo mese, volatilità ancora vicina al picco. Più è alto, più il mercato è ancora in discesa.",
@@ -145,7 +152,7 @@ DESC.update({
 })
 _LUNGHI = globals().get("_LUNGHI", {})
 for _k in list(NOMI):
-    if _k.startswith(("cr_", "mf_", "st_", "sf_", "se_")) and _k not in DESC:
+    if _k.startswith(("cr_", "mf_", "st_", "sf_", "se_", "sc_", "sm_")) and _k not in DESC:
         DESC[_k] = (_LUNGHI.get(_k, NOMI[_k]) + ". Una delle voci che compongono l'indice, come posizione rispetto alla storia (da 0 a 100: più è alto, più è sotto stress). " + TAG.get(_k, "")).strip()
 CFG_SOVR = {"val": 1, "dec": 0, "u": "", "pp": "sul giorno precedente", "def": 2,
             "rng": [["1M", 30], ["3M", 91], ["1A", 365], ["5A", 1826], ["20A", 7305], ["Max", 0]],
@@ -535,7 +542,7 @@ h+='<div class="gi-sc">Com’era prima</div><div class="gi-g">'+prev('Ieri',1)+p
 h+='<div class="gi-hint" style="margin-top:6px">La freccia mostra di quanto è cambiato l’indice da allora a oggi: rossa se il numero è salito, verde se è sceso.</div>';
 box.innerHTML=h}
 function kids(k){var box=document.getElementById('gi-kd'),ks=(KD.kids[k]||[]).filter(function(x){return S[x]});if(!ks.length){box.innerHTML='';return}
-var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred'||k==='crollo'||k==='minimi'||k==='stato'||k==='mi_modello'||k==='mi_semplice'||k==='super'||k==='sa_fin'||k==='sa_eco')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
+var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred'||k==='crollo'||k==='minimi'||k==='stato'||k==='mi_modello'||k==='mi_semplice'||k==='sea'||k==='super'||k==='sa_fin'||k==='sa_eco'||k==='sa_costi'||k==='sa_fam')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
 h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'||x==='i9'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
 box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}

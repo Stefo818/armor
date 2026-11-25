@@ -49,6 +49,15 @@ def consiglio(o: dict) -> str:
     }.get(st, "Dati insufficienti per l'Indice Occasione di oggi.")
 
 
+SALUTE_ECO = ["In salute", "Rallenta", "In difficoltà", "In forte difficoltà"]
+
+
+def _tessera_gi(k: str, titolo: str, valore: str, chip: str, col: str, nota: str) -> str:
+    """Come _tessera, ma toccandola si apre il grafico interattivo con medie e pilastri."""
+    return (f"<div class='oc-t' style='--c:{col}' role='button' tabindex='0' data-gi='{k}'><span class='oc-tt'>{E(titolo)}</span><span class='oc-chip'>{E(chip)}</span>"
+            f"<b class='oc-v'>{valore}</b><span class='oc-tn' style='max-height:none'>{nota}</span></div>")
+
+
 def _tessera(titolo: str, valore: str, chip: str, col: str, nota: str) -> str:
     return (f"<div class='oc-t' style='--c:{col}' role='button' tabindex='0' onclick=\"this.classList.toggle('x')\" onkeydown=\"if(event.key==='Enter'||event.key===' '){{this.classList.toggle('x');event.preventDefault()}}\"><span class='oc-tt'>{E(titolo)}</span><span class='oc-chip'>{E(chip)}</span>"
             f"<b class='oc-v'>{valore}</b><span class='oc-tn'>{nota}</span></div>")
@@ -56,7 +65,7 @@ def _tessera(titolo: str, valore: str, chip: str, col: str, nota: str) -> str:
 
 def _tessere(o: dict, v: dict) -> str:
     out, sal = "", o.get("salute") or {}
-    for k, titolo, nome in (("mercato", "Salute del mercato", "Indice Armor"), ("economia", "Salute di economia e finanza", "Super Armor")):
+    for k, titolo, nome in (("mercato", "Salute del mercato", "Indice Armor"), ("economia", "Salute dell'economia di oggi", "Salute dell'economia")):
         s = sal.get(k)
         if not s:
             continue
@@ -67,7 +76,11 @@ def _tessere(o: dict, v: dict) -> str:
         except Exception:
             pass
         pos = f" Più alto del {_pc(s.get('posizione'))} dei giorni dal 1990." if s.get("posizione") is not None else ""
-        out += _tessera(titolo, f"{_n(s['valore'])}<small>/100</small>", s["stato"], COL[s["zona"]], f"{nome}.{pos}{freq}")
+        if k == "economia":
+            out += _tessera_gi("sea", titolo, f"{_n(s['valore'])}<small>/100</small>", SALUTE_ECO[s["zona"]], COL[s["zona"]],
+                               f"1 = in salute, 100 = economia allo sfascio.{pos} Tocca per il grafico, le medie e i pilastri (lavoro e produzione, costi e tassi, famiglie e mutui).")
+            continue
+        out += _tessera_gi("armor", titolo, f"{_n(s['valore'])}<small>/100</small>", s["stato"], COL[s["zona"]], f"{nome}.{pos}{freq} Tocca per il grafico, le medie e i pilastri.")
     f = o.get("fasi") or {}
     t = f.get("tendenza")
     if t in fasi.FASI:

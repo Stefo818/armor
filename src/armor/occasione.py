@@ -14,6 +14,13 @@ VOCI_S = {"rientra": "Paura che rientra", "curva": "Curva della paura tornata no
 SOGLIA, SOGLIA_FORTE = 50, 70
 
 
+def _super_oggi(t: dict):
+    """Valore di oggi del Super Armor versione 2 (se manca, quello vecchio)."""
+    from . import fasi
+    s = fasi.super_nuovo()
+    return float(s.iloc[-1]) if s is not None and len(s) else t.get("super_armor")
+
+
 def _lin(x, zero: float, pieno: float):
     """Da 0 (al valore `zero`) a 100 (al valore `pieno`), lineare e tagliato."""
     return ((x - zero) / (pieno - zero)).clip(0, 1) * 100
@@ -107,7 +114,7 @@ def aggiorna(scrivi: bool = True) -> dict:
         out["fasi"] = fasi.oggi()
         tj = DATA / "titan.json"
         t = json.loads(tj.read_text(encoding="utf-8")) if tj.exists() else {}
-        out["salute"] = fasi.salute(t.get("armor_tarato", t.get("armor_index")), t.get("super_armor"))
+        out["salute"] = fasi.salute(t.get("armor_tarato", t.get("armor_index")), _super_oggi(t))
         out["titan_calo"] = {k: v.get("calo") for k, v in (t.get("previsioni") or {}).items()}
     except Exception as e:      # le fasce non devono mai bloccare l'indice
         out["errore_fasi"] = str(e)[:120]

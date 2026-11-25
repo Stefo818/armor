@@ -51,7 +51,9 @@ def riga() -> dict:
     except Exception:  # noqa: BLE001
         r["c21"] = r["c21_rientra"] = np.nan
     for nome, chiave in (("nfci", "nfci"), ("liquidita_netta_13s", "net_liq_13w"), ("rend_2anni", "dgs2"), ("rend_10anni", "dgs10"),
-                         ("spread_baa", "baa10y"), ("curva_10_2", "t10y2y")):
+                         ("spread_baa", "baa10y"), ("curva_10_2", "t10y2y"),
+                         ("mutuo_30_anni", "f_mortgage30us"), ("petrolio_wti", "wti"), ("inflazione_cpi", "cpi"), ("tasso_fed", "fedfunds"), ("debito_famiglie_reddito", "f_tdsp"),
+                         ("stretta_credito_famiglie", "f_drtsclcc"), ("carte_insolventi", "f_drcclacbs"), ("mutui_insolventi", "f_drsfrmacbs"), ("credito_consumo", "f_totalsl")):
         try:
             r[nome] = round(_ultimo(store.load(chiave))[0], 4)
         except Exception:  # noqa: BLE001

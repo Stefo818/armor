@@ -92,7 +92,7 @@ def aggiorna(log=print) -> dict:
     ser = calcola()
     out = {"serie": {}, "oggi": {}}
     for k, s in ser.items():
-        c = compatta(s, giornaliera=k in ("crollo", "minimi", "stato", "super", "sa_fin", "sa_eco"))
+        c = compatta(s, giornaliera=k in ("crollo", "minimi", "stato", "super", "sa_fin", "sa_eco", "sa_costi", "sa_fam", "sea"))
         if c:
             out["serie"][k] = c
     for k in ("crollo", "minimi", "stato"):
@@ -103,6 +103,9 @@ def aggiorna(log=print) -> dict:
         x = ser["super"].dropna(); f, e = ser["sa_fin"].dropna(), ser["sa_eco"].dropna()
         out["oggi"]["super"] = {"valore": round(float(x.iloc[-1]), 1), "tendenza": round(float(x.iloc[-1] - x.iloc[-6]), 1), "zona": "", "data": str(x.index[-1].date()),
                                 "finanza": round(float(f.iloc[-1]), 1), "economia": round(float(e.iloc[-1]), 1), "sopra60": int((x.tail(5) > 60).sum())}
+    if "sea" in ser:   # Salute dell'economia (oggi): valore e tendenza
+        y = ser["sea"].dropna()
+        out["oggi"]["sea"] = {"valore": round(float(y.iloc[-1]), 1), "tendenza": round(float(y.iloc[-1] - y.iloc[-6]), 1), "zona": "", "data": str(y.index[-1].date())}
     out["data"] = max(x["data"] for x in out["oggi"].values())
     FILE.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     log("[status_index] " + " · ".join(f"{k} {x['valore']:.0f}" for k, x in out["oggi"].items()))
