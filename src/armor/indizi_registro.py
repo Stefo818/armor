@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+"""Registro giornaliero dei valori da misurare in avanti (peso zero, nessuna decisione):
+Status index e componenti, correlazione dei settori a 21 sedute e suo calo, stretta di liquidita' e tassi,
+fragilita' x innesco, credito che si rovina. Una riga al giorno in data/indizi_registro.csv."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from . import store
+from .config import DATA
+
+REG = DATA / "indizi_registro.csv"
+
+
+def _ultimo(s: pd.Series | None):
+    try:
+        s = s.dropna()
+        return float(s.iloc[-1]), s
+    except Exception:  # noqa: BLE001
+        return np.nan, None
+
+
+def correlazione_settori() -> tuple[float, float]:
+    """Correlazione media a coppie dei settori (21 sedute) e «rientra» (calo dal massimo a 63 sedute, scala 0-100)."""
+    from . import occasione
+    S = occasione.serie_archivio()
+    R = pd.DataFrame({k: v.dropna().pct_change() for k, v in S["settori"].items() if len(v)})
+    R = R.dropna().iloc[-400:]
+    A = R.to_numpy(); vals = []
+    for i in range(20, len(R)):
+        c = np.corrcoef(A[i - 20:i + 1].T); n = c.shape[0]
+        vals.append((c.sum() - n) / (n * (n - 1)))
+    C = pd.Series(vals, index=R.index[20:])
+    p90 = C.iloc[-63:].max()
+    rientra = float(100 * min(max(-(C.iloc[-1] / p90 - 1) / 0.25, 0), 1))
+    return float(C.iloc[-1]), rientra
+
+
+def riga() -> dict:
+    from . import status_index
+    S = status_index.calcola()
+    r: dict = {"data": str(S["crollo"].index[-1].date())}
+    for k, v in S.items():
+        r[k] = round(float(v.iloc[-1]), 2) if len(v) else np.nan
+    c5 = S["crollo"].rolling(5).mean().iloc[-1]
+    r["crollo_m5"] = round(float(c5), 2)
+    r["stato_x_crollo"] = round(float(c5) / 100 * float(S["stato"].iloc[-1]), 2)
+    try:
+        r["c21"], r["c21_rientra"] = (round(x, 4) for x in correlazione_settori())
+    except Exception:  # noqa: BLE001
+        r["c21"] = r["c21_rientra"] = np.nan
+    for nome, chiave in (("nfci", "nfci"), ("liquidita_netta_13s", "net_liq_13w"), ("rend_2anni", "dgs2"), ("rend_10anni", "dgs10"),
+                         ("spread_baa", "baa10y"), ("curva_10_2", "t10y2y")):
+        try:
+            r[nome] = round(_ultimo(store.load(chiave))[0], 4)
+        except Exception:  # noqa: BLE001
+            r[nome] = np.nan
+    # credito che si rovina: spread nel terzo piu' basso della sua storia ma in risalita da un mese
+    try:
+        v, s = _ultimo(store.load("baa10y"))
+        pct = float((s.rank(pct=True)).iloc[-1])
+        sal = float(s.iloc[-1] - s.iloc[-22])
+        r["credito_pct"] = round(pct * 100, 1); r["credito_var_1m"] = round(sal, 3)
+        r["credito_si_rovina"] = int(pct <= 0.40 and sal > 0)
+    except Exception:  # noqa: BLE001
+        r["credito_pct"] = r["credito_var_1m"] = r["credito_si_rovina"] = np.nan
+    return r
+
+
+def aggiorna(log=print) -> dict:
+    r = riga()
+    old = pd.read_csv(REG) if REG.exists() else pd.DataFrame()
+    pd.concat([old, pd.DataFrame([r])], ignore_index=True).drop_duplicates(subset=["data"], keep="last").sort_values("data").to_csv(REG, index=False)
+    log(f"[indizi_registro] {r['data']}: {len(r) - 1} valori registrati")
+    return r

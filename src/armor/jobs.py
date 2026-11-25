@@ -403,6 +403,11 @@ def tutto(skip_download: bool = False) -> None:
         status_index.aggiorna()
     except Exception as e:  # noqa: BLE001
         print("[status_index] non calcolato:", str(e)[:120])
+    try:   # registro dei valori da misurare in avanti (data/indizi_registro.csv)
+        from . import indizi_registro
+        indizi_registro.aggiorna()
+    except Exception as e:  # noqa: BLE001
+        print("[indizi_registro] non aggiornato:", str(e)[:100])
     try:   # Super Armor Index: valore del giorno nella storia (ricostruita dal 2000, poi reale)
         from . import super_armor, armor_index
         _p = closed_sp500()

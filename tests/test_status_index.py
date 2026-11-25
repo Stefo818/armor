@@ -30,3 +30,16 @@ def test_quadro_sette_valori():
     for k in ("armor", "super", "crollo", "minimi", "stato", "bolla", "cred"):
         assert f"data-gi='{k}'" in h
     assert "Status index" in h
+
+
+def test_registro_indizi_una_riga_con_valori():
+    from armor import indizi_registro as ir
+    r = ir.riga()
+    for k in ("crollo", "minimi", "stato", "stato_x_crollo", "c21", "credito_si_rovina"):
+        assert k in r
+    assert 1 <= r["stato"] <= 100
+
+
+def test_spiegazione_colori_minimi():
+    from armor import grafico_indici as g
+    assert "ROSSO" in g.DESC["minimi"] and "VERDE" in g.DESC["minimi"]
