@@ -35,7 +35,8 @@ def test_pilastri_dentro_ogni_indice():
     d = grafico_indici.dati()
     for k in ("a_paura", "a_liquidita", "a_rimbalzo", "a_stress", "a_ciclo", "p1", "p6"):
         assert k in d, k
-    assert grafico_indici.KIDS["super"][:6] == ["p1", "p2", "p3", "p4", "p5", "p6"]
+    assert grafico_indici.KIDS["super"] == ["sa_fin", "sa_eco"]
+    assert len(grafico_indici.KIDS["sa_fin"]) == 6 and len(grafico_indici.KIDS["sa_eco"]) == 7
     assert len(grafico_indici.KIDS["armor"]) == 5
     h = grafico_indici.html()
     assert "gi-kd" in h and "gi-bk" in h and "solo informativo" in h

@@ -24,7 +24,7 @@ SOGLIA_PROMOSSO = 0.80   # quinto piu' alto della media a 5 sedute dell'Indice c
 SOPRA60 = {"Indice Armor": (44.7, 26), "Super Armor": (54.8, 17)}   # il Crollo e' cambiato il 25/11/2026: va rimisurato
 BASE_3M = 16.8
 # etichette piccole sotto ogni indice; per l'Indice crollo l'unico orizzonte che ha retto alla verifica e' la settimana
-SOTTO = {"Indice Armor": "Salute mercato", "Super Armor": "Salute economia + mercato",
+SOTTO = {"Indice Armor": "Salute mercato", "Super Armor": "Economia nei prossimi mesi",
          "Indice crollo": "Rischio di crollo, prossima settimana"}
 BREVE_ZONA = {"minimi": ["Lontano dai minimi", "Passaggio", "Discesa possibile", "Verso un minimo", "Discesa in corso"],
               "stato": ["Solido", "Passaggio", "Fragile", "Molto fragile", "Estremo"]}
@@ -98,6 +98,9 @@ def leggi() -> dict | None:
             out["status"] = si["oggi"]
             out["tendenza"]["minimi"] = si["oggi"]["minimi"]["tendenza"]
             out["tendenza"]["stato"] = si["oggi"]["stato"]["tendenza"]
+            if "super" in si["oggi"]:   # Super Armor versione 2 (economia dei prossimi mesi)
+                out["super"] = si["oggi"]["super"]["valore"]; out["tendenza"]["super"] = si["oggi"]["super"]["tendenza"]
+                out["sopra60_5sedute"]["Super Armor"] = si["oggi"]["super"]["sopra60"]
     except Exception:  # noqa: BLE001
         pass
     return out

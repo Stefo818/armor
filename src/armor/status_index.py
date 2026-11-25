@@ -63,6 +63,11 @@ def calcola() -> dict:
     ser["stato"] = mappa_tratti(p)
     for c in comp.columns:
         ser["st_" + c] = comp[c]
+    try:   # Super Armor versione 2 (economia dei prossimi mesi) e le sue misure
+        from . import super_armor_2
+        ser.update(super_armor_2.calcola())
+    except Exception:  # noqa: BLE001
+        pass
     return {k: v[v.index >= INIZIO].dropna() for k, v in ser.items()}
 
 
@@ -87,13 +92,17 @@ def aggiorna(log=print) -> dict:
     ser = calcola()
     out = {"serie": {}, "oggi": {}}
     for k, s in ser.items():
-        c = compatta(s, giornaliera=k in ("crollo", "minimi", "stato"))
+        c = compatta(s, giornaliera=k in ("crollo", "minimi", "stato", "super", "sa_fin", "sa_eco"))
         if c:
             out["serie"][k] = c
     for k in ("crollo", "minimi", "stato"):
         s = ser[k].dropna()
         v = float(s.iloc[-1]); tr = float(s.iloc[-1] - s.iloc[-6]) if len(s) > 5 else 0.0
         out["oggi"][k] = {"valore": round(v, 1), "tendenza": round(tr, 1), "zona": NOMI_ZONE[k][livello(k, v)], "data": str(s.index[-1].date())}
+    if "super" in ser:   # Super Armor v2: valore, tendenza e pilastri di oggi
+        x = ser["super"].dropna(); f, e = ser["sa_fin"].dropna(), ser["sa_eco"].dropna()
+        out["oggi"]["super"] = {"valore": round(float(x.iloc[-1]), 1), "tendenza": round(float(x.iloc[-1] - x.iloc[-6]), 1), "zona": "", "data": str(x.index[-1].date()),
+                                "finanza": round(float(f.iloc[-1]), 1), "economia": round(float(e.iloc[-1]), 1), "sopra60": int((x.tail(5) > 60).sum())}
     out["data"] = max(x["data"] for x in out["oggi"].values())
     FILE.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     log("[status_index] " + " · ".join(f"{k} {x['valore']:.0f}" for k, x in out["oggi"].items()))

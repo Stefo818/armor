@@ -132,8 +132,9 @@ G["bolla"] = ("Indice Bolla (Sick Index): da 0 a 100, quanto il mercato somiglia
 G["cred"] = ("Indice Credito (Sick Index): da 0 a 100, quanto il credito è sotto stress. Unisce spread che si allargano, banche che irrigidiscono i prestiti, curva dei tassi rovesciata e tensione sul debito europeo.",
              "Le crisi di credito sono le più gravi: quando le banche si fermano, il mercato scende forte.",
              "Sotto 60 sereno, 60-80 teso, da 80 rosso. Era acceso prima di 4 picchi su 4 (1990, 2007, 2011, 2023) ma dal 2015 non ha più previsto i cali.", "Calcolato ogni giorno dalla storia dal 1971.")
-G["super"] = ("Super Armor (SAI): la media dei sei pilastri Titan (prezzi, credito, paura, rischio tra i mercati, lavoro ed economia, liquidità).",
-              "Riassume da quali aree arriva il rischio.", "Zone dai dati dal 1995: sotto 35 tranquillo, 35-45 neutro, 45-55 allarme, da 55 pericolo.", "Motore Titan, giornaliero.")
+G["super"] = ("Super Armor: da 1 a 100, come sarà l'economia nei prossimi mesi. Mescola dati finanziari (veloci, anticipano) ed economici (lenti, dicono dov'è l'economia). Vale il peggiore dei due pilastri.",
+              "Serve a capire se l'economia sta per rallentare: lavoro, produzione, recessioni. Non prevede i cali di Borsa del giorno dopo: per quelli c'è il Crollo.",
+              "Fasce come l'Indice Armor: sotto 40 sereno, 40-60 attenzione, 60-80 rischio, sopra 80 forte rallentamento atteso. Misurato dal 2005: è collegato a come va l'economia nei sei mesi dopo (0,61 su 1; il Super Armor di prima 0,31).", "Calcolato ogni giorno da 13 misure, dal 1992.")
 for _m, _d in (("Titan", "il motore che misura lo stato di salute del mercato"), ("Titan+", "FHS+VIX corretto dai pilastri di Titan, in ombra dal 12 novembre 2026"), ("FHS+VIX", "simulazione della nervosità ancorata all'indice della paura (il modello che prevede)"),
                ("FHS", "simulazione della nervosità sui soli prezzi"), ("A1", "regressione sui soli prezzi")):
     for _h, _t, _n in (("10g", 5, "10 giorni"), ("1m", 10, "1 mese"), ("3m", 10, "3 mesi"), ("6m", 10, "6 mesi")):
