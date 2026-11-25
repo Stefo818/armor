@@ -19,7 +19,7 @@ from .config import DATA
 
 FILE = DATA / "status_index.json"
 INIZIO = "1990-01-02"
-SETTIMANALE_FINO = "2022-12-31"   # fino al 2022 un punto a settimana (pagina leggera), dopo un punto al giorno
+SETTIMANALE_FINO = "2022-12-31"   # componenti: fino al 2022 un punto a settimana (pagina leggera); i tre indici principali sono giornalieri da sempre
 ZONE_LIM = [35, 40, 60, 80]
 ZONE_COL = ["#22c55e", "#9ca3af", "#f59e0b", "#ef4444", "#8b5cf6"]
 NOMI_ZONE = {
@@ -66,12 +66,14 @@ def calcola() -> dict:
     return {k: v[v.index >= INIZIO].dropna() for k, v in ser.items()}
 
 
-def compatta(s: pd.Series) -> dict | None:
+def compatta(s: pd.Series, giornaliera: bool = False) -> dict | None:
     """Pagina leggera: un punto a settimana fino al 2022, poi giornaliero. Formato di grafico_indici._serie."""
     from .grafico_indici import _serie
     s = s.dropna()
     if len(s) < 10:
         return None
+    if giornaliera:   # i tre indici principali: un punto al giorno da sempre
+        return _serie(s)
     vecchio = s[s.index <= SETTIMANALE_FINO]
     vecchio = vecchio.groupby(vecchio.index.to_period("W")).tail(1)
     return _serie(pd.concat([vecchio, s[s.index > SETTIMANALE_FINO]]))
@@ -85,7 +87,7 @@ def aggiorna(log=print) -> dict:
     ser = calcola()
     out = {"serie": {}, "oggi": {}}
     for k, s in ser.items():
-        c = compatta(s)
+        c = compatta(s, giornaliera=k in ("crollo", "minimi", "stato"))
         if c:
             out["serie"][k] = c
     for k in ("crollo", "minimi", "stato"):
