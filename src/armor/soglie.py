@@ -13,7 +13,7 @@ FRASI = ["pochi segnali di tensione", "mercato in difficoltà: tensione che cres
 # (limite alto, % giorni, % con calo ≥10% a 3 mesi, calo peggiore medio %)
 ZONE = {
     "armor": {"nome": "Indice Armor", "lim": [40, 60, 80, 100], "stat": [(55, 6, -3.6), (35, 24, -6.1), (8, 34, -8.8), (1, 41, -12.1)]},
-    "sea": {"nome": "Salute dell'economia", "lim": [40, 60, 80, 100], "stat": [(38, 9, -3.9), (21, 13, -5.0), (25, 17, -5.0), (16, 28, -7.6)]},
+    "sea": {"nome": "Salute dell'economia", "lim": [40, 60, 80, 100], "stat": [(94, 13, -4.5), (3, 30, -10.0), (2, 45, -10.6), (2, 13, -3.5)]},
     "super": {"nome": "Super Armor", "lim": [40, 60, 80, 100], "stat": [(30, 7, -3.9), (24, 13, -4.7), (24, 14, -4.4), (22, 29, -7.3)]},
 }
 

@@ -152,7 +152,7 @@ def combo_html() -> str:
         from . import grafico_indici as gi
         S = s2.calcola()
         nm = lambda k: getattr(gi, "_CORTI", {}).get(k) or s2.NOMI[k]
-        pil = "".join(_tile(40 + i, k, S[k].dropna(), n, t) for i, (k, n, t) in enumerate((("sa_fin", "Finanza", ""), ("sa_eco", "Economia", ""), ("sa_costi", "Costi e tassi", ""), ("sa_fam", "Famiglie e mutui", ""))) if k in S)
+        pil = "".join(_tile(40 + i, k, S[k].dropna(), n, t) for i, (k, n, t) in enumerate((("sa_fin", "Finanza", ""), ("sa_eco", "Economia", ""), ("sa_costi", "Costi e tassi", ""), ("sa_fam", "Famiglie e mutui", ""), ("sa_pil", "PIL USA ed Europa", ""))) if k in S)
         n_p = 4
         try:   # pilastro informativo: difensività dei grandi fondi (provato, non migliora l'indice: senza peso)
             from . import difensivita

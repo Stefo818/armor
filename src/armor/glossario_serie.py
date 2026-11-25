@@ -133,8 +133,8 @@ G["cred"] = ("Indice Credito (Sick Index): da 0 a 100, quanto il credito è sott
              "Le crisi di credito sono le più gravi: quando le banche si fermano, il mercato scende forte.",
              "Sotto 60 sereno, 60-80 teso, da 80 rosso. Era acceso prima di 4 picchi su 4 (1990, 2007, 2011, 2023) ma dal 2015 non ha più previsto i cali.", "Calcolato ogni giorno dalla storia dal 1971.")
 G["sea"] = ("Salute dell'economia: da 1 (ottima) a 100 (economia allo sfascio). Descrive l'economia di oggi, non quella dei prossimi mesi, ed è staccata dall'Indice Armor.",
-             "Media con lo stesso peso di tre pilastri: lavoro e produzione, costi e tassi (inflazione, petrolio, rialzo dei tassi), famiglie e mutui. Toccando i pilastri si vedono le singole misure.",
-             "Fasce come gli altri indici: sotto 40 in salute, 40-60 rallenta, 60-80 in difficoltà, sopra 80 in forte difficoltà. Con i soli lavoro e produzione descrive meglio le recessioni (0,98 contro 0,87), perché inflazione e tassi salgono anche con l'economia che cresce.",
+             "Sedici misure con lo stesso peso in tre gruppi: lavoro e produzione, PIL di Stati Uniti ed Europa, famiglie e mutui; tarate in modo che 100 = forti recessioni del passato (2008-09, 2020). Costi e tassi non entrano nel voto. Toccando i pilastri si vedono le singole misure.",
+             "Fasce come gli altri indici: sotto 40 in salute, 40-60 rallenta, 60-80 in difficoltà, sopra 80 in forte difficoltà. Sotto 40 è la condizione di quasi tutti i giorni dal 1990 (94%): è normale che oggi il numero sia basso se l'economia regge.",
              "Pilastri e valori sono nel grafico a comparsa.")
 G["super"] = ("Super Armor: da 1 a 100, come sarà l'economia nei prossimi mesi. Mescola dati finanziari (veloci, anticipano) ed economici (lenti, dicono dov'è l'economia). Vale il peggiore dei due pilastri.",
               "Serve a capire se l'economia sta per rallentare: lavoro, produzione, recessioni. Non prevede i cali di Borsa del giorno dopo: per quelli c'è il Crollo.",

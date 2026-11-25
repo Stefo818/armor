@@ -31,7 +31,7 @@ FAMIGLIE = {"sm_mutuo_var": ("f_mortgage30us", "Tasso del mutuo a 30 anni: varia
             "sm_insol_mutui": ("f_drsfrmacbs", "Mutui non pagati (insolvenze)"), "sm_insol_carte": ("f_drcclacbs", "Carte di credito non pagate (insolvenze)"),
             "sm_stretta": ("f_drtsclcc", "Banche che stringono il credito alle famiglie (accesso)"), "sm_consumo": ("f_totalsl", "Credito al consumo: crescita debole in 12 mesi"),
             "sm_debito": ("f_tdsp", "Quota del reddito delle famiglie per ripagare i debiti")}
-NOMI = {"super": "Super Armor", "sa_fin": "Pilastro finanza (veloce)", "sa_eco": "Pilastro economia (lenta)", "sa_costi": "Costi e tassi (senza peso)", "sa_fam": "Famiglie e mutui (senza peso)", "sa_w6": "Prova: media dei tre pilastri", "sea": "Salute dell'economia",
+NOMI = {"super": "Super Armor", "sa_fin": "Pilastro finanza (veloce)", "sa_eco": "Pilastro economia (lenta)", "sa_costi": "Costi e tassi (senza peso)", "sa_fam": "Famiglie e mutui (senza peso)", "sa_pil": "PIL di USA ed Europa", "sa_w6": "Prova: media dei tre pilastri", "sea": "Salute dell'economia",
         **{k: v[1] for k, v in {**FIN, **ECO, **COSTI, **FAMIGLIE}.items()}}
 MIN = 1300   # circa 5 anni di giorni di Borsa di storia prima di dare un percentile
 
@@ -76,9 +76,11 @@ def calcola() -> dict[str, pd.Series]:
     fam_c = [c for c in FAMIGLIE if c in C]
     if fam_c:
         fam = mean(fam_c); ser["sa_fam"] = fam
-        # Salute dell'economia (oggi, non il futuro): lavoro e produzione + costi e tassi + famiglie e mutui, peso uguale, percentile 1-100 (100 = economia allo sfascio)
-        tre = pd.concat([eco, ser["sa_costi"], fam], axis=1)
-        ser["sea"] = 1 + 99 * tre.mean(axis=1, skipna=True).where(tre.notna().sum(axis=1) >= 2).expanding(MIN).rank(pct=True)
+        # Salute dell'economia: indice calibrato sulle recessioni (PROTOCOLLO_SALUTE_ECONOMIA.md): 100 = forti recessioni del passato
+        from . import salute_economia as _se
+        _r = _se.calcola(cal); ser["sea"] = _r["sea"]
+        if "sea_pil" in _r:
+            ser["sa_pil"] = _r["sea_pil"]
         ser["sa_w6"] = pd.concat([fin, eco, fam], axis=1).mean(axis=1, skipna=False)
     for c in C.columns:
         ser[c] = C[c]

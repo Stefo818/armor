@@ -92,7 +92,7 @@ def aggiorna(log=print) -> dict:
     ser = calcola()
     out = {"serie": {}, "oggi": {}}
     for k, s in ser.items():
-        c = compatta(s, giornaliera=k in ("crollo", "minimi", "stato", "super", "sa_fin", "sa_eco", "sa_costi", "sa_fam", "sea"))
+        c = compatta(s, giornaliera=k in ("crollo", "minimi", "stato", "super", "sa_fin", "sa_eco", "sa_costi", "sa_fam", "sa_pil", "sea"))
         if c:
             out["serie"][k] = c
     for k in ("crollo", "minimi", "stato"):
