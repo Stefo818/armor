@@ -26,7 +26,7 @@ BASE_3M = 16.8
 # etichette piccole sotto ogni indice; per l'Indice crollo l'unico orizzonte che ha retto alla verifica e' la settimana
 SOTTO = {"Indice Armor": "Salute mercato", "Super Armor": "Salute economia + mercato",
          "Indice crollo": "Rischio di crollo, prossima settimana"}
-BREVE_ZONA = {"minimi": ["Ha smesso", "Passaggio", "Ancora aperta", "In corso", "Senza fine"],
+BREVE_ZONA = {"minimi": ["Lontano dai minimi", "Passaggio", "Discesa possibile", "Verso un minimo", "Discesa in corso"],
               "stato": ["Solido", "Passaggio", "Fragile", "Molto fragile", "Estremo"]}
 
 
@@ -137,7 +137,7 @@ def _tessera_status(d: dict) -> tuple[str, int]:
     celle = []
     voci = (("crollo", "Crollo", "Rischio di crollo, prossima settimana",
              f"{d['sopra60_5sedute']['Indice crollo']}/5 sedute sopra 60", f"{d['sopra60_5sedute']['Indice crollo']}/5 sopra 60"),
-            ("minimi", "Minimi", "Il mercato smette di scendere?", None, None),
+            ("minimi", "Minimi", "Verso un minimo o lontano da esso?", None, None),
             ("stato", "Stato", "Quanto è fragile il terreno", None, None))
     for k, nome, sotto, lg, sh in voci:
         x = st[k]

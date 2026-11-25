@@ -42,4 +42,4 @@ def test_registro_indizi_una_riga_con_valori():
 
 def test_spiegazione_colori_minimi():
     from armor import grafico_indici as g
-    assert "ROSSO" in g.DESC["minimi"] and "VERDE" in g.DESC["minimi"]
+    assert "rosso" in g.DESC["minimi"] and "verde" in g.DESC["minimi"] and "fondo" in g.DESC["minimi"]

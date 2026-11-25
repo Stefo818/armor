@@ -39,9 +39,8 @@ KIDS = {
     "armor": ["a_paura", "a_liquidita", "a_rimbalzo", "a_stress", "a_ciclo"],
     "super": ["p1", "p2", "p3", "p4", "p5", "p6", "i9", "i7", "i8"],
     "crollo": ["cr_paura", "cr_curva", "cr_tend", "cr_cred", "cr_rot", "cr_tassi"],
-    "minimi": ["mi_panico", "mi_svolta"],
-    "mi_panico": ["mp_caduta", "mp_paura", "mp_breve", "mp_credito", "mp_sotto"],
-    "mi_svolta": ["ms_rientra", "ms_curva", "ms_credstop", "ms_risale", "ms_ampiezza"],
+    "minimi": ["mi_modello", "mi_semplice"],
+    "mi_semplice": ["mf_rimb", "mf_dur", "mf_pend", "mf_neri", "mf_vol"],
     "stato": ["st_cape", "st_buffett", "st_margin", "st_f5", "st_f4", "st_f6", "st_f10", "st_f11", "st_nfci", "st_liq"],
     "sovr": ["sacc"],
     "bolla": ["sovr", "b_m1"],
@@ -96,7 +95,7 @@ try:
     from . import status_index as _si
     for _k in ("crollo", "minimi", "stato"):
         ZONE[_k] = {"lim": _si.ZONE_LIM, "col": _si.ZONE_COL, "nom": _si.NOMI_ZONE[_k], "le": 1}
-    NOMI.update({"crollo": "Crollo", "minimi": "Minimi", "stato": "Stato", "mi_panico": "Panico recente", "mi_svolta": "Segni di svolta (abbassano l'indice)"})
+    NOMI.update({"crollo": "Crollo", "minimi": "Minimi", "stato": "Stato", "mi_modello": "Modello su 14 mercati", "mi_semplice": "Cinque segnali semplici"})
     # nome corto sulle tessere, nome intero nella spiegazione
     _CORTI = {"cr_paura": "Paura", "cr_curva": "Paura a breve", "cr_tend": "Sotto le medie", "cr_cred": "Debito aziende", "cr_rot": "Fuga dai rischiosi", "cr_tassi": "Tassi",
               "mp_caduta": "Caduta", "mp_paura": "Paura", "mp_breve": "Paura a breve", "mp_credito": "Credito", "mp_sotto": "Sotto la media",
@@ -119,20 +118,21 @@ except Exception:  # noqa: BLE001
 _PESI_C = {"cr_paura": 23, "cr_curva": 23, "cr_tend": 19, "cr_cred": 12, "cr_rot": 12, "cr_tassi": 12}
 TAG.update({k: f"peso {v}%" for k, v in _PESI_C.items()})
 TAG.update({"st_" + c: "peso uguale" for c in ("cape", "buffett", "margin", "f5", "f4", "f6", "f10", "f11", "nfci", "liq")})
-TAG.update({"mi_panico": "il più alto in 63 sedute", "mi_svolta": "segni che la discesa finisce"})
+TAG.update({"mi_modello": "peso uguale", "mi_semplice": "peso uguale"})
 DESC.update({
     "crollo": "Quanto è teso il mercato adesso e nella prossima settimana: unisce la paura (e la sua curva), il prezzo sotto le medie, il costo del debito delle aziende, "
               "la fuga dai settori rischiosi e le scosse sui tassi. Da 1 a 100: fino a 35 verde, da 40 giallo, da 60 rosso, da 80 viola. "
               "Anticipa di pochi giorni (misurato), non di settimane. Dal 25 novembre 2026 non usa più la distanza dal massimo: la differenza misurata è piccola, scelta per coerenza con l'obiettivo.",
-    "minimi": "Il mercato ha già smesso di scendere? 1 = sì: la discesa è finita, il minimo è già toccato e nelle prossime settimane ci si aspetta in media una risalita. 100 = no: il mercato continua a scendere e non si intravede ancora una fine. Sta in alto solo se c'è stato un forte panico negli ultimi tre mesi E non ci sono ancora segni di svolta (paura che rientra, credito che smette di peggiorare, prezzo che risale). Se non c'è stato panico, o se i segni di svolta ci sono, scende. COLORI: ROSSO = discesa senza fine in vista; VERDE = ha smesso di scendere. ATTENZIONE, MISURATO NEL PASSATO: questa lettura NON è dimostrata. Dal 2013 non ha previsto meglio del caso se il ribasso sarebbe continuato, e nei pochi giorni con valore sopra 80 il mercato è poi risalito in media del 14% in un mese (9 giorni soltanto). Va letta come un indizio sullo stato del panico, non come una previsione.",
-    "mi_panico": "Il punto più alto del panico negli ultimi tre mesi (media di cinque voci: caduta, paura, paura a breve, credito, prezzo sotto la media). Per un minimo serve che il panico ci sia stato.",
-    "mi_svolta": "Segni che la discesa si sta esaurendo (media di cinque voci: paura che rientra, curva normale, credito che smette di peggiorare, prezzo che risale, settori che risalgono). Più è alto, più l'indice Minimi scende.",
+    "minimi": "In che fase del ciclo è il mercato: sta andando verso un minimo oppure si sta allontanando dai minimi per fare nuovi massimi? 1 (verde) = si allontana dai minimi: la discesa, se c'è stata, è alle spalle e il mercato tende a risalire verso nuovi massimi. 100 (rosso) = sta andando verso un minimo: la discesa è in corso e il fondo non si intravede ancora. Si calcola mescolando in parti uguali un modello statistico (addestrato ogni anno su 14 borse nelle discese del passato) e cinque segnali semplici. COSA HA DIMOSTRATO IL PASSATO: separa i giorni «prima del fondo» da quelli «dopo il fondo» molto meglio del caso (punteggio 0,77 su 1; il caso è 0,5), in 14 mercati e anche sul solo S&P 500. ATTENZIONE: riconosce soprattutto quando il fondo è già alle spalle (conferma, con ritardo di giorni o settimane); non indica la data del minimo né di quanto scenderà ancora. Considera solo crisi interne al mercato: i cigni neri esterni sono stati esclusi dalla misura.",
+    "mi_modello_vecchio": "Il punto più alto del panico negli ultimi tre mesi (media di cinque voci: caduta, paura, paura a breve, credito, prezzo sotto la media). Per un minimo serve che il panico ci sia stato.",
+    "mi_semplice": "Cinque segnali semplici, senza addestramento (media dei loro percentili storici): poco rimbalzo dal minimo recente, pochi giorni dal massimo, media a 50 giorni in discesa, molti giorni neri nell'ultimo mese, volatilità ancora vicina al picco. Più è alto, più il mercato è ancora in discesa.",
+    "mi_modello": "Un modello statistico (regressione) addestrato ogni anno sulle discese di 14 borse: confronta 15 misure di prezzo e volatilità con quelle dei giorni che precedevano il fondo in passato. Più è alto, più la situazione somiglia ai giorni prima di un minimo.",
     "stato": "Quanto il terreno è fragile rispetto alla storia, da 1 (terreno solido) a 100 (molto fragile). Media di dieci misure: mercato caro, Borsa grande rispetto all'economia, debiti per comprare azioni, "
              "costo del debito, assicurazioni sul ribasso, tassi, fuga dai settori rischiosi, titoli di Stato, condizioni finanziarie, liquidità. Dice quanto il mercato è predisposto, non quando scende.",
 })
 _LUNGHI = globals().get("_LUNGHI", {})
 for _k in list(NOMI):
-    if _k.startswith(("cr_", "mp_", "ms_", "st_")) and _k not in DESC:
+    if _k.startswith(("cr_", "mf_", "st_")) and _k not in DESC:
         DESC[_k] = (_LUNGHI.get(_k, NOMI[_k]) + ". Una delle voci che compongono l'indice, come posizione rispetto alla storia (da 0 a 100: più è alto, più è sotto stress). " + TAG.get(_k, "")).strip()
 CFG_SOVR = {"val": 1, "dec": 0, "u": "", "pp": "sul giorno precedente", "def": 2,
             "rng": [["1M", 30], ["3M", 91], ["1A", 365], ["5A", 1826], ["20A", 7305], ["Max", 0]],
@@ -468,7 +468,7 @@ h+='<div class="gi-sc">Com’era prima</div><div class="gi-g">'+prev('Ieri',1)+p
 h+='<div class="gi-hint" style="margin-top:6px">La freccia mostra di quanto è cambiato l’indice da allora a oggi: rossa se il numero è salito, verde se è sceso.</div>';
 box.innerHTML=h}
 function kids(k){var box=document.getElementById('gi-kd'),ks=(KD.kids[k]||[]).filter(function(x){return S[x]});if(!ks.length){box.innerHTML='';return}
-var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred'||k==='crollo'||k==='minimi'||k==='stato'||k==='mi_panico'||k==='mi_svolta')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
+var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred'||k==='crollo'||k==='minimi'||k==='stato'||k==='mi_modello'||k==='mi_semplice')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
 h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'||x==='i9'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
 box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}

@@ -1,8 +1,8 @@
 """Status index: Crollo, Minimi, Stato. Tre numeri da 1 a 100, stessa scala a colori (fasce 35 / 40 / 60 / 80).
 
 - Crollo: Indice crollo (PROTOCOLLO_INDICE_CROLLO_2.md; versione 2, senza distanza dal massimo).
-- Minimi (dal 25/11/2026, lettura scelta dall'utente): alto = il mercato continua a scendere e non si vede la fine; basso = ha smesso di scendere.
-  Formula: minimo fra «panico recente» e (100 - «segni di svolta»). Misura in ESITO_MINIMI_2.md: non dimostrata (indizio).
+- Minimi (indice di fase, dal 25/11/2026): alto = il mercato va verso un minimo (discesa in corso, fondo davanti); basso = si allontana dai minimi verso nuovi massimi.
+  Modello e misure: fase_minimo.py, PROTOCOLLO_MINIMI_5.md / ESITO_MINIMI_5.md.
 - Stato: ex «Terreno fragile» (predisposizione.py): media di dieci percentili di fragilita', resa sulla stessa scala a tratti
   del Crollo (percentile espanso del punteggio, dal 1990). Alto = terreno molto fragile; non dice il giorno.
 Ogni indice ha le sue componenti, salvate come serie compatte per i grafici (data/status_index.json).
@@ -24,19 +24,16 @@ ZONE_LIM = [35, 40, 60, 80]
 ZONE_COL = ["#22c55e", "#9ca3af", "#f59e0b", "#ef4444", "#8b5cf6"]
 NOMI_ZONE = {
     "crollo": ["Nessuna tensione", "Zona di passaggio", "Mercato teso", "Mercato molto teso", "Mercato in panico"],
-    "minimi": ["Ha smesso di scendere", "Zona di passaggio", "Discesa ancora aperta", "Discesa in corso", "Discesa senza fine in vista"],
+    "minimi": ["Lontano dai minimi, verso nuovi massimi", "Zona di passaggio", "Possibile discesa in corso", "Verso un minimo", "Discesa in corso, fondo lontano"],
     "stato": ["Terreno solido", "Zona di passaggio", "Terreno fragile", "Terreno molto fragile", "Terreno estremamente fragile"],
 }
 # componenti: chiave grafico -> (colonna, nome semplice, spiegazione corta)
 CROLLO_KIDS = {"cr_paura": ("f1_paura", "paura del mercato"), "cr_curva": ("f3_curva", "paura a breve più alta che a tre mesi"),
                "cr_tend": ("f7_tendenza", "prezzo sotto le sue medie"), "cr_cred": ("f5_credito", "costo del debito delle aziende"),
                "cr_rot": ("f10_rotaz", "fuga dai settori rischiosi"), "cr_tassi": ("f6_tassi", "scosse sui tassi americani")}
-MINIMI_PAN = {"mp_caduta": ("caduta", "caduta dal massimo dell'anno"), "mp_paura": ("paura", "paura"),
-              "mp_breve": ("breve", "paura a breve più alta che a tre mesi"), "mp_credito": ("credito", "credito che peggiora"),
-              "mp_sotto": ("sotto", "prezzo sotto la media di lungo periodo")}
-MINIMI_SVO = {"ms_rientra": ("rientra", "paura che rientra"), "ms_curva": ("curva", "curva della paura tornata normale"),
-              "ms_credstop": ("cred_stop", "credito che smette di peggiorare"), "ms_risale": ("risale", "prezzo che risale dal minimo"),
-              "ms_ampiezza": ("ampiezza", "ampiezza: settori che risalgono")}
+MINIMI_PAN: dict = {}   # (vecchia versione: panico e svolta; dal 25/11/2026 il Minimi e' un indice di fase, vedi fase_minimo.py)
+MINIMI_SVO = {"mf_rimb": ("mf_rimb", "poco rimbalzo dal minimo"), "mf_dur": ("mf_dur", "pochi giorni dal massimo"), "mf_pend": ("mf_pend", "media a 50 giorni in discesa"),
+              "mf_neri": ("mf_neri", "molti giorni neri di recente"), "mf_vol": ("mf_vol", "volatilità ancora vicina al picco")}
 
 
 def mappa_tratti(punteggio: pd.Series) -> pd.Series:
@@ -52,18 +49,15 @@ def mappa_tratti(punteggio: pd.Series) -> pd.Series:
 
 def calcola() -> dict:
     """Serie giornaliere di tutto lo Status index e delle sue componenti (indice = DatetimeIndex dal 1990)."""
-    from . import occasione, predisposizione
+    from . import predisposizione
     X = ic.calcola_serie()
     ser: dict[str, pd.Series] = {"crollo": X["indice"]}
     for k, (c, _) in CROLLO_KIDS.items():
         ser[k] = X[c]
-    d = occasione.calcola(occasione.serie_archivio())
-    d = d[d.index >= INIZIO]
-    ser["minimi"] = pd.concat([d["panico_rec"], 100 - d["svolta"]], axis=1).min(axis=1, skipna=False).clip(1, 100)   # lettura «continua a scendere»
-    ser["mi_panico"] = d["panico_rec"]
-    ser["mi_svolta"] = d["svolta"]
-    for k, (c, _) in {**MINIMI_PAN, **MINIMI_SVO}.items():
-        ser[k] = d[c]
+    from . import fase_minimo
+    f = fase_minimo.calcola()
+    for k in ("minimi", "mi_modello", "mi_semplice", *fase_minimo.SEGNALI):
+        ser[k] = f[k].clip(1, 100)
     comp = predisposizione.componenti(X)
     p = comp.mean(axis=1, skipna=True).where(comp.notna().sum(axis=1) >= 5)
     ser["stato"] = mappa_tratti(p)
