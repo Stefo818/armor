@@ -117,9 +117,15 @@ G.update({k: (f"Pilastro «{n}» del motore Titan: {d}.", "È uno dei sei matton
 G["armor"] = ("L'Indice Armor (motore Titan): giudizio da 1 a 100 sul pericolo di calo e di nervosità del mercato, con una parte veloce (paura, liquidità, rimbalzi) e una lenta (prezzi, credito, valutazioni).",
               "Dice quanto il contesto è pericoloso per chi ha azioni. Non prevede il giorno del calo.",
               "Zone dai dati dal 1995: sotto 35 tranquillo, 35-40 neutro, 40-45 allarme, da 45 pericolo. 40 è la soglia di stress.", "Motore Titan, giornaliero.")
-G["crollo"] = ("Indice crollo: da 0 a 100, dice quanto il mercato somiglia ai momenti che in passato hanno preceduto cali forti. Più è alto, più è alto il rischio di un calo importante.",
+G["crollo"] = ("Crollo (Status index): da 0 a 100, dice quanto il mercato somiglia ai momenti che in passato hanno preceduto cali forti. Più è alto, più è alto il rischio di un calo importante.",
                "Serve a capire se conviene essere prudenti. Non dice il giorno del calo.",
                "Fasce: fino a 35 calma, 36-40 attenzione leggera, 41-60 cautela, 61-80 pericolo, sopra 80 rischio molto alto.", "Calcolato ogni giorno da famiglie di segnali (prezzi, paura, credito, liquidità).")
+G["minimi"] = ("Minimi (Status index): da 1 a 100, in che fase del ciclo è il mercato. 1 = si allontana dai minimi verso nuovi massimi; 100 = va verso un minimo, la discesa è in corso e il fondo non si vede.",
+               "Serve a capire se il mercato sta scendendo ancora o se il peggio è alle spalle. Riconosce bene il fondo già passato (conferma); non dice la data del minimo né di quanto scenderà.",
+               "Verde sotto 35 lontano dai minimi, 35-40 passaggio, 40-60 discesa possibile, 60-80 verso un minimo, sopra 80 discesa in corso. Misurato su 14 borse, solo crisi interne: 0,77 su 1 (il caso è 0,5).", "Modello annuale più cinque segnali semplici, dal 2002.")
+G["stato"] = ("Stato (Status index): da 1 a 100, quanto il terreno è fragile. 1 = mercato calmo che tende a salire; 100 = mercato fragile che tende a crollare.",
+              "Misura la fragilità di fondo (prezzi cari, debiti, credito, liquidità), non se il mercato sta già cadendo: per quello c'è il Crollo.",
+              "Stesse fasce degli altri indici: sotto 35 solido, 35-40 passaggio, 40-60 fragile, 60-80 molto fragile, sopra 80 estremo. Incrociato con il Crollo non lo migliora (ESITO_CROLLO_STATO).", "Media di dieci misure, dal 1990.")
 G["bolla"] = ("Indice Bolla (Sick Index): da 0 a 100, quanto il mercato somiglia a una bolla. Unisce prezzi alti rispetto agli utili, salita forte in tre anni e concentrazione su pochi titoli.",
               "Aiuta a capire se i prezzi sono gonfiati. Una bolla può durare anni prima di rompersi, quindi non dice il giorno del calo.",
               "Sotto 60 nella norma, 60-80 sopra la norma, da 80 rosso. È un indizio, non dimostrato (2 casi su 2: 2000 e 2022).", "Calcolato ogni giorno dalla storia dal 1971.")
