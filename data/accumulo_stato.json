@@ -1,9 +1,9 @@
 {
- "data": "2026-11-24 18:24 UTC",
+ "data": "2026-11-25 13:42 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
-  "nuove_righe": 0,
+  "nuove_righe": 8,
   "fallite": {
    "sml": "simbolo inesistente",
    "tyvix": "simbolo inesistente",
@@ -20,7 +20,7 @@
  "fred": {
   "richieste": 245,
   "riuscite": 245,
-  "nuove_righe": 15,
+  "nuove_righe": 17,
   "fallite": {},
   "codici_inesistenti_saltati": [
    "ACMTP02",
@@ -49,12 +49,12 @@
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 918,
+  "barre_nuove": 2082,
   "fallite": {}
  },
  "opzioni": {
   "richieste": 10,
-  "righe_oggi": 290,
+  "righe_oggi": 294,
   "fallite": {}
  },
  "componenti": {
@@ -103,46 +103,50 @@
   "paura_cripto": 0
  },
  "nyfed_tassi_overnight": {
-  "righe_nuove": 0,
+  "righe_nuove": 18,
   "fallite": {}
  },
  "tsa": {
-  "righe_nuove": 0
+  "righe_nuove": 1
  },
  "finra_vendite_scoperto": {
   "giorni_richiesti": 60,
-  "righe_nuove": 25823,
+  "righe_nuove": 23715,
   "senza_file": 0,
   "fallite": {
-   "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260101": "403 Client Error: Forbidden for url: https://cdn.f",
    "20251225": "403 Client Error: Forbidden for url: https://cdn.f",
    "20251127": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20250901": "403 Client Error: Forbidden for url: https://cdn.f"
+   "20250704": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250901": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250619": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250526": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250418": "403 Client Error: Forbidden for url: https://cdn.f"
   }
  },
  "gdelt_notizie": {
   "righe_nuove": 0,
   "fallite": {
    "crollo_borsa_volume": "429 troppe richieste",
-   "crollo_borsa_tono": "429 troppe richieste",
+   "crollo_borsa_tono": "GDELT: risposta vuota o non CSV",
    "recessione_volume": "429 troppe richieste",
-   "recessione_tono": "GDELT: risposta vuota o non CSV",
+   "recessione_tono": "429 troppe richieste",
    "crisi_bancaria_volume": "GDELT: risposta vuota o non CSV",
    "crisi_bancaria_tono": "GDELT: risposta vuota o non CSV",
-   "stretta_credito_volume": "GDELT: risposta vuota o non CSV",
+   "stretta_credito_volume": "429 troppe richieste",
    "stretta_credito_tono": "429 troppe richieste",
    "default_volume": "GDELT: risposta vuota o non CSV",
-   "default_tono": "429 troppe richieste",
+   "default_tono": "GDELT: risposta vuota o non CSV",
    "inflazione_volume": "429 troppe richieste",
    "inflazione_tono": "429 troppe richieste",
-   "licenziamenti_volume": "GDELT: risposta vuota o non CSV",
+   "licenziamenti_volume": "429 troppe richieste",
    "licenziamenti_tono": "GDELT: risposta vuota o non CSV",
    "panico_volume": "429 troppe richieste",
    "panico_tono": "429 troppe richieste"
@@ -153,11 +157,11 @@
   "scaricate": 9,
   "fallite": {}
  },
- "aaii": {
-  "errore": "503 Server Error: Service Unavailable for url: https://www.aaii.com/files/surveys/sentiment.xls"
+ "aaii_sondaggio": {
+  "righe_nuove": 6150
  },
  "mercati_previsione": {
-  "righe_oggi": 133
+  "righe_oggi": 141
  },
  "nyfed_dealer": {
   "serie_richieste": 260,
@@ -182,13 +186,15 @@
  "sec_moduli_depositati": {
   "trimestri_letti": 6,
   "moduli": 36,
-  "righe_nuove": 6168,
+  "righe_nuove": 6026,
   "problemi": {}
  },
  "sec_parole_di_stress": {
-  "richieste": 12,
+  "richieste": 24,
   "righe_nuove": 0,
-  "problemi": {}
+  "problemi": {
+   "dubbio_sostanziale": "500 Server Error: Internal Server Error for url: h"
+  }
  },
  "cripto_leva": {
   "righe_nuove": 0,
@@ -199,11 +205,9 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 583,
+  "titoli_oggi": 680,
   "righe_conteggi_nuove": 1,
-  "problemi": {
-   "margin_call": "429 troppe richieste"
-  }
+  "problemi": {}
  },
  "retail_forum": {
   "titoli": 200,
@@ -215,12 +219,10 @@
   "fallite": {}
  },
  "google_trends": {
-  "righe_giornaliere": 330,
+  "righe_giornaliere": 570,
   "righe_settimanali": 0,
   "problemi": {
-   "US:buy bitcoin": "The request failed: Google returned a response wit",
-   "IT:crollo borsa": "The request failed: Google returned a response wit",
-   "mondo:stock market crash": "The request failed: Google returned a response wit"
+   "mondo:layoffs": "The request failed: Google returned a response wit"
   }
  },
  "bis_dsr": {
@@ -229,13 +231,13 @@
  },
  "derivati_componenti": {
   "indicatori": 30,
-  "giorni": 2991,
-  "ultimo": "2026-11-23",
-  "righe_nuove": 0
+  "giorni": 2992,
+  "ultimo": "2026-11-24",
+  "righe_nuove": 30
  },
  "derivati_intraday": {
   "strumenti": 51,
-  "giorni": 9,
-  "righe_nuove": 0
+  "giorni": 10,
+  "righe_nuove": 117
  }
 }
