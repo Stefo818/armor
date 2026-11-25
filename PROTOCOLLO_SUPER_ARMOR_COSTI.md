@@ -25,3 +25,15 @@ In ogni caso, K1-K5 entrano nell'app come **pilastro informativo «Costi e tassi
 
 ## Limiti dichiarati
 Verifica 2015-2026 con una sola recessione (2020, shock esterno) e un'inflazione anomala (2021-23); petrolio con storia breve (dal 2000); bersagli rivisti; mesi sovrapposti.
+
+## Addendum del 25/11/2026 ore 18:15: mutui, prestiti e debiti delle famiglie (richiesta dell'utente; ancora nessun risultato calcolato)
+Dati scaricati da FRED solo per verificarne la storia (nessun test eseguito). **Accesso al mutuo**: non esiste una serie lunga; si usa come sostituto la stretta delle banche sul credito alle famiglie (carte di credito, dal 1996). I dati sul peso del debito delle famiglie (TDSP) e sul debito sul PIL esistono solo dal 2005: TDSP entra, il debito sul PIL no (storia troppo corta).
+Misure (alto = peggio; percentile espandente, minimo 60 mesi, per i trimestrali 20 trimestri; ritardi reali):
+- M1 tasso del mutuo a 30 anni, variazione su 12 mesi (settimanale, ritardo 3 giorni); M2 stesso tasso, livello.
+- M3 insolvenze sui mutui (trimestrale, ritardo 75 giorni, dal 1991); M4 insolvenze sulle carte di credito (idem).
+- M5 banche che stringono il credito alle famiglie (carte; trimestrale, ritardo 45 giorni, dal 1996).
+- M6 credito al consumo (TOTALSL), crescita su 12 mesi, **invertita** (crescita bassa = peggio), ritardo 45 giorni.
+- M7 quota del reddito delle famiglie spesa per rimborsare i debiti (TDSP, trimestrale, ritardo 90 giorni, dal 2005).
+«Famiglie» = media delle misure disponibili (almeno la metà).
+Varianti nuove (si aggiungono alle 8 del protocollo, N totale = 14): W1 = massimo(finanza, economia, famiglie) · W2 = M1-M7 aggiunte al pilastro economia · W3 = terzo pilastro «mutui e accesso» = media(M1, M2, M5) · W4 = terzo pilastro «debiti e insolvenze» = media(M3, M4, M6, M7) · W5 = massimo(finanza, economia, media di K1-K5 e M1-M7) · W6 = media dei tre pilastri (finanza, economia, famiglie).
+Regole di giudizio, blocchi (scelta 2006-2014, verifica 2015-2026), IC90 e soglia «migliore fra N» identici (la soglia si ricalcola sulle 14 varianti). Controllo del segno e valore da sole delle misure M1-M7 (Spearman con Z6, tutto il periodo e per blocco). In ogni caso le misure entrano nell'app come pilastro informativo «Famiglie e mutui» senza peso.
