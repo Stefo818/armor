@@ -1,0 +1,267 @@
+{
+ "eventi": {
+  "E1 giorni": {
+   "episodi": [
+    47,
+    13
+   ],
+   "soglia_caso": 0.6938763506922725,
+   "scelta": {
+    "V1 attuale": 0.673004051027854,
+    "V2 senza distanza dal massimo": 0.6788226857559821,
+    "V3 attuale + CAPE": 0.668692599954709,
+    "V4 senza distanza + CAPE": 0.6736104471227637,
+    "N1 credito e prezzi insieme (da solo)": 0.6537188938932642,
+    "N2 credito che si rovina dal basso (da solo)": 0.4563048838789221,
+    "N3 calma e mercato caro (da solo)": 0.360151473215409,
+    "N4 salita eccessiva con volatilita (da solo)": 0.6425936642930831,
+    "N5 terreno fragile x innesco (da solo)": 0.5014983770726921,
+    "N6 stretta di liquidita e tassi (da solo)": 0.5928421357220139,
+    "N1 credito e prezzi insieme (misto 50/50)": 0.6886143471806356,
+    "N2 credito che si rovina dal basso (misto 50/50)": 0.629934831291045,
+    "N3 calma e mercato caro (misto 50/50)": 0.575513926980852,
+    "N4 salita eccessiva con volatilita (misto 50/50)": 0.6794869536773771,
+    "N5 terreno fragile x innesco (misto 50/50)": 0.65044284528093,
+    "N6 stretta di liquidita e tassi (misto 50/50)": 0.6746861082454771
+   },
+   "verifica": {
+    "V1 attuale": 0.7588434583319493,
+    "V2 senza distanza dal massimo": 0.7636928289102202,
+    "V3 attuale + CAPE": 0.7615836848573422,
+    "V4 senza distanza + CAPE": 0.7681104062178231,
+    "N1 credito e prezzi insieme (da solo)": 0.5376656591490351,
+    "N2 credito che si rovina dal basso (da solo)": 0.5349005214734115,
+    "N3 calma e mercato caro (da solo)": 0.3930149134752715,
+    "N4 salita eccessiva con volatilita (da solo)": 0.6411133623409838,
+    "N5 terreno fragile x innesco (da solo)": 0.6638489387850002,
+    "N6 stretta di liquidita e tassi (da solo)": 0.5157521506626366,
+    "N1 credito e prezzi insieme (misto 50/50)": 0.733566944564387,
+    "N2 credito che si rovina dal basso (misto 50/50)": 0.7030258743813731,
+    "N3 calma e mercato caro (misto 50/50)": 0.6192413724383034,
+    "N4 salita eccessiva con volatilita (misto 50/50)": 0.7691234596605441,
+    "N5 terreno fragile x innesco (misto 50/50)": 0.73139137077756,
+    "N6 stretta di liquidita e tassi (misto 50/50)": 0.733716411465772
+   },
+   "ic90": {
+    "V1 attuale": [
+     0.6679279458039225,
+     0.839688881536413
+    ],
+    "V2 senza distanza dal massimo": [
+     0.6645846401387888,
+     0.8459058768142194
+    ],
+    "V3 attuale + CAPE": [
+     0.6686782953738459,
+     0.8405005794560877
+    ],
+    "V4 senza distanza + CAPE": [
+     0.6685846338730643,
+     0.8480574228894814
+    ],
+    "N1 credito e prezzi insieme (da solo)": [
+     0.423989313989314,
+     0.654533107419642
+    ],
+    "N2 credito che si rovina dal basso (da solo)": [
+     0.4536449512001083,
+     0.6409143662315434
+    ],
+    "N3 calma e mercato caro (da solo)": [
+     0.259321410048858,
+     0.5479994286175911
+    ],
+    "N4 salita eccessiva con volatilita (da solo)": [
+     0.5141928704409281,
+     0.7558521887564593
+    ],
+    "N5 terreno fragile x innesco (da solo)": [
+     0.5565681526920915,
+     0.775864967747316
+    ],
+    "N6 stretta di liquidita e tassi (da solo)": [
+     0.4244002863299861,
+     0.6585460232261153
+    ],
+    "N1 credito e prezzi insieme (misto 50/50)": [
+     0.6641873694773393,
+     0.8204554026888067
+    ],
+    "N2 credito che si rovina dal basso (misto 50/50)": [
+     0.6024459858481124,
+     0.8050426968878882
+    ],
+    "N3 calma e mercato caro (misto 50/50)": [
+     0.5140360219453607,
+     0.7283853103966323
+    ],
+    "N4 salita eccessiva con volatilita (misto 50/50)": [
+     0.6788434213659558,
+     0.8450894844840297
+    ],
+    "N5 terreno fragile x innesco (misto 50/50)": [
+     0.6230230823287067,
+     0.8308781375477716
+    ],
+    "N6 stretta di liquidita e tassi (misto 50/50)": [
+     0.6367253165374922,
+     0.840765637705628
+    ]
+   }
+  },
+  "E2 settimane": {
+   "episodi": [
+    30,
+    8
+   ],
+   "soglia_caso": 0.7751496293128903,
+   "scelta": {
+    "V1 attuale": 0.6238329552353261,
+    "V2 senza distanza dal massimo": 0.6297408697319232,
+    "V3 attuale + CAPE": 0.6161580982202767,
+    "V4 senza distanza + CAPE": 0.6223727513819216,
+    "N1 credito e prezzi insieme (da solo)": 0.665502550830218,
+    "N2 credito che si rovina dal basso (da solo)": 0.43171123962893143,
+    "N3 calma e mercato caro (da solo)": 0.36871691642436444,
+    "N4 salita eccessiva con volatilita (da solo)": 0.6265499355635791,
+    "N5 terreno fragile x innesco (da solo)": 0.46174713231300124,
+    "N6 stretta di liquidita e tassi (da solo)": 0.5774834648688373,
+    "N1 credito e prezzi insieme (misto 50/50)": 0.660579821282125,
+    "N2 credito che si rovina dal basso (misto 50/50)": 0.5780713806435122,
+    "N3 calma e mercato caro (misto 50/50)": 0.5411125666996837,
+    "N4 salita eccessiva con volatilita (misto 50/50)": 0.6361184778093747,
+    "N5 terreno fragile x innesco (misto 50/50)": 0.5955810461066556,
+    "N6 stretta di liquidita e tassi (misto 50/50)": 0.6341885803751158
+   },
+   "verifica": {
+    "V1 attuale": 0.6546769259293594,
+    "V2 senza distanza dal massimo": 0.6691619542041346,
+    "V3 attuale + CAPE": 0.653738296097154,
+    "V4 senza distanza + CAPE": 0.6680031519421525,
+    "N1 credito e prezzi insieme (da solo)": 0.41655464911467505,
+    "N2 credito che si rovina dal basso (da solo)": 0.716887225363864,
+    "N3 calma e mercato caro (da solo)": 0.5726684898488922,
+    "N4 salita eccessiva con volatilita (da solo)": 0.4871952350050987,
+    "N5 terreno fragile x innesco (da solo)": 0.7030337443218689,
+    "N6 stretta di liquidita e tassi (da solo)": 0.701544683415222,
+    "N1 credito e prezzi insieme (misto 50/50)": 0.5673148233985352,
+    "N2 credito che si rovina dal basso (misto 50/50)": 0.7334523036988968,
+    "N3 calma e mercato caro (misto 50/50)": 0.6730555298043942,
+    "N4 salita eccessiva con volatilita (misto 50/50)": 0.5836307592472421,
+    "N5 terreno fragile x innesco (misto 50/50)": 0.705861221841105,
+    "N6 stretta di liquidita e tassi (misto 50/50)": 0.7282956336330768
+   },
+   "ic90": {
+    "V1 attuale": [
+     0.4920300107663659,
+     0.7729552140051011
+    ],
+    "V2 senza distanza dal massimo": [
+     0.5141724937675813,
+     0.7908146234224289
+    ],
+    "V3 attuale + CAPE": [
+     0.4918555612011443,
+     0.7708269958473102
+    ],
+    "V4 senza distanza + CAPE": [
+     0.5142038632873479,
+     0.788170029073773
+    ],
+    "N1 credito e prezzi insieme (da solo)": [
+     0.26225036940815816,
+     0.6201496778479626
+    ],
+    "N2 credito che si rovina dal basso (da solo)": [
+     0.5804972661690851,
+     0.8205051316607921
+    ],
+    "N3 calma e mercato caro (da solo)": [
+     0.34120403624070517,
+     0.8317858033682234
+    ],
+    "N4 salita eccessiva con volatilita (da solo)": [
+     0.2780225277023489,
+     0.6639347399783107
+    ],
+    "N5 terreno fragile x innesco (da solo)": [
+     0.5720240383196736,
+     0.7993836984486765
+    ],
+    "N6 stretta di liquidita e tassi (da solo)": [
+     0.5349661091234531,
+     0.8417095351087118
+    ],
+    "N1 credito e prezzi insieme (misto 50/50)": [
+     0.3768637478388318,
+     0.7210953985647036
+    ],
+    "N2 credito che si rovina dal basso (misto 50/50)": [
+     0.647548156670796,
+     0.7977919356491762
+    ],
+    "N3 calma e mercato caro (misto 50/50)": [
+     0.5425914723394532,
+     0.7741752586885662
+    ],
+    "N4 salita eccessiva con volatilita (misto 50/50)": [
+     0.3928581501961561,
+     0.7350289880226974
+    ],
+    "N5 terreno fragile x innesco (misto 50/50)": [
+     0.5886323002402835,
+     0.791475993821981
+    ],
+    "N6 stretta di liquidita e tassi (misto 50/50)": [
+     0.5940882566165453,
+     0.8252898608535373
+    ]
+   }
+  },
+  "E3 mesi": {
+   "episodi": [
+    12,
+    3
+   ],
+   "soglia_caso": null,
+   "scelta": {
+    "V1 attuale": 0.5353524427618532,
+    "V2 senza distanza dal massimo": 0.5345532119463975,
+    "V3 attuale + CAPE": 0.5259980369769445,
+    "V4 senza distanza + CAPE": 0.5255914107725898,
+    "N1 credito e prezzi insieme (da solo)": 0.5879073773611362,
+    "N2 credito che si rovina dal basso (da solo)": 0.37266690703683675,
+    "N3 calma e mercato caro (da solo)": 0.3436392043747371,
+    "N4 salita eccessiva con volatilita (da solo)": 0.6296797067483926,
+    "N5 terreno fragile x innesco (da solo)": 0.41165494862087615,
+    "N6 stretta di liquidita e tassi (da solo)": 0.4383160066502414,
+    "N1 credito e prezzi insieme (misto 50/50)": 0.5502974580854516,
+    "N2 credito che si rovina dal basso (misto 50/50)": 0.48788334034412995,
+    "N3 calma e mercato caro (misto 50/50)": 0.4617711275364061,
+    "N4 salita eccessiva con volatilita (misto 50/50)": 0.5677603509404483,
+    "N5 terreno fragile x innesco (misto 50/50)": 0.5075977004587064,
+    "N6 stretta di liquidita e tassi (misto 50/50)": 0.5245458005328205
+   },
+   "verifica": {
+    "V1 attuale": 0.6914754428341385,
+    "V2 senza distanza dal massimo": 0.6811929683306495,
+    "V3 attuale + CAPE": 0.7002985775630703,
+    "V4 senza distanza + CAPE": 0.6897644927536232,
+    "N1 credito e prezzi insieme (da solo)": 0.3018484970477724,
+    "N2 credito che si rovina dal basso (da solo)": 0.568119296833065,
+    "N3 calma e mercato caro (da solo)": 0.5433943907675792,
+    "N4 salita eccessiva con volatilita (da solo)": 0.5584910091250671,
+    "N5 terreno fragile x innesco (da solo)": 0.7783648684916801,
+    "N6 stretta di liquidita e tassi (da solo)": 0.8364365271068169,
+    "N1 credito e prezzi insieme (misto 50/50)": 0.536550590445518,
+    "N2 credito che si rovina dal basso (misto 50/50)": 0.656417740203972,
+    "N3 calma e mercato caro (misto 50/50)": 0.6578938539989264,
+    "N4 salita eccessiva con volatilita (misto 50/50)": 0.6503119967793881,
+    "N5 terreno fragile x innesco (misto 50/50)": 0.7511406333870102,
+    "N6 stretta di liquidita e tassi (misto 50/50)": 0.8118625872249061
+   },
+   "ic90": {}
+  }
+ },
+ "passano": []
+}
