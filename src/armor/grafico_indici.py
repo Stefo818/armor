@@ -38,6 +38,11 @@ ZONE["super"] = ZONE["armor"]
 KIDS = {
     "armor": ["a_paura", "a_liquidita", "a_rimbalzo", "a_stress", "a_ciclo"],
     "super": ["p1", "p2", "p3", "p4", "p5", "p6", "i9", "i7", "i8"],
+    "crollo": ["cr_paura", "cr_curva", "cr_tend", "cr_cred", "cr_rot", "cr_tassi"],
+    "minimi": ["mi_panico", "mi_svolta"],
+    "mi_panico": ["mp_caduta", "mp_paura", "mp_breve", "mp_credito", "mp_sotto"],
+    "mi_svolta": ["ms_rientra", "ms_curva", "ms_credstop", "ms_risale", "ms_ampiezza"],
+    "stato": ["st_cape", "st_buffett", "st_margin", "st_f5", "st_f4", "st_f6", "st_f10", "st_f11", "st_nfci", "st_liq"],
     "sovr": ["sacc"],
     "bolla": ["sovr", "b_m1"],
     "cred": ["c_m3", "c_m5"],
@@ -86,6 +91,50 @@ DESC.update({
     "c_m3": "Credito e banche: allargamento dello spread tra obbligazioni aziendali e titoli di Stato, banche che irrigidiscono i prestiti, curva dei tassi rovesciata, condizioni finanziarie sul credito.",
     "c_m5": "Stress del debito e delle banche europee: indice di stress sistemico dell'area euro e quanto è salito negli ultimi tre mesi.",
 })
+# ---- Status index (Crollo, Minimi, Stato): scala 1-100 con fasce 35/40/60/80; il valore sul limite sta nella fascia piu' bassa
+try:
+    from . import status_index as _si
+    for _k in ("crollo", "minimi", "stato"):
+        ZONE[_k] = {"lim": _si.ZONE_LIM, "col": _si.ZONE_COL, "nom": _si.NOMI_ZONE[_k], "le": 1}
+    NOMI.update({"crollo": "Crollo", "minimi": "Minimi", "stato": "Stato", "mi_panico": "Panico recente", "mi_svolta": "Segni di svolta"})
+    # nome corto sulle tessere, nome intero nella spiegazione
+    _CORTI = {"cr_paura": "Paura", "cr_curva": "Paura a breve", "cr_tend": "Sotto le medie", "cr_cred": "Debito aziende", "cr_rot": "Fuga dai rischiosi", "cr_tassi": "Tassi",
+              "mp_caduta": "Caduta", "mp_paura": "Paura", "mp_breve": "Paura a breve", "mp_credito": "Credito", "mp_sotto": "Sotto la media",
+              "ms_rientra": "Paura rientra", "ms_curva": "Curva normale", "ms_credstop": "Credito stabile", "ms_risale": "Prezzo risale", "ms_ampiezza": "Settori risalgono",
+              "st_cape": "Mercato caro", "st_buffett": "Borsa vs economia", "st_margin": "Debiti in Borsa", "st_f5": "Debito aziende", "st_f4": "Assicurazioni",
+              "st_f6": "Tassi", "st_f10": "Fuga dai rischiosi", "st_f11": "Titoli di Stato", "st_nfci": "Condizioni fin.", "st_liq": "Liquidità"}
+    _LUNGHI = {}
+    for _k, (_c, _n) in {**_si.CROLLO_KIDS, **_si.MINIMI_PAN, **_si.MINIMI_SVO}.items():
+        _LUNGHI[_k] = _n[0].upper() + _n[1:]
+    try:
+        from .predisposizione import NOMI as _PN
+        for _c, _n in _PN.items():
+            _LUNGHI["st_" + _c] = _n[0].upper() + _n[1:]
+    except Exception:  # noqa: BLE001
+        pass
+    for _k, _n in _LUNGHI.items():
+        NOMI[_k] = _CORTI.get(_k, _n)
+except Exception:  # noqa: BLE001
+    pass
+_PESI_C = {"cr_paura": 23, "cr_curva": 23, "cr_tend": 19, "cr_cred": 12, "cr_rot": 12, "cr_tassi": 12}
+TAG.update({k: f"peso {v}%" for k, v in _PESI_C.items()})
+TAG.update({"st_" + c: "peso uguale" for c in ("cape", "buffett", "margin", "f5", "f4", "f6", "f10", "f11", "nfci", "liq")})
+TAG.update({"mi_panico": "il più alto in 63 sedute", "mi_svolta": "segni che la discesa finisce"})
+DESC.update({
+    "crollo": "Quanto è teso il mercato adesso e nella prossima settimana: unisce la paura (e la sua curva), il prezzo sotto le medie, il costo del debito delle aziende, "
+              "la fuga dai settori rischiosi e le scosse sui tassi. Da 1 a 100: fino a 35 verde, da 40 giallo, da 60 rosso, da 80 viola. "
+              "Anticipa di pochi giorni (misurato), non di settimane. Dal 25 novembre 2026 non usa più la distanza dal massimo: la differenza misurata è piccola, scelta per coerenza con l'obiettivo.",
+    "minimi": "Quanto è probabile che il mercato stia toccando un minimo. Sale quando c'è stato un panico negli ultimi tre mesi E compaiono segni di svolta (paura che rientra, credito che smette di peggiorare, prezzo che risale). "
+              "Da 1 a 100 con gli stessi colori degli altri indici: qui un numero alto vuol dire «minimo probabile», non pericolo. Non è preciso sui singoli giorni: misurato, distingue poco i minimi che reggono.",
+    "mi_panico": "Il punto più alto del panico negli ultimi tre mesi (media di cinque voci: caduta, paura, paura a breve, credito, prezzo sotto la media). Per un minimo serve che il panico ci sia stato.",
+    "mi_svolta": "Segni che la discesa si sta esaurendo (media di cinque voci: paura che rientra, curva normale, credito che smette di peggiorare, prezzo che risale, settori che risalgono).",
+    "stato": "Quanto il terreno è fragile rispetto alla storia, da 1 (terreno solido) a 100 (molto fragile). Media di dieci misure: mercato caro, Borsa grande rispetto all'economia, debiti per comprare azioni, "
+             "costo del debito, assicurazioni sul ribasso, tassi, fuga dai settori rischiosi, titoli di Stato, condizioni finanziarie, liquidità. Dice quanto il mercato è predisposto, non quando scende.",
+})
+_LUNGHI = globals().get("_LUNGHI", {})
+for _k in list(NOMI):
+    if _k.startswith(("cr_", "mp_", "ms_", "st_")) and _k not in DESC:
+        DESC[_k] = (_LUNGHI.get(_k, NOMI[_k]) + ". Una delle voci che compongono l'indice, come posizione rispetto alla storia (da 0 a 100: più è alto, più è sotto stress). " + TAG.get(_k, "")).strip()
 CFG_SOVR = {"val": 1, "dec": 0, "u": "", "pp": "sul giorno precedente", "def": 2,
             "rng": [["1M", 30], ["3M", 91], ["1A", 365], ["5A", 1826], ["20A", 7305], ["Max", 0]],
             "prev": [["Ieri", 1], ["Una settimana fa", 7], ["Due settimane fa", 14], ["Un mese fa", 30], ["3 mesi fa", 91], ["6 mesi fa", 182]],
@@ -262,6 +311,13 @@ def dati() -> dict:
             out["crollo"] = x
     except Exception:  # noqa: BLE001
         pass
+    try:   # Status index: serie lunghe (dal 1990) di Crollo, Minimi, Stato e delle loro componenti
+        from . import status_index
+        si = status_index.leggi()
+        if si:
+            out.update(si["serie"])
+    except Exception:  # noqa: BLE001
+        pass
     return out
 
 
@@ -332,7 +388,7 @@ function cfg(){return CF[cur]||{}}
 function fv(v,d){var c=cfg();return it(v,d==null?(c.dec||0):d)+(c.u||'')}
 function chips(){var box=document.getElementById('gi-rg');box.innerHTML=RG.map(function(r,i){return '<button type="button" data-i="'+i+'">'+r[0]+'</button>'}).join('');box.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){range(+b.dataset.i)})})}
 function it(x,d){var s=x.toFixed(d==null?0:d).replace('.',',');return s.replace('-','−')}
-function zi(k,v){var l=Z[k].lim;for(var i=0;i<l.length;i++){if(k==='crollo'?v<=l[i]:v<l[i])return i}return l.length}
+function zi(k,v){var l=Z[k].lim;for(var i=0;i<l.length;i++){if(Z[k].le?v<=l[i]:v<l[i])return i}return l.length}
 function zc(v){return Z[cur].col[zi(cur,v)]}
 function dfmt(d,o){return new Date(d*864e5).toLocaleDateString('it-IT',Object.assign({timeZone:'UTC'},o))}
 function dlong(d){return dfmt(d,{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
@@ -409,11 +465,11 @@ function tile(lbl,v,sub){var c=zc(v);return '<div class="gi-c" style="--c:'+c+'"
 function mean(k){var a=Math.max(0,n-k+1),s=0;for(var i=a;i<=n;i++)s+=V[i];return s/(n-a+1)}
 h+='<div class="gi-sc">Valore medio</div><div class="gi-g">'+tile('Ultima settimana',mean(5),'5 sedute')+tile('Ultimo mese',mean(21),'21 sedute')+tile('Ultimi 3 mesi',mean(63),'63 sedute')+'</div>';
 function prev(lbl,k){if(n-k<0)return '';var v=V[n-k],df=V[n]-v,c=Math.abs(df)<.05?'var(--mu)':df>0?'var(--bad)':'var(--ok)';return tile(lbl,v,dshort(T[n-k])+' · <b style="color:'+c+'">'+(Math.abs(df)<.05?'=':(df>0?'▲ ':'▼ ')+it(Math.abs(df),1))+'</b>')}
-h+='<div class="gi-sc">Com’era prima</div><div class="gi-g">'+prev('Ieri',1)+prev('Una settimana fa',5)+prev('Due settimane fa',10)+'</div>';
-h+='<div class="gi-hint" style="margin-top:6px">La freccia mostra di quanto è cambiato l’indice da allora a oggi: rossa se il rischio è salito, verde se è sceso.</div>';
+h+='<div class="gi-sc">Com’era prima</div><div class="gi-g">'+prev('Ieri',1)+prev('Una settimana fa',5)+prev('Un mese fa',21)+prev('3 mesi fa',63)+prev('6 mesi fa',126)+'</div>';
+h+='<div class="gi-hint" style="margin-top:6px">La freccia mostra di quanto è cambiato l’indice da allora a oggi: rossa se il numero è salito, verde se è sceso.</div>';
 box.innerHTML=h}
 function kids(k){var box=document.getElementById('gi-kd'),ks=(KD.kids[k]||[]).filter(function(x){return S[x]});if(!ks.length){box.innerHTML='';return}
-var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
+var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred'||k==='crollo'||k==='minimi'||k==='stato'||k==='mi_panico'||k==='mi_svolta')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
 h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'||x==='i9'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
 box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}

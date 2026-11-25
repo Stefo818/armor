@@ -398,6 +398,11 @@ def tutto(skip_download: bool = False) -> None:
         print(f"[occasione] {_o['occasione']} · stato {_o['stato']} · sconto {_o['sconto']}%")
     except Exception as e:  # noqa: BLE001
         print("[occasione] non calcolato:", str(e)[:120])
+    try:   # Status index: Crollo, Minimi, Stato (1-100) con le loro componenti (data/status_index.json)
+        from . import status_index
+        status_index.aggiorna()
+    except Exception as e:  # noqa: BLE001
+        print("[status_index] non calcolato:", str(e)[:120])
     try:   # Super Armor Index: valore del giorno nella storia (ricostruita dal 2000, poi reale)
         from . import super_armor, armor_index
         _p = closed_sp500()

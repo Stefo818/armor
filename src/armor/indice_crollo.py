@@ -36,7 +36,10 @@ FASCE = (
     (100, "viola", "Mercato in panico", "bad", "#8b5cf6"),
 )
 # protocollo parte 4, modello M2: pesi fissati prima dei risultati
-PESI = {"f1_paura": 0.30, "f3_curva": 0.30, "f5_credito": 0.15, "f7_tendenza": 0.25, "f8_perdita": 0.25,
+# Versione 2 (25/11/2026, scelta dell'utente): tolta «distanza dal massimo» (f8), che si accende solo a calo gia' avviato.
+# Misura (ESITO_INDICE_CROLLO_2.md): +0,005/+0,009 di AUC a cinque giorni, dentro il margine d'errore; non e' una versione «dimostrata migliore».
+# La famiglia f8 resta calcolata (peso zero) e visibile.
+PESI = {"f1_paura": 0.30, "f3_curva": 0.30, "f5_credito": 0.15, "f7_tendenza": 0.25,
         "f10_rotaz": 0.15, "f6_tassi": 0.15}
 NOMI = {
     "f1_paura": "paura del mercato",

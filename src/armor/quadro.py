@@ -1,4 +1,4 @@
-"""Scheda «Quadro di oggi»: i tre indici e l'unico segnale che ha superato la gara.
+"""Scheda «Quadro di oggi»: Indice Armor, Super Armor, Status index (Crollo, Minimi, Stato), Sick Index (Bolla, Credito) su una sola riga.
 
 Regole e risultati: PROTOCOLLO_GARA_INDICI.md e ESITO_GARA_INDICI.md.
 Gara fra 81 candidati (3 indici x 9 misure x 3 orizzonti), scelta sul 1990-2014 e verifica sul 2015-2026,
@@ -21,15 +21,22 @@ STORIA = DATA / "titan_storia.csv"
 SOGLIA_PROMOSSO = 0.80   # quinto piu' alto della media a 5 sedute dell'Indice crollo, sulla scala 0-100
 
 # numeri misurati (ESITO_GARA_INDICI.md): persistenza sopra 60 -> calo dell'8% entro tre mesi
-SOPRA60 = {"Indice Armor": (44.7, 26), "Super Armor": (54.8, 17), "Indice crollo": (39.2, 68)}
+SOPRA60 = {"Indice Armor": (44.7, 26), "Super Armor": (54.8, 17)}   # il Crollo e' cambiato il 25/11/2026: va rimisurato
 BASE_3M = 16.8
 # etichette piccole sotto ogni indice; per l'Indice crollo l'unico orizzonte che ha retto alla verifica e' la settimana
 SOTTO = {"Indice Armor": "Salute mercato", "Super Armor": "Salute economia + mercato",
          "Indice crollo": "Rischio di crollo, prossima settimana"}
+BREVE_ZONA = {"minimi": ["Nessun panico", "Passaggio", "Si forma", "Probabile", "Molto prob."],
+              "stato": ["Solido", "Passaggio", "Fragile", "Molto fragile", "Estremo"]}
 
 
 def _col(v: float) -> str:
     return "#8b5cf6" if v >= 80 else ("#ef4444" if v >= 60 else ("#f59e0b" if v >= 40 else "#22c55e"))
+
+
+def _col5(v: float) -> str:
+    """Colori dello Status index: stesse fasce dell'Indice crollo (35 / 40 / 60 / 80), valore sul limite nella fascia piu' bassa."""
+    return "#8b5cf6" if v > 80 else ("#ef4444" if v > 60 else ("#f59e0b" if v > 40 else ("#9ca3af" if v > 35 else "#22c55e")))
 
 
 def _freccia(dv: float) -> str:
@@ -82,8 +89,18 @@ def leggi() -> dict | None:
         x = x.dropna()
         return float(x.iloc[-1] - x.iloc[-6]) if len(x) > 5 else 0.0
     tend = {"armor": _tr(d[col]), "super": _tr(d["super_armor_index"]), "crollo": _tr(st)}
-    return {"tendenza": tend, "data": str(d.index[-1].date()), "armor": arm, "super": sup, "crollo": cro, "crollo_m5": m5,
-            "sopra60_5sedute": sop, "settimana_acceso": m5 >= 60}
+    out = {"tendenza": tend, "data": str(d.index[-1].date()), "armor": arm, "super": sup, "crollo": cro, "crollo_m5": m5,
+           "sopra60_5sedute": sop, "settimana_acceso": m5 >= 60}
+    try:   # Minimi e Stato (status_index.py)
+        from . import status_index
+        si = status_index.leggi()
+        if si:
+            out["status"] = si["oggi"]
+            out["tendenza"]["minimi"] = si["oggi"]["minimi"]["tendenza"]
+            out["tendenza"]["stato"] = si["oggi"]["stato"]["tendenza"]
+    except Exception:  # noqa: BLE001
+        pass
+    return out
 
 
 def _tessera_sick() -> tuple[str, int]:
@@ -111,6 +128,31 @@ def _tessera_sick() -> tuple[str, int]:
     return (f"<div class='qd-c qd-sick'><div class='sk-t'>Sick Index<span class='lg'> · il mercato è malato?</span></div>{''.join(celle)}</div>"), 5
 
 
+def _tessera_status(d: dict) -> tuple[str, int]:
+    """Riquadro «Status index»: Crollo, Minimi, Stato (1-100, stesse fasce di colore). Ogni cella si tocca per il grafico."""
+    import html as _h
+    st = d.get("status")
+    if not st:
+        return "", 0
+    celle = []
+    voci = (("crollo", "Crollo", "Rischio di crollo, prossima settimana",
+             f"{d['sopra60_5sedute']['Indice crollo']}/5 sedute sopra 60", f"{d['sopra60_5sedute']['Indice crollo']}/5 sopra 60"),
+            ("minimi", "Minimi", "Un minimo è probabile?", None, None),
+            ("stato", "Stato", "Quanto è fragile il terreno", None, None))
+    for k, nome, sotto, lg, sh in voci:
+        x = st[k]
+        v = d["crollo"] if k == "crollo" else x["valore"]
+        tr = d["tendenza"].get(k, 0.0)
+        if lg is None:
+            lg = x["zona"]
+            from . import status_index as _si
+            sh = BREVE_ZONA[k][_si.livello(k, v)]
+        celle.append(f"<div class='sk' data-gi='{k}'><div class='qd-n' style='color:{_col5(v)}'>{v:.0f}{_freccia(tr)}</div><div class='qd-l'>{nome}</div>"
+                     f"<div class='qd-u'>{_h.escape(sotto)}</div><div class='qd-s'><span class='lg'>{_h.escape(lg)}</span><span class='sh'>{_h.escape(sh)}</span></div></div>")
+    return ("<div class='qd-c qd-sick qd-status' style='grid-column:span 3;grid-template-columns:repeat(3,1fr)'>"
+            "<div class='sk-t'>Status index<span class='lg'> · come sta il mercato</span></div>" + "".join(celle) + "</div>"), 3
+
+
 def _striscia_territori() -> str:
     try:
         from . import territori
@@ -132,18 +174,27 @@ def html() -> str:
     d = leggi()
     if not d:
         return ""
-    quarta, ncol = _tessera_sick()
-    tre = "".join(
+    quarta, _ncs = _tessera_sick()
+    nsick = 2 if quarta else 0
+    status, nst = _tessera_status(d)
+    due = "".join(
         f"<div class='qd-c' data-gi='{g}'><div class='qd-n' style='color:{_col(v)}'>{v:.0f}{_freccia(d['tendenza'][g])}</div><div class='qd-l'>{_h.escape(n)}</div><div class='qd-u'>{_h.escape(SOTTO[n])}</div>"
         f"<div class='qd-s'><span class='lg'>{d['sopra60_5sedute'][n]}/5 sedute sopra 60</span><span class='sh'>{d['sopra60_5sedute'][n]}/5 sopra 60</span></div></div>"
-        for n, v, g in (("Indice Armor", d["armor"], "armor"), ("Super Armor", d["super"], "super"), ("Indice crollo", d["crollo"], "crollo"))) + quarta
+        for n, v, g in (("Indice Armor", d["armor"], "armor"), ("Super Armor", d["super"], "super")))
+    if not status:   # senza i dati nuovi: come prima, con l'Indice crollo accanto agli altri due
+        due += (f"<div class='qd-c' data-gi='crollo'><div class='qd-n' style='color:{_col5(d['crollo'])}'>{d['crollo']:.0f}{_freccia(d['tendenza']['crollo'])}</div>"
+                f"<div class='qd-l'>Crollo</div><div class='qd-u'>{_h.escape(SOTTO['Indice crollo'])}</div><div class='qd-s'><span class='lg'>{d['sopra60_5sedute']['Indice crollo']}/5 sedute sopra 60</span>"
+                f"<span class='sh'>{d['sopra60_5sedute']['Indice crollo']}/5 sopra 60</span></div></div>")
+        nst = 1
+    tre = due + status + quarta
+    ncol = 2 + nst + nsick
     m5 = d["crollo_m5"]
     acceso = m5 >= 60
     cls = "bad" if acceso else "ok"
     tit = "Settimana a rischio sopra la norma" if acceso else "Settimana senza segnale"
-    det = (f"La media a 5 sedute dell'Indice crollo è <b>{m5:.0f}</b>. Sopra 60 il calo del 3% entro cinque sedute "
-           "è arrivato nel <b>18%</b> dei casi, contro il 7% normale." if acceso else
-           f"La media a 5 sedute dell'Indice crollo è <b>{m5:.0f}</b>, sotto la soglia di 60: nessun segnale per i prossimi cinque giorni.")
+    det = (f"La media a 5 sedute del Crollo è <b>{m5:.0f}</b>. Sopra 60 il calo del 3% entro cinque sedute "
+           "è arrivato nel <b>17%</b> dei casi dal 2015 (nel 24% prima), contro il 6% normale." if acceso else
+           f"La media a 5 sedute del Crollo è <b>{m5:.0f}</b>, sotto la soglia di 60: nessun segnale per i prossimi cinque giorni.")
     righe60 = "".join(
         f"<li>{_h.escape(n)} sopra 60 per una settimana: calo dell'8% entro tre mesi nel <b>{p:.0f}%</b> dei casi "
         f"(normale {BASE_3M:.0f}%), su {e} episodi</li>" for n, (p, e) in SOPRA60.items())
@@ -156,11 +207,13 @@ def html() -> str:
 .qd-sick{grid-column:span 2;grid-template-columns:1fr 1fr;column-gap:8px;position:relative;background:rgba(127,127,127,.07);border-radius:11px;padding:15px 6px 4px;align-items:start}
 .qd-sick>.sk{padding:0}
 .sk-t{position:absolute;top:4px;left:0;right:0;text-align:center;font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--mu)}
+.qd-status{background:rgba(56,132,244,.11)}
+.qd-c,.sk{min-width:0}
 .sk{cursor:pointer}.qd-l{white-space:nowrap}.qd-u,.qd-s{max-width:100%}
 .qd-s .sh{display:none}
-@media(max-width:560px){.qd{padding:9px 8px 7px}.qd-h{font-size:9.5px;margin-bottom:4px}.qd-g{grid-template-columns:repeat(5,1fr)!important;column-gap:1px}
-.qd-n{font-size:22px}.qd-a{font-size:11px;margin-left:2px}.qd-l{font-size:10px;white-space:normal;line-height:1.12;margin-top:3px}.qd-u{display:none}
-.qd-s{font-size:8.8px;line-height:1.2}.qd-s .lg{display:none}.qd-s .sh{display:inline}.qd-sick .sk-t .lg{display:none}
+@media(max-width:560px){.qd{padding:9px 8px 7px}.qd-h{font-size:9.5px;margin-bottom:4px}.qd-g{grid-template-columns:repeat(var(--nc,5),1fr)!important;column-gap:1px}
+.qd .qd-n{font-size:18px}.qd .qd-a{font-size:7.5px;margin-left:1px}.qd .qd-l{font-size:9.5px;white-space:normal;line-height:1.12;margin-top:3px}.qd-u{display:none}
+.qd .qd-s{font-size:8px;line-height:1.15}.qd-s .lg{display:none}.qd-s .sh{display:inline}.qd-sick .sk-t .lg{display:none}
 .qd-c,.sk{padding:13px 1px 3px}.qd-sick{grid-column:span 2;margin:0;padding:13px 2px 3px;column-gap:2px;border-radius:9px}.qd-sick>.sk{padding:0}.sk-t{font-size:8.5px;top:3px}}
 .qd-n{font-size:28px;font-weight:800;line-height:1}
 .qd-a{font-size:15px;margin-left:5px;vertical-align:middle}
