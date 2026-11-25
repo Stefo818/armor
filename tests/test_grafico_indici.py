@@ -65,7 +65,7 @@ def test_storia_tre_medie_per_ogni_serie():
     d = grafico_indici.dati()
     st = grafico_indici.storia(d)
     assert "armor" in st and "super" in st and "sa_fin" in st
-    assert len(st["armor"]) == 4 and st["armor"][0] is not None
+    assert len(st["armor"]) == 5 and st["armor"][0] is not None
     h = grafico_indici.html()
     assert "gi-storia" in h and "Prima di un crollo" in h and "Mercati calmi" in h and "Media storica" in h
 
