@@ -333,10 +333,15 @@ def dati() -> dict:
     return out
 
 
-def _maschere() -> tuple[pd.Series, pd.Series] | None:
-    """Giorni di Borsa 'calmi' e 'prima di un crollo' (S&P 500).
-    Calmo: a meno del 5% dal massimo di un anno e nessun calo oltre il 5% nelle 63 sedute dopo.
-    Prima di un crollo: non ancora sceso oltre il 10% dal massimo e calo di almeno il 15% nelle 63 sedute dopo."""
+# Picchi dell'S&P 500 prima di crolli nati DENTRO il sistema finanziario (lista di PROTOCOLLO_TERRITORI.md; esclusi gli shock esterni come il Covid).
+PICCHI_ENDOGENI = ["1990-07-16", "1997-10-07", "1998-07-17", "2000-03-24", "2007-10-09", "2010-04-23", "2011-04-29",
+                   "2018-01-26", "2018-09-20", "2022-01-03", "2023-02-02", "2024-07-16"]
+FINESTRA_PRIMA = 20   # sedute (4 settimane) prima del picco; vedi scratch/armor_prima_crollo.py
+
+
+def _maschere():
+    """Giorni di Borsa 'calmi' (S&P 500 a meno del 5% dal massimo di un anno e nessun calo oltre il 5% nelle 63 sedute dopo)
+    e, per ogni crollo endogeno, la finestra delle 20 sedute fino al picco incluso (data iniziale, data del picco)."""
     try:
         from . import store
         sp = store.load("sp500").dropna()
@@ -344,16 +349,20 @@ def _maschere() -> tuple[pd.Series, pd.Series] | None:
         ora = sp / sp.rolling(252, min_periods=60).max() - 1
         a = sp.to_numpy()
         fmin = pd.Series([a[i + 1:i + 64].min() / a[i] - 1 if i + 63 < len(a) else float("nan") for i in range(len(a))], index=sp.index)
-        calmo = (ora > -0.05) & (fmin > -0.05)
-        pre = (ora > -0.10) & (fmin <= -0.15)
-        ok = fmin.notna()
-        return calmo.where(ok), pre.where(ok)
+        calmo = ((ora > -0.05) & (fmin > -0.05)).where(fmin.notna())
+        fin = []
+        for p in PICCHI_ENDOGENI:
+            t = pd.Timestamp(p)
+            i = sp.index.get_loc(sp.index[sp.index.searchsorted(t)])
+            fin.append((sp.index[max(0, i - FINESTRA_PRIMA + 1)], sp.index[i]))
+        return calmo, fin
     except Exception:  # noqa: BLE001
         return None
 
 
 def storia(d: dict) -> dict:
-    """Per ogni serie: media di sempre, media nei mercati calmi, media nei giorni prima di un crollo (valori come mostrati)."""
+    """Per ogni serie: [media di sempre, media nei mercati calmi, media delle 4 settimane prima dei crolli endogeni (ogni crollo pesa uno),
+    numero di crolli con dati, in quanti di questi la media supera quella dei mercati calmi]."""
     m = _maschere()
     out: dict = {}
     for k, r in d.items():
@@ -361,15 +370,17 @@ def storia(d: dict) -> dict:
             t = pd.to_datetime(pd.Series(r["dt"]).cumsum() + r["t0"], unit="D")
             v = pd.Series([x / 10 for x in r["v"]], index=t.values)
             v = v[~v.index.duplicated()]
-            row = [round(float(v.mean()), 1), None, None, 0]
+            row = [round(float(v.mean()), 1), None, None, 0, 0]
             if m is not None:
-                for j, mk in ((1, m[0]), (2, m[1])):
-                    z = mk.reindex(v.index, method="ffill", tolerance=pd.Timedelta(days=7))
-                    sel = v[z.fillna(False).astype(bool).to_numpy()]
-                    if len(sel) >= 5:
-                        row[j] = round(float(sel.mean()), 1)
-                        if j == 2:
-                            row[3] = int(len(sel))
+                z = m[0].reindex(v.index, method="ffill", tolerance=pd.Timedelta(days=7)).fillna(False).astype(bool).to_numpy()
+                if z.sum() >= 5:
+                    row[1] = round(float(v[z].mean()), 1)
+                eps = [float(w.mean()) for a, b in m[1] for w in [v[(v.index >= a) & (v.index <= b + pd.Timedelta(days=1))]] if len(w)]
+                if len(eps) >= 5:
+                    row[2] = round(sum(eps) / len(eps), 1)
+                    row[3] = len(eps)
+                    if row[1] is not None:
+                        row[4] = sum(1 for e in eps if e > row[1])
             out[k] = row
         except Exception:  # noqa: BLE001
             continue
@@ -531,7 +542,7 @@ box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.add
 function storiaBox(k){var b=document.getElementById('gi-hs'),r=ST[k];if(!b)return;if(!r){b.innerHTML='';return}
 function f(x){return x==null?'\u2013':(cfg().val&&fv?fv(x):it(x,1))}
 function t(l,x,s,c){return '<div class="gi-hc"><b style="color:'+(x==null?'var(--mu)':zc(x))+'">'+f(x)+'</b><span>'+l+'</span><small>'+s+'</small></div>'}
-b.innerHTML='<div class="gi-hr">'+t('Media storica',r[0],'tutti i giorni')+t('Mercati calmi',r[1],'Borsa vicina ai massimi, nessun calo in vista')+t('Prima di un crollo',r[2],'63 sedute prima di un calo di almeno 15% (pochi episodi)')+'</div>'}
+b.innerHTML='<div class="gi-hr">'+t('Media storica',r[0],'tutti i giorni')+t('Mercati calmi',r[1],'Borsa vicina ai massimi, nessun calo in vista')+t('Prima di un crollo',r[2],r[3]?('ultime 4 settimane prima di '+r[3]+' crolli nati dentro la finanza; sopra i mercati calmi in '+r[4]+' su '+r[3]):'dati troppo pochi')+'</div>'}
 function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';storiaBox(k);RG=cfg().rng||RGD;chips();
 document.body.style.overflow='hidden';ov.classList.add('on');requestAnimationFrame(function(){ov.classList.add('in')});size();
 cursor=null;range(cfg().def!=null?cfg().def:2);v0=tv0;v1=tv1;fit();ya=tya;yb=tyb;stats();kids(k);var pr=KD.par[k],bk=document.getElementById('gi-bk');if(pr){bk.hidden=false;bk.textContent='\u2039 '+NM[pr];bk.onclick=function(){open(pr)}}else{bk.hidden=true}head();draw();sh.scrollTop=0}
