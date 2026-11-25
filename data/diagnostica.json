@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-25T14:57:16Z",
+ "data_utc": "2026-11-25T15:38:39Z",
  "oggi": "2026-11-25",
  "ultima_previsione": "2026-11-24",
  "giorni_da_ultima": 1,
@@ -5902,8 +5902,8 @@
   {
    "nome": "hy_oas",
    "chiave": true,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5937,8 +5937,8 @@
   {
    "nome": "ig_oas",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
