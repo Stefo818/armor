@@ -3,9 +3,9 @@
   "10g": "Alto",
   "1m": "Alto",
   "3m": "Elevato",
-  "6m": "Elevato"
+  "6m": "Normale"
  },
- "regime": "Calma",
+ "regime": "Tensione",
  "vix": "stress",
  "aix_band": "moderato",
  "divergence": false,
