@@ -90,8 +90,7 @@ def _tile(i: int, k: str, s: pd.Series, nome: str | None = None, tag: str = "") 
     c = _colp(v)
     d = _delta(s, 5)
     fr = "" if d is None or abs(d) < 0.5 else f"<em style='color:{'#dc2626' if d > 0 else '#16a34a'}'>{'▲' if d > 0 else '▼'}{_it(abs(d), 1)}</em>"
-    return (f"<button type='button' class='ts-t' data-ts='{i}' data-gi='{k}'><span class='ts-tn'>{E(nome)}</span><span class='ts-tv' style='color:{c}'>{_it(v)}</span>{fr}"
-            f"<span class='ts-tb'><i style='width:{max(3, min(100, v)):.0f}%;background:{c}'></i></span>" + (f"<span class='ts-tag'>{E(tag)}</span>" if tag else "") + "</button>")
+    return (f"<button type='button' class='ts-t' data-ts='{i}' data-gi='{k}'><span class='ts-tn'>{E(nome)}</span><span class='ts-tv' style='color:{c}'>{_it(v)}</span>{fr}</button>")
 
 
 def _dett(i: int, k: str, s: pd.Series) -> str:
@@ -151,8 +150,10 @@ def combo_html() -> str:
         eco = "".join(_tile(70 + i, k, S[k].dropna(), nm(k), "peso uguale") for i, k in enumerate(s2.ECO))
         sa = S["super"].dropna()
         top = max(("sa_fin", "sa_eco"), key=lambda k: float(S[k].dropna().iloc[-1]))
-        nota = (f"È il più alto fra due pilastri: finanza (veloce) {_it(float(S['sa_fin'].dropna().iloc[-1]))} ed economia (lenta) {_it(float(S['sa_eco'].dropna().iloc[-1]))}. "
-                f"Spinge di più <b>{'la finanza' if top == 'sa_fin' else 'l’economia'}</b>. Dice come sarà l'economia nei prossimi mesi.")
+        nota = ("<b>Fotografa e anticipa la situazione economica.</b> Unisce i dati della <b>finanza</b> (veloci: tassi, costo del credito, Borsa; anticipano) "
+                "e quelli dell'<b>economia reale</b> (lenti: lavoro, produzione, permessi, fiducia; confermano). "
+                f"Vale il più alto dei due pilastri: se uno vede guai il numero sale. Oggi finanza {_it(float(S['sa_fin'].dropna().iloc[-1]))}, economia {_it(float(S['sa_eco'].dropna().iloc[-1]))}: "
+                f"spinge di più {'la finanza' if top == 'sa_fin' else 'l’economia'}. Più è alto, più l'economia dei prossimi mesi rischia di rallentare.")
         sa_card = _scheda("Super Armor", "super", sa, nota,
                           _gruppo("I pilastri", pil, n_p) + _gruppo("Le 6 misure della finanza", fin, 6) + _gruppo("Le 7 misure dell'economia", eco, 7))
     except Exception:  # noqa: BLE001
@@ -209,6 +210,6 @@ CSS = ("<style>.ts{background:var(--card);border:1px solid var(--bd);border-radi
        ".ts-tv{font-size:22px;font-weight:800;line-height:1.1}.ts-t em{font-style:normal;font-size:11px;font-weight:700;align-self:end;text-align:right}.ts-tb{grid-column:1/3;height:5px;border-radius:99px;background:var(--bd);overflow:hidden;margin-top:3px}.ts-tb i{display:block;height:100%;border-radius:99px}"
        ".ts-d2{display:grid;grid-template-columns:260px 1fr;gap:12px;margin-top:8px;padding:8px 10px;border-left:3px solid var(--bd);font-size:12.5px;line-height:1.5}@media(max-width:640px){.ts-d2{grid-template-columns:1fr}}.ts-d2[hidden]{display:none}"
        ".ts-d2 p{margin:2px 0}.ts-d2s small{display:block;font-size:10px;color:var(--mu);text-align:right}.ts-d2 .ts-sp{height:44px}"
-       ".ts-big{cursor:pointer}.ts-in{cursor:default;margin-top:6px}.ts-in .ts-tg{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}.ts-how{font-size:12px;color:var(--mu);margin-top:8px}.ts-how summary{cursor:pointer;font-weight:700;color:var(--tx)}.ts-how p{margin:5px 0 0;line-height:1.5}"
-       '@media(max-width:560px){.ts{padding:8px 7px}.ts-g{grid-template-columns:1fr!important;gap:8px}.ts-c{padding:6px 7px}.ts-k{font-size:9.5px;letter-spacing:.2px}.ts-chip{font-size:9px;padding:0 6px;border-width:1px}.ts-cb{gap:4px}.ts-v{font-size:28px}.ts-v small{font-size:10px}.ts-cs{max-width:none}.ts-sp{height:24px}.ts-cm{font-size:9px;gap:0 6px}.ts-d{font-size:9.5px}.ts-nt{font-size:9.5px;line-height:1.25;margin-top:2px}.ts-ph{font-size:9.5px;margin:7px 0 3px}.ts-ph small{display:block;font-size:9px}.ts-tg{grid-template-columns:1fr!important;gap:3px}.ts-t{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 28px 46px;grid-template-areas:"n b v d" "t b v d";align-items:center;gap:0 8px;padding:4px 8px;border-radius:8px}.ts-tn{grid-area:n;grid-column:auto;font-size:11px;color:var(--tx);white-space:normal;line-height:1.12}.ts-tag{grid-area:t;grid-column:auto;font-size:8.5px;margin:0;line-height:1.1}.ts-tb{grid-area:b;grid-column:auto;height:7px;margin:0}.ts-tv{grid-area:v;font-size:17px;text-align:right}.ts-t em{grid-area:d;font-size:9.5px;text-align:left;align-self:center}.ts-how{font-size:11px}}'
+       ".ts-big{cursor:pointer}.ts-in{cursor:default;margin-top:6px}.ts-in .ts-tg{grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:4px}.ts-in .ts-t{grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:0 6px;padding:3px 8px}.ts-in .ts-tn{grid-column:auto;font-size:11px}.ts-in .ts-tv{font-size:16px}.ts-in .ts-t em{font-size:10px}.ts-how{font-size:12px;color:var(--mu);margin-top:8px}.ts-how summary{cursor:pointer;font-weight:700;color:var(--tx)}.ts-how p{margin:5px 0 0;line-height:1.5}"
+       '@media(max-width:560px){.ts{padding:8px 7px}.ts-g{grid-template-columns:1fr!important;gap:8px}.ts-c{padding:6px 7px}.ts-k{font-size:9.5px;letter-spacing:.2px}.ts-chip{font-size:9px;padding:0 6px;border-width:1px}.ts-cb{gap:4px}.ts-v{font-size:28px}.ts-v small{font-size:10px}.ts-cs{max-width:none}.ts-sp{height:24px}.ts-cm{font-size:9px;gap:0 6px}.ts-d{font-size:9.5px}.ts-nt{font-size:9.5px;line-height:1.25;margin-top:2px}.ts-ph{font-size:9.5px;margin:7px 0 3px}.ts-ph small{display:block;font-size:9px}.ts-tg,.ts-in .ts-tg{grid-template-columns:1fr 1fr!important;gap:3px}.ts-t,.ts-in .ts-t{grid-template-columns:minmax(0,1fr) 30px 46px;grid-template-areas:"n v d";align-items:center;gap:0 8px;padding:3px 8px;border-radius:8px}.ts-tn{grid-area:n;grid-column:auto;font-size:11px;color:var(--tx);white-space:normal;line-height:1.12}.ts-tag{grid-area:t;grid-column:auto;font-size:8.5px;margin:0;line-height:1.1}.ts-tb{grid-area:b;grid-column:auto;height:7px;margin:0}.ts-tv{grid-area:v;font-size:17px;text-align:right}.ts-t em{grid-area:d;font-size:9.5px;text-align:left;align-self:center}.ts-how{font-size:11px}}'
        "</style>")

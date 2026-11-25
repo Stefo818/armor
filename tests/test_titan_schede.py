@@ -37,4 +37,4 @@ def test_settimo_pilastro_fondi_senza_peso(tmp_path, monkeypatch):
     monkeypatch.setattr(tv, "FILE", tmp_path / "t.csv")
     monkeypatch.setattr("armor.difensivita.leggi", lambda: {"ultimi": [20.0 + i * 0.1 for i in range(30)]})
     h = ts.super_html()
-    assert h.count("class='ts-t'") >= 16 and "Fondi (difensività)" in h and "senza peso" in h
+    assert h.count("class='ts-t'") >= 16 and "Fondi (difensività)" in h
