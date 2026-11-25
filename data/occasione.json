@@ -443,23 +443,23 @@
  },
  "salute": {
   "mercato": {
-   "valore": 55.3,
+   "valore": 55.8,
    "zona": 1,
    "stato": "In difficoltà",
-   "posizione": 0.8820617669213386
+   "posizione": 0.8862584741203056
   },
   "economia": {
-   "valore": 51.0,
+   "valore": 51.4,
    "zona": 1,
    "stato": "In difficoltà",
-   "posizione": 0.8430001076078769
+   "posizione": 0.8483805014527064
   }
  },
  "titan_calo": {
   "1 settimana": 0.1378,
   "1 mese": 0.0737,
-  "3 mesi": 0.2258,
-  "6 mesi": 0.3282,
-  "12 mesi": 0.4589
+  "3 mesi": 0.2261,
+  "6 mesi": 0.3289,
+  "12 mesi": 0.4604
  }
 }

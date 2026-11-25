@@ -67,3 +67,7 @@ date,serie,scala,verdetto,q,candidato
 2026-11-24,usd,1m,non_ancora,0.3997,0
 2026-11-24,usd,3m,non_ancora,0.4547,0
 2026-11-24,usd,1a,non_ancora,0.5303,0
+2026-11-24,eur,1s,non_ancora,0.5144,0
+2026-11-24,eur,1m,non_ancora,0.4137,1
+2026-11-24,eur,3m,non_ancora,0.473,1
+2026-11-24,eur,1a,non_ancora,0.531,0

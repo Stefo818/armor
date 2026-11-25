@@ -5,7 +5,7 @@
  "banda": "forte",
  "precedente": {
   "trimestre": "2026 T3",
-  "valore": 3.4
+  "valore": 4.3
  },
  "semaforo": {
   "colore": "verde",
@@ -19,15 +19,15 @@
  "prova": {
   "tutto": {
    "n": 61,
-   "mae_now": 1.37,
-   "mae_ingenuo": 3.75,
+   "mae_now": 1.38,
+   "mae_ingenuo": 3.76,
    "segno": 0.918,
    "utile": true
   },
   "senza_2020": {
    "n": 57,
-   "mae_now": 1.24,
-   "mae_ingenuo": 1.83,
+   "mae_now": 1.25,
+   "mae_ingenuo": 1.85,
    "segno": 0.912,
    "utile": true
   }
@@ -146,7 +146,7 @@
   [
    "2026 T3",
    3.27,
-   3.4
+   4.3
   ],
   [
    "2026 T4",
