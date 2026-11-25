@@ -1,0 +1,114 @@
+{
+ "T1_logL2_001_30": {
+  "sel": {
+   "auc": 0.7527313055870216,
+   "auc_vol60": 0.757093585896771,
+   "n_calmi": 1976,
+   "auc_giorni_calmi": 0.5062584320191875,
+   "p_giorni_calmi": 0.5012498750124987,
+   "auc_vol60_giorni_calmi": 0.4483735571878279,
+   "eventi_giorni_calmi": 0.0354251012145749,
+   "n_picchi_calmi": 19,
+   "copertura_picchi_calmi": 0.0,
+   "n_picchi": 45,
+   "copertura_picchi": 0.2
+  },
+  "ver": {
+   "auc": 0.701876453330799,
+   "auc_vol60": 0.675461591472742,
+   "n_calmi": 1578,
+   "auc_giorni_calmi": 0.5455687369155617,
+   "p_giorni_calmi": 0.20157984201579843,
+   "auc_vol60_giorni_calmi": 0.42581033279591884,
+   "eventi_giorni_calmi": 0.09188846641318124,
+   "n_picchi_calmi": 14,
+   "copertura_picchi_calmi": 0.0,
+   "n_picchi": 35,
+   "copertura_picchi": 0.34285714285714286
+  }
+ },
+ "T1_logL2_001_100": {
+  "sel": {
+   "auc": 0.7331545966183358,
+   "auc_vol60": 0.757093585896771,
+   "n_calmi": 1976,
+   "auc_giorni_calmi": 0.5514015889671713,
+   "p_giorni_calmi": 0.36036396360363965,
+   "auc_vol60_giorni_calmi": 0.4483735571878279,
+   "eventi_giorni_calmi": 0.0354251012145749,
+   "n_picchi_calmi": 19,
+   "copertura_picchi_calmi": 0.0,
+   "n_picchi": 45,
+   "copertura_picchi": 0.17777777777777778
+  },
+  "ver": {
+   "auc": 0.7019457022002515,
+   "auc_vol60": 0.675461591472742,
+   "n_calmi": 1578,
+   "auc_giorni_calmi": 0.5530861226748803,
+   "p_giorni_calmi": 0.19288071192880712,
+   "auc_vol60_giorni_calmi": 0.42581033279591884,
+   "eventi_giorni_calmi": 0.09188846641318124,
+   "n_picchi_calmi": 14,
+   "copertura_picchi_calmi": 0.07142857142857142,
+   "n_picchi": 35,
+   "copertura_picchi": 0.34285714285714286
+  }
+ },
+ "T2_lda_100": {
+  "sel": {
+   "auc": 0.6504921095008052,
+   "auc_vol60": 0.8123078904991948,
+   "n_calmi": 1976,
+   "auc_giorni_calmi": 0.5143839103869654,
+   "p_giorni_calmi": 0.5175482451754825,
+   "auc_vol60_giorni_calmi": 0.7572131704005431,
+   "eventi_giorni_calmi": 0.006072874493927126,
+   "n_picchi_calmi": 19,
+   "copertura_picchi_calmi": 0.21052631578947367,
+   "n_picchi": 45,
+   "copertura_picchi": 0.24444444444444444
+  },
+  "ver": {
+   "auc": 0.7711030206186503,
+   "auc_vol60": 0.6874547936167831,
+   "n_calmi": 1558,
+   "auc_giorni_calmi": 0.5703719567694908,
+   "p_giorni_calmi": 0.27647235276472354,
+   "auc_vol60_giorni_calmi": 0.44346455970200627,
+   "eventi_giorni_calmi": 0.05712451861360719,
+   "n_picchi_calmi": 14,
+   "copertura_picchi_calmi": 0.14285714285714285,
+   "n_picchi": 35,
+   "copertura_picchi": 0.34285714285714286
+  }
+ },
+ "T2_logL2_001_100": {
+  "sel": {
+   "auc": 0.7112006441223833,
+   "auc_vol60": 0.8123078904991948,
+   "n_calmi": 1976,
+   "auc_giorni_calmi": 0.5981415478615071,
+   "p_giorni_calmi": 0.4724527547245275,
+   "auc_vol60_giorni_calmi": 0.7572131704005431,
+   "eventi_giorni_calmi": 0.006072874493927126,
+   "n_picchi_calmi": 19,
+   "copertura_picchi_calmi": 0.0,
+   "n_picchi": 45,
+   "copertura_picchi": 0.24444444444444444
+  },
+  "ver": {
+   "auc": 0.7511774087625481,
+   "auc_vol60": 0.6874547936167831,
+   "n_calmi": 1558,
+   "auc_giorni_calmi": 0.5616983195784031,
+   "p_giorni_calmi": 0.34976502349765026,
+   "auc_vol60_giorni_calmi": 0.44346455970200627,
+   "eventi_giorni_calmi": 0.05712451861360719,
+   "n_picchi_calmi": 14,
+   "copertura_picchi_calmi": 0.0,
+   "n_picchi": 35,
+   "copertura_picchi": 0.3142857142857143
+  }
+ }
+}

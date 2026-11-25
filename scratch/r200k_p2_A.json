@@ -1,0 +1,750 @@
+{
+ "gruppo": "A",
+ "T1": {
+  "n_tentativi": 102000,
+  "soglia": 0.7519084184940003,
+  "top": [
+   {
+    "idx": 79160,
+    "tipo": "pesi",
+    "sel": 0.828513503074646,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.38275960087776184,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.26714015007019043,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.35010024905204773
+    },
+    "ver": {
+     "auc": 0.6669721576562744,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5733304922195287,
+     "lift": 2.8217510436013904,
+     "frac_allarme": 0.08816245666171373
+    },
+    "confermato": true
+   },
+   {
+    "idx": 39979,
+    "tipo": "pesi",
+    "sel": 0.8277637958526611,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.3528745472431183,
+     "sp|vol60": 0.0334118977189064,
+     "A|coppia|curva2a|stoc120|mid|vol252|somma": 0.013761509209871292,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.24977438151836395,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.1726539582014084,
+     "A|coppia|hy|chg252|mid_su_sp|vol20|diff": 0.028370965272188187,
+     "rut_su_sp|vol252": 0.07810404151678085,
+     "A|coppia|dax|vol20|skew|chg5_max20|diff": 0.07104870676994324
+    },
+    "ver": {
+     "auc": 0.6782888556600444,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5905304900708195,
+     "lift": 2.9528850506668523,
+     "frac_allarme": 0.06983655274888559
+    },
+    "confermato": true
+   },
+   {
+    "idx": 48312,
+    "tipo": "pesi",
+    "sel": 0.8218672275543213,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.34005188941955566,
+     "A|coppia|sp|vol252|t10|chg5_max20|diff": 0.10606448352336884,
+     "nasdaq_su_sp|vol252": 0.043850138783454895,
+     "A|coppia|curva2a|stoc120|mid|vol252|somma": 0.11212223023176193,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.28371429443359375,
+     "A|coppia|dax|vol20|skew|chg5_max20|diff": 0.11419694870710373
+    },
+    "ver": {
+     "auc": 0.6788008197155829,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5978517751147326,
+     "lift": 3.2247944314081205,
+     "frac_allarme": 0.04110946012877662
+    },
+    "confermato": true
+   },
+   {
+    "idx": 22492,
+    "tipo": "pesi",
+    "sel": 0.8215596079826355,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.1545540988445282,
+     "nasdaq_su_sp|vol252": 0.030938124284148216,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.30459651350975037,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.19626328349113464,
+     "nasdaq|vol20": 0.06746914982795715,
+     "sp|corrsp120": 0.01598472148180008,
+     "A|coppia|dax|vol20|skew|chg5_max20|diff": 0.2301941066980362
+    },
+    "ver": {
+     "auc": 0.6955041246059381,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.6242074963364781,
+     "lift": 2.963486867742187,
+     "frac_allarme": 0.06240713224368499
+    },
+    "confermato": true
+   },
+   {
+    "idx": 46886,
+    "tipo": "pesi",
+    "sel": 0.8210071921348572,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.29754263162612915,
+     "A|coppia|t2|vol20|sp|vol252|diff": 0.21710903942584991,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.2769401967525482,
+     "rut_su_sp|dd_storico": 0.040406350046396255,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.0960903987288475,
+     "A|coppia|sp|vol60|rv20|stoc20|diff": 0.017744669690728188,
+     "A|coppia|dax|vol20|skew|chg5_max20|diff": 0.05416670814156532
+    },
+    "ver": {
+     "auc": 0.6850480228970193,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.6053995535095962,
+     "lift": 2.5790587202107704,
+     "frac_allarme": 0.02030708271421496
+    },
+    "confermato": true
+   },
+   {
+    "idx": 14225,
+    "tipo": "pesi",
+    "sel": 0.8203376531600952,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.1312352865934372,
+     "A|coppia|sp|vol252|t10|chg5_max20|diff": 0.05500202998518944,
+     "A|coppia|curva2a|stoc120|mid|vol252|somma": 0.19032315909862518,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.1787944734096527,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.16631658375263214,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|prod": 0.08597572147846222,
+     "nasdaq|vol20": 0.0019229556201025844,
+     "A|coppia|sp|vol60|rv20|stoc20|diff": 0.19042979180812836
+    },
+    "ver": {
+     "auc": 0.6462247187898927,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5556201053758455,
+     "lift": 3.168281873517351,
+     "frac_allarme": 0.06612184249628529
+    },
+    "confermato": true
+   },
+   {
+    "idx": 85487,
+    "tipo": "pesi",
+    "sel": 0.8200685977935791,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.27091795206069946,
+     "A|coppia|t2|vol20|sp|vol252|diff": 0.23644909262657166,
+     "A|coppia|curva2a|stoc120|mid|vol252|somma": 0.12165522575378418,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.1303871124982834,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.08982158452272415,
+     "nasdaq_su_sp|vol60": 0.036000173538923264,
+     "sp|corrsp60": 0.0069281659089028835,
+     "A|coppia|sp|vol60|rv20|stoc20|diff": 0.06121687963604927,
+     "A|coppia|hy|chg252|mid_su_sp|vol20|diff": 0.011319459415972233,
+     "A|coppia|dax|vol20|skew|chg5_max20|diff": 0.01973167434334755,
+     "A|coppia|baa|z252|sp|vol252|somma": 0.015572668984532356
+    },
+    "ver": {
+     "auc": 0.6650198171161237,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5836265567281781,
+     "lift": 2.6891133811163157,
+     "frac_allarme": 0.0359088657751362
+    },
+    "confermato": true
+   },
+   {
+    "idx": 73343,
+    "tipo": "pesi",
+    "sel": 0.8193405270576477,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.15699687600135803,
+     "A|coppia|sp|vol60|kritz|turb6_w250_m20|corrsp120|somma": 0.18909882009029388,
+     "A|coppia|sp|vol252|t10|chg5_max20|diff": 0.10851919651031494,
+     "nasdaq_su_sp|vol252": 0.012158551253378391,
+     "A|coppia|hy|z252|sp|corrsp120|somma": 0.14418160915374756,
+     "A|coppia|curva2a|stoc120|mid|vol252|somma": 0.08620601892471313,
+     "mid|vol252": 0.013956805691123009,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.08973138779401779,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.06804575771093369,
+     "A|coppia|sp|vol60|rv20|stoc20|diff": 0.1311049908399582
+    },
+    "ver": {
+     "auc": 0.6626963981513895,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5724055521271639,
+     "lift": 3.0970286723869918,
+     "frac_allarme": 0.0591877166914314
+    },
+    "confermato": true
+   },
+   {
+    "idx": 38006,
+    "tipo": "pesi",
+    "sel": 0.8192508220672607,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.23912154138088226,
+     "A|coppia|sp|vol60|kritz|turb6_w250_m20|corrsp120|somma": 0.06433277577161789,
+     "A|coppia|t2|vol20|sp|vol252|diff": 0.11984864622354507,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.08921299874782562,
+     "A|coppia|sp|vol60|curva2a|dmin120|somma": 0.020269064232707024,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.38386547565460205,
+     "A|coppia|hy|stoc5|oex|vol252|diff": 0.007618415169417858,
+     "A|coppia|sp|vol60|rv20|stoc20|diff": 0.02214849926531315,
+     "A|coppia|baa|z252|sp|vol252|somma": 0.05358259379863739
+    },
+    "ver": {
+     "auc": 0.6576574683472969,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5684676890581609,
+     "lift": 3.2335087066161856,
+     "frac_allarme": 0.057701832590391286
+    },
+    "confermato": true
+   },
+   {
+    "idx": 34624,
+    "tipo": "pesi",
+    "sel": 0.8191605806350708,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.20186935365200043,
+     "nasdaq|vol252": 0.09585809707641602,
+     "A|coppia|oex|dmax60|sp|corrsp120|somma": 0.09971647709608078,
+     "A|coppia|sp|vol252|kritz|ass6_w250_k2|corrsp120|somma": 0.022061144933104515,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.27050843834877014,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.30998650193214417
+    },
+    "ver": {
+     "auc": 0.6823683304384122,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.588060054666993,
+     "lift": 2.852235334654148,
+     "frac_allarme": 0.07057949479940565
+    },
+    "confermato": true
+   }
+  ]
+ },
+ "T2": {
+  "n_tentativi": 102000,
+  "soglia": 0.7857214009661836,
+  "top": [
+   {
+    "idx": 25608,
+    "tipo": "pesi",
+    "sel": 0.8969603776931763,
+    "membri": {
+     "A|coppia|sp|vol252|kritz|ass6_w250_k2|corrsp120|somma": 0.27355000376701355,
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.37691813707351685,
+     "A|coppia|nikkei|stoc252|curva2a|upfrac60|diff": 0.2531947195529938,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|diff": 0.08026307076215744,
+     "A|coppia|dollaro|ewz90|oex|vol252|diff": 0.016074057668447495
+    },
+    "ver": {
+     "auc": 0.6363612152686356,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.4782255059624984,
+     "lift": 4.320430107526882,
+     "frac_allarme": 0.06869089099054256
+    },
+    "confermato": true
+   },
+   {
+    "idx": 82773,
+    "tipo": "pesi",
+    "sel": 0.8951555490493774,
+    "membri": {
+     "A|coppia|sp|vol60|kritz|turb6_w250_m20|corrsp120|somma": 0.2756075859069824,
+     "A|coppia|baa|z252|sp|vol252|somma": 0.03288473188877106,
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.3718240261077881,
+     "A|coppia|kritz|turb6_w500_m20|vol252|kritz|ass15_w250_k2|upfrac10|somma": 0.2373538315296173,
+     "A|coppia|nikkei|stoc252|curva2a|upfrac60|diff": 0.08232980966567993
+    },
+    "ver": {
+     "auc": 0.6693262395249812,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5243875362254858,
+     "lift": 3.5746415770609317,
+     "frac_allarme": 0.08362369337979095
+    },
+    "confermato": true
+   },
+   {
+    "idx": 7261,
+    "tipo": "pesi",
+    "sel": 0.8945835828781128,
+    "membri": {
+     "A|coppia|sp|vol252|kritz|ass6_w250_k2|corrsp120|somma": 0.19671809673309326,
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.2040984183549881,
+     "oex|vol60": 0.0022256735246628523,
+     "oex|vol252": 0.012057298794388771,
+     "A|coppia|sp|vol252|t10|chg5_max20|diff": 0.059748098254203796,
+     "nasdaq|vol120": 0.03702746331691742,
+     "A|coppia|kritz|turb6_w500_m20|vol252|kritz|ass15_w250_k2|upfrac10|somma": 0.29942479729652405,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|diff": 0.06894706934690475,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.11975307017564774
+    },
+    "ver": {
+     "auc": 0.6963565546607592,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5548004079466965,
+     "lift": 4.8518199068483705,
+     "frac_allarme": 0.046540567446490794
+    },
+    "confermato": true
+   },
+   {
+    "idx": 18960,
+    "tipo": "pesi",
+    "sel": 0.8923136591911316,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.4520987868309021,
+     "oex|vol60": 0.09975863993167877,
+     "A|coppia|sp|vol60|curva2a|dmin120|somma": 0.02438894659280777,
+     "A|coppia|kritz|turb6_w500_m20|vol252|kritz|ass15_w250_k2|upfrac10|somma": 0.10784798115491867,
+     "A|coppia|vix_su_rv|chg120|sp|vol252|diff": 0.0032071564346551895,
+     "A|coppia|dax|corrsp120|nikkei_su_sp|chg5_max20|somma": 0.1707131564617157,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.14198532700538635
+    },
+    "ver": {
+     "auc": 0.7036392084229895,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.577332618784247,
+     "lift": 3.9223017358435173,
+     "frac_allarme": 0.07292185166749626
+    },
+    "confermato": true
+   },
+   {
+    "idx": 17017,
+    "tipo": "pesi",
+    "sel": 0.891893744468689,
+    "membri": {
+     "A|coppia|sp|vol60|kritz|turb6_w250_m20|corrsp120|somma": 0.19211715459823608,
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.29116392135620117,
+     "oex|vol252": 0.04832027852535248,
+     "oex|vol20": 0.03282782807946205,
+     "A|coppia|kritz|turb6_w500_m20|vol252|kritz|ass15_w250_k2|upfrac10|somma": 0.4021088778972626,
+     "A|coppia|nikkei|stoc252|curva2a|upfrac60|diff": 0.03346192464232445
+    },
+    "ver": {
+     "auc": 0.6919295824519034,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5466133440671047,
+     "lift": 3.6820160366552117,
+     "frac_allarme": 0.07242409158785465
+    },
+    "confermato": true
+   },
+   {
+    "idx": 78391,
+    "tipo": "pesi",
+    "sel": 0.8917539715766907,
+    "membri": {
+     "A|coppia|sp|vol252|kritz|ass6_w250_k2|corrsp120|somma": 0.3615585267543793,
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.2618454098701477,
+     "oex|vol60": 0.07928800582885742,
+     "A|coppia|kritz|turb6_w500_m20|vol252|kritz|ass15_w250_k2|upfrac10|somma": 0.17259465157985687,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.007932821288704872,
+     "A|coppia|sp|vol5|dax|corrsp120|somma": 0.02909320406615734,
+     "A|coppia|dollaro|ewz90|oex|vol252|diff": 0.08768736571073532
+    },
+    "ver": {
+     "auc": 0.6802211670283177,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5661518974026102,
+     "lift": 4.566308243727598,
+     "frac_allarme": 0.061224489795918366
+    },
+    "confermato": true
+   },
+   {
+    "idx": 17087,
+    "tipo": "pesi",
+    "sel": 0.8916251063346863,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.3600986897945404,
+     "sp|vol252": 0.09333731979131699,
+     "A|coppia|baa|dd_storico|oex|corrsp120|somma": 0.030601510778069496,
+     "A|coppia|oex|vol60|kritz|turb6_w250|upfrac60|somma": 0.10630415380001068,
+     "A|coppia|sp|corrsp60|t2|dmax60|somma": 0.02348988689482212,
+     "A|coppia|t2|stoc120|dax|corrsp120|diff": 0.23559248447418213,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.1505759358406067
+    },
+    "ver": {
+     "auc": 0.6801606396532992,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5436642093466467,
+     "lift": 3.4502374710285344,
+     "frac_allarme": 0.0704330512692882
+    },
+    "confermato": true
+   },
+   {
+    "idx": 68134,
+    "tipo": "pesi",
+    "sel": 0.8915529847145081,
+    "membri": {
+     "A|coppia|sp|vol252|kritz|ass6_w250_k2|corrsp120|somma": 0.21447163820266724,
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.35496023297309875,
+     "A|coppia|sp|vol60|curva2a|dmin120|somma": 0.0015662206569686532,
+     "A|coppia|nikkei|stoc252|curva2a|upfrac60|diff": 0.3774917423725128,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|diff": 0.05151018500328064
+    },
+    "ver": {
+     "auc": 0.6331877649964137,
+     "p": 0.0007499625018749063,
+     "p_corr": 0.007499625018749062,
+     "ic90": 0.47206240058241045,
+     "lift": 4.380855703436349,
+     "frac_allarme": 0.07117969138875062
+    },
+    "confermato": true
+   },
+   {
+    "idx": 78760,
+    "tipo": "pesi",
+    "sel": 0.8915194869041443,
+    "membri": {
+     "A|coppia|sp|vol60|kritz|turb6_w250_m20|corrsp120|somma": 0.06830086559057236,
+     "A|coppia|sp|vol252|kritz|ass6_w250_k2|corrsp120|somma": 0.044214870780706406,
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.26151415705680847,
+     "A|coppia|sp|vol252|t10|chg5_max20|diff": 0.06214514374732971,
+     "sp|vol252": 0.12084841728210449,
+     "A|coppia|kritz|turb6_w500_m20|vol252|kritz|ass15_w250_k2|upfrac10|somma": 0.3950313925743103,
+     "A|coppia|vix_su_rv|chg120|sp|vol252|diff": 0.04794515669345856
+    },
+    "ver": {
+     "auc": 0.7096979986623451,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.571882442439068,
+     "lift": 3.7074971164936565,
+     "frac_allarme": 0.07192633150821304
+    },
+    "confermato": true
+   },
+   {
+    "idx": 36049,
+    "tipo": "pesi",
+    "sel": 0.8904341459274292,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.40621182322502136,
+     "oex|vol252": 0.010863475501537323,
+     "A|coppia|oex|vol60|kritz|turb6_w250|upfrac60|somma": 0.08365274220705032,
+     "mid|vol60": 0.05949452146887779,
+     "A|coppia|t2|stoc120|dax|corrsp120|diff": 0.24028348922729492,
+     "A|coppia|nikkei_su_sp|corrsp20|sp_spec|vicino_max60_0.02_60|somma": 0.17341038584709167,
+     "mid|vol120": 0.02608354389667511
+    },
+    "ver": {
+     "auc": 0.681955881596349,
+     "p": 4.999750012499375e-05,
+     "p_corr": 0.0004999750012499375,
+     "ic90": 0.5491124644800787,
+     "lift": 3.444258966839612,
+     "frac_allarme": 0.07117969138875062
+    },
+    "confermato": true
+   }
+  ]
+ },
+ "T3": {
+  "n_tentativi": 102000,
+  "soglia": 0.6535105583676052,
+  "top": [
+   {
+    "idx": 72321,
+    "tipo": "pesi",
+    "sel": 0.8599632382392883,
+    "membri": {
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.10980275273323059,
+     "nasdaq_su_sp|vol60": 0.02801056206226349,
+     "A|coppia|sp|ewz30|dax_su_sp|dd_storico|somma": 0.12144018709659576,
+     "nasdaq_su_sp|vol120": 0.046519726514816284,
+     "nasdaq_su_sp|vol252": 0.06864098459482193,
+     "A|coppia|ciss|vol120|oex|dmin120|prod": 0.09761161357164383,
+     "A|coppia|nasdaq_su_sp|vol60|baa|skew60|somma": 0.08189484477043152,
+     "A|coppia|xli|upfrac5|kritz|ass6_w60_k1|vol252|somma": 0.04952685534954071,
+     "A|coppia|ciss|corrsp60|kritz|turb6_w500_m20|dmax252|somma": 0.12694904208183289,
+     "A|coppia|nasdaq_su_sp|vol20|yen|upfrac5|somma": 0.040326252579689026,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.22927717864513397
+    },
+    "ver": {
+     "auc": 0.575725448049496,
+     "p": 0.008599570021498925,
+     "p_corr": 0.08599570021498926,
+     "ic90": 0.4594261647974309,
+     "lift": 0.8395100502512562,
+     "frac_allarme": 0.03591470258136925
+    },
+    "confermato": false
+   },
+   {
+    "idx": 188,
+    "tipo": "pesi",
+    "sel": 0.859785258769989,
+    "membri": {
+     "A|coppia|nasdaq_su_sp|vol60|dax_su_sp|dd_storico|somma": 0.00835255067795515,
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.11205350607633591,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|diff": 0.17882132530212402,
+     "A|coppia|sp|vol120|volume|chg5_min20|somma": 0.06886089593172073,
+     "A|coppia|volume|stoc252|dax_su_sp|dd_storico|diff": 0.16222336888313293,
+     "A|coppia|xlk|upfrac60|kritz|ass6_w250_k1|dmax252|somma": 0.20521338284015656,
+     "A|coppia|curva2a|stoc120|mid|vol252|somma": 0.019862355664372444,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|prod": 0.06679967045783997,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.17781293392181396
+    },
+    "ver": {
+     "auc": 0.5065283062712406,
+     "p": 0.4313784310784461,
+     "p_corr": 1.0,
+     "ic90": 0.41073763222776094,
+     "lift": 0.802550488290509,
+     "frac_allarme": 0.11896745230078563
+    },
+    "confermato": false
+   },
+   {
+    "idx": 98312,
+    "tipo": "pesi",
+    "sel": 0.859587550163269,
+    "membri": {
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.09997629374265671,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|diff": 0.03278089687228203,
+     "A|coppia|sp|vol120|volume|chg5_min20|somma": 0.01826767809689045,
+     "A|coppia|xli|upfrac5|kritz|ass6_w60_k1|vol252|somma": 0.06199890375137329,
+     "A|coppia|sp|vol60|rv20|stoc20|diff": 0.031784847378730774,
+     "A|coppia|xlk|upfrac60|kritz|ass6_w250_k1|dmax252|somma": 0.08304404467344284,
+     "kritz|turb6_w500_m20|vol252": 0.12964311242103577,
+     "rut_su_sp|dd_storico": 0.15359558165073395,
+     "A|coppia|dax_su_sp|chg120|nasdaq|vol120|somma": 0.11357024312019348,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.27533841133117676
+    },
+    "ver": {
+     "auc": 0.5353428994684405,
+     "p": 0.30418479076046195,
+     "p_corr": 1.0,
+     "ic90": 0.4350385400328742,
+     "lift": 2.0825055510108683,
+     "frac_allarme": 0.04826038159371493
+    },
+    "confermato": false
+   },
+   {
+    "idx": 31636,
+    "tipo": "pesi",
+    "sel": 0.8593453168869019,
+    "membri": {
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.1473262906074524,
+     "A|coppia|ciss|vol120|oex|dmin120|prod": 0.03696872666478157,
+     "A|coppia|xli|upfrac5|kritz|ass6_w60_k1|vol252|somma": 0.11992629617452621,
+     "A|coppia|ciss|corrsp60|kritz|turb6_w500_m20|dmax252|somma": 0.09154046326875687,
+     "A|coppia|xlk|upfrac60|kritz|ass6_w250_k1|dmax252|somma": 0.031024064868688583,
+     "dax_su_sp|dd_storico": 0.09856110066175461,
+     "A|coppia|oex|dmax60|sp|corrsp120|somma": 0.0669405609369278,
+     "A|coppia|sp|vol60|curva2a|dmin120|somma": 0.02831791341304779,
+     "A|coppia|rv20|dmax20|baa|chg20|diff": 0.12108376622200012,
+     "A|coppia|dax_su_sp|chg120|nasdaq|vol120|somma": 0.08500951528549194,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.10194967687129974,
+     "A|coppia|xlk|upfrac60|sp_spec|obv_60|diff": 0.07135161757469177
+    },
+    "ver": {
+     "auc": 0.566938739942487,
+     "p": 0.04969751512424379,
+     "p_corr": 0.49697515124243785,
+     "ic90": 0.4612417219872633,
+     "lift": 1.8100074842296587,
+     "frac_allarme": 0.052749719416386086
+    },
+    "confermato": false
+   },
+   {
+    "idx": 45966,
+    "tipo": "pesi",
+    "sel": 0.8585643172264099,
+    "membri": {
+     "A|coppia|sp|vol60|kritz|turb6_w250_m20|corrsp120|somma": 0.010373486205935478,
+     "A|coppia|volume|stoc252|dax_su_sp|dd_storico|diff": 0.05171392858028412,
+     "A|coppia|ciss|vol120|oex|dmin120|prod": 0.22447717189788818,
+     "A|coppia|nasdaq_su_sp|vol60|baa|skew60|somma": 0.01537775993347168,
+     "A|coppia|ciss|corrsp60|kritz|turb6_w500_m20|dmax252|somma": 0.010848631151020527,
+     "A|coppia|xlk|upfrac60|kritz|ass6_w250_k1|dmax252|somma": 0.128321573138237,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|prod": 0.18835040926933289,
+     "A|coppia|rv20|dmax20|baa|chg20|diff": 0.17278635501861572,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.1384117603302002,
+     "A|coppia|xlk|upfrac60|sp_spec|obv_60|diff": 0.05933894217014313
+    },
+    "ver": {
+     "auc": 0.5776788567113021,
+     "p": 0.11664416779161042,
+     "p_corr": 1.0,
+     "ic90": 0.41286391246798604,
+     "lift": 2.1391959798994975,
+     "frac_allarme": 0.10101010101010101
+    },
+    "confermato": false
+   },
+   {
+    "idx": 82807,
+    "tipo": "pesi",
+    "sel": 0.8579415082931519,
+    "membri": {
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.0790804997086525,
+     "A|coppia|sp_spec|gap_su_20|rut_su_sp|dd_storico|diff": 0.008003096096217632,
+     "A|coppia|sp|ewz30|dax_su_sp|dd_storico|somma": 0.03621909022331238,
+     "A|coppia|volume|stoc252|dax_su_sp|dd_storico|diff": 0.07963548600673676,
+     "nasdaq_su_sp|vol252": 0.002741826931014657,
+     "A|coppia|nasdaq_su_sp|vol60|baa|skew60|somma": 0.010075985454022884,
+     "A|coppia|ciss|corrsp60|kritz|turb6_w500_m20|dmax252|somma": 0.21733854711055756,
+     "A|coppia|xlk|upfrac60|kritz|ass6_w250_k1|dmax252|somma": 0.12379714101552963,
+     "rut_su_sp|dd_storico": 0.08551596105098724,
+     "A|coppia|dax_su_sp|chg120|nasdaq|vol120|somma": 0.14624612033367157,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.21134625375270844
+    },
+    "ver": {
+     "auc": 0.526686902721701,
+     "p": 0.30758462076896154,
+     "p_corr": 1.0,
+     "ic90": 0.42183774838560745,
+     "lift": 0.7098296359848021,
+     "frac_allarme": 0.0920314253647587
+    },
+    "confermato": false
+   },
+   {
+    "idx": 60951,
+    "tipo": "pesi",
+    "sel": 0.8575114607810974,
+    "membri": {
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.10608021914958954,
+     "nasdaq|vol60": 0.123993419110775,
+     "A|coppia|baa|z252|sp|vol252|somma": 0.017911186441779137,
+     "nasdaq|vol120": 0.016751931980252266,
+     "A|coppia|volume|stoc252|dax_su_sp|dd_storico|diff": 0.0020153941586613655,
+     "A|coppia|ciss|vol120|oex|dmin120|prod": 0.1853567659854889,
+     "A|coppia|sp|vol60|rv20|stoc20|diff": 0.1417287141084671,
+     "A|coppia|xlk|upfrac60|kritz|ass6_w250_k1|dmax252|somma": 0.0677407830953598,
+     "dax_su_sp|dd_storico": 0.12202666699886322,
+     "A|coppia|mid|stoc20|nasdaq|vol120|somma": 0.003163666231557727,
+     "A|coppia|rv20|dmax20|baa|chg20|diff": 0.02052263543009758,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.19270861148834229
+    },
+    "ver": {
+     "auc": 0.6075609260173701,
+     "p": 0.049297535123243835,
+     "p_corr": 0.49297535123243835,
+     "ic90": 0.48360935999007154,
+     "lift": 1.7577889447236181,
+     "frac_allarme": 0.15151515151515152
+    },
+    "confermato": false
+   },
+   {
+    "idx": 24910,
+    "tipo": "pesi",
+    "sel": 0.8574867248535156,
+    "membri": {
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.20340821146965027,
+     "nasdaq|vol60": 0.022070694714784622,
+     "A|coppia|baa|z252|sp|vol252|somma": 0.019095640629529953,
+     "A|coppia|ciss|vol120|oex|dmin120|prod": 0.07383967936038971,
+     "A|coppia|nasdaq_su_sp|vol60|baa|skew60|somma": 0.0490431934595108,
+     "A|coppia|ciss|corrsp60|kritz|turb6_w500_m20|dmax252|somma": 0.21295765042304993,
+     "A|coppia|skew|vol10|kritz|turb15_w250|upfrac60|diff": 0.04291672259569168,
+     "kritz|turb6_w500_m20|vol252": 0.12511545419692993,
+     "A|coppia|vix|chg20_ritardo1|nasdaq|vol20|diff": 0.0243713166564703,
+     "rut_su_sp|dd_storico": 0.01158366072922945,
+     "A|coppia|rv20|dmax20|baa|chg20|diff": 0.10259772092103958,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.1130000501871109
+    },
+    "ver": {
+     "auc": 0.5705115171231881,
+     "p": 0.06679666016699165,
+     "p_corr": 0.6679666016699165,
+     "ic90": 0.4636050715018938,
+     "lift": 2.1413589687568275,
+     "frac_allarme": 0.051627384960718295
+    },
+    "confermato": false
+   },
+   {
+    "idx": 7490,
+    "tipo": "pesi",
+    "sel": 0.8574126362800598,
+    "membri": {
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.3131229877471924,
+     "A|coppia|sp|vol120|volume|chg5_min20|somma": 0.0956713855266571,
+     "A|coppia|sp|ewz30|dax_su_sp|dd_storico|somma": 0.21750408411026,
+     "nasdaq|vol252": 0.024232828989624977,
+     "A|coppia|ciss|vol120|oex|dmin120|prod": 0.09907698631286621,
+     "A|coppia|oex|dmax60|sp|corrsp120|prod": 0.015046631917357445,
+     "A|coppia|t2|vol20|sp|vol252|diff": 0.042688533663749695,
+     "A|coppia|rv20|dmax20|baa|chg20|diff": 0.18876728415489197,
+     "A|coppia|dax_su_sp|chg120|nasdaq|vol120|somma": 0.0038892682641744614
+    },
+    "ver": {
+     "auc": 0.5939161123536759,
+     "p": 0.06439678016099196,
+     "p_corr": 0.6439678016099195,
+     "ic90": 0.4871097065871161,
+     "lift": 1.6695341112341366,
+     "frac_allarme": 0.06621773288439955
+    },
+    "confermato": false
+   },
+   {
+    "idx": 71016,
+    "tipo": "pesi",
+    "sel": 0.8565179109573364,
+    "membri": {
+     "A|coppia|nasdaq|vol60|kritz|turb6_w250|vol20|somma": 0.19729872047901154,
+     "A|coppia|sp|ewz30|dax_su_sp|dd_storico|somma": 0.019586866721510887,
+     "nasdaq_su_sp|vol120": 0.11670225113630295,
+     "A|coppia|ciss|vol120|oex|dmin120|prod": 0.05430324375629425,
+     "A|coppia|sp|vol60|rv20|stoc20|diff": 0.08681194484233856,
+     "A|coppia|ciss|corrsp60|kritz|turb6_w500_m20|dmax252|somma": 0.03691951557993889,
+     "A|coppia|xlk|upfrac60|kritz|ass6_w250_k1|dmax252|somma": 0.011926267296075821,
+     "A|coppia|curva2a|stoc120|mid|vol252|somma": 0.014998217113316059,
+     "A|coppia|nasdaq_su_sp|vol20|yen|upfrac5|somma": 0.015397720038890839,
+     "A|coppia|rv20|dmax20|baa|chg20|diff": 0.10734721273183823,
+     "A|coppia|t2|chg252|rut|upfrac60|prod": 0.18137365579605103,
+     "A|coppia|xlk|upfrac60|sp_spec|obv_60|diff": 0.1573343724012375
+    },
+    "ver": {
+     "auc": 0.5681950213495222,
+     "p": 0.08054597270136493,
+     "p_corr": 0.8054597270136493,
+     "ic90": 0.4745181907430298,
+     "lift": 2.511704865792377,
+     "frac_allarme": 0.04601571268237935
+    },
+    "confermato": false
+   }
+  ]
+ },
+ "n_tentativi_fase2": 306000
+}

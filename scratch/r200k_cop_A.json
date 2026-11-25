@@ -1,0 +1,268 @@
+{
+ "T1": {
+  "vol60": {
+   "1992-2007": {
+    "n_calmi": 19,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.17777777777777778,
+    "casuale": 0.8146979811148158,
+    "giorni_in_allarme": 0.1,
+    "precisione": 0.2692307692307692,
+    "base": 0.1458974358974359,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 8
+   },
+   "2008-oggi": {
+    "n_calmi": 14,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.2571428571428571,
+    "casuale": 0.9086698823267165,
+    "giorni_in_allarme": 0.13893016344725112,
+    "precisione": 0.3511586452762923,
+    "base": 0.15131253095591876,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 9
+   }
+  },
+  "candidato1_confermato": {
+   "1992-2007": {
+    "n_calmi": 19,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.15555555555555556,
+    "casuale": 0.8146979811148158,
+    "giorni_in_allarme": 0.1,
+    "precisione": 0.517948717948718,
+    "base": 0.1458974358974359,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 7
+   },
+   "2008-oggi": {
+    "n_calmi": 14,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.22857142857142856,
+    "casuale": 0.7716087229035553,
+    "giorni_in_allarme": 0.08816245666171373,
+    "precisione": 0.42696629213483145,
+    "base": 0.15131253095591876,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 7
+   }
+  },
+  "candidato2_confermato": {
+   "1992-2007": {
+    "n_calmi": 19,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.15555555555555556,
+    "casuale": 0.8146979811148158,
+    "giorni_in_allarme": 0.1,
+    "precisione": 0.5025641025641026,
+    "base": 0.1458974358974359,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 8
+   },
+   "2008-oggi": {
+    "n_calmi": 14,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.17142857142857143,
+    "casuale": 0.6859865114133097,
+    "giorni_in_allarme": 0.06983655274888559,
+    "precisione": 0.44680851063829785,
+    "base": 0.15131253095591876,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 5
+   }
+  },
+  "candidato3_confermato": {
+   "1992-2007": {
+    "n_calmi": 19,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.13333333333333333,
+    "casuale": 0.8146979811148158,
+    "giorni_in_allarme": 0.1,
+    "precisione": 0.5128205128205128,
+    "base": 0.1458974358974359,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 7
+   },
+   "2008-oggi": {
+    "n_calmi": 14,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.08571428571428572,
+    "casuale": 0.4891368881902919,
+    "giorni_in_allarme": 0.04110946012877662,
+    "precisione": 0.4879518072289157,
+    "base": 0.15131253095591876,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 3
+   }
+  }
+ },
+ "T2": {
+  "vol60": {
+   "1992-2007": {
+    "n_calmi": 19,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.17777777777777778,
+    "casuale": 0.8146979811148158,
+    "giorni_in_allarme": 0.1,
+    "precisione": 0.23333333333333334,
+    "base": 0.11538461538461539,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 8
+   },
+   "2008-oggi": {
+    "n_calmi": 14,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.2571428571428571,
+    "casuale": 0.9098364185934824,
+    "giorni_in_allarme": 0.13962170233947238,
+    "precisione": 0.2620320855614973,
+    "base": 0.11572921851667496,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 9
+   }
+  },
+  "candidato1_confermato": {
+   "1992-2007": {
+    "n_calmi": 19,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.17777777777777778,
+    "casuale": 0.8146979811148158,
+    "giorni_in_allarme": 0.1,
+    "precisione": 0.5743589743589743,
+    "base": 0.11538461538461539,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 8
+   },
+   "2008-oggi": {
+    "n_calmi": 14,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.11428571428571428,
+    "casuale": 0.679740801790951,
+    "giorni_in_allarme": 0.06869089099054256,
+    "precisione": 0.5,
+    "base": 0.11572921851667496,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 4
+   }
+  },
+  "candidato2_confermato": {
+   "1992-2007": {
+    "n_calmi": 19,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.17777777777777778,
+    "casuale": 0.8146979811148158,
+    "giorni_in_allarme": 0.1,
+    "precisione": 0.5692307692307692,
+    "base": 0.11538461538461539,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 9
+   },
+   "2008-oggi": {
+    "n_calmi": 14,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.17142857142857143,
+    "casuale": 0.7527241928815775,
+    "giorni_in_allarme": 0.08362369337979095,
+    "precisione": 0.41369047619047616,
+    "base": 0.11572921851667496,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 5
+   }
+  },
+  "candidato3_confermato": {
+   "1992-2007": {
+    "n_calmi": 19,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.17777777777777778,
+    "casuale": 0.8146979811148158,
+    "giorni_in_allarme": 0.1,
+    "precisione": 0.5076923076923077,
+    "base": 0.11538461538461539,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 8
+   },
+   "2008-oggi": {
+    "n_calmi": 14,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.11428571428571428,
+    "casuale": 0.5335173311294171,
+    "giorni_in_allarme": 0.046540567446490794,
+    "precisione": 0.5614973262032086,
+    "base": 0.11572921851667496,
+    "anticipo_mediano": 19.0,
+    "n_con_anticipo": 5
+   }
+  }
+ },
+ "T3": {
+  "vol60": {
+   "1992-2007": {
+    "n_calmi": 24,
+    "copertura_calmi": 0.0,
+    "n_episodi": 45,
+    "copertura": 0.17777777777777778,
+    "casuale": 0.815844471003391,
+    "giorni_in_allarme": 0.10034904013961606,
+    "precisione": 0.2,
+    "base": 0.19022687609075042,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 8
+   },
+   "2008-oggi": {
+    "n_calmi": 20,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.2571428571428571,
+    "casuale": 0.967669011616425,
+    "giorni_in_allarme": 0.19304152637485972,
+    "precisione": 0.29069767441860467,
+    "base": 0.22334455667789002,
+    "anticipo_mediano": 20.0,
+    "n_con_anticipo": 9
+   }
+  },
+  "candidato1_non_confermato": {
+   "1992-2007": {
+    "n_calmi": 24,
+    "copertura_calmi": 0.08333333333333333,
+    "n_episodi": 45,
+    "copertura": 0.26666666666666666,
+    "casuale": 0.815844471003391,
+    "giorni_in_allarme": 0.10034904013961606,
+    "precisione": 0.6956521739130435,
+    "base": 0.19022687609075042,
+    "anticipo_mediano": 11.5,
+    "n_con_anticipo": 12
+   },
+   "2008-oggi": {
+    "n_calmi": 20,
+    "copertura_calmi": 0.0,
+    "n_episodi": 35,
+    "copertura": 0.11428571428571428,
+    "casuale": 0.44301005305189345,
+    "giorni_in_allarme": 0.03591470258136925,
+    "precisione": 0.1875,
+    "base": 0.22334455667789002,
+    "anticipo_mediano": 19.0,
+    "n_con_anticipo": 5
+   }
+  }
+ }
+}
