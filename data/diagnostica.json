@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-25T15:52:43Z",
+ "data_utc": "2026-11-25T19:14:03Z",
  "oggi": "2026-11-25",
  "ultima_previsione": "2026-11-24",
  "giorni_da_ultima": 1,
@@ -7,8 +7,8 @@
   {
    "nome": "aaa_d",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -57,8 +57,8 @@
   {
    "nome": "baa_d",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -78,8 +78,8 @@
   {
    "nome": "bce_ciss_area_euro",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -92,78 +92,78 @@
   {
    "nome": "bce_ciss_francia",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_germania",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_italia",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_regno_unito",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_spagna",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_usa",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_euro_dollaro",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "bce_euro_franco",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "bce_euro_sterlina",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "bce_euro_yen",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "bce_euro_yuan",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -344,8 +344,8 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -897,8 +897,8 @@
   {
    "nome": "dax",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -1065,113 +1065,113 @@
   {
    "nome": "di_dia_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dia_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dia_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dia_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dia_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dia_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dia_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dia_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dji_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dji_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dji_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dji_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dji_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dji_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dji_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_dji_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -1338,50 +1338,50 @@
   {
    "nome": "di_fvx_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_fvx_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_fvx_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_fvx_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_fvx_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_fvx_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_fvx_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -1443,113 +1443,113 @@
   {
    "nome": "di_gld_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gld_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gld_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gld_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gld_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gld_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gld_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gld_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gspc_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gspc_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gspc_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gspc_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gspc_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gspc_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gspc_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_gspc_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -1611,393 +1611,393 @@
   {
    "nome": "di_hyg_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_hyg_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_hyg_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_hyg_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_hyg_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_hyg_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_hyg_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_hyg_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ief_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ief_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ief_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ief_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ief_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ief_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ief_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ief_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_iwm_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_iwm_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_iwm_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_iwm_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_iwm_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_iwm_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_iwm_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_iwm_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_jnk_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_jnk_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_jnk_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_jnk_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_jnk_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_jnk_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_jnk_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_jnk_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_kre_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_kre_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_kre_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_kre_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_kre_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_kre_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_kre_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_kre_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_lqd_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_lqd_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_lqd_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_lqd_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_lqd_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_lqd_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_lqd_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_lqd_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ndx_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ndx_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ndx_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ndx_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ndx_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ndx_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ndx_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_ndx_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -2115,57 +2115,57 @@
   {
    "nome": "di_qqq_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_qqq_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_qqq_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_qqq_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_qqq_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_qqq_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_qqq_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_qqq_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -2227,372 +2227,372 @@
   {
    "nome": "di_rut_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_rut_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_rut_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_rut_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_rut_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_rut_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_rut_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_slv_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_slv_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_slv_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_slv_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_slv_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_slv_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_slv_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_slv_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_smh_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_smh_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_smh_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_smh_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_smh_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_smh_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_smh_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_smh_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_spy_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_spy_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_spy_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_spy_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_spy_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_spy_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_spy_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_spy_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tlt_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tlt_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tlt_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tlt_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tlt_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tlt_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tlt_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tlt_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tnx_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tnx_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tnx_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tnx_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tnx_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tnx_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tnx_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tyx_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tyx_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tyx_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tyx_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tyx_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tyx_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_tyx_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -2647,211 +2647,211 @@
   {
    "nome": "di_uso_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uso_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uso_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uso_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uso_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uso_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uso_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uso_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uup_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uup_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uup_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uup_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uup_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uup_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uup_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_uup_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix3m_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix3m_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix3m_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix3m_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix3m_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix3m_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix3m_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix9d_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix9d_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix9d_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix9d_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix9d_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix9d_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix9d_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -2906,666 +2906,666 @@
   {
    "nome": "di_vvix_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vvix_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vvix_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vvix_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vvix_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vvix_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vvix_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlb_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlb_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlb_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlb_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlb_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlb_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlb_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlb_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlc_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlc_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlc_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlc_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlc_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlc_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlc_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlc_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xle_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xle_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xle_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xle_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xle_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xle_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xle_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xle_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlf_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlf_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlf_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlf_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlf_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlf_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlf_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlf_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xli_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xli_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xli_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xli_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xli_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xli_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xli_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xli_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlk_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlk_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlk_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlk_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlk_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlk_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlk_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlk_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlp_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlp_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlp_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlp_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlp_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlp_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlp_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlp_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlre_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlre_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlre_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlre_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlre_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlre_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlre_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlre_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlu_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlu_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlu_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlu_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlu_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlu_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlu_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlu_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlv_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlv_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlv_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlv_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlv_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlv_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlv_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xlv_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xly_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xly_barre",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xly_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xly_quota_volume_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xly_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xly_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xly_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_xly_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -3933,6 +3933,13 @@
    "stato": "ok"
   },
   {
+   "nome": "f_apu000074714",
+   "chiave": false,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 55,
+   "stato": "ok"
+  },
+  {
    "nome": "f_aspus",
    "chiave": false,
    "ultima_data": "2026-07-01",
@@ -3963,120 +3970,120 @@
   {
    "nome": "f_bamlc0a0cmey",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlc0a1caaa",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlc0a2caa",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlc0a3ca",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlc0a4cbbb",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlc1a0c13y",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlc4a0c710y",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlc8a0c15py",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlcc0a0cmtriv",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlemcbpioas",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlh0a0hym2ey",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlh0a1hybb",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlh0a2hyb",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlh0a3hyc",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlhe00ehyioas",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlhyh0a0hym2triv",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_bamlhyh0a3cmtriv",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -4143,6 +4150,13 @@
    "stato": "ok"
   },
   {
+   "nome": "f_cdsp",
+   "chiave": false,
+   "ultima_data": "2026-04-01",
+   "giorni_ritardo": 238,
+   "stato": "ok"
+  },
+  {
    "nome": "f_ces0500000003",
    "chiave": false,
    "ultima_data": "2026-10-01",
@@ -4171,6 +4185,13 @@
    "stato": "ok"
   },
   {
+   "nome": "f_clvmnacscab1gqea19",
+   "chiave": false,
+   "ultima_data": "2026-07-01",
+   "giorni_ritardo": 147,
+   "stato": "ok"
+  },
+  {
    "nome": "f_cmdebt",
    "chiave": false,
    "ultima_data": "2026-04-01",
@@ -4180,8 +4201,8 @@
   {
    "nome": "f_cmrmtspl",
    "chiave": false,
-   "ultima_data": "2026-08-01",
-   "giorni_ritardo": 116,
+   "ultima_data": "2026-09-01",
+   "giorni_ritardo": 85,
    "stato": "ok"
   },
   {
@@ -4201,8 +4222,8 @@
   {
    "nome": "f_cp",
    "chiave": false,
-   "ultima_data": "2026-04-01",
-   "giorni_ritardo": 238,
+   "ultima_data": "2026-07-01",
+   "giorni_ritardo": 147,
    "stato": "ok"
   },
   {
@@ -4215,8 +4236,8 @@
   {
    "nome": "f_cpatax",
    "chiave": false,
-   "ultima_data": "2026-04-01",
-   "giorni_ritardo": 238,
+   "ultima_data": "2026-07-01",
+   "giorni_ritardo": 147,
    "stato": "ok"
   },
   {
@@ -4249,6 +4270,20 @@
   },
   {
    "nome": "f_cusr0000sah1",
+   "chiave": false,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 55,
+   "stato": "ok"
+  },
+  {
+   "nome": "f_cusr0000seha",
+   "chiave": false,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 55,
+   "stato": "ok"
+  },
+  {
+   "nome": "f_cusr0000setb01",
    "chiave": false,
    "ultima_data": "2026-10-01",
    "giorni_ritardo": 55,
@@ -4591,6 +4626,13 @@
    "stato": "ok"
   },
   {
+   "nome": "f_drtspm",
+   "chiave": false,
+   "ultima_data": "2014-10-01",
+   "giorni_ritardo": 4438,
+   "stato": "warning"
+  },
+  {
    "nome": "f_drtssp",
    "chiave": false,
    "ultima_data": "2026-10-01",
@@ -4649,8 +4691,8 @@
   {
    "nome": "f_effr",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -4710,6 +4752,13 @@
    "stato": "warning"
   },
   {
+   "nome": "f_gasregcovw",
+   "chiave": false,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
+   "stato": "ok"
+  },
+  {
    "nome": "f_gasregw",
    "chiave": false,
    "ultima_data": "2026-11-23",
@@ -4747,8 +4796,8 @@
   {
    "nome": "f_gvzcls",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -4759,10 +4808,24 @@
    "stato": "ok"
   },
   {
+   "nome": "f_hccsdodns",
+   "chiave": false,
+   "ultima_data": "2026-04-01",
+   "giorni_ritardo": 238,
+   "stato": "ok"
+  },
+  {
    "nome": "f_hdtgpdusq163n",
    "chiave": false,
    "ultima_data": "2026-01-01",
    "giorni_ritardo": 328,
+   "stato": "ok"
+  },
+  {
+   "nome": "f_hhmsdodns",
+   "chiave": false,
+   "ultima_data": "2026-04-01",
+   "giorni_ritardo": 238,
    "stato": "ok"
   },
   {
@@ -4782,8 +4845,8 @@
   {
    "nome": "f_hsn1f",
    "chiave": false,
-   "ultima_data": "2026-09-01",
-   "giorni_ritardo": 85,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 55,
    "stato": "ok"
   },
   {
@@ -5011,6 +5074,13 @@
    "stato": "warning"
   },
   {
+   "nome": "f_mdsp",
+   "chiave": false,
+   "ultima_data": "2026-04-01",
+   "giorni_ritardo": 238,
+   "stato": "ok"
+  },
+  {
    "nome": "f_mich",
    "chiave": false,
    "ultima_data": "2026-10-01",
@@ -5020,15 +5090,15 @@
   {
    "nome": "f_mortgage15us",
    "chiave": false,
-   "ultima_data": "2026-11-19",
-   "giorni_ritardo": 6,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "f_mortgage30us",
    "chiave": false,
-   "ultima_data": "2026-11-19",
-   "giorni_ritardo": 6,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -5048,8 +5118,8 @@
   {
    "nome": "f_msacsr",
    "chiave": false,
-   "ultima_data": "2026-09-01",
-   "giorni_ritardo": 85,
+   "ultima_data": "2026-10-01",
+   "giorni_ritardo": 55,
    "stato": "ok"
   },
   {
@@ -5069,8 +5139,8 @@
   {
    "nome": "f_netfi",
    "chiave": false,
-   "ultima_data": "2026-04-01",
-   "giorni_ritardo": 238,
+   "ultima_data": "2026-07-01",
+   "giorni_ritardo": 147,
    "stato": "ok"
   },
   {
@@ -5083,15 +5153,15 @@
   {
    "nome": "f_nfcileverage",
    "chiave": false,
-   "ultima_data": "2026-11-13",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
    "nome": "f_nfcinonfinleverage",
    "chiave": false,
-   "ultima_data": "2026-11-13",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
@@ -5111,15 +5181,15 @@
   {
    "nome": "f_obfr",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_ovxcls",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5242,6 +5312,13 @@
    "stato": "ok"
   },
   {
+   "nome": "f_revolsl",
+   "chiave": false,
+   "ultima_data": "2026-09-01",
+   "giorni_ritardo": 85,
+   "stato": "ok"
+  },
+  {
    "nome": "f_rhorusq156n",
    "chiave": false,
    "ultima_data": "2026-07-01",
@@ -5279,8 +5356,8 @@
   {
    "nome": "f_rvxcls",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5289,6 +5366,13 @@
    "ultima_data": "2026-10-01",
    "giorni_ritardo": 55,
    "stato": "ok"
+  },
+  {
+   "nome": "f_sloas",
+   "chiave": false,
+   "ultima_data": "2024-10-01",
+   "giorni_ritardo": 785,
+   "stato": "warning"
   },
   {
    "nome": "f_sofr",
@@ -5300,8 +5384,8 @@
   {
    "nome": "f_sp500",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5417,6 +5501,13 @@
    "stato": "ok"
   },
   {
+   "nome": "f_totalsl",
+   "chiave": false,
+   "ultima_data": "2026-09-01",
+   "giorni_ritardo": 85,
+   "stato": "ok"
+  },
+  {
    "nome": "f_totbkcr",
    "chiave": false,
    "ultima_data": "2026-11-11",
@@ -5510,29 +5601,29 @@
   {
    "nome": "f_vixcls",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_vxdcls",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_vxncls",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "f_vxvcls",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5559,8 +5650,8 @@
   {
    "nome": "f_wei",
    "chiave": false,
-   "ultima_data": "2026-11-14",
-   "giorni_ritardo": 11,
+   "ultima_data": "2026-11-21",
+   "giorni_ritardo": 4,
    "stato": "ok"
   },
   {
@@ -5587,8 +5678,8 @@
   {
    "nome": "f_wlemuindxd",
    "chiave": false,
-   "ultima_data": "2026-11-23",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-24",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5664,8 +5755,8 @@
   {
    "nome": "ftsemib",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -6196,8 +6287,8 @@
   {
    "nome": "mortgage30",
    "chiave": false,
-   "ultima_data": "2026-11-19",
-   "giorni_ritardo": 6,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -6210,8 +6301,8 @@
   {
    "nome": "mweq",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -6420,64 +6511,64 @@
   {
    "nome": "ofr_credit",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "ofr_emerging_markets",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "ofr_equity_valuation",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "ofr_funding",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "ofr_ofr_fsi",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "ofr_other_advanced_economies",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "ofr_safe_assets",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "ofr_united_states",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
    "nome": "ofr_volatility",
    "chiave": false,
-   "ultima_data": "2026-11-20",
-   "giorni_ritardo": 5,
+   "ultima_data": "2026-11-23",
+   "giorni_ritardo": 2,
    "stato": "ok"
   },
   {
@@ -6686,8 +6777,8 @@
   {
    "nome": "rrp",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -7148,22 +7239,22 @@
   {
    "nome": "stlfsi",
    "chiave": false,
-   "ultima_data": "2026-11-13",
-   "giorni_ritardo": 12,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 5,
    "stato": "ok"
   },
   {
    "nome": "stoxx50",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "stoxx600",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -7610,8 +7701,8 @@
   {
    "nome": "vwce_de",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {

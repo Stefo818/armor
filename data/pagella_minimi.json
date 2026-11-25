@@ -1,6 +1,6 @@
 {
  "inizio": "2026-11-12",
- "giorni": 9,
+ "giorni": 10,
  "serie": {
   "eur": {
    "1s": {
@@ -15,12 +15,12 @@
      },
      "possibile": {
       "n": 4,
-      "maturi": 2,
+      "maturi": 3,
       "tenuto": 0.0,
-      "q_media": 0.583
+      "q_media": 0.577
      },
      "non_ancora": {
-      "n": 5,
+      "n": 6,
       "maturi": 2,
       "tenuto": 0.0,
       "q_media": 0.638
@@ -45,7 +45,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 9,
+      "n": 10,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -70,7 +70,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 6,
+      "n": 7,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -95,7 +95,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 9,
+      "n": 10,
       "maturi": 0,
       "tenuto": null,
       "q_media": null

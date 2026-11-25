@@ -1,8 +1,8 @@
 {
  "data": "2026-11-25",
  "trimestre": "2026 T4",
- "stima": 3.2093,
- "banda": "forte",
+ "stima": 2.9019,
+ "banda": "moderata",
  "precedente": {
   "trimestre": "2026 T3",
   "valore": 4.3
@@ -150,7 +150,7 @@
   ],
   [
    "2026 T4",
-   3.21,
+   2.9,
    null
   ]
  ],
