@@ -1,0 +1,91 @@
+{
+ "vincitore": "V2b",
+ "barra": 0.5794484182542233,
+ "criteri": {
+  "i_auc": false,
+  "ii_tabella": true,
+  "iii_stacco": true,
+  "iv_falsi": true,
+  "v_protezione": false
+ },
+ "passa": false,
+ "oggi": {
+  "V2": 91.3,
+  "V2b": 93.2,
+  "RIF_vecchio": 79.1
+ },
+ "risultati": {
+  "V2": {
+   "auc_a_sel": 0.6474287639178793,
+   "auc_b_sel": 0.5915820182724253,
+   "auc_a_ver": 0.6868486568644008,
+   "auc_b_ver": 0.7653736417167486,
+   "punteggio_scelta": 0.6195053910951522,
+   "stacco_ver": 6.930636097746195,
+   "media_calmi_ver": 32.44783419830214,
+   "falsi_ver_%": 5.843729481286934,
+   "protezione_ver": 0.46674413341291476,
+   "tabella_ver": {
+    "vicino_verde": 7.00507614213198,
+    "vicino_giallo": 13.966480446927374,
+    "mid_verde": 12.429378531073446,
+    "mid_giallo": 29.11392405063291,
+    "tutti_verde": 13.738019169329075,
+    "tutti_giallo": 36.625971143174255
+   },
+   "rapporti_ver": {
+    "tutti": 2.666029992514777,
+    "mid": 2.3423475258918294,
+    "vicino": 1.9937656869889078
+   }
+  },
+  "V2b": {
+   "auc_a_sel": 0.6573366998911232,
+   "auc_b_sel": 0.5910847176079734,
+   "auc_a_ver": 0.6993620718772302,
+   "auc_b_ver": 0.7696605139961649,
+   "punteggio_scelta": 0.6242107087495483,
+   "stacco_ver": 6.797984891368014,
+   "media_calmi_ver": 31.06193674002967,
+   "falsi_ver_%": 4.9244911359159556,
+   "protezione_ver": 0.46674413341291476,
+   "tabella_ver": {
+    "vicino_verde": 7.038123167155426,
+    "vicino_giallo": 14.6875,
+    "mid_verde": 13.068181818181818,
+    "mid_giallo": 28.706624605678233,
+    "tutti_verde": 14.219474497681608,
+    "tutti_giallo": 37.0197904540163
+   },
+   "rapporti_ver": {
+    "tutti": 2.6034570025813637,
+    "mid": 2.1966808393910298,
+    "vicino": 2.086848958333333
+   }
+  },
+  "RIF_vecchio": {
+   "auc_a_sel": 0.7530463688696667,
+   "auc_b_sel": 0.8381449335548172,
+   "auc_a_ver": 0.7040536491558756,
+   "auc_b_ver": 0.8201855136518275,
+   "punteggio_scelta": 0.795595651212242,
+   "stacco_ver": -2.308639232656784,
+   "media_calmi_ver": 19.699399230402005,
+   "falsi_ver_%": 16.217990807616548,
+   "protezione_ver": 0.602614069368981,
+   "tabella_ver": {
+    "vicino_verde": 8.758568164508757,
+    "vicino_giallo": 13.333333333333334,
+    "mid_verde": 15.636363636363637,
+    "mid_giallo": 32.56880733944954,
+    "tutti_verde": 12.294583079732197,
+    "tutti_giallo": 58.82352941176471
+   },
+   "rapporti_ver": {
+    "tutti": 4.784507862550961,
+    "mid": 2.082888841476424,
+    "vicino": 1.5223188405797103
+   }
+  }
+ }
+}
