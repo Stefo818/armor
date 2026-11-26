@@ -165,7 +165,13 @@ def aggiorna_dtcc_cds(stato: dict) -> None:
     lunghi = [oggi - timedelta(days=k) for k in range(1, 366)] if primo else giorni
     jobs = {}
     for sez in DTCC_SEZ:
-        for g in (lunghi if sez in DTCC_RECUPERO else giorni):
+        if sez in DTCC_RECUPERO:
+            scelti = lunghi
+        else:   # file grandi: ogni giro aggiunge fino a 25 giorni mancanti dell'ultimo anno, partendo dai piu' recenti
+            ha = set(store.load(f"dtcc_{sez}_n_operazioni").index.date)
+            manca = [oggi - timedelta(days=k) for k in range(1, 366) if (oggi - timedelta(days=k)) not in ha and (oggi - timedelta(days=k)).weekday() < 5]
+            scelti = list(dict.fromkeys(giorni + manca[:25]))
+        for g in scelti:
             if g.weekday() < 5:
                 jobs[f"{sez}|{g}"] = (lambda s=sez, d=g: _dtcc_giorno(s, d))
     ris = run_parallel(jobs, workers=4, deadline=1500)
