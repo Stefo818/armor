@@ -155,6 +155,12 @@ DTCC_SEZ = {"cftc_credits": ("cftc", "CFTC_CUMULATIVE_CREDITS", True), "cftc_com
 DTCC_GIORNI = 400   # il sito conserva circa un anno di file giornalieri
 
 
+def _date_gia(sid: str) -> set:
+    """Giorni gia' presenti in una serie (vuoto se la serie non esiste ancora)."""
+    s = store.load(sid)
+    return set() if len(s) == 0 else set(pd.to_datetime(s.index).date)
+
+
 def _nome_dtcc(sez: str, g) -> str:
     return f"{DTCC_SEZ[sez][1]}_{g.year}_{g.month:02d}_{g.day:02d}.zip"
 
@@ -188,7 +194,7 @@ def aggiorna_dtcc_cds(stato: dict) -> None:
         gia = {r.strip() for r in open(os.environ["DTCC_GIA"]) if r.strip()}
     limite = time.time() + float(os.environ.get("DTCC_SECONDI", 17000))
     oggi = datetime.now(timezone.utc).date()
-    ha = {s: set(store.load(f"dtcc_{s}_n_operazioni").index.date) for s in DTCC_SEZ}
+    ha = {s: _date_gia(f"dtcc_{s}_n_operazioni") for s in DTCC_SEZ}
     giorni = [oggi - timedelta(days=k) for k in range(1, DTCC_GIORNI)]
     da_fare = [(s, g) for g in giorni for s in DTCC_SEZ
                if not (g in ha[s] and (not gia or _nome_dtcc(s, g) in gia))]

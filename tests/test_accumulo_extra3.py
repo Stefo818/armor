@@ -60,3 +60,7 @@ def test_dtcc_nomi_e_giorno_vuoto(tmp_path, monkeypatch):
     monkeypatch.setattr(ex3, "_get", lambda *a, **k: R)
     r = ex3._dtcc_giorno("cftc_rates", dt.date(2026, 11, 22), str(tmp_path))
     assert r["n_operazioni"] == 0 and (tmp_path / "CFTC_CUMULATIVE_RATES_2026_11_22.zip").exists()
+
+
+def test_date_gia_serie_inesistente():
+    assert ex3._date_gia("dtcc_serie_che_non_esiste_n_operazioni") == set()
