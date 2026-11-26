@@ -1,1 +1,33 @@
-{}
+{
+ "dtcc_cds": {
+  "da_fare": 5187,
+  "scaricati_per_sezione": {
+   "cftc_credits": 397,
+   "cftc_commodities": 382,
+   "sec_credits": 399,
+   "cftc_rates": 399,
+   "sec_rates": 398,
+   "cftc_equities": 388,
+   "sec_equities": 318
+  },
+  "errori_per_sezione": {
+   "cftc_fx": 399,
+   "canada_credits": 399,
+   "canada_equities": 399,
+   "canada_rates": 399,
+   "canada_fx": 399,
+   "canada_commodities": 399,
+   "sec_equities": 81,
+   "cftc_commodities": 17,
+   "cftc_equities": 11,
+   "cftc_credits": 2,
+   "sec_rates": 1
+  },
+  "esempi_errori": [
+   "cftc_fx|2026-11-25: 403 Client Error: Forbidden for url: htt",
+   "canada_credits|2026-11-25: 403 Client Error: Forbidden for url: htt",
+   "canada_equities|2026-11-25: 403 Client Error: Forbidden for url: htt",
+   "canada_rates|2026-11-25: 403 Client Error: Forbidden for url: htt"
+  ]
+ }
+}
