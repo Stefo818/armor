@@ -364,3 +364,35 @@ def punteggio_rapido() -> pd.Series:
     fvv[fvv.index < "2007-01-01"] = 50.0
     return (0.30 * salto.fillna(50) + 0.10 * _pct(vix / vix3).fillna(50) + 0.20 * _pct(vix).fillna(50) + 0.15 * f9 + 0.15 * fvv
             + 0.10 * _pct(r.clip(upper=0).rolling(5).std()).fillna(50))
+
+
+SOGLIA_GEMINI = 64.2   # 95° percentile dei giorni calmi fino al 2007 (ESITO_GEMINI_UNIFICATO)
+
+
+def _pr_mobile(s: pd.Series, window: int = 1260, minp: int = 252) -> pd.Series:
+    v = s.to_numpy(float)
+    out = np.full(len(v), np.nan)
+    for i in range(len(v)):
+        if np.isnan(v[i]):
+            continue
+        a = v[max(0, i - window + 1):i + 1]
+        a = a[~np.isnan(a)]
+        if len(a) >= minp:
+            out[i] = (a <= v[i]).mean() * 100
+    return pd.Series(out, index=s.index).fillna(50.0)
+
+
+def punteggio_unificato(ultimi: int = 1700) -> pd.Series:
+    """Candidato G1 (formula proposta da Gemini, con cape_m e baa10y al posto di dati mancanti): 30% terreno + 35% anticipo + 35% innesco,
+    ogni parte in percentile mobile a 1260 giorni. Solo registro in avanti, peso zero (ESITO_GEMINI_UNIFICATO.md)."""
+    sp = store.load("sp500").dropna()
+    sp = sp[~sp.index.duplicated()]
+    cal = sp.index[-ultimi:]
+    g = lambda sid, lag=1: _lag(store.load(sid).dropna(), lag).reindex(sp.index).ffill()
+    vix, vix3, skew = g("vix"), g("vix3m"), g("skew")
+    terreno = (_pr_mobile(g("cape_m", 31)) + _pr_mobile(g("dgs10")) + _pr_mobile(g("baa10y"))) / 3
+    s20, s50 = sp / sp.rolling(20).mean() - 1, sp / sp.rolling(50).mean() - 1
+    anticipo = (_pr_mobile((s20 + s50) / 2) + _pr_mobile(vix / vix.rolling(60).mean()) + _pr_mobile(skew)) / 3
+    vol20 = sp.pct_change().rolling(20).std() * np.sqrt(252)
+    innesco = (_pr_mobile(vix / vix3) + _pr_mobile(vol20) + _pr_mobile(vix.pct_change(5))) / 3
+    return (0.30 * terreno + 0.35 * anticipo + 0.35 * innesco).reindex(cal)
