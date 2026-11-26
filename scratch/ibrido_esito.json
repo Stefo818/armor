@@ -1,0 +1,74 @@
+{
+ "0_attuale": {
+  "media_calmi": 22.5,
+  "stacco_sel": 12.5,
+  "stacco_ver": -7.8,
+  "auc_calmi_ver": 0.411,
+  "protezione_ver": 0.41,
+  "falsi_%": 5.0,
+  "tabella": {
+   "vicino_verde": 5.4,
+   "vicino_giallo+": 10.0,
+   "2-7_verde": 7.1,
+   "2-7_giallo+": 25.1,
+   "tutti_verde": 9.6,
+   "tutti_giallo+": 55.9
+  },
+  "rapporti": {
+   "tutti": 5.82,
+   "2-7": 3.54,
+   "vicino": 1.85
+  },
+  "batteria_A": false,
+  "batteria_B": true,
+  "passa": false
+ },
+ "G1": {
+  "media_calmi": 35.5,
+  "stacco_sel": 9.6,
+  "stacco_ver": 8.9,
+  "auc_calmi_ver": 0.628,
+  "protezione_ver": 0.62,
+  "falsi_%": 4.6,
+  "tabella": {
+   "vicino_verde": 5.3,
+   "vicino_giallo+": 7.2,
+   "2-7_verde": 11.9,
+   "2-7_giallo+": 18.9,
+   "tutti_verde": 27.9,
+   "tutti_giallo+": 24.8
+  },
+  "rapporti": {
+   "tutti": 0.89,
+   "2-7": 1.59,
+   "vicino": 1.36
+  },
+  "batteria_A": false,
+  "batteria_B": false,
+  "passa": false
+ },
+ "H_ibrido": {
+  "media_calmi": 29.4,
+  "stacco_sel": 7.0,
+  "stacco_ver": -1.4,
+  "auc_calmi_ver": 0.55,
+  "protezione_ver": 0.33,
+  "falsi_%": 0.2,
+  "tabella": {
+   "vicino_verde": 6.1,
+   "vicino_giallo+": 8.3,
+   "2-7_verde": 12.9,
+   "2-7_giallo+": 20.0,
+   "tutti_verde": 25.0,
+   "tutti_giallo+": 36.0
+  },
+  "rapporti": {
+   "tutti": 1.44,
+   "2-7": 1.55,
+   "vicino": 1.36
+  },
+  "batteria_A": false,
+  "batteria_B": false,
+  "passa": false
+ }
+}
