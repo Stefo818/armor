@@ -1,0 +1,99 @@
+{
+ "n_fase1": 99977,
+ "mercati": [
+  "sp500",
+  "f_nikkei225",
+  "dax",
+  "x_ftse",
+  "x_fchi",
+  "x_hsi",
+  "x_gsptse",
+  "x_ibex",
+  "x_ssmi",
+  "x_aex",
+  "x_bfx",
+  "x_atx",
+  "x_axjo",
+  "x_bvsp",
+  "x_mxx",
+  "x_ks11",
+  "x_twii",
+  "x_sti",
+  "x_jkse",
+  "x_bsesn",
+  "x_000001_ss",
+  "x_ta125_ta",
+  "ftsemib"
+ ],
+ "righe": 109966,
+ "T1": {
+  "soglia": 0.5980287056306827,
+  "miglior": 0.6256876587867737,
+  "passano_sel": 273,
+  "robusti_descrittivi": 64,
+  "top100_v1": 0.5223178863525391,
+  "top100_v2": 0.5685329437255859,
+  "top100_v2_med": 0.5685697793960571,
+  "migliori": [
+   {
+    "nome": "coppia|rel_dmax_10_meno_252|dmax252|z252|diff",
+    "sel": 0.5982718467712402,
+    "v1": 0.5768219828605652,
+    "v2": 0.5776791572570801
+   },
+   {
+    "nome": "coppia|rel_sommaabs_20_meno_40|dmax252|rapp252|diff",
+    "sel": 0.578916609287262,
+    "v1": 0.5761548280715942,
+    "v2": 0.5781775116920471
+   },
+   {
+    "nome": "coppia|rend252|z252|min5|raw|somma",
+    "sel": 0.5684753656387329,
+    "v1": 0.5901050567626953,
+    "v2": 0.5761325359344482
+   },
+   {
+    "nome": "coppia|dmax252|raw|rel_quotasu_60_meno_120|somma",
+    "sel": 0.5850982666015625,
+    "v1": 0.5748594403266907,
+    "v2": 0.579620897769928
+   }
+  ]
+ },
+ "T2": {
+  "soglia": 0.6260709727710447,
+  "miglior": 0.6423128843307495,
+  "passano_sel": 16,
+  "robusti_descrittivi": 80,
+  "top100_v1": 0.5042582154273987,
+  "top100_v2": 0.5777613520622253,
+  "top100_v2_med": 0.577434778213501,
+  "migliori": [
+   {
+    "nome": "coppia|dmax252|z252|rel_sommaabs_20_meno_120|somma",
+    "sel": 0.606469988822937,
+    "v1": 0.5796918272972107,
+    "v2": 0.579490602016449
+   },
+   {
+    "nome": "coppia|rel_dmax_10_meno_252|dev60|z252|prod",
+    "sel": 0.5418859720230103,
+    "v1": 0.6120029091835022,
+    "v2": 0.5790323615074158
+   },
+   {
+    "nome": "coppia|rel_dmax_60_meno_252|sommaabs40|rapp252|prod",
+    "sel": 0.5693608522415161,
+    "v1": 0.6180974841117859,
+    "v2": 0.5774499177932739
+   },
+   {
+    "nome": "coppia|sommaabs60|rapp252|rel_dmax_60_meno_252|prod",
+    "sel": 0.5595642924308777,
+    "v1": 0.6120112538337708,
+    "v2": 0.5764834880828857
+   }
+  ]
+ }
+}
