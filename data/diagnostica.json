@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-26T13:37:27Z",
+ "data_utc": "2026-11-26T14:26:03Z",
  "oggi": "2026-11-26",
  "ultima_previsione": "2026-11-25",
  "giorni_da_ultima": 1,
@@ -4255,6 +4255,118 @@
    "stato": "warning"
   },
   {
+   "nome": "dtcc_cftc_commodities_importo_totale",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_commodities_n_operazioni",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_credits_importo_indici",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_credits_importo_totale",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_credits_n_indici",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_credits_n_operazioni",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_equities_importo_totale",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_equities_n_operazioni",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_rates_importo_totale",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_cftc_rates_n_operazioni",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_sec_credits_importo_totale",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_sec_credits_n_operazioni",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_sec_equities_importo_totale",
+   "chiave": false,
+   "ultima_data": "2026-11-21",
+   "giorni_ritardo": 5,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_sec_equities_n_operazioni",
+   "chiave": false,
+   "ultima_data": "2026-11-21",
+   "giorni_ritardo": 5,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_sec_rates_importo_totale",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "dtcc_sec_rates_n_operazioni",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
    "nome": "dxy",
    "chiave": false,
    "ultima_data": "2026-11-25",
@@ -4397,8 +4509,8 @@
   {
    "nome": "epu",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
