@@ -108,39 +108,74 @@ def _col(df: pd.DataFrame, *parti: str, escludi: tuple = ()) -> str | None:
     return None
 
 
-def parse_dtcc_cds(txt: str, giorno: str) -> dict:
-    """Riepilogo di un giorno di operazioni su CDS: numero, importo totale e, per gli indici (CDX, iTraxx), importo e prezzo medio pesato.
-    I nomi delle colonne si cercano per parole chiave, perche' il tracciato puo' cambiare."""
-    df = pd.read_csv(io.StringIO(txt), dtype=str, low_memory=False)
+def _nuovo_acc() -> dict:
+    return {"n": 0, "imp": 0.0, "ni": 0, "impi": 0.0, "pw": 0.0, "iw": 0.0, "pl": [], "notc": False}
+
+
+def _acc(df: pd.DataFrame, indici: bool, st: dict) -> None:
+    """Aggiunge un blocco di righe ai totali. I nomi delle colonne si cercano per parole chiave, perche' il tracciato puo' cambiare."""
     notc = _col(df, "notional", "amount", "1") or _col(df, "notional")
+    st["n"] += len(df)
+    if notc is None:
+        return
+    st["notc"] = True
+    imp = pd.to_numeric(df[notc].astype(str).str.replace(r"[^\d.]", "", regex=True), errors="coerce")
+    st["imp"] += float(imp.sum())
+    if not indici:
+        return
     prc = _col(df, "price", escludi=("type", "notation type", "additional", "currency", "unit"))
     testo = [c for c in df.columns if any(k in str(c).lower() for k in ("underlier", "underlying", "product", "taxonomy"))]
-    if notc is None:
-        raise RuntimeError("DTCC: colonna importo non trovata")
-    imp = pd.to_numeric(df[notc].astype(str).str.replace(r"[^\d.]", "", regex=True), errors="coerce")
-    out = {"n_operazioni": float(len(df)), "importo_totale": float(imp.sum())}
     idx = pd.Series(False, index=df.index)
     for c in testo:
         idx |= df[c].astype(str).str.contains(r"CDX|ITRAXX|iTraxx|INDEX", case=False, regex=True, na=False)
-    out["n_indici"] = float(idx.sum()); out["importo_indici"] = float(imp[idx].sum())
+    st["ni"] += int(idx.sum())
+    st["impi"] += float(imp[idx].sum())
     if prc is not None and idx.any():
         p = pd.to_numeric(df[prc].astype(str).str.replace(r"[^\d.\-]", "", regex=True), errors="coerce")
         m = idx & p.notna() & imp.notna() & (imp > 0)
-        if m.any() and imp[m].sum() > 0:
-            out["prezzo_medio_pesato_indici"] = float((p[m] * imp[m]).sum() / imp[m].sum())
-            out["prezzo_mediano_indici"] = float(p[m].median())
+        st["pw"] += float((p[m] * imp[m]).sum())
+        st["iw"] += float(imp[m].sum())
+        st["pl"].extend(p[idx & p.notna()].tolist())
+
+
+def _fine_acc(st: dict, indici: bool, strict: bool = False) -> dict:
+    if strict and not st["notc"]:
+        raise RuntimeError("DTCC: colonna importo non trovata")
+    out = {"n_operazioni": float(st["n"])}
+    if st["notc"]:
+        out["importo_totale"] = float(st["imp"])
+    if indici:
+        out["n_indici"] = float(st["ni"])
+        out["importo_indici"] = float(st["impi"])
+        if st["iw"] > 0:
+            out["prezzo_medio_pesato_indici"] = st["pw"] / st["iw"]
+            out["prezzo_mediano_indici"] = float(pd.Series(st["pl"]).median())
     return out
+
+
+def parse_dtcc_cds(txt: str, giorno: str) -> dict:
+    """Riepilogo di un giorno di operazioni su CDS: numero, importo totale e, per gli indici (CDX, iTraxx), importo e prezzo medio pesato."""
+    st = _nuovo_acc()
+    _acc(pd.read_csv(io.StringIO(txt), dtype=str, low_memory=False), True, st)
+    return _fine_acc(st, True, True)
 
 
 def parse_dtcc_generico(txt: str) -> dict:
     """Riepilogo di un giorno per le sezioni senza distinzione indice/singola azienda (SEC, tassi, cambi, azioni, materie prime)."""
-    df = pd.read_csv(io.StringIO(txt), dtype=str, low_memory=False)
-    notc = _col(df, "notional", "amount", "1") or _col(df, "notional")
-    out = {"n_operazioni": float(len(df))}
-    if notc is not None:
-        imp = pd.to_numeric(df[notc].astype(str).str.replace(r"[^\d.]", "", regex=True), errors="coerce")
-        out["importo_totale"] = float(imp.sum())
-    return out
+    st = _nuovo_acc()
+    _acc(pd.read_csv(io.StringIO(txt), dtype=str, low_memory=False), False, st)
+    return _fine_acc(st, False)
+
+
+def riepilogo_zip(contenuto: bytes, indici: bool) -> dict:
+    """Come sopra ma legge il file a pezzi di 100.000 righe: i file dei tassi e dei cambi sono enormi e riempirebbero la memoria."""
+    z = zipfile.ZipFile(io.BytesIO(contenuto))
+    nome = next(n for n in z.namelist() if n.lower().endswith(".csv"))
+    st = _nuovo_acc()
+    with z.open(nome) as f:
+        for blocco in pd.read_csv(f, dtype=str, chunksize=100_000, encoding="latin-1", low_memory=False):
+            _acc(blocco, indici, st)
+    return _fine_acc(st, indici)
 
 
 # sezione -> (cartella, nome file, usa il riepilogo con gli indici). CANADA: indirizzi supposti, non verificati (l'esito dice se esistono)
@@ -176,8 +211,7 @@ def _dtcc_giorno(sez: str, g, raw_dir: str | None = None) -> dict:
         with open(os.path.join(raw_dir, nome), "wb") as f:
             f.write(contenuto)
     try:
-        txt = _csv_da_zip(contenuto)
-        return parse_dtcc_cds(txt, str(g)) if DTCC_SEZ[sez][2] else parse_dtcc_generico(txt)
+        return riepilogo_zip(contenuto, DTCC_SEZ[sez][2])
     except (pd.errors.EmptyDataError, StopIteration):   # giorno senza operazioni (fine settimana)
         return {"n_operazioni": 0.0, "importo_totale": 0.0}
 
@@ -199,12 +233,12 @@ def aggiorna_dtcc_cds(stato: dict) -> None:
     da_fare = [(s, g) for g in giorni for s in DTCC_SEZ
                if not (g in ha[s] and (not gia or _nome_dtcc(s, g) in gia))]
     fatti, err = {}, []
-    for i in range(0, len(da_fare), 120):
+    for i in range(0, len(da_fare), 60):
         if time.time() > limite:
             break
-        blocco = da_fare[i:i + 120]
+        blocco = da_fare[i:i + 60]
         jobs = {f"{s}|{g}": (lambda s=s, g=g: _dtcc_giorno(s, g, raw)) for s, g in blocco}
-        ris = run_parallel(jobs, workers=4, deadline=max(60.0, min(1800.0, limite - time.time())))
+        ris = run_parallel(jobs, workers=3, deadline=max(60.0, min(1800.0, limite - time.time())))
         righe: dict = {}
         for k, (tipo, v) in ris.items():
             sez, g = k.split("|")
@@ -216,6 +250,7 @@ def aggiorna_dtcc_cds(stato: dict) -> None:
             fatti[sez] = fatti.get(sez, 0) + 1
         for sid, d in righe.items():
             store.upsert(sid, pd.Series(d).sort_index())
+        print(f"DTCC blocco {i // 60 + 1}/{-(-len(da_fare) // 60)}: scaricati {sum(fatti.values())}, errori {len(err)}" + (f" (ultimo: {err[-1]})" if err else ""), flush=True)
     if not fatti and da_fare:
         raise RuntimeError("DTCC: nessun file scaricato: " + "; ".join(err[:2]))
     per_sez_err: dict = {}

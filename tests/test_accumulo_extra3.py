@@ -64,3 +64,15 @@ def test_dtcc_nomi_e_giorno_vuoto(tmp_path, monkeypatch):
 
 def test_date_gia_serie_inesistente():
     assert ex3._date_gia("dtcc_serie_che_non_esiste_n_operazioni") == set()
+
+
+def test_riepilogo_zip_a_pezzi():
+    import io, zipfile
+    righe = "Product Name,Rounded Notional Amount 1,Price,Price Notation Type\n" + "".join(f"Credit:Index:CDX,1000,{50 + i % 3},Spread\n" for i in range(250_000))
+    b = io.BytesIO()
+    with zipfile.ZipFile(b, "w") as z:
+        z.writestr("g.csv", righe)
+    r = ex3.riepilogo_zip(b.getvalue(), True)
+    assert r["n_operazioni"] == 250_000 and r["importo_totale"] == 250_000_000 and r["n_indici"] == 250_000
+    assert 50 <= r["prezzo_medio_pesato_indici"] <= 52
+    assert ex3.riepilogo_zip(b.getvalue(), False)["n_operazioni"] == 250_000
