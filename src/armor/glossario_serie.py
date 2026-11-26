@@ -126,6 +126,16 @@ G["minimi"] = ("Minimi (Status index): da 1 a 100, in che fase del ciclo è il m
 G["stato"] = ("Stato (Status index): da 1 a 100, quanto il terreno è fragile. 1 = mercato calmo che tende a salire; 100 = mercato fragile che tende a crollare.",
               "Misura la fragilità di fondo (prezzi cari, debiti, credito, liquidità), non se il mercato sta già cadendo: per quello c'è il Crollo.",
               "Stesse fasce degli altri indici: sotto 35 solido, 35-40 passaggio, 40-60 fragile, 60-80 molto fragile, sopra 80 estremo. Incrociato con il Crollo non lo migliora (ESITO_CROLLO_STATO).", "Media di dieci misure, dal 1990.")
+
+try:   # varianti in prova dell'Indice crollo (spiegazioni in crollo_varianti.py)
+    from .crollo_varianti import VARIANTI as _VAR
+    for _k, (_n, _c, _d) in _VAR.items():
+        G[_k] = (f"Crollo, variante «{_n}» (in prova): da 1 a 100, stesse fasce e stessi colori dell'Indice crollo. " + _d,
+                 "Alto = il mercato somiglia ai momenti che in passato hanno preceduto cali forti, secondo questa formula.",
+                 "Verde sotto 35, 35-40 passaggio, 40-60 teso, 60-80 molto teso, sopra 80 panico. Non sostituisce l'Indice crollo.",
+                 "Calcolato dal 2002 con i dati dell'archivio (crollo_varianti.py).")
+except Exception:  # noqa: BLE001
+    pass
 G["bolla"] = ("Indice Bolla (Sick Index): da 0 a 100, quanto il mercato somiglia a una bolla. Unisce prezzi alti rispetto agli utili, salita forte in tre anni e concentrazione su pochi titoli.",
               "Aiuta a capire se i prezzi sono gonfiati. Una bolla può durare anni prima di rompersi, quindi non dice il giorno del calo.",
               "Sotto 60 nella norma, 60-80 sopra la norma, da 80 rosso. È un indizio, non dimostrato (2 casi su 2: 2000 e 2022).", "Calcolato ogni giorno dalla storia dal 1971.")

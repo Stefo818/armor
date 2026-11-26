@@ -57,6 +57,17 @@ TAG = {"sacc": "quanto in fretta sale", "a_paura": "parte veloce", "a_liquidita"
        "a_stress": "parte lenta", "a_ciclo": "parte lenta", "i7": "solo informativo", "i8": "solo informativo", "i9": "senza peso"}
 for _k in PAR:
     ZONE[_k] = ZONE["armor"]
+try:   # varianti in prova dell'Indice crollo: compaiono dentro la sua finestra, ognuna con il proprio grafico
+    from .crollo_varianti import VARIANTI as _VAR
+    KIDS["crollo_var"] = list(_VAR)
+    for _k, (_n, _c, _d) in _VAR.items():
+        PAR[_k] = "crollo"
+        ZONE[_k] = ZONE["crollo"]
+        NOMI[_k] = _n
+        DESC[_k] = _d + " Non sostituisce l'Indice crollo: è una prova, da giudicare con i mesi che passano."
+        TAG[_k] = "in prova"
+except Exception:  # noqa: BLE001
+    pass
 NOMI.update({"a_paura": "Paura sui mercati", "a_liquidita": "Liquidità", "a_rimbalzo": "Segnali di rimbalzo",
              "a_stress": "Stress di mercato e credito", "a_ciclo": "Ciclo, prezzi e valutazioni",
              "i7": "7° Fondi a breve termine", "i8": "8° Indice Buffett", "i9": "Fondi (difensività)"})
@@ -570,11 +581,14 @@ function prev(lbl,k){if(n-k<0)return '';var v=V[n-k],df=V[n]-v,c=Math.abs(df)<.0
 h+='<div class="gi-sc">Com’era prima</div><div class="gi-g">'+prev('Ieri',1)+prev('Una settimana fa',5)+prev('Un mese fa',21)+prev('3 mesi fa',63)+prev('6 mesi fa',126)+'</div>';
 h+='<div class="gi-hint" style="margin-top:6px">La freccia mostra di quanto è cambiato l’indice da allora a oggi: rossa se il numero è salito, verde se è sceso.</div>';
 box.innerHTML=h}
-function kids(k){var box=document.getElementById('gi-kd'),ks=(KD.kids[k]||[]).filter(function(x){return S[x]});if(!ks.length){box.innerHTML='';return}
-var h='<div class="gi-kt">'+((k==='sovr'||k==='bolla'||k==='cred'||k==='crollo'||k==='minimi'||k==='stato'||k==='mi_modello'||k==='mi_semplice'||k==='sea'||k==='super'||k==='sa_fin'||k==='sa_eco'||k==='sa_costi'||k==='sa_fam'||k==='sa_pil')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor')+' <small>(tocca per il grafico)</small></div><div class="gi-kg">';
+function kidsGroup(k,ks,title,sub){var h='<div class="gi-kt">'+title+' <small>'+(sub||'(tocca per il grafico)')+'</small></div><div class="gi-kg">';
 ks.forEach(function(x){var t=S[x].t,v=S[x].v,n=v.length-1,val=v[n],dv=n>=5?val-v[n-5]:0,c=Z[x].col[zi(x,val)],ar=Math.abs(dv)<.5?'':'<em style="color:'+(dv>0?'var(--bad)':'var(--ok)')+'">'+(dv>0?'\u25b2':'\u25bc')+it(Math.abs(dv),1)+'</em>',tg=KD.tag[x]||'';
 h+='<button type="button" class="gi-k'+(x==='i7'||x==='i8'||x==='i9'?' inf':'')+'" data-k="'+x+'" style="--c:'+c+'"><div class="gi-kn">'+NM[x]+'</div><div class="gi-kv"><b>'+it(val)+'</b>'+ar+'</div><div class="gi-kb"><i style="width:'+Math.max(3,Math.min(100,val))+'%"></i></div>'+(tg?'<div class="gi-kg2">'+tg+'</div>':'')+'</button>'});
-box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}
+return h+'</div>'}
+function kids(k){var box=document.getElementById('gi-kd'),ks=(KD.kids[k]||[]).filter(function(x){return S[x]}),vs=k==='crollo'?(KD.kids.crollo_var||[]).filter(function(x){return S[x]}):[];if(!ks.length&&!vs.length){box.innerHTML='';return}
+var h='';if(ks.length)h+=kidsGroup(k,ks,((k==='sovr'||k==='bolla'||k==='cred'||k==='crollo'||k==='minimi'||k==='stato'||k==='mi_modello'||k==='mi_semplice'||k==='sea'||k==='super'||k==='sa_fin'||k==='sa_eco'||k==='sa_costi'||k==='sa_fam'||k==='sa_pil')?'Da cosa dipende':k==='armor'?'I pilastri dell\u2019Indice Armor':'I pilastri del Super Armor'));
+if(vs.length)h+=kidsGroup(k,vs,'Varianti in prova','(altre formule per lo stesso rischio, non sostituiscono l\u2019indice \u00b7 tocca per il grafico)');
+box.innerHTML=h;box.querySelectorAll('.gi-k').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.k)})})}
 function storiaBox(k){var b=document.getElementById('gi-hs'),r=ST[k];if(!b)return;if(!r){b.innerHTML='';return}
 function f(x){return x==null?'\u2013':(cfg().val&&fv?fv(x):it(x,1))}
 function t(l,x,s,c){return '<div class="gi-hc"><b style="color:'+(x==null?'var(--mu)':zc(x))+'">'+f(x)+'</b><span>'+l+'</span><small>'+s+'</small></div>'}

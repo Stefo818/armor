@@ -18,6 +18,9 @@ SERIES = [
     ("urth", "MSCI World (URTH)", "#84cc16", "", 0, "a"), ("stoxx600", "Europa STOXX 600", "#ec4899", "", 0, "a"), ("eem", "Mercati emergenti", "#ef4444", "", 0, "a"),
     ("dax", "DAX", "#06b6d4", "", 0, "a"), ("ftsemib", "FTSE MIB", "#22c55e", "", 0, "a"), ("nikkei", "Nikkei 225", "#eab308", "", 0, "a"), ("iwm", "Small cap USA", "#8b5cf6", "", 0, "a"),
     ("armor", "Indice Armor", "tx", "", 1, "rischio"), ("super", "Super Armor (economia nei prossimi mesi)", "#f59e0b", "", 1, "rischio"), ("sea", "Salute dell'economia (oggi)", "#06b6d4", "", 1, "rischio"), ("crollo", "Crollo (Status index)", "#8b5cf6", "", 1, "rischio"), ("minimi", "Minimi (Status index)", "#a3e635", "", 1, "rischio"), ("stato", "Stato (Status index)", "#fde047", "", 1, "rischio"), ("bolla", "Indice Bolla (Sick Index)", "#f43f5e", "", 1, "rischio"), ("cred", "Indice Credito (Sick Index)", "#22d3ee", "", 1, "rischio"), ("regime", "Regime: pressione accumulata (0-100)", "#b91c1c", "", 0, "rischio"),
+    ("crollo_v2b", "Crollo · variante: Formula di Gemini (in prova)", "#0ea5e9", "", 0, "rischio"), ("crollo_k3", "Crollo · variante: Gemini + indice attuale (in prova)", "#a855f7", "", 0, "rischio"),
+    ("crollo_k4", "Crollo · variante: Gemini + attuale + allarme veloce (in prova)", "#f97316", "", 0, "rischio"), ("crollo_rapido", "Crollo · variante: Allarme veloce (in prova)", "#ef4444", "", 0, "rischio"),
+    ("crollo_g1", "Crollo · variante: Indice unificato di Gemini (in prova)", "#14b8a6", "", 0, "rischio"),
     ("t_p1", "Pilastro Andamento dei prezzi", "#8b5cf6", "", 0, "rischio"), ("t_p2", "Pilastro Credito", "#14b8a6", "", 0, "rischio"), ("t_p3", "Pilastro Paura sui mercati", "#06b6d4", "", 0, "rischio"),
     ("t_p4", "Pilastro Rischio tra i mercati", "#ec4899", "", 0, "rischio"), ("t_p5", "Pilastro Lavoro ed economia", "#84cc16", "", 0, "rischio"), ("t_p6", "Pilastro Liquidità", "#3b82f6", "", 0, "rischio"),
     ("pm_Titan_10g", "Titan (stato di salute) · calo ≥5% a 10 giorni", "#eab308", "%", 0, "prev"),
@@ -113,7 +116,7 @@ def build(sp: pd.Series, vw: pd.Series, aix: dict | None) -> dict | None:
     try:   # Status index: Minimi e Stato (serie compatte di status_index.json: settimanali fino al 2022, giornaliere dopo)
         from . import status_index
         sj = status_index.leggi()
-        for k in ("minimi", "stato", "super", "sea"):
+        for k in ("minimi", "stato", "super", "sea", "crollo_v2b", "crollo_k3", "crollo_k4", "crollo_rapido", "crollo_g1"):
             c = (sj or {}).get("serie", {}).get(k)
             if c:
                 g = (np.cumsum(c["dt"]) + c["t0"]).astype("int64")

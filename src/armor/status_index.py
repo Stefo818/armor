@@ -54,6 +54,11 @@ def calcola() -> dict:
     ser: dict[str, pd.Series] = {"crollo": X["indice"]}
     for k, (c, _) in CROLLO_KIDS.items():
         ser[k] = X[c]
+    try:   # varianti in prova dell'Indice crollo (non sostituiscono quello mostrato)
+        from . import crollo_varianti
+        ser.update(crollo_varianti.calcola(X))
+    except Exception:  # noqa: BLE001
+        pass
     from . import fase_minimo
     f = fase_minimo.calcola()
     for k in ("minimi", "mi_modello", "mi_semplice", *fase_minimo.SEGNALI):
