@@ -69,7 +69,7 @@ def aggiorna_french(stato: dict) -> None:
 
 
 # ----------------------------------------------------------------------------- CBOE: storia degli indici di volatilita'
-CBOE_IDX = ["VIX", "VIX9D", "VIX3M", "VIX6M", "VIX1D", "VVIX", "SKEW", "VXN", "RVX", "OVX", "GVZ", "VXEEM", "VXD"]
+CBOE_IDX = ["VIX", "VIX9D", "VIX3M", "VIX6M", "VIX1D", "VVIX", "SKEW", "VXN", "RVX", "OVX", "GVZ", "VXEEM", "VXD", "VXAPL", "VXAZN", "VXO"]   # VXO: indirizzo supposto, non verificato
 
 
 def parse_cboe_storia(txt: str) -> pd.DataFrame:
