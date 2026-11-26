@@ -89,8 +89,20 @@ def _tile(i: int, k: str, s: pd.Series, nome: str | None = None, tag: str = "") 
     v = float(s.iloc[-1])
     c = _colp(v)
     d = _delta(s, 5)
-    fr = "" if d is None or abs(d) < 0.5 else f"<em style='color:{'#dc2626' if d > 0 else '#16a34a'}'>{'▲' if d > 0 else '▼'}{_it(abs(d), 1)}</em>"
-    return (f"<button type='button' class='ts-t' data-ts='{i}' data-gi='{k}'><span class='ts-tn'>{E(nome)}</span><span class='ts-tv' style='color:{c}'>{_it(v)}</span>{fr}</button>")
+    per = "1 settimana"
+    if d is not None and abs(d) < 0.05:   # misure lente (si aggiornano di rado): si guarda l'ultimo mese, poi gli ultimi 3
+        for n, lab in ((21, "1 mese"), (63, "3 mesi")):
+            d2 = _delta(s, n)
+            if d2 is not None and abs(d2) >= 0.05:
+                d, per = d2, lab
+                break
+    if d is None:
+        fr = ""
+    elif abs(d) < 0.05:
+        fr = "<em class='ts-e' title='invariato da 3 mesi'>＝</em>"
+    else:   # in questi indici salire = più rischio (rosso), scendere = meno rischio (verde)
+        fr = f"<em class='{'up' if d > 0 else 'dn'}' title='variazione in {per}'>{'▲' if d > 0 else '▼'} {_it(abs(d), 1)}</em>"
+    return (f"<button type='button' class='ts-t' style='--c:{c}' data-ts='{i}' data-gi='{k}'><span class='ts-tn'>{E(nome)}</span><span class='ts-tv'>{_it(v)}</span>{fr}</button>")
 
 
 def _dett(i: int, k: str, s: pd.Series) -> str:
@@ -119,8 +131,8 @@ def _scheda(nome: str, k: str, s: pd.Series, nota: str, tiles: str) -> str:
             f"<div class='ts-nt'>{nota}</div><div class='ts-in'>{tiles}</div></div>")
 
 
-def _gruppo(titolo: str, tiles: str, n: int) -> str:
-    return f"<div class='ts-ph'>{titolo} <small>(tocca per il grafico)</small></div><div class='ts-tg' style='--n:{n}'>{tiles}</div>"
+def _gruppo(titolo: str, tiles: str, n: int, tocca: bool = False) -> str:
+    return f"<div class='ts-ph'>{titolo}{' <small>· tocca una misura per il grafico</small>' if tocca else ''}</div><div class='ts-tg' style='--n:{n}'>{tiles}</div>"
 
 
 def _flash_html(S: dict) -> str:
@@ -136,7 +148,7 @@ def _flash_html(S: dict) -> str:
     ra = ", ".join(f"{E(n)} <b>{_it(v)}</b>" for n, v in r["rassicurano"]) or "nessuna misura molto bassa"
     fl = "".join(f"<div class='fl {t}'><b>{E(a)}.</b> {E(b)}</div>" for t, a, b in r["flash"])
     return (f"<div class='ts-fr'>{E(r['frase'])}</div><div class='ts-pr'><span>Spingono in su:</span> {sp}.<br><span>Rassicurano:</span> {ra}.</div>"
-            f"<div class='ts-fh'>Indicazioni flash di oggi</div><div class='ts-fl'>{fl}</div>")
+            f"<details class='ts-fx'><summary>Indicazioni flash di oggi <span>{len(r['flash'])}</span></summary><div class='ts-fl'>{fl}</div></details>")
 
 
 def combo_html() -> str:
@@ -146,7 +158,7 @@ def combo_html() -> str:
         return ""
     a = df["armor_index"]
     arm = "".join(_tile(20 + i, k, df[k], APIL[k][0], APIL[k][1]) for i, k in enumerate(APIL) if k in df and df[k].notna().any())
-    arm_html = _gruppo("I 5 pilastri dell'Indice Armor", arm, 5) if arm else ""
+    arm_html = _gruppo("I 5 pilastri dell'Indice Armor", arm, 5, True) if arm else ""
     try:
         from . import super_armor_2 as s2
         from . import grafico_indici as gi
@@ -173,7 +185,7 @@ def combo_html() -> str:
                 f"Vale il più alto dei due pilastri: se uno vede guai il numero sale. Oggi finanza {_it(float(S['sa_fin'].dropna().iloc[-1]))}, economia {_it(float(S['sa_eco'].dropna().iloc[-1]))}: "
                 f"spinge di più {'la finanza' if top == 'sa_fin' else 'l’economia'}. Più è alto, più l'economia dei prossimi mesi rischia di rallentare.")
         sa_card = _scheda("Super Armor", "super", sa, nota,
-                          _flash_html(S) + _gruppo("I pilastri (finanza ed economia decidono il numero; gli altri sono informazioni senza peso)", pil, n_p) + _gruppo("Le 6 misure della finanza", fin, 6)
+                          _flash_html(S) + _gruppo("I pilastri (finanza ed economia decidono il numero; gli altri sono informazioni senza peso)", pil, n_p, True) + _gruppo("Le 6 misure della finanza", fin, 6)
                           + _gruppo("Le 7 misure dell'economia", eco, 7) + _gruppo("Costi e tassi (senza peso)", cos, 5) + _gruppo("Famiglie e mutui (senza peso)", fam, 7))
     except Exception:  # noqa: BLE001
         sa_card = ""
@@ -229,6 +241,6 @@ CSS = ("<style>.ts{background:var(--card);border:1px solid var(--bd);border-radi
        ".ts-tv{font-size:22px;font-weight:800;line-height:1.1}.ts-t em{font-style:normal;font-size:11px;font-weight:700;align-self:end;text-align:right}.ts-tb{grid-column:1/3;height:5px;border-radius:99px;background:var(--bd);overflow:hidden;margin-top:3px}.ts-tb i{display:block;height:100%;border-radius:99px}"
        ".ts-d2{display:grid;grid-template-columns:260px 1fr;gap:12px;margin-top:8px;padding:8px 10px;border-left:3px solid var(--bd);font-size:12.5px;line-height:1.5}@media(max-width:640px){.ts-d2{grid-template-columns:1fr}}.ts-d2[hidden]{display:none}"
        ".ts-d2 p{margin:2px 0}.ts-d2s small{display:block;font-size:10px;color:var(--mu);text-align:right}.ts-d2 .ts-sp{height:44px}"
-       ".ts-fr{font-size:14px;font-weight:800;margin:6px 0 4px}.ts-pr{font-size:12px;color:var(--mu);margin-bottom:6px}.ts-pr span{font-weight:700;color:var(--tx)}.ts-fh{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mu);margin:8px 0 4px}.ts-fl{display:grid;gap:4px}.fl{font-size:12.5px;line-height:1.35;padding:5px 8px;border-left:4px solid var(--bd);background:var(--bg);border-radius:6px}.fl.r{border-left-color:#dc2626}.fl.a{border-left-color:#f59e0b}.fl.v{border-left-color:#16a34a}.fl.n{border-left-color:#64748b}.ts-big{cursor:pointer}.ts-in{cursor:default;margin-top:6px}.ts-in .ts-tg{grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:4px}.ts-in .ts-t{grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:0 6px;padding:3px 8px}.ts-in .ts-tn{grid-column:auto;font-size:11px}.ts-in .ts-tv{font-size:16px}.ts-in .ts-t em{font-size:10px}.ts-how{font-size:12px;color:var(--mu);margin-top:8px}.ts-how summary{cursor:pointer;font-weight:700;color:var(--tx)}.ts-how p{margin:5px 0 0;line-height:1.5}"
-       '@media(max-width:560px){.ts{padding:8px 7px}.ts-g{grid-template-columns:1fr!important;gap:8px}.ts-c{padding:6px 7px}.ts-k{font-size:9.5px;letter-spacing:.2px}.ts-chip{font-size:9px;padding:0 6px;border-width:1px}.ts-cb{gap:4px}.ts-v{font-size:28px}.ts-v small{font-size:10px}.ts-cs{max-width:none}.ts-sp{height:24px}.ts-cm{font-size:9px;gap:0 6px}.ts-d{font-size:9.5px}.ts-nt{font-size:9.5px;line-height:1.25;margin-top:2px}.ts-ph{font-size:9.5px;margin:7px 0 3px}.ts-ph small{display:block;font-size:9px}.ts-tg,.ts-in .ts-tg{grid-template-columns:1fr 1fr!important;gap:3px}.ts-t,.ts-in .ts-t{grid-template-columns:minmax(0,1fr) 30px 46px;grid-template-areas:"n v d";align-items:center;gap:0 8px;padding:3px 8px;border-radius:8px}.ts-tn{grid-area:n;grid-column:auto;font-size:11px;color:var(--tx);white-space:normal;line-height:1.12}.ts-tag{grid-area:t;grid-column:auto;font-size:8.5px;margin:0;line-height:1.1}.ts-tb{grid-area:b;grid-column:auto;height:7px;margin:0}.ts-tv{grid-area:v;font-size:17px;text-align:right}.ts-t em{grid-area:d;font-size:9.5px;text-align:left;align-self:center}.ts-how{font-size:11px}}'
+       ".ts-fr{font-size:14px;font-weight:800;margin:6px 0 4px}.ts-pr{font-size:12px;color:var(--mu);margin-bottom:6px}.ts-pr span{font-weight:700;color:var(--tx)}.ts-fh{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mu);margin:8px 0 4px}.ts-fl{display:grid;gap:4px}.fl{font-size:12.5px;line-height:1.35;padding:5px 8px;border-left:4px solid var(--bd);background:var(--bg);border-radius:6px}.fl.r{border-left-color:#dc2626}.fl.a{border-left-color:#f59e0b}.fl.v{border-left-color:#16a34a}.fl.n{border-left-color:#64748b}.ts-big{cursor:pointer}.ts-in{cursor:default;margin-top:6px}.ts-in .ts-tg{grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:4px}.ts-in .ts-t{grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:0 6px;padding:3px 8px}.ts-in .ts-tn{grid-column:auto;font-size:11px}.ts-in .ts-tv{font-size:16px}.ts-in .ts-t em{font-size:10px}.ts-fx{margin:8px 0 4px;border:1px solid var(--bd);border-radius:10px;background:var(--bg)}.ts-fx>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mu)}.ts-fx>summary::-webkit-details-marker{display:none}.ts-fx>summary::before{content:'▸';transition:.15s;color:var(--tx)}.ts-fx[open]>summary::before{transform:rotate(90deg)}.ts-fx>summary span{margin-left:auto;font-size:10px;padding:0 7px;border-radius:99px;background:var(--bd);color:var(--tx)}.ts-fx .ts-fl{padding:0 8px 8px}.ts-in .ts-ph{margin:8px 0 4px;font-size:10.5px}.ts-in .ts-tg{grid-template-columns:repeat(auto-fill,minmax(148px,1fr))!important;gap:4px}.ts-in .ts-t{border:0;border-left:3px solid var(--c);border-radius:7px;background:color-mix(in srgb,var(--c) 8%,var(--bg));padding:3px 7px 3px 8px;grid-template-columns:minmax(0,1fr) auto auto;gap:0 6px}.ts-in .ts-t:hover{background:color-mix(in srgb,var(--c) 15%,var(--bg))}.ts-in .ts-t.on{box-shadow:0 0 0 1.5px var(--c)}.ts-in .ts-tn{color:var(--tx);opacity:.82;font-size:11px}.ts-in .ts-tv{color:var(--c);font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}.ts-t em.up,.ts-t em.dn,.ts-t em.ts-e{font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-radius:99px;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:end}.ts-t em.up{color:#dc2626;background:rgba(220,38,38,.13)}.ts-t em.dn{color:#16a34a;background:rgba(22,163,74,.14)}.ts-t em.ts-e{color:var(--mu);background:var(--bd)}.ts-how{font-size:12px;color:var(--mu);margin-top:8px}.ts-how summary{cursor:pointer;font-weight:700;color:var(--tx)}.ts-how p{margin:5px 0 0;line-height:1.5}"
+       '@media(max-width:560px){.ts{padding:8px 7px}.ts-g{grid-template-columns:1fr!important;gap:8px}.ts-c{padding:6px 7px}.ts-k{font-size:9.5px;letter-spacing:.2px}.ts-chip{font-size:9px;padding:0 6px;border-width:1px}.ts-cb{gap:4px}.ts-v{font-size:28px}.ts-v small{font-size:10px}.ts-cs{max-width:none}.ts-sp{height:24px}.ts-cm{font-size:9px;gap:0 6px}.ts-d{font-size:9.5px}.ts-nt{font-size:9.5px;line-height:1.25;margin-top:2px}.ts-ph{font-size:9.5px;margin:7px 0 3px}.ts-ph small{display:block;font-size:9px}.ts-tg,.ts-in .ts-tg{grid-template-columns:1fr 1fr!important;gap:3px}.ts-t,.ts-in .ts-t{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"n v d";align-items:center;gap:0 8px;padding:3px 8px;border-radius:8px}.ts-tn{grid-area:n;grid-column:auto;font-size:11px;color:var(--tx);white-space:normal;line-height:1.12}.ts-tag{grid-area:t;grid-column:auto;font-size:8.5px;margin:0;line-height:1.1}.ts-tb{grid-area:b;grid-column:auto;height:7px;margin:0}.ts-tv{grid-area:v;font-size:17px;text-align:right}.ts-t em{grid-area:d;font-size:9.5px;text-align:left;align-self:center}.ts-how{font-size:11px}}'
        "</style>")
