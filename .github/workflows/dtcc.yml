@@ -41,4 +41,4 @@ jobs:
           ls data_raw/dtcc/*.zip | xargs -n 40 gh release upload dtcc-raw --clobber
       - name: Salva i riepiloghi nel repository
         if: always()
-        run: bash scripts/salva.sh "Archivio DTCC: riepiloghi giornalieri" data/series data/dtcc_stato.json
+        run: bash scripts/salva.sh "Archivio DTCC - riepiloghi giornalieri" data/series data/dtcc_stato.json
