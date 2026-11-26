@@ -1,0 +1,316 @@
+{
+ "vincitore": "C4_G_F1_ab",
+ "barra_caso_ver": 0.588,
+ "criteri": {
+  "i_auc": false,
+  "ii_tabella": false,
+  "iii_stacco": false,
+  "iv_falsi": false,
+  "v_protezione": false
+ },
+ "passa": false,
+ "oggi": {
+  "C1_L_F1_a": 79.9,
+  "C2_L_F1_ab": 67.2,
+  "C3_G_F1_a": 77.5,
+  "C4_G_F1_ab": 65.2,
+  "C5_L_F2_a": 83.4,
+  "C6_L_F2_ab": 69.9,
+  "C7_G_F2_a": 77.6,
+  "C8_G_F2_ab": 66.2,
+  "C9_L_F0_ab": 63.1,
+  "C10_G_F0_ab": 65.9,
+  "RIF_vecchio": 79.1,
+  "RIF_gemini": 87.8
+ },
+ "risultati": {
+  "C1_L_F1_a": {
+   "auc_a_sel": 0.7712918739435646,
+   "auc_b_sel": 0.8887952657807309,
+   "auc_a_ver": 0.6926831659975049,
+   "auc_b_ver": 0.8116173805162203,
+   "punteggio_scelta": 0.8300435698621478,
+   "stacco_ver": -3.4230022294159426,
+   "media_calmi_ver": 26.45925085778081,
+   "falsi_ver_%": 27.971109652002625,
+   "protezione_ver": 0.4416902528856979,
+   "tabella_ver": {
+    "vicino_verde": 8.148734177215191,
+    "vicino_giallo": 20.253164556962027,
+    "mid_verde": 20.0,
+    "mid_giallo": 27.230046948356808,
+    "tutti_verde": 12.8060263653484,
+    "tutti_giallo": 53.214285714285715
+   },
+   "rapporti_ver": {
+    "tutti": 4.155409663865546,
+    "mid": 1.3615023474178405,
+    "vicino": 2.4854368932038833
+   }
+  },
+  "C2_L_F1_ab": {
+   "auc_a_sel": 0.777110164036982,
+   "auc_b_sel": 0.9226748338870432,
+   "auc_a_ver": 0.6932061472083154,
+   "auc_b_ver": 0.8245848694604413,
+   "punteggio_scelta": 0.8498924989620126,
+   "stacco_ver": -1.620300741590409,
+   "media_calmi_ver": 24.65206116514014,
+   "falsi_ver_%": 28.29940906106369,
+   "protezione_ver": 0.47407738454290255,
+   "tabella_ver": {
+    "vicino_verde": 8.545727136431784,
+    "vicino_giallo": NaN,
+    "mid_verde": 19.877675840978593,
+    "mid_giallo": 29.518072289156628,
+    "tutti_verde": 11.98813056379822,
+    "tutti_giallo": 64.1025641025641
+   },
+   "rapporti_ver": {
+    "tutti": 5.347169332317847,
+    "mid": 1.4849860982391103,
+    "vicino": NaN
+   }
+  },
+  "C3_G_F1_a": {
+   "auc_a_sel": 0.741617692173505,
+   "auc_b_sel": 0.9243837209302326,
+   "auc_a_ver": 0.667857901646846,
+   "auc_b_ver": 0.7766110268547411,
+   "punteggio_scelta": 0.8330007065518688,
+   "stacco_ver": -2.836211757698628,
+   "media_calmi_ver": 29.133023933750653,
+   "falsi_ver_%": 6.565988181221274,
+   "protezione_ver": 0.4885460728384743,
+   "tabella_ver": {
+    "vicino_verde": 7.88135593220339,
+    "vicino_giallo": 15.950920245398773,
+    "mid_verde": 18.928571428571427,
+    "mid_giallo": 28.638497652582164,
+    "tutti_verde": 13.490504256712507,
+    "tutti_giallo": 47.284345047923324
+   },
+   "rapporti_ver": {
+    "tutti": 3.50500946059121,
+    "mid": 1.512977234476039,
+    "vicino": 2.0238802031796292
+   }
+  },
+  "C4_G_F1_ab": {
+   "auc_a_sel": 0.7690699758786836,
+   "auc_b_sel": 0.9664233803986712,
+   "auc_a_ver": 0.6714730092665734,
+   "auc_b_ver": 0.8106001825242937,
+   "punteggio_scelta": 0.8677466781386773,
+   "stacco_ver": 0.043147016452948606,
+   "media_calmi_ver": 29.53812210427382,
+   "falsi_ver_%": 18.384766907419568,
+   "protezione_ver": 0.4119041246665768,
+   "tabella_ver": {
+    "vicino_verde": 7.261247040252565,
+    "vicino_giallo": 35.526315789473685,
+    "mid_verde": 20.0,
+    "mid_giallo": 29.166666666666668,
+    "tutti_verde": 10.224438902743142,
+    "tutti_giallo": 61.56648451730419
+   },
+   "rapporti_ver": {
+    "tutti": 6.0215025101070685,
+    "mid": 1.4583333333333335,
+    "vicino": 4.892591533180778
+   }
+  },
+  "C5_L_F2_a": {
+   "auc_a_sel": 0.7714313535005985,
+   "auc_b_sel": 0.8775097591362127,
+   "auc_a_ver": 0.6853505336042667,
+   "auc_b_ver": 0.7823726831836358,
+   "punteggio_scelta": 0.8244705563184056,
+   "stacco_ver": -4.983273563477038,
+   "media_calmi_ver": 29.47027831371084,
+   "falsi_ver_%": 30.006565988181222,
+   "protezione_ver": 0.5763531959687205,
+   "tabella_ver": {
+    "vicino_verde": 8.55085508550855,
+    "vicino_giallo": 10.344827586206897,
+    "mid_verde": 21.052631578947366,
+    "mid_giallo": 24.90566037735849,
+    "tutti_verde": 15.411681914144967,
+    "tutti_giallo": 38.66120218579235
+   },
+   "rapporti_ver": {
+    "tutti": 2.5085647628315493,
+    "mid": 1.1830188679245284,
+    "vicino": 1.2098003629764067
+   }
+  },
+  "C6_L_F2_ab": {
+   "auc_a_sel": 0.780799793073994,
+   "auc_b_sel": 0.9229325166112957,
+   "auc_a_ver": 0.6958472023229082,
+   "auc_b_ver": 0.8176772074701306,
+   "punteggio_scelta": 0.8518661548426449,
+   "stacco_ver": -2.2194461297643997,
+   "media_calmi_ver": 26.441453988202984,
+   "falsi_ver_%": 33.61785948785292,
+   "protezione_ver": 0.4416902528856979,
+   "tabella_ver": {
+    "vicino_verde": 8.120649651972158,
+    "vicino_giallo": 28.000000000000004,
+    "mid_verde": 19.921875,
+    "mid_giallo": 26.582278481012654,
+    "tutti_verde": 12.248743718592966,
+    "tutti_giallo": 54.72370766488414
+   },
+   "rapporti_ver": {
+    "tutti": 4.467699620640797,
+    "mid": 1.334326135517498,
+    "vicino": 3.4480000000000004
+   }
+  },
+  "C7_G_F2_a": {
+   "auc_a_sel": 0.7422436583796009,
+   "auc_b_sel": 0.9059966777408638,
+   "auc_a_ver": 0.6958787991043947,
+   "auc_b_ver": 0.7600616644399519,
+   "punteggio_scelta": 0.8241201680602324,
+   "stacco_ver": -5.70787440967732,
+   "media_calmi_ver": 30.423951029198605,
+   "falsi_ver_%": 17.202889034799735,
+   "protezione_ver": 0.5343571424674151,
+   "tabella_ver": {
+    "vicino_verde": 7.062146892655368,
+    "vicino_giallo": 15.658362989323843,
+    "mid_verde": 11.507936507936508,
+    "mid_giallo": 35.26970954356847,
+    "tutti_verde": 14.965517241379311,
+    "tutti_giallo": 40.54054054054054
+   },
+   "rapporti_ver": {
+    "tutti": 2.7089301282849667,
+    "mid": 3.0648161396480185,
+    "vicino": 2.217224199288256
+   }
+  },
+  "C8_G_F2_ab": {
+   "auc_a_sel": 0.7683105454064231,
+   "auc_b_sel": 0.9621474252491694,
+   "auc_a_ver": 0.6896989044633177,
+   "auc_b_ver": 0.8129273927746294,
+   "punteggio_scelta": 0.8652289853277962,
+   "stacco_ver": -2.1409355532465497,
+   "media_calmi_ver": 29.9241301154564,
+   "falsi_ver_%": 31.12278397898884,
+   "protezione_ver": 0.445959066750716,
+   "tabella_ver": {
+    "vicino_verde": 7.352941176470589,
+    "vicino_giallo": 18.181818181818183,
+    "mid_verde": 15.081967213114755,
+    "mid_giallo": 36.17021276595745,
+    "tutti_verde": 10.607071380920614,
+    "tutti_giallo": 52.44648318042814
+   },
+   "rapporti_ver": {
+    "tutti": 4.944482911161118,
+    "mid": 2.3982423681776135,
+    "vicino": 2.4727272727272727
+   }
+  },
+  "C9_L_F0_ab": {
+   "auc_a_sel": 0.779625683487425,
+   "auc_b_sel": 0.920687707641196,
+   "auc_a_ver": 0.6951858490000709,
+   "auc_b_ver": 0.8226953502216767,
+   "punteggio_scelta": 0.8501566955643105,
+   "stacco_ver": -1.4766489633259354,
+   "media_calmi_ver": 24.003253744786768,
+   "falsi_ver_%": 29.875246224556797,
+   "protezione_ver": 0.47407738454290255,
+   "tabella_ver": {
+    "vicino_verde": 8.32708177044261,
+    "vicino_giallo": NaN,
+    "mid_verde": 20.783132530120483,
+    "mid_giallo": 27.95031055900621,
+    "tutti_verde": 12.212389380530974,
+    "tutti_giallo": 64.41048034934498
+   },
+   "rapporti_ver": {
+    "tutti": 5.274191506866654,
+    "mid": 1.3448555225492842,
+    "vicino": NaN
+   }
+  },
+  "C10_G_F0_ab": {
+   "auc_a_sel": 0.7749822548919353,
+   "auc_b_sel": 0.9507144933554817,
+   "auc_a_ver": 0.6611670107810398,
+   "auc_b_ver": 0.7888212287282423,
+   "punteggio_scelta": 0.8628483741237085,
+   "stacco_ver": -0.41338863624495303,
+   "media_calmi_ver": 29.59873240559054,
+   "falsi_ver_%": 19.304005252790546,
+   "protezione_ver": 0.37388603125216535,
+   "tabella_ver": {
+    "vicino_verde": 8.108108108108109,
+    "vicino_giallo": 16.39344262295082,
+    "mid_verde": 19.45288753799392,
+    "mid_giallo": 30.48780487804878,
+    "tutti_verde": 10.904425914047467,
+    "tutti_giallo": 55.892255892255896
+   },
+   "rapporti_ver": {
+    "tutti": 5.125648643295702,
+    "mid": 1.5672637195121952,
+    "vicino": 2.0218579234972673
+   }
+  },
+  "RIF_vecchio": {
+   "auc_a_sel": 0.7530463688696667,
+   "auc_b_sel": 0.8381449335548172,
+   "auc_a_ver": 0.7040536491558756,
+   "auc_b_ver": 0.8201855136518275,
+   "punteggio_scelta": 0.795595651212242,
+   "stacco_ver": -2.308639232656784,
+   "media_calmi_ver": 19.699399230402005,
+   "falsi_ver_%": 16.217990807616548,
+   "protezione_ver": 0.602614069368981,
+   "tabella_ver": {
+    "vicino_verde": 8.758568164508757,
+    "vicino_giallo": 13.333333333333334,
+    "mid_verde": 15.636363636363637,
+    "mid_giallo": 32.56880733944954,
+    "tutti_verde": 12.294583079732197,
+    "tutti_giallo": 58.82352941176471
+   },
+   "rapporti_ver": {
+    "tutti": 4.784507862550961,
+    "mid": 2.082888841476424,
+    "vicino": 1.5223188405797103
+   }
+  },
+  "RIF_gemini": {
+   "auc_a_sel": 0.5753881366433474,
+   "auc_b_sel": 0.47051017441860465,
+   "auc_a_ver": 0.652727401491586,
+   "auc_b_ver": 0.6519757055982108,
+   "punteggio_scelta": 0.522949155530976,
+   "stacco_ver": 8.124707704452852,
+   "media_calmi_ver": 40.81323479219656,
+   "falsi_ver_%": 2.4294156270518714,
+   "protezione_ver": 0.3342369594732966,
+   "tabella_ver": {
+    "vicino_verde": 7.7733860342556,
+    "vicino_giallo": 10.273972602739725,
+    "mid_verde": 21.693121693121693,
+    "mid_giallo": 24.013157894736842,
+    "tutti_verde": 20.737327188940093,
+    "tutti_giallo": 25.936329588014985
+   },
+   "rapporti_ver": {
+    "tutti": 1.250707449022056,
+    "mid": 1.1069480102695763,
+    "vicino": 1.3216856280473646
+   }
+  }
+ }
+}
