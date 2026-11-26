@@ -22,3 +22,4 @@ data/_cache/
 # file dei brevetti scaricati a mano (diversi GB): restano solo sul PC
 Brevetti/
 key fred.txt
+data_raw/

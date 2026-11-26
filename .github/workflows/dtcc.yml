@@ -1,0 +1,44 @@
+name: Archivio completo DTCC (operazioni su CDS, tassi, cambi, azioni, materie prime)
+on:
+  schedule:
+    - cron: '40 5 * * *'   # i file del giorno prima escono poco dopo mezzanotte (ora di Greenwich)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: armor-dtcc
+  cancel-in-progress: false
+jobs:
+  dtcc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      PYTHONUNBUFFERED: '1'
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt tzdata
+      - name: Elenco dei file grezzi gia' archiviati
+        run: |
+          gh release view dtcc-raw >/dev/null 2>&1 || gh release create dtcc-raw --title "Archivio grezzo DTCC" --notes "File giornalieri interi scaricati da pddata.dtcc.com (uso personale di ricerca)"
+          gh release view dtcc-raw --json assets -q '.assets[].name' > /tmp/dtcc_gia.txt || : > /tmp/dtcc_gia.txt
+          wc -l /tmp/dtcc_gia.txt
+      - name: Scarica tutto
+        env:
+          PYTHONPATH: src
+          DTCC_GIA: /tmp/dtcc_gia.txt
+          DTCC_RAW: data_raw/dtcc
+          DTCC_SECONDI: '16000'
+        timeout-minutes: 300
+        run: python -m armor dtcc
+      - name: Carica i file interi nell'archivio grezzo
+        if: always()
+        run: |
+          [ -d data_raw/dtcc ] || exit 0
+          ls data_raw/dtcc/*.zip | xargs -n 40 gh release upload dtcc-raw --clobber
+      - name: Salva i riepiloghi nel repository
+        if: always()
+        run: bash scripts/salva.sh "Archivio DTCC: riepiloghi giornalieri" data/series data/dtcc_stato.json

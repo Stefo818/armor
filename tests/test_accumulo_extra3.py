@@ -47,3 +47,16 @@ def test_csv_da_zip():
 def test_parse_dtcc_generico():
     r = ex3.parse_dtcc_generico("Product Name,Rounded Notional Amount 1\nA,\"1,000+\"\nB,500\n")
     assert r["n_operazioni"] == 2 and r["importo_totale"] == 1500
+
+
+def test_dtcc_nomi_e_giorno_vuoto(tmp_path, monkeypatch):
+    import datetime as dt
+    import io, zipfile
+    assert ex3._nome_dtcc("sec_credits", dt.date(2026, 11, 25)) == "SEC_CUMULATIVE_CREDITS_2026_11_25.zip"
+    b = io.BytesIO()
+    with zipfile.ZipFile(b, "w") as z:
+        z.writestr("vuoto.csv", "")
+    class R: content = b.getvalue()
+    monkeypatch.setattr(ex3, "_get", lambda *a, **k: R)
+    r = ex3._dtcc_giorno("cftc_rates", dt.date(2026, 11, 22), str(tmp_path))
+    assert r["n_operazioni"] == 0 and (tmp_path / "CFTC_CUMULATIVE_RATES_2026_11_22.zip").exists()

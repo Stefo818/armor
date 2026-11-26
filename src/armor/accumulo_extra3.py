@@ -143,49 +143,76 @@ def parse_dtcc_generico(txt: str) -> dict:
     return out
 
 
-# sezione -> (cartella, nome file, usa il riepilogo con gli indici)
-DTCC_SEZ = {"cftc_credits": ("cftc", "CFTC_CUMULATIVE_CREDITS", True), "sec_credits": ("sec", "SEC_CUMULATIVE_CREDITS", False),
-            "cftc_rates": ("cftc", "CFTC_CUMULATIVE_RATES", False), "cftc_fx": ("cftc", "CFTC_CUMULATIVE_FOREIGN_EXCHANGE", False),
-            "cftc_equities": ("cftc", "CFTC_CUMULATIVE_EQUITIES", False), "cftc_commodities": ("cftc", "CFTC_CUMULATIVE_COMMODITIES", False)}
-DTCC_RECUPERO = ("cftc_credits", "sec_credits")   # solo i CDS si recuperano all'indietro (gli altri file sono molto grandi)
+# sezione -> (cartella, nome file, usa il riepilogo con gli indici). CANADA: indirizzi supposti, non verificati (l'esito dice se esistono)
+DTCC_SEZ = {"cftc_credits": ("cftc", "CFTC_CUMULATIVE_CREDITS", True), "cftc_commodities": ("cftc", "CFTC_CUMULATIVE_COMMODITIES", False),
+            "cftc_equities": ("cftc", "CFTC_CUMULATIVE_EQUITIES", False), "cftc_fx": ("cftc", "CFTC_CUMULATIVE_FOREIGN_EXCHANGE", False),
+            "cftc_rates": ("cftc", "CFTC_CUMULATIVE_RATES", False),
+            "sec_credits": ("sec", "SEC_CUMULATIVE_CREDITS", False), "sec_equities": ("sec", "SEC_CUMULATIVE_EQUITIES", False),
+            "sec_rates": ("sec", "SEC_CUMULATIVE_RATES", False),
+            "canada_credits": ("canada", "CANADA_CUMULATIVE_CREDITS", False), "canada_equities": ("canada", "CANADA_CUMULATIVE_EQUITIES", False),
+            "canada_rates": ("canada", "CANADA_CUMULATIVE_RATES", False), "canada_fx": ("canada", "CANADA_CUMULATIVE_FOREIGN_EXCHANGE", False),
+            "canada_commodities": ("canada", "CANADA_CUMULATIVE_COMMODITIES", False)}
+DTCC_GIORNI = 400   # il sito conserva circa un anno di file giornalieri
 
 
-def _dtcc_giorno(sez: str, g) -> dict:
-    cart, nome, indici = DTCC_SEZ[sez]
-    url = f"https://kgc0418-tdw-data-0.s3.amazonaws.com/{cart}/eod/{nome}_{g.year}_{g.month:02d}_{g.day:02d}.zip"
-    txt = _csv_da_zip(_get(url, headers=BROWSER, timeout=90, tries=2).content)
-    return parse_dtcc_cds(txt, str(g)) if indici else parse_dtcc_generico(txt)
+def _nome_dtcc(sez: str, g) -> str:
+    return f"{DTCC_SEZ[sez][1]}_{g.year}_{g.month:02d}_{g.day:02d}.zip"
+
+
+def _dtcc_giorno(sez: str, g, raw_dir: str | None = None) -> dict:
+    """Scarica il file del giorno (lo conserva intero in raw_dir) e ne ricava il riepilogo."""
+    import os
+    cart = DTCC_SEZ[sez][0]
+    nome = _nome_dtcc(sez, g)
+    contenuto = _get(f"https://kgc0418-tdw-data-0.s3.amazonaws.com/{cart}/eod/{nome}", headers=BROWSER, timeout=120, tries=2).content
+    if raw_dir:
+        os.makedirs(raw_dir, exist_ok=True)
+        with open(os.path.join(raw_dir, nome), "wb") as f:
+            f.write(contenuto)
+    try:
+        txt = _csv_da_zip(contenuto)
+        return parse_dtcc_cds(txt, str(g)) if DTCC_SEZ[sez][2] else parse_dtcc_generico(txt)
+    except (pd.errors.EmptyDataError, StopIteration):   # giorno senza operazioni (fine settimana)
+        return {"n_operazioni": 0.0, "importo_totale": 0.0}
 
 
 def aggiorna_dtcc_cds(stato: dict) -> None:
-    """Ogni giorno: ultimi giorni lavorativi di tutte le sezioni. La prima volta recupera 365 giorni dei CDS (il sito ne conserva circa un anno)."""
+    """Scarica TUTTO quello che il sito conserva (tutte le sezioni, tutti i giorni dell'ultimo anno), dai piu' recenti.
+    Ogni file intero va in DTCC_RAW (poi caricato nell'archivio grezzo); il riepilogo giornaliero va nelle serie.
+    Salta cio' che c'e' gia' (elenco in DTCC_GIA). Salva a blocchi, cosi' un'interruzione non perde il lavoro."""
+    import os
+    import time
+    raw = os.environ.get("DTCC_RAW", "data_raw/dtcc")
+    gia = set()
+    if os.environ.get("DTCC_GIA") and os.path.exists(os.environ["DTCC_GIA"]):
+        gia = {r.strip() for r in open(os.environ["DTCC_GIA"]) if r.strip()}
+    limite = time.time() + float(os.environ.get("DTCC_SECONDI", 17000))
     oggi = datetime.now(timezone.utc).date()
-    primo = store.load("dtcc_sec_credits_n_operazioni").size == 0
-    giorni = [oggi - timedelta(days=k) for k in range(1, 8)]
-    lunghi = [oggi - timedelta(days=k) for k in range(1, 366)] if primo else giorni
-    jobs = {}
-    for sez in DTCC_SEZ:
-        if sez in DTCC_RECUPERO:
-            scelti = lunghi
-        else:   # file grandi: ogni giro aggiunge fino a 25 giorni mancanti dell'ultimo anno, partendo dai piu' recenti
-            ha = set(store.load(f"dtcc_{sez}_n_operazioni").index.date)
-            manca = [oggi - timedelta(days=k) for k in range(1, 366) if (oggi - timedelta(days=k)) not in ha and (oggi - timedelta(days=k)).weekday() < 5]
-            scelti = list(dict.fromkeys(giorni + manca[:25]))
-        for g in scelti:
-            if g.weekday() < 5:
-                jobs[f"{sez}|{g}"] = (lambda s=sez, d=g: _dtcc_giorno(s, d))
-    ris = run_parallel(jobs, workers=4, deadline=1500)
-    fatti, err, righe = {}, [], {}
-    for k, (tipo, v) in ris.items():
-        sez, g = k.split("|")
-        if tipo != "ok":
-            err.append(f"{k}: {str(v)[:40]}")
-            continue
-        for nome, val in v.items():
-            righe.setdefault(f"dtcc_{sez}_{nome}", {})[pd.Timestamp(g)] = val
-        fatti[sez] = fatti.get(sez, 0) + 1
-    for sid, d in righe.items():
-        store.upsert(sid, pd.Series(d).sort_index())
-    if not fatti:
+    ha = {s: set(store.load(f"dtcc_{s}_n_operazioni").index.date) for s in DTCC_SEZ}
+    giorni = [oggi - timedelta(days=k) for k in range(1, DTCC_GIORNI)]
+    da_fare = [(s, g) for g in giorni for s in DTCC_SEZ
+               if not (g in ha[s] and (not gia or _nome_dtcc(s, g) in gia))]
+    fatti, err = {}, []
+    for i in range(0, len(da_fare), 120):
+        if time.time() > limite:
+            break
+        blocco = da_fare[i:i + 120]
+        jobs = {f"{s}|{g}": (lambda s=s, g=g: _dtcc_giorno(s, g, raw)) for s, g in blocco}
+        ris = run_parallel(jobs, workers=4, deadline=max(60.0, min(1800.0, limite - time.time())))
+        righe: dict = {}
+        for k, (tipo, v) in ris.items():
+            sez, g = k.split("|")
+            if tipo != "ok":
+                err.append(f"{k}: {str(v)[:40]}")
+                continue
+            for nome, val in v.items():
+                righe.setdefault(f"dtcc_{sez}_{nome}", {})[pd.Timestamp(g)] = val
+            fatti[sez] = fatti.get(sez, 0) + 1
+        for sid, d in righe.items():
+            store.upsert(sid, pd.Series(d).sort_index())
+    if not fatti and da_fare:
         raise RuntimeError("DTCC: nessun file scaricato: " + "; ".join(err[:2]))
-    stato["dtcc_cds"] = {"giorni_per_sezione": fatti, "errori": len(err), "esempi_errori": err[:3], "recupero": bool(primo)}
+    per_sez_err: dict = {}
+    for e in err:
+        per_sez_err[e.split("|")[0]] = per_sez_err.get(e.split("|")[0], 0) + 1
+    stato["dtcc_cds"] = {"da_fare": len(da_fare), "scaricati_per_sezione": fatti, "errori_per_sezione": per_sez_err, "esempi_errori": err[:4]}

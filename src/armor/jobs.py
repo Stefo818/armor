@@ -540,6 +540,16 @@ def main() -> None:
     elif cmd == "accumulo":   # archivio esteso per le ricerche future (workflow accumulo.yml): python -m armor accumulo [yahoo fred cboe_putcall intraday opzioni componenti]
         from . import accumulo
         accumulo.aggiorna(sys.argv[2:] or None)
+    elif cmd == "dtcc":   # archivio DTCC completo (workflow dtcc.yml)
+        from . import accumulo_extra3 as ex3, store as _st
+        stato: dict = {}
+        try:
+            ex3.aggiorna_dtcc_cds(stato)
+        finally:
+            import json as _j
+            from .config import DATA as _D
+            (_D / "dtcc_stato.json").write_text(_j.dumps(stato, ensure_ascii=False, indent=1), encoding="utf-8")
+            print(stato)
     elif cmd == "senza-download":
         tutto(skip_download=True)
     elif cmd == "diagnosi":

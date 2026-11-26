@@ -580,7 +580,7 @@ def aggiorna(solo: list[str] | None = None) -> dict:
              ("dealer", ex.aggiorna_dealer), ("ftd", ex.aggiorna_ftd), ("etf_quote", ex.aggiorna_etf_quote),
              ("moduli_sec", ex2.aggiorna_moduli_sec), ("parole_sec", ex2.aggiorna_parole_sec), ("cripto_leva", ex2.aggiorna_cripto_leva), ("jgb", ex2.aggiorna_jgb),
              ("testi", ex2.aggiorna_testi), ("retail", ex2.aggiorna_retail),
-             ("french", ex3.aggiorna_french), ("cboe_storia", ex3.aggiorna_cboe_storia), ("dtcc_cds", ex3.aggiorna_dtcc_cds),
+             ("french", ex3.aggiorna_french), ("cboe_storia", ex3.aggiorna_cboe_storia),
              ("derivati_componenti", dv.aggiorna_derivati_componenti), ("derivati_intraday", dv.aggiorna_derivati_intraday),
              ("tesoro_curve", ex.aggiorna_ust), ("short_interest", ex.aggiorna_short_interest), ("wikipedia", ex.aggiorna_wiki),
              ("wiki_lingue", ex2.aggiorna_wiki_lingue), ("gdelt", ex.aggiorna_gdelt), ("trends", ex2.aggiorna_trends))
