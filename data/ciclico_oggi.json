@@ -204,11 +204,11 @@
 "calo_max_12": -0.4
 },
 {
-"mese": "2025-08",
+"mese": "2025-09",
 "distanza": 0.61,
-"ret_6": 6.5,
-"ret_12": 19.0,
-"calo_max_12": -1.8
+"ret_6": -5.2,
+"ret_12": 14.4,
+"calo_max_12": -5.2
 },
 {
 "mese": "1999-02",
@@ -237,6 +237,13 @@
 "ret_6": 22.8,
 "ret_12": 49.1,
 "calo_max_12": 1.5
+},
+{
+"mese": "2025-06",
+"distanza": 0.66,
+"ret_6": 11.1,
+"ret_12": 20.9,
+"calo_max_12": -0.1
 },
 {
 "mese": "2005-04",
@@ -274,32 +281,25 @@
 "calo_max_12": -10.4
 },
 {
-"mese": "2007-10",
-"distanza": 0.68,
-"ret_6": -10.6,
-"ret_12": -37.5,
-"calo_max_12": -45.2
-},
-{
-"mese": "1997-10",
-"distanza": 0.69,
-"ret_6": 21.6,
-"ret_12": 20.1,
-"calo_max_12": -0.9
-},
-{
 "mese": "2024-12",
-"distanza": 0.69,
+"distanza": 0.68,
 "ret_6": 5.5,
 "ret_12": 16.4,
 "calo_max_12": -15.3
+},
+{
+"mese": "1997-10",
+"distanza": 0.68,
+"ret_6": 21.6,
+"ret_12": 20.1,
+"calo_max_12": -0.9
 }
 ],
-"rialzo_12_su_k": 18,
-"mediana_12": 10.6,
-"p10_12": -15.5,
-"p90_12": 20.4,
-"calo10_12_su_k": 12,
+"rialzo_12_su_k": 19,
+"mediana_12": 12.0,
+"p10_12": -12.4,
+"p90_12": 20.7,
+"calo10_12_su_k": 11,
 "rialzo_6_su_k": 19,
 "nota": "Non ancora validato: si mostra nell'app solo se supera la verifica della Fase B."
 },
@@ -308,14 +308,14 @@
 "modello": "Famiglie combinate (storia lunga)",
 "ob": "calo10",
 "h": 3,
-"p": 0.1976,
+"p": 0.1973,
 "base": 0.1478
 },
 {
 "modello": "Due stadi: recessione poi calo (storia lunga)",
 "ob": "calo10",
 "h": 3,
-"p": 0.32,
+"p": 0.3208,
 "base": 0.1478
 }
 ]

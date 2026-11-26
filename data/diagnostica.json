@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-26T14:26:03Z",
+ "data_utc": "2026-11-26T15:21:34Z",
  "oggi": "2026-11-26",
  "ultima_previsione": "2026-11-25",
  "giorni_da_ultima": 1,
@@ -19,12 +19,25 @@
    "stato": "ok"
   },
   {
+   "nome": "aaii_bear",
+   "chiave": false,
+   "ultima_data": "2026-11-05",
+   "giorni_ritardo": 21,
+   "stato": "ok"
+  },
+  {
+   "nome": "aaii_bull",
+   "chiave": false,
+   "ultima_data": "2026-11-05",
+   "giorni_ritardo": 21,
+   "stato": "ok"
+  },
+  {
    "nome": "aaii_spread",
    "chiave": true,
-   "ultima_data": null,
-   "giorni_ritardo": null,
-   "stato": "errore",
-   "nota": "mai scaricata"
+   "ultima_data": "2026-11-05",
+   "giorni_ritardo": 21,
+   "stato": "warning"
   },
   {
    "nome": "ai_capex_ocf",
