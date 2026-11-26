@@ -344,7 +344,7 @@ def dati() -> dict:
 # Picchi dell'S&P 500 prima di crolli nati DENTRO il sistema finanziario (lista di PROTOCOLLO_TERRITORI.md; esclusi gli shock esterni come il Covid).
 PICCHI_ENDOGENI = ["1990-07-16", "1997-10-07", "1998-07-17", "2000-03-24", "2007-10-09", "2010-04-23", "2011-04-29",
                    "2018-01-26", "2018-09-20", "2022-01-03", "2023-02-02", "2024-07-16"]
-FINESTRA_PRIMA = 20   # sedute (4 settimane) prima del picco; vedi scratch/armor_prima_crollo.py
+FINESTRA_PRIMA = 10   # sedute (2 settimane) prima del picco (richiesta del 26/11/2026: accorgersene qualche giorno prima, non mesi)
 
 
 def _maschere():
@@ -395,26 +395,26 @@ def storia(d: dict) -> dict:
             t = pd.to_datetime(pd.Series(r["dt"]).cumsum() + r["t0"], unit="D")
             v = pd.Series([x / 10 for x in r["v"]], index=t.values)
             v = v[~v.index.duplicated()]
-            row = [round(float(v.mean()), 1), None, None, 0, 0, FINESTRA_PRIMA, 0, 0]
+            row = [round(float(v.mean()), 1), None, None, 0, 0, FINESTRA_PRIMA, 0, 0, None]   # [8] = media delle ultime 5 sedute prima del picco
             if m is not None:
                 cal, picchi = _maschere.cal, _maschere.picchi
                 z = m[0].reindex(v.index, method="ffill", tolerance=pd.Timedelta(days=7)).fillna(False).astype(bool).to_numpy()
                 if z.sum() >= 5:
                     row[1] = round(float(v[z].mean()), 1)
-                n_sed, soglia, att = FINESTRA_PRIMA, 0, 0
-                for s in SOGLIE_ATTIVA:
-                    a = [x for x in _anticipo(v, cal, picchi, s) if x is not None]
-                    if len(a) >= 4:
-                        n_sed, soglia, att = max(5, int(round(float(pd.Series(a).median())))), s, len(a); break
-                eps = []
+                n_sed, soglia, att = FINESTRA_PRIMA, 0, 0   # finestra fissa: 10 sedute (2 settimane); si guarda anche la media delle ultime 5
+                eps, eps5 = [], []
                 for i in picchi:
-                    w = v[(v.index >= cal[max(0, i - n_sed)]) & (v.index <= cal[i] + pd.Timedelta(days=1))]
+                    w = v[(v.index >= cal[max(0, i - n_sed + 1)]) & (v.index <= cal[i] + pd.Timedelta(days=1))]
+                    w5 = v[(v.index >= cal[max(0, i - 4)]) & (v.index <= cal[i] + pd.Timedelta(days=1))]
                     if len(w):
                         eps.append(float(w.mean()))
+                    if len(w5):
+                        eps5.append(float(w5.mean()))
                 if len(eps) >= 5:
                     row[2] = round(sum(eps) / len(eps), 1)
                     row[3] = len(eps)
                     row[5], row[6], row[7] = n_sed, soglia, att
+                    row[8] = round(sum(eps5) / len(eps5), 1) if eps5 else None
                     if row[1] is not None:
                         row[4] = sum(1 for e in eps if e > row[1])
             out[k] = row
@@ -578,7 +578,7 @@ box.innerHTML=h+'</div>';box.querySelectorAll('.gi-k').forEach(function(b){b.add
 function storiaBox(k){var b=document.getElementById('gi-hs'),r=ST[k];if(!b)return;if(!r){b.innerHTML='';return}
 function f(x){return x==null?'\u2013':(cfg().val&&fv?fv(x):it(x,1))}
 function t(l,x,s,c){return '<div class="gi-hc"><b style="color:'+(x==null?'var(--mu)':zc(x))+'">'+f(x)+'</b><span>'+l+'</span><small>'+s+'</small></div>'}
-b.innerHTML='<div class="gi-hr">'+t('Media storica',r[0],'tutti i giorni, comprese le discese già in corso')+t('Mercati calmi',r[1],'Borsa vicina ai massimi, nessun calo in vista')+t('Prima di un crollo',r[2],r[3]?('media delle '+r[5]+' sedute (circa '+Math.round(r[5]/5)+' settimane) prima del picco di '+r[3]+' crolli nati dentro la finanza'+(r[6]?('. Quanti giorni prima: '+r[5]+' = il tempo tipico con cui l\u2019indice supera '+r[6]+' prima del crollo (lo fa in '+r[7]+' crolli su '+r[3]+')'):'. L\u2019indice non supera 50 prima dei crolli: finestra fissa')+'; sopra i mercati calmi in '+r[4]+' su '+r[3]+(r[1]!=null?('. Rispetto ai mercati calmi: '+(r[2]>=r[1]?'+':'')+(r[2]-r[1]).toFixed(1).replace('.',',')+' punti. È sotto la media storica perché questa include le fasi di discesa già avviate, quando l\u2019indice è alto'):'')):'dati troppo pochi')+'</div>'}
+b.innerHTML='<div class="gi-hr">'+t('Media storica',r[0],'tutti i giorni, comprese le discese già in corso')+t('Mercati calmi',r[1],'Borsa vicina ai massimi, nessun calo in vista')+t('Prima di un crollo',r[2],r[3]?('media delle 10 sedute (2 settimane) prima del picco di '+r[3]+' crolli nati dentro la finanza'+(r[8]!=null?('; nelle ultime 5: '+String(r[8]).replace('.',',')):'')+'; sopra i mercati calmi in '+r[4]+' su '+r[3]+(r[1]!=null?('. Rispetto ai mercati calmi: '+(r[2]>=r[1]?'+':'')+(r[2]-r[1]).toFixed(1).replace('.',',')+' punti. È sotto la media storica perché questa include le fasi di discesa già avviate, quando l\u2019indice è alto'):'')):'dati troppo pochi')+'</div>'}
 function open(k){if(!S[k])return;cur=k;T=S[k].t;V=S[k].v;setTheme();document.getElementById('gi-nm').firstChild.nodeValue=NM[k];document.getElementById('gi-ds').textContent=DS[k]||'';storiaBox(k);RG=cfg().rng||RGD;chips();
 document.body.style.overflow='hidden';ov.classList.add('on');requestAnimationFrame(function(){ov.classList.add('in')});size();
 cursor=null;range(cfg().def!=null?cfg().def:2);v0=tv0;v1=tv1;fit();ya=tya;yb=tyb;stats();kids(k);var pr=KD.par[k],bk=document.getElementById('gi-bk');if(pr){bk.hidden=false;bk.textContent='\u2039 '+NM[pr];bk.onclick=function(){open(pr)}}else{bk.hidden=true}head();draw();sh.scrollTop=0}
