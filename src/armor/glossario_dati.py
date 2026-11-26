@@ -234,7 +234,10 @@ def _archivio(k: str):
             ("retail_", "Attività dei piccoli investitori sui forum online (menzioni di titoli).", "ApeWisdom."),
             ("aaii_", "Sondaggio settimanale dei piccoli investitori americani: quanti si dicono rialzisti, neutrali o ribassisti.", "AAII."),
             ("tsa_", "Persone che passano ogni giorno i controlli aeroportuali americani: indicatore rapido dell'economia reale.", "TSA."),
-            ("cboe_pc_", "Rapporto tra opzioni put (di protezione) e call (di scommessa al rialzo) scambiate ogni giorno: più è alto, più gli investitori si proteggono.", "CBOE.")):
+            ("cboe_pc_", "Rapporto tra opzioni put (di protezione) e call (di scommessa al rialzo) scambiate ogni giorno: più è alto, più gli investitori si proteggono.", "CBOE."),
+            ("cboe_", "Storia completa di un indice della paura di Cboe (VIX e gli altri: a 9 giorni, 3 e 6 mesi, paura sulla paura, protezione dai crolli, Nasdaq, piccole aziende, petrolio, oro, mercati emergenti, Apple, Amazon). Più è alto, più gli investitori pagano per proteggersi.", "Cboe, storia giornaliera."),
+            ("ff_", "Rendimento giornaliero (in %) dei fattori o dei settori di Borsa americani dal 1926: mercato, aziende piccole contro grandi, care contro economiche, qualità, momentum, o uno dei 49 settori.", "Ken French, Dartmouth."),
+            ("dtcc_", "Riepilogo giornaliero delle operazioni reali comunicate al pubblico alla DTCC: numero di operazioni e importo scambiato su CDS (assicurazioni contro il fallimento di aziende e indici), tassi, cambi, azioni e materie prime. Sulle operazioni sui CDS degli indici anche il prezzo medio.", "DTCC, diffusione pubblica dei prezzi (PPD).")):
         if k.startswith(pre):
             return (cosa, "Per ora non entra in nessun indice: è un archivio per cercare, fra qualche mese, segnali che anticipano le correzioni.",
                     "Si legge come ogni serie storica: conta il confronto con i valori passati.", fonte)
