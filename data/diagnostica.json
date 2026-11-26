@@ -1,5 +1,5 @@
 {
- "data_utc": "2026-11-26T05:21:02Z",
+ "data_utc": "2026-11-26T13:32:22Z",
  "oggi": "2026-11-26",
  "ultima_previsione": "2026-11-25",
  "giorni_da_ultima": 1,
@@ -43,8 +43,8 @@
   {
    "nome": "armor_index",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -78,8 +78,22 @@
   {
    "nome": "bce_ciss_area_euro",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_austria",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_belgio",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -90,45 +104,115 @@
    "stato": "ok"
   },
   {
+   "nome": "bce_ciss_contr_azioni",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_contr_banche",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_contr_cambi",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_contr_correlazione",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_contr_monetario",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_contr_obbligazioni",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_finlandia",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
    "nome": "bce_ciss_francia",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_germania",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_irlanda",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_italia",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_olanda",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_ciss_portogallo",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_regno_unito",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_spagna",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_ciss_usa",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -169,43 +253,134 @@
   {
    "nome": "bce_rend_aaa_10a",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_aaa_2a",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_aaa_30a",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_tutti_10a",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_tutti_2a",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
    "nome": "bce_rend_tutti_30a",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_area_euro_pesata",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_area_euro_pil",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_austria",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_belgio",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_finlandia",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_francia",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_germania",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_grecia",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_irlanda",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_italia",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_olanda",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_portogallo",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "bce_sov_spagna",
+   "chiave": false,
+   "ultima_data": "2026-11-20",
+   "giorni_ritardo": 6,
    "stato": "ok"
   },
   {
@@ -246,8 +421,8 @@
   {
    "nome": "btc",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -276,6 +451,20 @@
    "chiave": true,
    "ultima_data": "2026-11-20",
    "giorni_ritardo": 6,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_gvz_gvz",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_ovx_ovx",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -314,6 +503,328 @@
    "stato": "warning"
   },
   {
+   "nome": "cboe_rvx_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_rvx_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_rvx_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_rvx_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_skew_skew",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix1d_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix1d_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix1d_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix1d_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix3m_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix3m_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix3m_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix3m_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix6m_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix6m_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix6m_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix6m_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix9d_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix9d_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix9d_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix9d_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vix_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vvix_vvix",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxapl_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxapl_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxapl_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxapl_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxazn_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxazn_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxazn_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxazn_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxd_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxd_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxd_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxd_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxeem_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxeem_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxeem_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxeem_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxn_close",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxn_high",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxn_low",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
+   "nome": "cboe_vxn_open",
+   "chiave": false,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
+   "stato": "ok"
+  },
+  {
    "nome": "ccsa",
    "chiave": false,
    "ultima_data": "2026-11-14",
@@ -344,8 +855,8 @@
   {
    "nome": "ciss",
    "chiave": true,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -2857,50 +3368,50 @@
   {
    "nome": "di_vix_ampiezza",
    "chiave": false,
-   "ultima_data": "2026-11-25",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-26",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_barre",
    "chiave": false,
-   "ultima_data": "2026-11-25",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-26",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_calo_massimo_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-25",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-26",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_ritorno_giornata",
    "chiave": false,
-   "ultima_data": "2026-11-25",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-26",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_ritorno_prima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-25",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-26",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_ritorno_ultima_ora",
    "chiave": false,
-   "ultima_data": "2026-11-25",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-26",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
    "nome": "di_vix_vol_realizzata",
    "chiave": false,
-   "ultima_data": "2026-11-25",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-26",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -3907,8 +4418,8 @@
   {
    "nome": "eth",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5132,8 +5643,8 @@
   {
    "nome": "f_nasdaqcom",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -5737,6 +6248,426 @@
    "ultima_data": "2026-11-24",
    "giorni_ritardo": 2,
    "stato": "ok"
+  },
+  {
+   "nome": "ff_fattori3_hml",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori3_mkt_rf",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori3_rf",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori3_smb",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori5_cma",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori5_hml",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori5_mkt_rf",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori5_rf",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori5_rmw",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_fattori5_smb",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_momentum_mom",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_aero",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_agric",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_autos",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_banks",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_beer",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_bldmt",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_books",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_boxes",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_bussv",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_chems",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_chips",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_clths",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_cnstr",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_coal",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_drugs",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_elceq",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_fabpr",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_fin",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_food",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_fun",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_gold",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_guns",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_hardw",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_hlth",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_hshld",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_insur",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_labeq",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_mach",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_meals",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_medeq",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_mines",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_oil",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_other",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_paper",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_persv",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_rlest",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_rtail",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_rubbr",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_ships",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_smoke",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_soda",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_softw",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_steel",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_telcm",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_toys",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_trans",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_txtls",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_util",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
+  },
+  {
+   "nome": "ff_settori49_whlsl",
+   "chiave": false,
+   "ultima_data": "2026-09-30",
+   "giorni_ritardo": 57,
+   "stato": "warning"
   },
   {
    "nome": "fisc_debito_pubblico",
@@ -6378,8 +7309,8 @@
   {
    "nome": "nikkei",
    "chiave": false,
-   "ultima_data": "2026-11-25",
-   "giorni_ritardo": 1,
+   "ultima_data": "2026-11-26",
+   "giorni_ritardo": 0,
    "stato": "ok"
   },
   {
@@ -9059,8 +9990,8 @@
   {
    "nome": "x_ada_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -9143,8 +10074,8 @@
   {
    "nome": "x_avax_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -9227,8 +10158,8 @@
   {
    "nome": "x_bnb_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -9472,8 +10403,8 @@
   {
    "nome": "x_doge_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -10004,8 +10935,8 @@
   {
    "nome": "x_inds",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -10165,8 +11096,8 @@
   {
    "nome": "x_link_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -10585,8 +11516,8 @@
   {
    "nome": "x_sol_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -11243,8 +12174,8 @@
   {
    "nome": "x_xrp_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -11376,8 +12307,8 @@
   {
    "nome": "xv_ada_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -11439,8 +12370,8 @@
   {
    "nome": "xv_avax_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -11502,8 +12433,8 @@
   {
    "nome": "xv_bnb_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -11670,8 +12601,8 @@
   {
    "nome": "xv_doge_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -12118,8 +13049,8 @@
   {
    "nome": "xv_inds",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -12237,8 +13168,8 @@
   {
    "nome": "xv_link_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -12552,8 +13483,8 @@
   {
    "nome": "xv_sol_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
@@ -13007,8 +13938,8 @@
   {
    "nome": "xv_xrp_usd",
    "chiave": false,
-   "ultima_data": "2026-11-24",
-   "giorni_ritardo": 2,
+   "ultima_data": "2026-11-25",
+   "giorni_ritardo": 1,
    "stato": "ok"
   },
   {
