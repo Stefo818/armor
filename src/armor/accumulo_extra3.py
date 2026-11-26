@@ -132,21 +132,54 @@ def parse_dtcc_cds(txt: str, giorno: str) -> dict:
     return out
 
 
+def parse_dtcc_generico(txt: str) -> dict:
+    """Riepilogo di un giorno per le sezioni senza distinzione indice/singola azienda (SEC, tassi, cambi, azioni, materie prime)."""
+    df = pd.read_csv(io.StringIO(txt), dtype=str, low_memory=False)
+    notc = _col(df, "notional", "amount", "1") or _col(df, "notional")
+    out = {"n_operazioni": float(len(df))}
+    if notc is not None:
+        imp = pd.to_numeric(df[notc].astype(str).str.replace(r"[^\d.]", "", regex=True), errors="coerce")
+        out["importo_totale"] = float(imp.sum())
+    return out
+
+
+# sezione -> (cartella, nome file, usa il riepilogo con gli indici)
+DTCC_SEZ = {"cftc_credits": ("cftc", "CFTC_CUMULATIVE_CREDITS", True), "sec_credits": ("sec", "SEC_CUMULATIVE_CREDITS", False),
+            "cftc_rates": ("cftc", "CFTC_CUMULATIVE_RATES", False), "cftc_fx": ("cftc", "CFTC_CUMULATIVE_FOREIGN_EXCHANGE", False),
+            "cftc_equities": ("cftc", "CFTC_CUMULATIVE_EQUITIES", False), "cftc_commodities": ("cftc", "CFTC_CUMULATIVE_COMMODITIES", False)}
+DTCC_RECUPERO = ("cftc_credits", "sec_credits")   # solo i CDS si recuperano all'indietro (gli altri file sono molto grandi)
+
+
+def _dtcc_giorno(sez: str, g) -> dict:
+    cart, nome, indici = DTCC_SEZ[sez]
+    url = f"https://kgc0418-tdw-data-0.s3.amazonaws.com/{cart}/eod/{nome}_{g.year}_{g.month:02d}_{g.day:02d}.zip"
+    txt = _csv_da_zip(_get(url, headers=BROWSER, timeout=90, tries=2).content)
+    return parse_dtcc_cds(txt, str(g)) if indici else parse_dtcc_generico(txt)
+
+
 def aggiorna_dtcc_cds(stato: dict) -> None:
+    """Ogni giorno: ultimi giorni lavorativi di tutte le sezioni. La prima volta recupera 365 giorni dei CDS (il sito ne conserva circa un anno)."""
     oggi = datetime.now(timezone.utc).date()
-    fatti, err = [], []
-    for k in range(1, 8):   # ultimi giorni lavorativi: i file escono con un giorno di ritardo
-        g = oggi - timedelta(days=k)
-        if g.weekday() >= 5:
+    primo = store.load("dtcc_sec_credits_n_operazioni").size == 0
+    giorni = [oggi - timedelta(days=k) for k in range(1, 8)]
+    lunghi = [oggi - timedelta(days=k) for k in range(1, 366)] if primo else giorni
+    jobs = {}
+    for sez in DTCC_SEZ:
+        for g in (lunghi if sez in DTCC_RECUPERO else giorni):
+            if g.weekday() < 5:
+                jobs[f"{sez}|{g}"] = (lambda s=sez, d=g: _dtcc_giorno(s, d))
+    ris = run_parallel(jobs, workers=4, deadline=1500)
+    fatti, err, righe = {}, [], {}
+    for k, (tipo, v) in ris.items():
+        sez, g = k.split("|")
+        if tipo != "ok":
+            err.append(f"{k}: {str(v)[:40]}")
             continue
-        try:
-            r = _get(DTCC_URL.format(y=g.year, m=f"{g.month:02d}", d=f"{g.day:02d}"), headers=BROWSER, timeout=90, tries=2)
-            riep = parse_dtcc_cds(_csv_da_zip(r.content), str(g))
-            for nome, v in riep.items():
-                store.upsert(f"dtcc_cds_{nome}", pd.Series([v], index=[pd.Timestamp(g)]))
-            fatti.append(str(g))
-        except Exception as e:  # noqa: BLE001
-            err.append(f"{g}: {str(e)[:50]}")
+        for nome, val in v.items():
+            righe.setdefault(f"dtcc_{sez}_{nome}", {})[pd.Timestamp(g)] = val
+        fatti[sez] = fatti.get(sez, 0) + 1
+    for sid, d in righe.items():
+        store.upsert(sid, pd.Series(d).sort_index())
     if not fatti:
         raise RuntimeError("DTCC: nessun file scaricato: " + "; ".join(err[:2]))
-    stato["dtcc_cds"] = {"giorni": fatti, "errori": err[:3]}
+    stato["dtcc_cds"] = {"giorni_per_sezione": fatti, "errori": len(err), "esempi_errori": err[:3], "recupero": bool(primo)}

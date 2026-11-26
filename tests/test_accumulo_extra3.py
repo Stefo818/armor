@@ -42,3 +42,8 @@ def test_csv_da_zip():
     with zipfile.ZipFile(b, "w") as z:
         z.writestr("a.CSV", "x,y\n1,2\n")
     assert ex3._csv_da_zip(b.getvalue()).startswith("x,y")
+
+
+def test_parse_dtcc_generico():
+    r = ex3.parse_dtcc_generico("Product Name,Rounded Notional Amount 1\nA,\"1,000+\"\nB,500\n")
+    assert r["n_operazioni"] == 2 and r["importo_totale"] == 1500
