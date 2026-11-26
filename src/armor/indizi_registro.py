@@ -58,6 +58,13 @@ def riga() -> dict:
         r["segnale_vol_allarme"] = int(r["vol60_sp_pct"] >= 90)
     except Exception:  # noqa: BLE001
         pass
+    try:   # candidato «reazione rapida» (ESITO_REAZIONE_RAPIDA.md): solo da misurare in avanti
+        from . import indice_crollo as _ic
+        pr = _ic.punteggio_rapido().dropna()
+        r["crollo_rapido"] = round(float(pr.iloc[-1]), 1)
+        r["crollo_rapido_allarme"] = int(float(pr.iloc[-1]) >= _ic.SOGLIA_RAPIDO)
+    except Exception:  # noqa: BLE001
+        pass
     for nome, chiave in (("nfci", "nfci"), ("liquidita_netta_13s", "net_liq_13w"), ("rend_2anni", "dgs2"), ("rend_10anni", "dgs10"),
                          ("spread_baa", "baa10y"), ("curva_10_2", "t10y2y"),
                          ("mutuo_30_anni", "f_mortgage30us"), ("petrolio_wti", "wti"), ("inflazione_cpi", "cpi"), ("tasso_fed", "fedfunds"), ("debito_famiglie_reddito", "f_tdsp"),

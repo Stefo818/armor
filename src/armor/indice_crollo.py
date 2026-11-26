@@ -344,3 +344,23 @@ def oggi_html() -> str:
         + _predisp_html(d) +
         "<details class='icd'><summary>Da cosa nasce e come si usa</summary>"
         f"<div class='icb'>{''.join(x for x in corpo if x)}</div></details></div>")
+
+
+SOGLIA_RAPIDO = 67.2   # PROTOCOLLO_REAZIONE_RAPIDA / ESITO_REAZIONE_RAPIDA: 95° percentile dei giorni calmi fino al 2007
+
+
+def punteggio_rapido() -> pd.Series:
+    """Candidato 2 della prova di reazione rapida (solo registro in avanti, peso zero): salto e curva del VIX, livello del VIX,
+    VIX9D su VIX, VVIX, volatilita' dei soli ribassi a 5 giorni; tutti in percentile (50 dove la serie non esiste ancora)."""
+    sp = store.load("sp500").dropna()
+    cal = sp.index
+    g = lambda sid, lag=0: _lag(store.load(sid).dropna(), lag).reindex(cal).ffill()
+    vix, vix3 = g("vix"), g("vix3m")
+    r = np.log(sp).diff()
+    salto = (_pct(vix / vix.shift(5) - 1) + _pct(vix / vix.shift(10) - 1)) / 2
+    f9 = _pct(g("cboe_vix9d_close", 1) / vix).fillna(50)
+    fvv = _pct(g("cboe_vvix_vvix", 1)).fillna(50)
+    f9[f9.index < "2011-06-01"] = 50.0
+    fvv[fvv.index < "2007-01-01"] = 50.0
+    return (0.30 * salto.fillna(50) + 0.10 * _pct(vix / vix3).fillna(50) + 0.20 * _pct(vix).fillna(50) + 0.15 * f9 + 0.15 * fvv
+            + 0.10 * _pct(r.clip(upper=0).rolling(5).std()).fillna(50))
