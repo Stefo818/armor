@@ -83,6 +83,16 @@ BCE = {
     "tasso_bce_rifinanziamento": "FM/B.U2.EUR.4F.KR.MRR_FR.LEV", "tasso_bce_deposito": "FM/B.U2.EUR.4F.KR.DFR.LEV",
     "euro_dollaro": "EXR/D.USD.EUR.SP00.A", "euro_yen": "EXR/D.JPY.EUR.SP00.A", "euro_franco": "EXR/D.CHF.EUR.SP00.A", "euro_sterlina": "EXR/D.GBP.EUR.SP00.A",
     "euro_yuan": "EXR/D.CNY.EUR.SP00.A",
+    # stress sovrano (SovCISS, BCE: stress del debito pubblico per paese) e contributi dei settori al rischio sistemico (banche, mercato monetario, azioni, obbligazioni, cambi)
+    "sov_italia": "CISS/D.IT.Z0Z.4F.EC.SOV_CIN.IDX", "sov_spagna": "CISS/D.ES.Z0Z.4F.EC.SOV_CIN.IDX", "sov_francia": "CISS/D.FR.Z0Z.4F.EC.SOV_CIN.IDX",
+    "sov_germania": "CISS/D.DE.Z0Z.4F.EC.SOV_CIN.IDX", "sov_grecia": "CISS/D.GR.Z0Z.4F.EC.SOV_CIN.IDX", "sov_portogallo": "CISS/D.PT.Z0Z.4F.EC.SOV_CIN.IDX",
+    "sov_irlanda": "CISS/D.IE.Z0Z.4F.EC.SOV_CIN.IDX", "sov_belgio": "CISS/D.BE.Z0Z.4F.EC.SOV_CIN.IDX", "sov_olanda": "CISS/D.NL.Z0Z.4F.EC.SOV_CIN.IDX",
+    "sov_austria": "CISS/D.AT.Z0Z.4F.EC.SOV_CIN.IDX", "sov_finlandia": "CISS/D.FI.Z0Z.4F.EC.SOV_CIN.IDX",
+    "sov_area_euro_pesata": "CISS/D.U2.Z0Z.4F.EC.SOV_EWN.IDX", "sov_area_euro_pil": "CISS/D.U2.Z0Z.4F.EC.SOV_GDPWN.IDX",
+    "ciss_belgio": "CISS/D.BE.Z0Z.4F.EC.SS_CIN.IDX", "ciss_olanda": "CISS/D.NL.Z0Z.4F.EC.SS_CIN.IDX", "ciss_irlanda": "CISS/D.IE.Z0Z.4F.EC.SS_CIN.IDX",
+    "ciss_portogallo": "CISS/D.PT.Z0Z.4F.EC.SS_CIN.IDX", "ciss_austria": "CISS/D.AT.Z0Z.4F.EC.SS_CIN.IDX", "ciss_finlandia": "CISS/D.FI.Z0Z.4F.EC.SS_CIN.IDX",
+    "ciss_contr_banche": "CISS/D.U2.Z0Z.4F.EC.SS_FIN.CON", "ciss_contr_monetario": "CISS/D.U2.Z0Z.4F.EC.SS_MMN.CON", "ciss_contr_azioni": "CISS/D.U2.Z0Z.4F.EC.SS_EMN.CON",
+    "ciss_contr_obbligazioni": "CISS/D.U2.Z0Z.4F.EC.SS_BMN.CON", "ciss_contr_cambi": "CISS/D.U2.Z0Z.4F.EC.SS_FXN.CON", "ciss_contr_correlazione": "CISS/D.U2.Z0Z.4F.EC.SS_CON.CON",
 }
 
 
