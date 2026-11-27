@@ -1,9 +1,9 @@
 {
- "data": "2026-11-27 04:35 UTC",
+ "data": "2026-11-27 17:01 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
-  "nuove_righe": 60,
+  "nuove_righe": 7,
   "fallite": {
    "sml": "simbolo inesistente",
    "tyvix": "simbolo inesistente",
@@ -20,7 +20,7 @@
  "fred": {
   "richieste": 258,
   "riuscite": 258,
-  "nuove_righe": 0,
+  "nuove_righe": 16,
   "fallite": {},
   "codici_inesistenti_saltati": [
    "ACMTP02",
@@ -49,12 +49,12 @@
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 541,
+  "barre_nuove": 2099,
   "fallite": {}
  },
  "opzioni": {
   "richieste": 10,
-  "righe_oggi": 299,
+  "righe_oggi": 296,
   "fallite": {}
  },
  "componenti": {
@@ -75,7 +75,7 @@
  },
  "ofr_stress": {
   "colonne": 9,
-  "righe_nuove": 0
+  "righe_nuove": 9
  },
  "mmf_ofr": {
   "ultima": "2026-10-31",
@@ -91,34 +91,34 @@
   "mercati": 96
  },
  "cripto": {
-  "stablecoin": 1,
-  "tvl": 1,
-  "paura_cripto": 1
+  "stablecoin": 0,
+  "tvl": 0,
+  "paura_cripto": 0
  },
  "nyfed_tassi_overnight": {
-  "righe_nuove": 0,
+  "righe_nuove": 18,
   "fallite": {}
  },
  "tsa": {
-  "righe_nuove": 0
+  "righe_nuove": 1
  },
  "finra_vendite_scoperto": {
-  "giorni_richiesti": 31,
-  "righe_nuove": 3138,
+  "giorni_richiesti": 25,
+  "righe_nuove": 0,
   "senza_file": 0,
   "fallite": {
+   "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20261126": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260101": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
    "20251225": "403 Client Error: Forbidden for url: https://cdn.f",
    "20251127": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250901": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250704": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250526": "403 Client Error: Forbidden for url: https://cdn.f",
@@ -128,10 +128,10 @@
    "20250109": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250101": "403 Client Error: Forbidden for url: https://cdn.f",
    "20241128": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20241225": "403 Client Error: Forbidden for url: https://cdn.f",
    "20240902": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20240619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20240704": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20240619": "403 Client Error: Forbidden for url: https://cdn.f"
+   "20241225": "403 Client Error: Forbidden for url: https://cdn.f"
   }
  },
  "vix_future_curva": {
@@ -143,7 +143,7 @@
   "righe_nuove": 6150
  },
  "mercati_previsione": {
-  "righe_oggi": 139
+  "righe_oggi": 141
  },
  "nyfed_dealer": {
   "serie_richieste": 260,
@@ -167,12 +167,12 @@
   "problemi": {}
  },
  "sec_parole_di_stress": {
-  "richieste": 48,
-  "righe_nuove": 12,
+  "richieste": 36,
+  "righe_nuove": 0,
   "problemi": {}
  },
  "cripto_leva": {
-  "righe_nuove": 16,
+  "righe_nuove": 0,
   "problemi": {}
  },
  "giappone_curva_titoli_di_stato": {
@@ -180,13 +180,13 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 565,
-  "righe_conteggi_nuove": 10,
+  "titoli_oggi": 665,
+  "righe_conteggi_nuove": 1,
   "problemi": {}
  },
  "retail_forum": {
   "titoli": 200,
-  "righe_nuove": 1
+  "righe_nuove": 0
  },
  "french": {
   "richieste": 4,
@@ -209,7 +209,7 @@
  "derivati_intraday": {
   "strumenti": 51,
   "giorni": 12,
-  "righe_nuove": 30
+  "righe_nuove": 368
  },
  "tesoro_curve": {
   "errore": "tesoro_curve bloccata oltre 180 secondi: saltata"
@@ -234,7 +234,13 @@
  "gdelt": {
   "errore": "gdelt bloccata oltre 120 secondi: saltata"
  },
- "trends": {
-  "errore": "trends bloccata oltre 120 secondi: saltata"
+ "google_trends": {
+  "righe_giornaliere": 90,
+  "righe_settimanali": 0,
+  "problemi": {
+   "US:margin call": "The request failed: Google returned a response wit",
+   "IT:crollo borsa": "The request failed: Google returned a response wit",
+   "mondo:stock market crash": "The request failed: Google returned a response wit"
+  }
  }
 }
