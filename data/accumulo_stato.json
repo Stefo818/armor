@@ -1,9 +1,9 @@
 {
- "data": "2026-11-26 17:22 UTC",
+ "data": "2026-11-27 04:35 UTC",
  "yahoo": {
   "richieste": 335,
   "riuscite": 330,
-  "nuove_righe": 0,
+  "nuove_righe": 60,
   "fallite": {
    "sml": "simbolo inesistente",
    "tyvix": "simbolo inesistente",
@@ -20,7 +20,7 @@
  "fred": {
   "richieste": 258,
   "riuscite": 258,
-  "nuove_righe": 4,
+  "nuove_righe": 0,
   "fallite": {},
   "codici_inesistenti_saltati": [
    "ACMTP02",
@@ -49,7 +49,7 @@
  "intraday_5m": {
   "richieste": 52,
   "riuscite": 52,
-  "barre_nuove": 345,
+  "barre_nuove": 541,
   "fallite": {}
  },
  "opzioni": {
@@ -75,7 +75,7 @@
  },
  "ofr_stress": {
   "colonne": 9,
-  "righe_nuove": 9
+  "righe_nuove": 0
  },
  "mmf_ofr": {
   "ultima": "2026-10-31",
@@ -91,45 +91,47 @@
   "mercati": 96
  },
  "cripto": {
-  "stablecoin": 0,
-  "tvl": 0,
-  "paura_cripto": 0
+  "stablecoin": 1,
+  "tvl": 1,
+  "paura_cripto": 1
  },
  "nyfed_tassi_overnight": {
   "righe_nuove": 0,
   "fallite": {}
  },
  "tsa": {
-  "righe_nuove": 1
+  "righe_nuove": 0
  },
  "finra_vendite_scoperto": {
-  "giorni_richiesti": 60,
-  "righe_nuove": 19377,
+  "giorni_richiesti": 31,
+  "righe_nuove": 3138,
   "senza_file": 0,
   "fallite": {
+   "20261126": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260907": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260619": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260703": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260525": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260216": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260403": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20260101": "403 Client Error: Forbidden for url: https://cdn.f",
    "20260119": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20251127": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20260101": "403 Client Error: Forbidden for url: https://cdn.f",
    "20251225": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20251127": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250901": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250704": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250619": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20250418": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250526": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20250418": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250217": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250120": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20250901": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20241225": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250109": "403 Client Error: Forbidden for url: https://cdn.f",
    "20250101": "403 Client Error: Forbidden for url: https://cdn.f",
    "20241128": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20241225": "403 Client Error: Forbidden for url: https://cdn.f",
    "20240902": "403 Client Error: Forbidden for url: https://cdn.f",
-   "20240704": "403 Client Error: Forbidden for url: https://cdn.f"
+   "20240704": "403 Client Error: Forbidden for url: https://cdn.f",
+   "20240619": "403 Client Error: Forbidden for url: https://cdn.f"
   }
  },
  "vix_future_curva": {
@@ -141,7 +143,7 @@
   "righe_nuove": 6150
  },
  "mercati_previsione": {
-  "righe_oggi": 142
+  "righe_oggi": 139
  },
  "nyfed_dealer": {
   "serie_richieste": 260,
@@ -165,18 +167,12 @@
   "problemi": {}
  },
  "sec_parole_di_stress": {
-  "richieste": 33,
-  "righe_nuove": 0,
-  "problemi": {
-   "dubbio_sostanziale": "500 Server Error: Internal Server Error for url: h",
-   "forbearance": "500 Server Error: Internal Server Error for url: h",
-   "svalutazione_avviamento": "500 Server Error: Internal Server Error for url: h",
-   "linea_credito_ritirata": "500 Server Error: Internal Server Error for url: h",
-   "ristrutturazione_debito": "500 Server Error: Internal Server Error for url: h"
-  }
+  "richieste": 48,
+  "righe_nuove": 12,
+  "problemi": {}
  },
  "cripto_leva": {
-  "righe_nuove": 0,
+  "righe_nuove": 16,
   "problemi": {}
  },
  "giappone_curva_titoli_di_stato": {
@@ -184,13 +180,13 @@
   "righe_nuove": 0
  },
  "testi_e_giornali": {
-  "titoli_oggi": 636,
-  "righe_conteggi_nuove": 1,
+  "titoli_oggi": 565,
+  "righe_conteggi_nuove": 10,
   "problemi": {}
  },
  "retail_forum": {
   "titoli": 200,
-  "righe_nuove": 0
+  "righe_nuove": 1
  },
  "french": {
   "richieste": 4,
@@ -212,8 +208,8 @@
  },
  "derivati_intraday": {
   "strumenti": 51,
-  "giorni": 11,
-  "righe_nuove": 0
+  "giorni": 12,
+  "righe_nuove": 30
  },
  "tesoro_curve": {
   "errore": "tesoro_curve bloccata oltre 180 secondi: saltata"
