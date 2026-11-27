@@ -1,5 +1,5 @@
 {
-"date": "2026-11-26",
+"date": "2026-11-27",
 "segnali": [
 {
 "segnale": "Utili in calo (12 mesi)",
@@ -34,7 +34,7 @@
 {
 "segnale": "Sussidi +20% dal minimo dell'anno",
 "colonna": "claims_up",
-"valore": 4.5,
+"valore": 3.7,
 "acceso": false
 },
 {
@@ -52,7 +52,7 @@
 {
 "segnale": "VIX sopra 30",
 "colonna": "vix",
-"valore": 28.29,
+"valore": 26.8,
 "acceso": false
 },
 {
@@ -84,7 +84,7 @@
 "totale": 13,
 "percentile_accesi": 68,
 "analoghi": {
-"data": "2026-11-26",
+"data": "2026-11-27",
 "colonne": [
 "eps_g12",
 "eps_g3",

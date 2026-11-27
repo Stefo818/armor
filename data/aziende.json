@@ -1,5 +1,5 @@
 {
-"date": "2026-11-26",
+"date": "2026-11-27",
 "fonte": "Yahoo Finance (bilanci trimestrali e annuali); contratti già firmati (RPO): SEC EDGAR",
 "pesi": "stimati dalla capitalizzazione",
 "aziende": [
@@ -518,10 +518,10 @@
 ],
 "diminuiti": [],
 "valuta": "TWD",
-"fx_bilancio": 0.030343487858772278,
+"fx_bilancio": 0.03036007098853588,
 "peso": 1.53,
 "ordine_statico": 7,
-"ps": 11.83352144216758
+"ps": 11.827057793854308
 },
 {
 "sym": "META",
@@ -1045,7 +1045,7 @@
 {
 "sym": "005930.KS",
 "nome": "Samsung Electronics",
-"cap_usd": 844136034936.7522,
+"cap_usd": 863343989229.2744,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1123,10 +1123,10 @@
 ],
 "diminuiti": [],
 "valuta": "KRW",
-"fx_bilancio": 0.0007449954864569008,
-"peso": 0.73,
+"fx_bilancio": 0.0007465026574209332,
+"peso": 0.74,
 "ordine_statico": 22,
-"ps": 1.9060470144664596
+"ps": 1.9454824699381792
 },
 {
 "sym": "JPM",
@@ -1301,7 +1301,7 @@
 {
 "sym": "MU",
 "nome": "Micron",
-"cap_usd": 680268206215.0,
+"cap_usd": 682379255691.25,
 "q": {
 "fine": "2026-08-31",
 "mesi": 3,
@@ -1382,9 +1382,9 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 0.58,
+"peso": 0.59,
 "ordine_statico": 12,
-"ps": 5.107578807512689
+"ps": 5.1234289552455925
 },
 {
 "sym": "AMD",
@@ -1902,10 +1902,10 @@
 "debito"
 ],
 "valuta": "EUR",
-"fx_bilancio": 1.0964912176132202,
+"fx_bilancio": 1.0979359149932861,
 "peso": 0.43,
 "ordine_statico": 21,
-"ps": 11.603579283749843
+"ps": 11.588310942162963
 },
 {
 "sym": "COST",
@@ -2334,10 +2334,10 @@
 "margine operativo"
 ],
 "valuta": "CNY",
-"fx_bilancio": 0.15009380877017975,
+"fx_bilancio": 0.15023812651634216,
 "peso": 0.34,
 "ordine_statico": 23,
-"ps": 3.480209806160722
+"ps": 3.4768667397431385
 },
 {
 "sym": "PLTR",
@@ -2605,9 +2605,9 @@
 "migliora": 18,
 "stabile": 10,
 "peggiora": 2,
-"peso_migliora": 20.32,
+"peso_migliora": 20.34,
 "peso_stabile": 10.14,
 "peso_peggiora": 2.35,
-"peso_totale": 32.81
+"peso_totale": 32.83
 }
 }
