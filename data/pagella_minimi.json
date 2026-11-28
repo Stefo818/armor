@@ -20,10 +20,10 @@
       "q_media": 0.576
      },
      "non_ancora": {
-      "n": 7,
-      "maturi": 2,
-      "tenuto": 0.0,
-      "q_media": 0.638
+      "n": 8,
+      "maturi": 3,
+      "tenuto": 0.333,
+      "q_media": 0.591
      }
     },
     "ultimo": "non_ancora"
@@ -45,7 +45,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 11,
+      "n": 12,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -70,7 +70,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 8,
+      "n": 9,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
@@ -95,7 +95,7 @@
       "q_media": null
      },
      "non_ancora": {
-      "n": 11,
+      "n": 12,
       "maturi": 0,
       "tenuto": null,
       "q_media": null
