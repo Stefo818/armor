@@ -1,10 +1,10 @@
 {
- "asof": "2026-11-25",
+ "asof": "2026-11-27",
  "segnali": [
   {
    "id": "disaccordo",
    "acceso": true,
-   "dettaglio": "1 mese: calo ≥10% → A1 5%, sfidante 13%; 3 mesi: calo ≥10% → A1 11%, sfidante 27%"
+   "dettaglio": "1 mese: calo ≥10% → A1 5%, sfidante 11%; 3 mesi: calo ≥10% → A1 10%, sfidante 25%"
   },
   {
    "id": "dati",
@@ -14,9 +14,9 @@
   {
    "id": "mai_visto",
    "acceso": false,
-   "dettaglio": "distanza dalla norma 3.3, limite 8.9 (superato solo dall'1% dei 9293 giorni di storia)",
-   "valore": 3.3117814801040426,
-   "soglia": 8.937452403244507
+   "dettaglio": "distanza dalla norma 3.5, limite 8.9 (superato solo dall'1% dei 9294 giorni di storia)",
+   "valore": 3.4750576520925027,
+   "soglia": 8.93696124191602
   },
   {
    "id": "errori",
@@ -27,54 +27,54 @@
   {
    "id": "instabilita",
    "acceso": true,
-   "dettaglio": "a 3 mesi la probabilità va da 25% a 30% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)",
+   "dettaglio": "a 3 mesi la probabilità va da 22% a 30% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)",
    "per_finestra": {
     "dal 1950": {
-     "1m": 0.147,
-     "3m": 0.295
+     "1m": 0.14366666666666666,
+     "3m": 0.29633333333333334
     },
     "dal 1990": {
-     "1m": 0.166,
-     "3m": 0.297
+     "1m": 0.14766666666666667,
+     "3m": 0.2823333333333333
     },
     "ultimi 15 anni": {
-     "1m": 0.15866666666666668,
-     "3m": 0.25466666666666665
+     "1m": 0.12033333333333333,
+     "3m": 0.21833333333333332
     }
    }
   }
  ],
  "livello": "bassa",
  "n_accesi": 2,
- "avviso": "Stima poco affidabile: disaccordo tra i modelli (1 mese: calo ≥10% → A1 5%, sfidante 13%; 3 mesi: calo ≥10% → A1 11%, sfidante 27%); stima instabile (a 3 mesi la probabilità va da 25% a 30% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)).",
+ "avviso": "Stima poco affidabile: disaccordo tra i modelli (1 mese: calo ≥10% → A1 5%, sfidante 11%; 3 mesi: calo ≥10% → A1 10%, sfidante 25%); stima instabile (a 3 mesi la probabilità va da 22% a 30% a seconda di quanta storia si usa per stimare il modello (dal 1950, dal 1990, ultimi 15 anni)).",
  "orizzonti": [
   {
    "hz": "10g",
    "soglia": 5,
-   "a1": 0.09338799339000464,
-   "sfidante": 0.159,
-   "normale": 0.06222095949346538
+   "a1": 0.08441114882858859,
+   "sfidante": 0.1342,
+   "normale": 0.06225902025244531
   },
   {
    "hz": "1m",
    "soglia": 10,
-   "a1": 0.054782544077170925,
-   "sfidante": 0.1286,
-   "normale": 0.05181936322287199
+   "a1": 0.04798107567339433,
+   "sfidante": 0.11,
+   "normale": 0.05185786802030457
   },
   {
    "hz": "3m",
    "soglia": 10,
-   "a1": 0.1074046706225142,
-   "sfidante": 0.2678,
-   "normale": 0.15210316491741924
+   "a1": 0.09909066408614402,
+   "sfidante": 0.2516,
+   "normale": 0.15213765610381158
   },
   {
    "hz": "6m",
    "soglia": 10,
-   "a1": 0.19774255179169686,
-   "sfidante": 0.3404,
-   "normale": 0.2541294506301236
+   "a1": 0.1842647647992812,
+   "sfidante": 0.3276,
+   "normale": 0.2541190864600326
   }
  ]
 }

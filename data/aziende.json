@@ -1,12 +1,12 @@
 {
-"date": "2026-11-27",
+"date": "2026-11-28",
 "fonte": "Yahoo Finance (bilanci trimestrali e annuali); contratti già firmati (RPO): SEC EDGAR",
 "pesi": "stimati dalla capitalizzazione",
 "aziende": [
 {
 "sym": "AAPL",
 "nome": "Apple",
-"cap_usd": 5167353080425.721,
+"cap_usd": 5210368658456.359,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -86,14 +86,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 4.44,
+"peso": 4.4,
 "ordine_statico": 1,
-"ps": 10.791533350651209
+"ps": 10.881367359996073
 },
 {
 "sym": "MSFT",
 "nome": "Microsoft",
-"cap_usd": 3638315442470.2866,
+"cap_usd": 3660000030279.0947,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -172,14 +172,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 3.13,
+"peso": 3.09,
 "ordine_statico": 2,
-"ps": 10.501855828400718
+"ps": 10.564447546592085
 },
 {
 "sym": "NVDA",
 "nome": "NVIDIA",
-"cap_usd": 3605147173690.796,
+"cap_usd": 3633882162643.4326,
 "q": {
 "fine": "2026-07-31",
 "mesi": 3,
@@ -258,14 +258,14 @@
 "diminuiti": [],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 3.1,
+"peso": 3.07,
 "ordine_statico": 0,
-"ps": 11.899392920367417
+"ps": 11.994237570983938
 },
 {
 "sym": "GOOGL",
 "nome": "Alphabet (Google)",
-"cap_usd": 3357491475036.621,
+"cap_usd": 3380358134948.7305,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -345,14 +345,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 2.89,
+"peso": 2.85,
 "ordine_statico": 4,
-"ps": 7.126949116822022
+"ps": 7.175488189185118
 },
 {
 "sym": "AMZN",
 "nome": "Amazon",
-"cap_usd": 2643055316937.7896,
+"cap_usd": 2747834653522.1934,
 "q": {
 "fine": "2026-09-30",
 "mesi": 6,
@@ -432,14 +432,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 2.27,
+"peso": 2.32,
 "ordine_statico": 3,
-"ps": 6.892595418430956
+"ps": 7.165840390134624
 },
 {
 "sym": "TSM",
 "nome": "TSMC",
-"cap_usd": 1775537145772.5286,
+"cap_usd": 1832588348706.5286,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -518,15 +518,15 @@
 ],
 "diminuiti": [],
 "valuta": "TWD",
-"fx_bilancio": 0.03036007098853588,
-"peso": 1.53,
+"fx_bilancio": 0.030378608033061028,
+"peso": 1.55,
 "ordine_statico": 7,
-"ps": 11.827057793854308
+"ps": 12.199633670407856
 },
 {
 "sym": "META",
 "nome": "Meta",
-"cap_usd": 1559026015237.1104,
+"cap_usd": 1607773554654.2903,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -607,14 +607,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 1.34,
+"peso": 1.36,
 "ordine_statico": 5,
-"ps": 6.452761997786108
+"ps": 6.654526603868655
 },
 {
 "sym": "TSLA",
 "nome": "Tesla",
-"cap_usd": 1502601463494.1677,
+"cap_usd": 1581103178400.0,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -693,14 +693,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 1.29,
+"peso": 1.34,
 "ordine_statico": 8,
-"ps": 14.508076310651422
+"ps": 15.266034357439413
 },
 {
 "sym": "AVGO",
 "nome": "Broadcom",
-"cap_usd": 1436194211257.6812,
+"cap_usd": 1490995534552.5454,
 "q": {
 "fine": "2026-07-31",
 "mesi": 3,
@@ -781,14 +781,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 1.23,
+"peso": 1.26,
 "ordine_statico": 6,
-"ps": 16.118178883750236
+"ps": 16.733205406632088
 },
 {
 "sym": "LLY",
 "nome": "Eli Lilly",
-"cap_usd": 1240113020962.7742,
+"cap_usd": 1240255570613.121,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -868,14 +868,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 1.07,
+"peso": 1.05,
 "ordine_statico": 11,
-"ps": 14.342867629279617
+"ps": 14.344516326399125
 },
 {
 "sym": "BRK-B",
 "nome": "Berkshire Hathaway",
-"cap_usd": 1230776497622.0037,
+"cap_usd": 1233899478652.7393,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -952,14 +952,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 1.06,
+"peso": 1.04,
 "ordine_statico": 9,
-"ps": 2.8036549753342985
+"ps": 2.8107689893909638
 },
 {
 "sym": "WMT",
 "nome": "Walmart",
-"cap_usd": 1046778498407.0376,
+"cap_usd": 1056219675803.3253,
 "q": {
 "fine": "2026-07-31",
 "mesi": 3,
@@ -1038,14 +1038,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 0.9,
+"peso": 0.89,
 "ordine_statico": 15,
-"ps": 1.4225626473241977
+"ps": 1.4353931232378307
 },
 {
 "sym": "005930.KS",
 "nome": "Samsung Electronics",
-"cap_usd": 863343989229.2744,
+"cap_usd": 874343043580.17,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1123,15 +1123,15 @@
 ],
 "diminuiti": [],
 "valuta": "KRW",
-"fx_bilancio": 0.0007465026574209332,
+"fx_bilancio": 0.0007496813777834177,
 "peso": 0.74,
 "ordine_statico": 22,
-"ps": 1.9454824699381792
+"ps": 1.9619139097180627
 },
 {
 "sym": "JPM",
 "nome": "JPMorgan Chase",
-"cap_usd": 841137729946.9734,
+"cap_usd": 857655624334.6642,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1209,12 +1209,12 @@
 "fx_bilancio": 1.0,
 "peso": 0.72,
 "ordine_statico": 10,
-"ps": 4.234206027328927
+"ps": 4.3173555110401765
 },
 {
 "sym": "V",
 "nome": "Visa",
-"cap_usd": 791826911399.3354,
+"cap_usd": 801473065781.9441,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1296,12 +1296,12 @@
 "fx_bilancio": 1.0,
 "peso": 0.68,
 "ordine_statico": 13,
-"ps": 17.250003516095582
+"ps": 17.460145650217722
 },
 {
 "sym": "MU",
 "nome": "Micron",
-"cap_usd": 682379255691.25,
+"cap_usd": 734245767649.5286,
 "q": {
 "fine": "2026-08-31",
 "mesi": 3,
@@ -1382,14 +1382,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 0.59,
+"peso": 0.62,
 "ordine_statico": 12,
-"ps": 5.1234289552455925
+"ps": 5.512852266341777
 },
 {
 "sym": "AMD",
 "nome": "AMD",
-"cap_usd": 672006272584.8463,
+"cap_usd": 702641552503.826,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1469,14 +1469,14 @@
 "diminuiti": [],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 0.58,
+"peso": 0.59,
 "ordine_statico": 29,
-"ps": 14.790172387200597
+"ps": 15.464423639929263
 },
 {
 "sym": "JNJ",
 "nome": "Johnson & Johnson",
-"cap_usd": 659458580145.2623,
+"cap_usd": 663238074894.5493,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1556,14 +1556,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 0.57,
+"peso": 0.56,
 "ordine_statico": 19,
-"ps": 6.6387333784191105
+"ps": 6.676781344889005
 },
 {
 "sym": "XOM",
 "nome": "Exxon Mobil",
-"cap_usd": 644843491416.7993,
+"cap_usd": 653409821202.8025,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1645,12 +1645,12 @@
 "fx_bilancio": 1.0,
 "peso": 0.55,
 "ordine_statico": 17,
-"ps": 1.6609746013126154
+"ps": 1.6830395773733295
 },
 {
 "sym": "MA",
 "nome": "Mastercard",
-"cap_usd": 574950074433.8423,
+"cap_usd": 581039640135.4933,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1732,12 +1732,12 @@
 "fx_bilancio": 1.0,
 "peso": 0.49,
 "ordine_statico": 16,
-"ps": 15.84408273902784
+"ps": 16.011894845003674
 },
 {
 "sym": "ABBV",
 "nome": "AbbVie",
-"cap_usd": 520527669210.49274,
+"cap_usd": 515931856026.219,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1816,14 +1816,14 @@
 "diminuiti": [],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 0.45,
+"peso": 0.44,
 "ordine_statico": 26,
-"ps": 7.885110267677958
+"ps": 7.815491502199821
 },
 {
 "sym": "ASML",
 "nome": "ASML",
-"cap_usd": 502230134308.0569,
+"cap_usd": 510994529997.29175,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -1902,15 +1902,15 @@
 "debito"
 ],
 "valuta": "EUR",
-"fx_bilancio": 1.0979359149932861,
+"fx_bilancio": 1.0972130298614502,
 "peso": 0.43,
 "ordine_statico": 21,
-"ps": 11.588310942162963
+"ps": 11.798306088979679
 },
 {
 "sym": "COST",
 "nome": "Costco",
-"cap_usd": 481597433751.3003,
+"cap_usd": 486471856590.3003,
 "q": {
 "fine": "2026-08-31",
 "mesi": 3,
@@ -1990,12 +1990,100 @@
 "fx_bilancio": 1.0,
 "peso": 0.41,
 "ordine_statico": 20,
-"ps": 1.5886230554480572
+"ps": 1.6047020873559323
+},
+{
+"sym": "PLTR",
+"nome": "Palantir",
+"cap_usd": 414843175686.6583,
+"q": {
+"fine": "2026-09-30",
+"mesi": 3,
+"tipo": "trimestre",
+"periodo": "lug-set 2026",
+"conf": "anno",
+"periodo_conf": "lug-set 2025",
+"rev": 2313411000.0,
+"ni": 1128012000.0,
+"op": 1084845000.0,
+"rev_prev": 1181092000.0,
+"ni_prev": 475599000.0,
+"op_prev": 393256000.0,
+"opm": 46.893742616422244,
+"opm_prev": 33.29596678328191,
+"rev_g": 95.87051643733086,
+"ni_g": 137.17711769789256,
+"opm_d": 13.597775833140332,
+"debt": 225267000.0,
+"cash": 3619414000.0,
+"debt_prev": 235436000.0,
+"cash_prev": 1615967000.0
+},
+"rev_12m": 7288260000.0,
+"rev_12m_fonte": "somma degli ultimi 4 trimestri",
+"a": {
+"fine": "2025-12-31",
+"periodo": "gen-dic 2025",
+"rev": 4475446000.0,
+"ni": 1625033000.0,
+"op": 1414015000.0,
+"rev_prev": 2865507000.0,
+"ni_prev": 462190000.0,
+"op_prev": 310403000.0,
+"opm": 31.59495165398041,
+"opm_prev": 10.83239370903648,
+"rev_g": 56.183390932215495,
+"ni_g": 251.59414959215906,
+"opm_d": 20.76255794494393
+},
+"base": "trimestre",
+"periodo": "lug-set 2026",
+"periodo_prec": "lug-set 2025",
+"rev": 2313411000.0,
+"rev_prev": 1181092000.0,
+"ni": 1128012000.0,
+"ni_prev": 475599000.0,
+"op": 1084845000.0,
+"op_prev": 393256000.0,
+"opm": 46.893742616422244,
+"opm_prev": 33.29596678328191,
+"rev_g": 95.87051643733086,
+"ni_g": 137.17711769789256,
+"opm_d": 13.597775833140332,
+"debt": 225267000.0,
+"cash": 3619414000.0,
+"debt_prev": 235436000.0,
+"cash_prev": 1615967000.0,
+"lev_d": -0.07457535655386699,
+"punteggio": 4,
+"stato": 1,
+"etichetta": "In miglioramento",
+"motivi": [
+"fatturato in crescita",
+"utile netto in crescita",
+"margine operativo in crescita",
+"debito netto in calo rispetto al fatturato"
+],
+"aumentati": [
+"fatturato",
+"utile netto",
+"utile operativo",
+"margine operativo",
+"liquidità"
+],
+"diminuiti": [
+"debito"
+],
+"valuta": "USD",
+"fx_bilancio": 1.0,
+"peso": 0.35,
+"ordine_statico": 28,
+"ps": 56.919371110067196
 },
 {
 "sym": "KO",
 "nome": "Coca-Cola",
-"cap_usd": 419822633118.61316,
+"cap_usd": 419005293993.182,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -2076,99 +2164,14 @@
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
-"peso": 0.36,
-"ordine_statico": 31,
-"ps": 8.223109513820917
-},
-{
-"sym": "PG",
-"nome": "Procter & Gamble",
-"cap_usd": 401509563959.2521,
-"q": {
-"fine": "2026-09-30",
-"mesi": 3,
-"tipo": "trimestre",
-"periodo": "lug-set 2026",
-"conf": "anno",
-"periodo_conf": "lug-set 2025",
-"rev": 23276000000.0,
-"ni": 4731000000.0,
-"op": 5937000000.0,
-"rev_prev": 22386000000.0,
-"ni_prev": 4750000000.0,
-"op_prev": 5856000000.0,
-"opm": 25.506959958755797,
-"opm_prev": 26.159206647011523,
-"rev_g": 3.9756990976503204,
-"ni_g": -0.40000000000000036,
-"opm_d": -0.6522466882557261,
-"debt": 38925000000.0,
-"cash": 15365000000.0,
-"debt_prev": 35946000000.0,
-"cash_prev": 11171000000.0
-},
-"rev_12m": 87923000000.0,
-"rev_12m_fonte": "somma degli ultimi 4 trimestri",
-"a": {
-"fine": "2026-06-30",
-"periodo": "lug 2025-giu 2026",
-"rev": 87032000000.0,
-"ni": 16046000000.0,
-"op": 19748000000.0,
-"rev_prev": 84284000000.0,
-"ni_prev": 15974000000.0,
-"op_prev": 20451000000.0,
-"opm": 22.69050464197077,
-"opm_prev": 24.264391818138677,
-"rev_g": 3.2604052963788988,
-"ni_g": 0.4507324402153401,
-"opm_d": -1.5738871761679079
-},
-"base": "trimestre",
-"periodo": "lug-set 2026",
-"periodo_prec": "lug-set 2025",
-"rev": 23276000000.0,
-"rev_prev": 22386000000.0,
-"ni": 4731000000.0,
-"ni_prev": 4750000000.0,
-"op": 5937000000.0,
-"op_prev": 5856000000.0,
-"opm": 25.506959958755797,
-"opm_prev": 26.159206647011523,
-"rev_g": 3.9756990976503204,
-"ni_g": -0.40000000000000036,
-"opm_d": -0.6522466882557261,
-"debt": 38925000000.0,
-"cash": 15365000000.0,
-"debt_prev": 35946000000.0,
-"cash_prev": 11171000000.0,
-"lev_d": -0.02362926889760769,
-"punteggio": 1,
-"stato": 0,
-"etichetta": "Stabile",
-"motivi": [
-"fatturato in crescita"
-],
-"aumentati": [
-"fatturato",
-"utile operativo",
-"debito",
-"liquidità"
-],
-"diminuiti": [
-"utile netto",
-"margine operativo"
-],
-"valuta": "USD",
-"fx_bilancio": 1.0,
 "peso": 0.35,
-"ordine_statico": 25,
-"ps": 4.566604460257863
+"ordine_statico": 31,
+"ps": 8.207100207489756
 },
 {
 "sym": "CVX",
 "nome": "Chevron",
-"cap_usd": 411616959106.9463,
+"cap_usd": 414543839635.9463,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -2251,12 +2254,12 @@
 "fx_bilancio": 1.0,
 "peso": 0.35,
 "ordine_statico": 33,
-"ps": 1.823096741091715
+"ps": 1.8360602165655189
 },
 {
 "sym": "TCEHY",
 "nome": "Tencent",
-"cap_usd": 392690942975.5863,
+"cap_usd": 407818686493.25446,
 "q": {
 "fine": "2026-06-30",
 "mesi": 12,
@@ -2334,15 +2337,15 @@
 "margine operativo"
 ],
 "valuta": "CNY",
-"fx_bilancio": 0.15023812651634216,
+"fx_bilancio": 0.15028329193592072,
 "peso": 0.34,
 "ordine_statico": 23,
-"ps": 3.4768667397431385
+"ps": 3.6097218793095665
 },
 {
-"sym": "PLTR",
-"nome": "Palantir",
-"cap_usd": 394169682947.8167,
+"sym": "PG",
+"nome": "Procter & Gamble",
+"cap_usd": 400651995513.6426,
 "q": {
 "fine": "2026-09-30",
 "mesi": 3,
@@ -2350,87 +2353,84 @@
 "periodo": "lug-set 2026",
 "conf": "anno",
 "periodo_conf": "lug-set 2025",
-"rev": 2313411000.0,
-"ni": 1128012000.0,
-"op": 1084845000.0,
-"rev_prev": 1181092000.0,
-"ni_prev": 475599000.0,
-"op_prev": 393256000.0,
-"opm": 46.893742616422244,
-"opm_prev": 33.29596678328191,
-"rev_g": 95.87051643733086,
-"ni_g": 137.17711769789256,
-"opm_d": 13.597775833140332,
-"debt": 225267000.0,
-"cash": 3619414000.0,
-"debt_prev": 235436000.0,
-"cash_prev": 1615967000.0
+"rev": 23276000000.0,
+"ni": 4731000000.0,
+"op": 5937000000.0,
+"rev_prev": 22386000000.0,
+"ni_prev": 4750000000.0,
+"op_prev": 5856000000.0,
+"opm": 25.506959958755797,
+"opm_prev": 26.159206647011523,
+"rev_g": 3.9756990976503204,
+"ni_g": -0.40000000000000036,
+"opm_d": -0.6522466882557261,
+"debt": 38925000000.0,
+"cash": 15365000000.0,
+"debt_prev": 35946000000.0,
+"cash_prev": 11171000000.0
 },
-"rev_12m": 7288260000.0,
+"rev_12m": 87923000000.0,
 "rev_12m_fonte": "somma degli ultimi 4 trimestri",
 "a": {
-"fine": "2025-12-31",
-"periodo": "gen-dic 2025",
-"rev": 4475446000.0,
-"ni": 1625033000.0,
-"op": 1414015000.0,
-"rev_prev": 2865507000.0,
-"ni_prev": 462190000.0,
-"op_prev": 310403000.0,
-"opm": 31.59495165398041,
-"opm_prev": 10.83239370903648,
-"rev_g": 56.183390932215495,
-"ni_g": 251.59414959215906,
-"opm_d": 20.76255794494393
+"fine": "2026-06-30",
+"periodo": "lug 2025-giu 2026",
+"rev": 87032000000.0,
+"ni": 16046000000.0,
+"op": 19748000000.0,
+"rev_prev": 84284000000.0,
+"ni_prev": 15974000000.0,
+"op_prev": 20451000000.0,
+"opm": 22.69050464197077,
+"opm_prev": 24.264391818138677,
+"rev_g": 3.2604052963788988,
+"ni_g": 0.4507324402153401,
+"opm_d": -1.5738871761679079
 },
 "base": "trimestre",
 "periodo": "lug-set 2026",
 "periodo_prec": "lug-set 2025",
-"rev": 2313411000.0,
-"rev_prev": 1181092000.0,
-"ni": 1128012000.0,
-"ni_prev": 475599000.0,
-"op": 1084845000.0,
-"op_prev": 393256000.0,
-"opm": 46.893742616422244,
-"opm_prev": 33.29596678328191,
-"rev_g": 95.87051643733086,
-"ni_g": 137.17711769789256,
-"opm_d": 13.597775833140332,
-"debt": 225267000.0,
-"cash": 3619414000.0,
-"debt_prev": 235436000.0,
-"cash_prev": 1615967000.0,
-"lev_d": -0.07457535655386699,
-"punteggio": 4,
-"stato": 1,
-"etichetta": "In miglioramento",
+"rev": 23276000000.0,
+"rev_prev": 22386000000.0,
+"ni": 4731000000.0,
+"ni_prev": 4750000000.0,
+"op": 5937000000.0,
+"op_prev": 5856000000.0,
+"opm": 25.506959958755797,
+"opm_prev": 26.159206647011523,
+"rev_g": 3.9756990976503204,
+"ni_g": -0.40000000000000036,
+"opm_d": -0.6522466882557261,
+"debt": 38925000000.0,
+"cash": 15365000000.0,
+"debt_prev": 35946000000.0,
+"cash_prev": 11171000000.0,
+"lev_d": -0.02362926889760769,
+"punteggio": 1,
+"stato": 0,
+"etichetta": "Stabile",
 "motivi": [
-"fatturato in crescita",
-"utile netto in crescita",
-"margine operativo in crescita",
-"debito netto in calo rispetto al fatturato"
+"fatturato in crescita"
 ],
 "aumentati": [
 "fatturato",
-"utile netto",
 "utile operativo",
-"margine operativo",
+"debito",
 "liquidità"
 ],
 "diminuiti": [
-"debito"
+"utile netto",
+"margine operativo"
 ],
 "valuta": "USD",
 "fx_bilancio": 1.0,
 "peso": 0.34,
-"ordine_statico": 28,
-"ps": 54.082824013937035
+"ordine_statico": 25,
+"ps": 4.556850829858428
 },
 {
 "sym": "CSCO",
 "nome": "Cisco",
-"cap_usd": 371378606901.40295,
+"cap_usd": 382575175384.7791,
 "q": {
 "fine": "2026-10-31",
 "mesi": 3,
@@ -2512,12 +2512,12 @@
 "fx_bilancio": 1.0,
 "peso": 0.32,
 "ordine_statico": 34,
-"ps": 5.546358322277856
+"ps": 5.713573610489689
 },
 {
 "sym": "HD",
 "nome": "Home Depot",
-"cap_usd": 360484112495.87085,
+"cap_usd": 361372185160.6432,
 "q": {
 "fine": "2026-10-31",
 "mesi": 3,
@@ -2597,7 +2597,7 @@
 "fx_bilancio": 1.0,
 "peso": 0.31,
 "ordine_statico": 24,
-"ps": 2.1053609495033982
+"ps": 2.11054762332319
 }
 ],
 "riepilogo": {
@@ -2605,9 +2605,9 @@
 "migliora": 18,
 "stabile": 10,
 "peggiora": 2,
-"peso_migliora": 20.34,
+"peso_migliora": 20.29,
 "peso_stabile": 10.14,
-"peso_peggiora": 2.35,
-"peso_totale": 32.83
+"peso_peggiora": 2.38,
+"peso_totale": 32.81
 }
 }
